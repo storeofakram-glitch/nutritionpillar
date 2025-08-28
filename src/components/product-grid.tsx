@@ -57,7 +57,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
 
   return (
     <div>
-      <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-center">
+      <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-center">
         <div className="relative md:col-span-2 lg:col-span-2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input 
@@ -73,22 +73,6 @@ export default function ProductGrid({ products }: ProductGridProps) {
           <SelectContent>
             <SelectItem value="all">All Categories</SelectItem>
             {availableFilters.categories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
-          </SelectContent>
-        </Select>
-
-        <Select value={filters.size} onValueChange={handleFilterChange('size')} disabled={availableFilters.sizes.length === 0}>
-          <SelectTrigger><SelectValue placeholder="Size" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Sizes</SelectItem>
-            {availableFilters.sizes.map(size => <SelectItem key={size} value={size}>{size}</SelectItem>)}
-          </SelectContent>
-        </Select>
-        
-        <Select value={filters.flavor} onValueChange={handleFilterChange('flavor')} disabled={availableFilters.flavors.length === 0}>
-          <SelectTrigger><SelectValue placeholder="Flavor" /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Flavors</SelectItem>
-            {availableFilters.flavors.map(flavor => <SelectItem key={flavor} value={flavor}>{flavor}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>
