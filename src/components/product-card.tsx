@@ -6,6 +6,8 @@ import type { Product } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCart } from '@/contexts/cart-context';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 interface ProductCardProps {
   product: Product;
@@ -14,8 +16,10 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
   const router = useRouter();
+  const isOutOfStock = product.quantity === 0;
 
   const handleAddToCart = () => {
+    if (isOutOfStock) return;
     // For simplicity, we add the first available option if it exists.
     // A real app would let the user select options on the card or a product page.
     const defaultOptions = {
@@ -29,16 +33,24 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-      <CardHeader className="p-0">
+      <CardHeader className="p-0 relative">
         <div className="relative w-full aspect-square">
           <Image
             src={product.imageUrl}
             alt={product.name}
             fill
-            className="object-cover"
+            className={cn("object-cover", isOutOfStock && "grayscale")}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
+        {product.quantity <= 10 && (
+           <Badge 
+            variant={isOutOfStock ? "destructive" : "secondary"}
+            className="absolute top-2 right-2"
+          >
+            {isOutOfStock ? "Out of Stock" : `${product.quantity} left`}
+          </Badge>
+        )}
       </CardHeader>
       <CardContent className="p-4 flex-grow flex flex-col">
         <p className="text-sm text-muted-foreground">{product.category}</p>
@@ -50,8 +62,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         </p>
       </CardContent>
       <CardFooter className="p-4 pt-0">
-        <Button className="w-full font-bold" onClick={handleAddToCart}>
-          Add to Cart
+        <Button className="w-full font-bold" onClick={handleAddToCart} disabled={isOutOfStock}>
+          {isOutOfStock ? "Out of Stock" : "Add to Cart"}
         </Button>
       </CardFooter>
     </Card>
