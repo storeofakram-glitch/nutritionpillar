@@ -17,6 +17,9 @@ import { useToast } from "@/hooks/use-toast"
 import { addShippingOption, updateShippingOption } from "@/services/shipping-service"
 import type { ShippingState } from "@/types"
 import { PlusCircle, Trash2 } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { dzStates } from "@/lib/dz-states"
+import { useEffect, useMemo } from "react"
 
 const citySchema = z.object({
     name: z.string().min(1, "City name is required."),
@@ -24,7 +27,7 @@ const citySchema = z.object({
 })
 
 const shippingZoneSchema = z.object({
-  state: z.string().min(2, "State name must be at least 2 characters."),
+  state: z.string().min(1, "Please select a state."),
   cities: z.array(citySchema).min(1, "At least one city is required.")
 })
 
@@ -47,10 +50,27 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
     },
   })
   
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     control: form.control,
     name: "cities"
   });
+  
+  const watchedState = form.watch("state");
+
+  const availableCities = useMemo(() => {
+    const selectedStateData = dzStates.find(s => s.name === watchedState);
+    return selectedStateData ? selectedStateData.cities : [];
+  }, [watchedState]);
+
+  useEffect(() => {
+    // When state changes, reset the cities array
+    // Don't reset if it's the initial render of an edit form
+    if (form.formState.isDirty) {
+        replace([]);
+        append({ name: "", price: 0 });
+    }
+  }, [watchedState, replace, append, form.formState.isDirty]);
+
 
   async function onSubmit(data: ShippingZoneFormValues) {
     const result = isEditMode
@@ -82,9 +102,20 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
           render={({ field }) => (
             <FormItem>
               <FormLabel>State (Wilaya)</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g. Algiers" {...field} />
-              </FormControl>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select a state" />
+                        </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                        {dzStates.map((state) => (
+                            <SelectItem key={state.id} value={state.name}>
+                                {state.id} - {state.name}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
               <FormMessage />
             </FormItem>
           )}
@@ -94,17 +125,28 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
             <FormLabel>Cities & Prices</FormLabel>
             <div className="space-y-3 mt-2">
                 {fields.map((field, index) => (
-                    <div key={field.id} className="grid grid-cols-[1fr_100px_auto] gap-2 items-end">
+                    <div key={field.id} className="grid grid-cols-[1fr_100px_auto] gap-2 items-start">
                         <FormField
                             control={form.control}
                             name={`cities.${index}.name`}
-                            render={({ field }) => (
+                            render={({ field: cityField }) => (
                                 <FormItem>
-                                <FormLabel className="sr-only">City Name</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="City Name" {...field} />
-                                </FormControl>
-                                <FormMessage />
+                                    <FormLabel className="sr-only">City Name</FormLabel>
+                                    <Select onValueChange={cityField.onChange} value={cityField.value} disabled={!watchedState}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a city" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {availableCities.map((city) => (
+                                                <SelectItem key={city} value={city}>
+                                                    {city}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
@@ -113,11 +155,11 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
                             name={`cities.${index}.price`}
                             render={({ field }) => (
                                 <FormItem>
-                                <FormLabel className="sr-only">Price</FormLabel>
-                                <FormControl>
-                                    <Input type="number" placeholder="Price" {...field} />
-                                </FormControl>
-                                <FormMessage />
+                                    <FormLabel className="sr-only">Price</FormLabel>
+                                    <FormControl>
+                                        <Input type="number" placeholder="Price" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
@@ -132,6 +174,7 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
                     size="sm"
                     className="mt-2 gap-1"
                     onClick={() => append({ name: "", price: 0 })}
+                    disabled={!watchedState}
                     >
                     <PlusCircle className="h-3.5 w-3.5" />
                     Add City
