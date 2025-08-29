@@ -20,12 +20,12 @@ export default async function AdminProductsPage() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-            <CardTitle>Products</CardTitle>
-            <CardDescription>Manage your products and view their sales performance.</CardDescription>
-        </div>
-        <div>
+      <CardHeader>
+        <div className="flex items-center justify-between gap-4">
+            <div>
+                <CardTitle>Products</CardTitle>
+                <CardDescription>Manage your products and view their sales performance.</CardDescription>
+            </div>
             <AddProductDialog />
         </div>
       </CardHeader>
