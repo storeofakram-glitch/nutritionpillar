@@ -1,3 +1,6 @@
+
+"use client";
+
 import {
   Table,
   TableBody,
@@ -8,9 +11,10 @@ import {
 } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { orders } from "@/lib/mock-data"
-import { MoreHorizontal } from "lucide-react"
+import { MoreHorizontal, RefreshCw } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
+import { useState } from "react";
 
 const customers = orders.map(order => order.customer).reduce((acc, current) => {
     if (!acc.find(c => c.email === current.email)) {
@@ -20,14 +24,29 @@ const customers = orders.map(order => order.customer).reduce((acc, current) => {
 }, [] as {name: string, email: string}[])
 
 export default function AdminCustomersPage() {
+    const [key, setKey] = useState(0);
+
+    const refreshCustomers = () => {
+        // In a real app, this would refetch from an API
+        setKey(prevKey => prevKey + 1);
+    }
+    
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Customers</CardTitle>
-                <CardDescription>View and manage your customers.</CardDescription>
+                <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                        <CardTitle>Customers</CardTitle>
+                        <CardDescription>View and manage your customers.</CardDescription>
+                    </div>
+                    <Button variant="outline" size="icon" onClick={refreshCustomers}>
+                        <RefreshCw className="h-4 w-4" />
+                        <span className="sr-only">Refresh</span>
+                    </Button>
+                </div>
             </CardHeader>
             <CardContent>
-               <Table>
+               <Table key={key}>
                     <TableHeader>
                         <TableRow>
                         <TableHead>Name</TableHead>

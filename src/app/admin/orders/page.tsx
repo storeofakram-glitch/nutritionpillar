@@ -1,3 +1,6 @@
+
+"use client";
+
 import {
   Table,
   TableBody,
@@ -9,21 +12,38 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { orders } from "@/lib/mock-data"
-import { MoreHorizontal } from "lucide-react"
+import { MoreHorizontal, RefreshCw } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
+import { useState } from "react";
 
 export default function AdminOrdersPage() {
+  const [key, setKey] = useState(0);
+
+  const refreshOrders = () => {
+    // In a real app, this would refetch from an API
+    // For now, it just forces a rerender of the component
+    setKey(prevKey => prevKey + 1);
+  }
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Orders</CardTitle>
-        <CardDescription>
-          A list of all the orders in your store.
-        </CardDescription>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1">
+            <CardTitle>Orders</CardTitle>
+            <CardDescription>
+              A list of all the orders in your store.
+            </CardDescription>
+          </div>
+          <Button variant="outline" size="icon" onClick={refreshOrders}>
+            <RefreshCw className="h-4 w-4" />
+            <span className="sr-only">Refresh</span>
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
-        <Table>
+        <Table key={key}>
           <TableHeader>
             <TableRow>
               <TableHead>Customer</TableHead>
