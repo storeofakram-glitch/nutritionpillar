@@ -1,4 +1,4 @@
-import type { Product, ShippingState, PromoCode } from '@/types';
+import type { Product, ShippingState, PromoCode, Order } from '@/types';
 
 export const products: Product[] = [
   {
@@ -129,4 +129,49 @@ export const promoCodes: PromoCode[] = [
     { code: 'FIT20', discount: 20, type: 'percentage', used: false },
     { code: 'FREESHIP', discount: 0, type: 'fixed', used: true }, // Example for a used or different type
     { code: '500OFF', discount: 500, type: 'fixed', used: false },
+];
+
+export const orders: Order[] = [
+  {
+    id: 'ORD-001',
+    customer: { name: 'John Doe', email: 'john.doe@email.com' },
+    date: '2024-05-15',
+    amount: 124.97,
+    status: 'delivered',
+    shippingAddress: { address: '123 Main St', city: 'Algiers Center', state: 'Algiers', phone: '0555112233' },
+    items: [
+      { product: products[0], quantity: 2, selectedFlavor: 'Chocolate' },
+      { product: products[1], quantity: 1 },
+    ],
+  },
+  {
+    id: 'ORD-002',
+    customer: { name: 'Jane Smith', email: 'jane.smith@email.com' },
+    date: '2024-05-16',
+    amount: 39.99,
+    status: 'processing',
+    shippingAddress: { address: '456 Oak Ave', city: 'Oran Center', state: 'Oran', phone: '0666445566' },
+    items: [{ product: products[2], quantity: 1, selectedFlavor: 'Fruit Punch' }],
+  },
+  {
+    id: 'ORD-003',
+    customer: { name: 'Ali Benali', email: 'ali.benali@email.com' },
+    date: '2024-05-17',
+    amount: 78.97,
+    status: 'shipped',
+    shippingAddress: { address: '789 Pine Rd', city: 'El Khroub', state: 'Constantine', phone: '0777889900' },
+    items: [
+      { product: products[3], quantity: 1 },
+      { product: products[5], quantity: 1, selectedFlavor: 'Vanilla Bean' },
+    ],
+  },
+  {
+    id: 'ORD-004',
+    customer: { name: 'Fatima Zohra', email: 'fatima.zohra@email.com' },
+    date: '2024-05-18',
+    amount: 52.99,
+    status: 'pending',
+    shippingAddress: { address: '101 Palm St', city: 'Hydra', state: 'Algiers', phone: '0550123456' },
+    items: [{ product: products[7], quantity: 1, selectedFlavor: 'Creamy Chocolate' }],
+  },
 ];

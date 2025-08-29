@@ -39,18 +39,19 @@ export type PromoCode = {
 };
 
 export type Order = {
-  clientName: string;
-  phone: string;
-  address: string;
-  state: string;
-  city: string;
-  shippingPrice: number;
-  products: CartItem[];
-  subtotal: number;
-  promoCode?: {
-    code: string;
-    discountAmount: number;
-  },
-  total: number;
-  status: 'pending' | 'active' | 'waiting_shipping' | 'shipped' | 'delivered' | 'canceled';
+  id: string;
+  customer: {
+    name: string;
+    email: string;
+  };
+  date: string;
+  amount: number;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'canceled';
+  shippingAddress: {
+    address: string;
+    city: string;
+    state: string;
+    phone: string;
+  };
+  items: CartItem[];
 };
