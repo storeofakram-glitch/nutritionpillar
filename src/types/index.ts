@@ -1,4 +1,5 @@
 
+
 export type Product = {
   id: string;
   name: string;
@@ -49,7 +50,7 @@ export type Order = {
     name: string;
     email: string;
   };
-  date: string;
+  date: string; // Keep as string to match Firestore data
   amount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'canceled';
   shippingAddress: {
