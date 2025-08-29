@@ -19,7 +19,7 @@ import type { ShippingState } from "@/types"
 import { PlusCircle, Trash2 } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { dzStates } from "@/lib/dz-states"
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useRef } from "react"
 
 const citySchema = z.object({
     name: z.string().min(1, "City name is required."),
@@ -41,6 +41,7 @@ interface ShippingZoneFormProps {
 export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFormProps) {
   const { toast } = useToast()
   const isEditMode = !!shippingZone;
+  const initialRender = useRef(true);
 
   const form = useForm<ShippingZoneFormValues>({
     resolver: zodResolver(shippingZoneSchema),
@@ -63,13 +64,21 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
   }, [watchedState]);
 
   useEffect(() => {
-    // When state changes, reset the cities array
-    // Don't reset if it's the initial render of an edit form
-    if (form.formState.isDirty) {
+    if (initialRender.current) {
+        initialRender.current = false;
+        return;
+    }
+    
+    // When state changes, reset the cities array, but not in edit mode
+    if (!isEditMode) {
+        replace([]);
+        append({ name: "", price: 0 });
+    } else if (watchedState !== shippingZone?.state) {
+        // If in edit mode and the state is changed from original, then reset
         replace([]);
         append({ name: "", price: 0 });
     }
-  }, [watchedState, replace, append, form.formState.isDirty]);
+  }, [watchedState, replace, append, isEditMode, shippingZone?.state]);
 
 
   async function onSubmit(data: ShippingZoneFormValues) {
