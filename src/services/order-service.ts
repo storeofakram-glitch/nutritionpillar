@@ -5,6 +5,7 @@ import { collection, getDocs, addDoc, query, orderBy, doc, runTransaction, getDo
 import { db } from '@/lib/firebase';
 import type { Order, Product, OrderItem, OrderInput } from '@/types';
 import { revalidatePath } from 'next/cache';
+import { getShippingOptions } from './shipping-service';
 
 const ordersCollection = collection(db, 'orders');
 const productsCollection = collection(db, 'products');
@@ -45,29 +46,31 @@ export async function addOrder(orderInput: OrderInput) {
     try {
         await runTransaction(db, async (transaction) => {
             const finalOrderItems: OrderItem[] = [];
+            let calculatedSubtotal = 0;
 
-            // 1. For each item in the order, get the current product data
-            for (const item of orderInput.items) {
-                const productRef = doc(db, 'products', item.productId);
-                const productDoc = await transaction.get(productRef);
+            // Fetch all products required for the order in parallel
+            const productRefs = orderInput.items.map(item => doc(db, 'products', item.productId));
+            const productDocs = await Promise.all(productRefs.map(ref => transaction.get(ref)));
+
+            for (let i = 0; i < orderInput.items.length; i++) {
+                const item = orderInput.items[i];
+                const productDoc = productDocs[i];
 
                 if (!productDoc.exists()) {
                     throw new Error(`Product with ID ${item.productId} does not exist.`);
                 }
+                
                 const productData = { id: productDoc.id, ...productDoc.data() } as Product;
                 
-                const currentQuantity = productData.quantity;
-
-                // 2. Check if there is enough stock
-                if (currentQuantity < item.quantity) {
-                    throw new Error(`Not enough stock for ${productData.name}. Requested: ${item.quantity}, Available: ${currentQuantity}`);
+                if (productData.quantity < item.quantity) {
+                    throw new Error(`Not enough stock for ${productData.name}. Requested: ${item.quantity}, Available: ${productData.quantity}`);
                 }
 
-                // 3. Decrement the stock
-                const newQuantity = currentQuantity - item.quantity;
-                transaction.update(productRef, { quantity: newQuantity });
+                const newQuantity = productData.quantity - item.quantity;
+                transaction.update(productRefs[i], { quantity: newQuantity });
+                
+                calculatedSubtotal += productData.price * item.quantity;
 
-                // 4. Add the full product data to our final order items array
                 finalOrderItems.push({
                     product: productData,
                     quantity: item.quantity,
@@ -77,21 +80,33 @@ export async function addOrder(orderInput: OrderInput) {
                 });
             }
 
-            // 5. Construct the final order object
+            // Calculate shipping
+            const shippingOptions = await getShippingOptions();
+            const stateData = shippingOptions.find(s => s.state === orderInput.shippingAddress.state);
+            const cityData = stateData?.cities.find(c => c.name === orderInput.shippingAddress.city);
+            const shippingPrice = cityData?.price || 0;
+
+            // Calculate final amount on the server
+            const discountAmount = orderInput.promoCode?.discountAmount || 0;
+            const finalAmount = calculatedSubtotal - discountAmount + shippingPrice;
+
             const newOrderData: Omit<Order, 'id'> = {
-                ...orderInput,
-                orderNumber,
+                customer: orderInput.customer,
+                shippingAddress: orderInput.shippingAddress,
+                promoCode: orderInput.promoCode,
                 items: finalOrderItems,
+                amount: finalAmount,
+                orderNumber,
                 date: new Date().toISOString(),
                 status: 'pending',
             };
 
-            // 6. If all stock updates are possible, create the new order
             const newOrderRef = doc(collection(db, 'orders'));
             transaction.set(newOrderRef, newOrderData);
         });
         
         revalidatePath('/');
+        revalidatePath('/cart');
         revalidatePath('/admin/orders');
         revalidatePath('/admin/products');
         revalidatePath('/admin/finance');

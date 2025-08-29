@@ -87,7 +87,6 @@ export default function CheckoutForm() {
 
     const orderData: OrderInput = {
         customer: { name: clientInfo.fullName, email: clientInfo.email },
-        amount: total,
         shippingAddress: { 
             address: clientInfo.address, 
             city: selectedCity, 
@@ -102,6 +101,7 @@ export default function CheckoutForm() {
             selectedFlavor: item.selectedFlavor,
         })),
         promoCode: appliedPromo,
+        // We let the server calculate the final amount for security
     };
     
     const result = await addOrder(orderData);

@@ -85,11 +85,10 @@ export type OrderItemInput = {
 
 export type OrderInput = {
   customer: Customer;
-  amount: number;
   shippingAddress: Order['shippingAddress'];
   items: OrderItemInput[];
   promoCode?: { code: string; discountAmount: number } | null;
-}
+};
 
 export type Expense = {
     id: string;
