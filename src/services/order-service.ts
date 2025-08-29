@@ -3,7 +3,7 @@
 
 import { collection, getDocs, addDoc, query, orderBy, doc, runTransaction, getDoc, setDoc, updateDoc, deleteDoc, where, writeBatch } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import type { Order, Product, OrderItem } from '@/types';
+import type { Order, Product, OrderItem, OrderInput } from '@/types';
 import { revalidatePath } from 'next/cache';
 
 const ordersCollection = collection(db, 'orders');
@@ -39,36 +39,54 @@ export async function getOrders(): Promise<Order[]> {
     return orders;
 }
 
-type OrderInput = Omit<Order, 'id' | 'orderNumber'>;
-
-export async function addOrder(order: OrderInput) {
+export async function addOrder(orderInput: OrderInput) {
     const orderNumber = await getNextOrderNumber();
-    const newOrderData = { ...order, orderNumber };
     
     try {
         await runTransaction(db, async (transaction) => {
+            const finalOrderItems: OrderItem[] = [];
+
             // 1. For each item in the order, get the current product data
-            for (const item of order.items) {
-                const productRef = doc(db, 'products', item.product.id);
+            for (const item of orderInput.items) {
+                const productRef = doc(db, 'products', item.productId);
                 const productDoc = await transaction.get(productRef);
 
                 if (!productDoc.exists()) {
-                    throw new Error(`Product with ID ${item.product.id} does not exist.`);
+                    throw new Error(`Product with ID ${item.productId} does not exist.`);
                 }
-
-                const currentQuantity = productDoc.data().quantity as number;
+                const productData = { id: productDoc.id, ...productDoc.data() } as Product;
+                
+                const currentQuantity = productData.quantity;
 
                 // 2. Check if there is enough stock
                 if (currentQuantity < item.quantity) {
-                    throw new Error(`Not enough stock for ${productDoc.data().name}. Requested: ${item.quantity}, Available: ${currentQuantity}`);
+                    throw new Error(`Not enough stock for ${productData.name}. Requested: ${item.quantity}, Available: ${currentQuantity}`);
                 }
 
                 // 3. Decrement the stock
                 const newQuantity = currentQuantity - item.quantity;
                 transaction.update(productRef, { quantity: newQuantity });
+
+                // 4. Add the full product data to our final order items array
+                finalOrderItems.push({
+                    product: productData,
+                    quantity: item.quantity,
+                    selectedColor: item.selectedColor,
+                    selectedFlavor: item.selectedFlavor,
+                    selectedSize: item.selectedSize
+                });
             }
 
-            // 4. If all stock updates are possible, create the new order
+            // 5. Construct the final order object
+            const newOrderData: Omit<Order, 'id'> = {
+                ...orderInput,
+                orderNumber,
+                items: finalOrderItems,
+                date: new Date().toISOString(),
+                status: 'pending',
+            };
+
+            // 6. If all stock updates are possible, create the new order
             const newOrderRef = doc(collection(db, 'orders'));
             transaction.set(newOrderRef, newOrderData);
         });

@@ -4,7 +4,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useCart } from '@/contexts/cart-context';
 import { promoCodes } from '@/lib/mock-data';
-import type { City, ShippingState, Order } from '@/types';
+import type { City, ShippingState, OrderInput } from '@/types';
 import { getShippingOptions } from '@/services/shipping-service';
 import { addOrder } from '@/services/order-service';
 import { Button } from '@/components/ui/button';
@@ -15,8 +15,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-
-type OrderInput = Omit<Order, 'id' | 'orderNumber'>;
 
 export default function CheckoutForm() {
   const { cartTotal, cartItems, clearCart } = useCart();
@@ -89,9 +87,7 @@ export default function CheckoutForm() {
 
     const orderData: OrderInput = {
         customer: { name: clientInfo.fullName, email: clientInfo.email },
-        date: new Date().toISOString(),
         amount: total,
-        status: 'pending' as const,
         shippingAddress: { 
             address: clientInfo.address, 
             city: selectedCity, 
@@ -99,7 +95,7 @@ export default function CheckoutForm() {
             phone: clientInfo.phone 
         },
         items: cartItems.map(item => ({
-            product: item.product, // Pass the whole product object
+            productId: item.product.id,
             quantity: item.quantity,
             selectedSize: item.selectedSize,
             selectedColor: item.selectedColor,
@@ -117,7 +113,7 @@ export default function CheckoutForm() {
         clearCart();
         router.push('/');
     } else {
-        toast({ variant: 'destructive', title: 'Error', description: 'There was a problem placing your order. Please try again.' });
+        toast({ variant: 'destructive', title: 'Error', description: result.error || 'There was a problem placing your order. Please try again.' });
     }
   };
 

@@ -75,6 +75,22 @@ export type Order = {
   promoCode?: { code: string; discountAmount: number } | null;
 };
 
+export type OrderItemInput = {
+    productId: string;
+    quantity: number;
+    selectedSize?: string;
+    selectedColor?: string;
+    selectedFlavor?: string;
+}
+
+export type OrderInput = {
+  customer: Customer;
+  amount: number;
+  shippingAddress: Order['shippingAddress'];
+  items: OrderItemInput[];
+  promoCode?: { code: string; discountAmount: number } | null;
+}
+
 export type Expense = {
     id: string;
     description: string;
