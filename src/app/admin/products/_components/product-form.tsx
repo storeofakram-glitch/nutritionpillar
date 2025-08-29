@@ -16,13 +16,14 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { addProduct } from "@/services/product-service"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const productSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   description: z.string().min(10, "Description must be at least 10 characters."),
   price: z.coerce.number().positive("Price must be a positive number."),
   quantity: z.coerce.number().int().min(0, "Quantity must be a non-negative integer."),
-  category: z.string().min(2, "Category must be at least 2 characters."),
+  category: z.string({ required_error: "Please select a category."}).min(2, "Category must be at least 2 characters."),
   imageUrl: z.string().url("Please enter a valid image URL."),
 })
 
@@ -31,6 +32,13 @@ type ProductFormValues = z.infer<typeof productSchema>
 interface ProductFormProps {
   onFormSubmit: () => void;
 }
+
+const categories = [
+    "Protein",
+    "Performance",
+    "Pre-Workout",
+    "Health & Wellness",
+]
 
 export function ProductForm({ onFormSubmit }: ProductFormProps) {
   const { toast } = useToast()
@@ -127,9 +135,20 @@ export function ProductForm({ onFormSubmit }: ProductFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Category</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g. Protein" {...field} />
-              </FormControl>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
