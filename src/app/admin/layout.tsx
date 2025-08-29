@@ -17,7 +17,7 @@ import {
   SidebarFooter,
   SidebarInset
 } from "@/components/ui/sidebar"
-import { Dumbbell, Home, Package, ShoppingCart, Truck, Users, ArrowLeft, DollarSign } from "lucide-react"
+import { Home, Package, ShoppingCart, Truck, Users, ArrowLeft, DollarSign } from "lucide-react"
 
 export default function AdminLayout({
   children,
@@ -41,7 +41,6 @@ export default function AdminLayout({
         <Sidebar>
           <SidebarHeader>
             <div className="flex items-center gap-2">
-                <Dumbbell className="size-6 text-primary" />
                 <span className="text-lg font-headline font-semibold">Nutrition Pillar</span>
             </div>
           </SidebarHeader>
