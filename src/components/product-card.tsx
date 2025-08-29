@@ -31,6 +31,16 @@ export default function ProductCard({ product }: ProductCardProps) {
     router.push('/cart');
   };
 
+  const getStockBadge = () => {
+    if (isOutOfStock) {
+        return <Badge variant="destructive" className="mt-2 self-start">Out of Stock</Badge>;
+    }
+    if (product.quantity <= 10) {
+        return <Badge variant="secondary" className="mt-2 self-start">{product.quantity} left</Badge>;
+    }
+    return <Badge variant="default" className="mt-2 self-start bg-green-600 hover:bg-green-700">In Stock</Badge>;
+  }
+
   return (
     <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
       <CardHeader className="p-0 relative">
@@ -52,14 +62,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <p className="text-2xl font-bold font-headline text-primary">
           DZD {product.price.toFixed(2)}
         </p>
-         {product.quantity <= 10 && (
-           <Badge 
-            variant={isOutOfStock ? "destructive" : "secondary"}
-            className="mt-2 self-start"
-          >
-            {isOutOfStock ? "Out of Stock" : `${product.quantity} left`}
-          </Badge>
-        )}
+         {getStockBadge()}
       </CardContent>
       <CardFooter className="p-4 pt-0">
         <Button className="w-full font-bold" onClick={handleAddToCart} disabled={isOutOfStock}>
