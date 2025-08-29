@@ -1,16 +1,121 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function AdminDashboardPage() {
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getDashboardStats } from "@/services/admin-service";
+import { DollarSign, ShoppingCart, Users, Activity } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+
+export default async function AdminDashboardPage() {
+    const stats = await getDashboardStats();
+
+    const getStatusVariant = (status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'canceled') => {
+        switch (status) {
+            case 'delivered': return 'default';
+            case 'pending': return 'secondary';
+            case 'shipped': return 'outline';
+            case 'processing': return 'destructive';
+            case 'canceled': return 'destructive';
+            default: return 'secondary';
+        }
+    }
+
     return (
-        <div>
+        <div className="space-y-6">
+             <div>
+                <h1 className="text-2xl font-bold font-headline tracking-tight">Dashboard</h1>
+                <p className="text-muted-foreground">An overview of your store's performance.</p>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                        <DollarSign className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">DZD {stats.totalRevenue.toFixed(2)}</div>
+                        <p className="text-xs text-muted-foreground">From all delivered orders</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Net Profit</CardTitle>
+                        <Activity className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className={`text-2xl font-bold ${stats.netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>DZD {stats.netProfit.toFixed(2)}</div>
+                        <p className="text-xs text-muted-foreground">Gross profit minus expenses</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
+                        <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">+{stats.totalSales}</div>
+                        <p className="text-xs text-muted-foreground">Total orders placed</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">New Customers</CardTitle>
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">+{stats.newCustomersThisMonth}</div>
+                        <p className="text-xs text-muted-foreground">This month</p>
+                    </CardContent>
+                </Card>
+            </div>
+
             <Card>
                 <CardHeader>
-                    <CardTitle>Welcome to the Admin Dashboard</CardTitle>
-                    <CardDescription>Manage your store, products, and orders from here.</CardDescription>
+                    <CardTitle>Recent Orders</CardTitle>
+                    <CardDescription>Your 5 most recent orders.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <p>Select a section from the sidebar to get started.</p>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Customer</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead>Date</TableHead>
+                                <TableHead className="text-right">Amount</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {stats.recentOrders.map(order => (
+                                <TableRow key={order.id}>
+                                    <TableCell>
+                                        <div className="font-medium">{order.customer.name}</div>
+                                        <div className="text-sm text-muted-foreground">{order.customer.email}</div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
+                                    </TableCell>
+                                    <TableCell>
+                                        {format(new Date(order.date), "PPP")}
+                                    </TableCell>
+                                    <TableCell className="text-right">DZD {order.amount.toFixed(2)}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                     {stats.recentOrders.length === 0 && (
+                        <p className="text-center text-muted-foreground py-8">No orders have been placed yet.</p>
+                    )}
                 </CardContent>
+                {stats.recentOrders.length > 0 && (
+                     <div className="flex items-center justify-center p-4">
+                        <Button asChild variant="outline">
+                            <Link href="/admin/orders">View All Orders</Link>
+                        </Button>
+                    </div>
+                )}
             </Card>
         </div>
     )
