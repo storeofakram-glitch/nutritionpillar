@@ -99,15 +99,7 @@ export default function CheckoutForm() {
             phone: clientInfo.phone 
         },
         items: cartItems.map(item => ({
-            product: {
-                id: item.product.id,
-                name: item.product.name,
-                price: item.product.price,
-                buyingPrice: item.product.buyingPrice,
-                imageUrl: item.product.imageUrl,
-                category: item.product.category,
-                description: item.product.description,
-            },
+            product: item.product, // Pass the whole product object
             quantity: item.quantity,
             selectedSize: item.selectedSize,
             selectedColor: item.selectedColor,

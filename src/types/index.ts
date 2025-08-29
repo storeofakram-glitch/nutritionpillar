@@ -51,15 +51,7 @@ export type Customer = {
 }
 
 export type OrderItem = {
-    product: {
-        id: string;
-        name: string;
-        price: number;
-        buyingPrice?: number;
-        imageUrl: string;
-        category: string;
-        description: string;
-    };
+    product: Product;
     quantity: number;
     selectedSize?: string;
     selectedColor?: string;
