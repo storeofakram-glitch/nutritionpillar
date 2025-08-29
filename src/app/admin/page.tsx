@@ -22,6 +22,17 @@ export default async function AdminDashboardPage() {
         }
     }
 
+    const getRecentOrdersDescription = () => {
+        const count = stats.recentOrders.length;
+        if (count === 1) {
+            return "Your most recent order.";
+        }
+        if (count > 1 && count < 5) {
+            return `Your ${count} most recent orders.`;
+        }
+        return "Your 5 most recent orders.";
+    }
+
     return (
         <div className="space-y-6">
              <div>
@@ -55,7 +66,7 @@ export default async function AdminDashboardPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>Recent Orders</CardTitle>
-                    <CardDescription>Your 5 most recent orders.</CardDescription>
+                    <CardDescription>{getRecentOrdersDescription()}</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Table>
