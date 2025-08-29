@@ -13,10 +13,15 @@ import { PlusCircle } from "lucide-react"
 import { ProductForm } from "./product-form"
 import { useState } from "react"
 
-export default function AddProductDialog() {
+interface AddProductDialogProps {
+  onProductAdded: () => void;
+}
+
+export default function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
   const [open, setOpen] = useState(false)
 
   const handleFormSubmit = () => {
+    onProductAdded();
     setOpen(false);
   }
 

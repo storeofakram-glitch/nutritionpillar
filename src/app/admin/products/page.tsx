@@ -28,7 +28,7 @@ export default function AdminProductsPage() {
                 <RefreshCw className="h-4 w-4" />
                 <span className="sr-only">Refresh</span>
               </Button>
-              <AddProductDialog />
+              <AddProductDialog onProductAdded={handleRefresh} />
             </div>
         </div>
       </CardHeader>
