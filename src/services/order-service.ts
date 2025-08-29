@@ -3,7 +3,7 @@
 
 import { collection, getDocs, addDoc, query, orderBy, doc, runTransaction, getDoc, setDoc, updateDoc, deleteDoc, where, writeBatch } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import type { Order, Product } from '@/types';
+import type { Order, Product, OrderItem } from '@/types';
 import { revalidatePath } from 'next/cache';
 
 const ordersCollection = collection(db, 'orders');
@@ -39,7 +39,9 @@ export async function getOrders(): Promise<Order[]> {
     return orders;
 }
 
-export async function addOrder(order: Omit<Order, 'id' | 'orderNumber'>) {
+type OrderInput = Omit<Order, 'id' | 'orderNumber'>;
+
+export async function addOrder(order: OrderInput) {
     const orderNumber = await getNextOrderNumber();
     const newOrderData = { ...order, orderNumber };
     
@@ -135,4 +137,3 @@ export async function deleteOrder(id: string) {
         return { success: false, error: (error as Error).message };
     }
 }
-
