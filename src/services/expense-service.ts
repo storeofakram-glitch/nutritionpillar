@@ -1,7 +1,7 @@
 
 'use server';
 
-import { collection, getDocs, addDoc, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, addDoc, query, orderBy, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Expense } from '@/types';
 import { revalidatePath } from 'next/cache';
@@ -34,6 +34,24 @@ export async function addExpense(expense: Omit<Expense, 'id'>) {
         return { success: false, error: (error as Error).message };
     }
 }
+
+/**
+ * Deletes an expense from the database.
+ * @param id The ID of the expense to delete.
+ * @returns An object indicating success or failure.
+ */
+export async function deleteExpense(id: string) {
+    try {
+        const docRef = doc(db, 'expenses', id);
+        await deleteDoc(docRef);
+        revalidatePath('/admin/finance');
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting expense: ", error);
+        return { success: false, error: (error as Error).message };
+    }
+}
+
 
 /**
  * Calculates the total sum of all expenses.

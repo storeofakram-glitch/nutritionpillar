@@ -200,7 +200,12 @@ export default function AdminFinancePage() {
 
             <FinanceChart data={monthlyData} />
 
-            <TransactionHistory orders={orders} expenses={expenses} isLoading={loading} />
+            <TransactionHistory 
+                orders={orders} 
+                expenses={expenses} 
+                isLoading={loading} 
+                onDataChange={fetchFinanceData}
+            />
         </div>
     )
 }
