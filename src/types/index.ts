@@ -27,6 +27,7 @@ export type City = {
 };
 
 export type ShippingState = {
+  id: string;
   state: string;
   cities: City[];
 };
