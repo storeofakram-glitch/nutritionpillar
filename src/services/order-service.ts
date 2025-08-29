@@ -1,12 +1,13 @@
 
 'use server';
 
-import { collection, getDocs, addDoc, query, orderBy, doc, runTransaction, getDoc, setDoc, updateDoc, deleteDoc, where } from 'firebase/firestore';
+import { collection, getDocs, addDoc, query, orderBy, doc, runTransaction, getDoc, setDoc, updateDoc, deleteDoc, where, writeBatch } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import type { Order } from '@/types';
+import type { Order, Product } from '@/types';
 import { revalidatePath } from 'next/cache';
 
 const ordersCollection = collection(db, 'orders');
+const productsCollection = collection(db, 'products');
 const counterDocRef = doc(db, 'counters', 'orders');
 
 async function getNextOrderNumber(): Promise<number> {
@@ -39,19 +40,49 @@ export async function getOrders(): Promise<Order[]> {
 }
 
 export async function addOrder(order: Omit<Order, 'id' | 'orderNumber'>) {
+    const orderNumber = await getNextOrderNumber();
+    const newOrderData = { ...order, orderNumber };
+    
     try {
-        const orderNumber = await getNextOrderNumber();
-        const newOrderData = { ...order, orderNumber };
-        const docRef = await addDoc(ordersCollection, newOrderData);
+        await runTransaction(db, async (transaction) => {
+            // 1. For each item in the order, get the current product data
+            for (const item of order.items) {
+                const productRef = doc(db, 'products', item.product.id);
+                const productDoc = await transaction.get(productRef);
 
+                if (!productDoc.exists()) {
+                    throw new Error(`Product with ID ${item.product.id} does not exist.`);
+                }
+
+                const currentQuantity = productDoc.data().quantity as number;
+
+                // 2. Check if there is enough stock
+                if (currentQuantity < item.quantity) {
+                    throw new Error(`Not enough stock for ${productDoc.data().name}. Requested: ${item.quantity}, Available: ${currentQuantity}`);
+                }
+
+                // 3. Decrement the stock
+                const newQuantity = currentQuantity - item.quantity;
+                transaction.update(productRef, { quantity: newQuantity });
+            }
+
+            // 4. If all stock updates are possible, create the new order
+            const newOrderRef = doc(collection(db, 'orders'));
+            transaction.set(newOrderRef, newOrderData);
+        });
+        
+        revalidatePath('/');
         revalidatePath('/admin/orders');
+        revalidatePath('/admin/products');
         revalidatePath('/admin/finance');
-        return { success: true, id: docRef.id };
+        return { success: true };
+
     } catch (error) {
-        console.error("Error adding order: ", error);
+        console.error("Error adding order and updating stock: ", error);
         return { success: false, error: (error as Error).message };
     }
 }
+
 
 export async function getTotalRevenue(): Promise<number> {
     const q = query(ordersCollection, where('status', '==', 'delivered'));
@@ -104,3 +135,4 @@ export async function deleteOrder(id: string) {
         return { success: false, error: (error as Error).message };
     }
 }
+
