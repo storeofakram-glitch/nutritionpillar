@@ -69,13 +69,13 @@ export default function AdminOrdersPage() {
   }, []);
 
   const customersWithCanceledOrders = useMemo(() => {
-    const customerEmails = new Set<string>();
+    const customerPhones = new Set<string>();
     orders.forEach(order => {
         if (order.status === 'canceled') {
-            customerEmails.add(order.customer.email);
+            customerPhones.add(order.shippingAddress.phone);
         }
     });
-    return customerEmails;
+    return customerPhones;
   }, [orders]);
 
   const handleViewOrder = (order: Order) => {
@@ -181,7 +181,7 @@ export default function AdminOrdersPage() {
                   <TableRow 
                     key={order.id}
                     className={cn(
-                        customersWithCanceledOrders.has(order.customer.email) && 'bg-red-50/50 hover:bg-red-50/80 dark:bg-red-950/50 dark:hover:bg-red-950/80'
+                        customersWithCanceledOrders.has(order.shippingAddress.phone) && 'bg-red-50/50 hover:bg-red-50/80 dark:bg-red-950/50 dark:hover:bg-red-950/80'
                     )}
                   >
                        <TableCell className="font-mono text-xs">
