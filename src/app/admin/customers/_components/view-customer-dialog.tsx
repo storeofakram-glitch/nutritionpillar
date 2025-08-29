@@ -88,7 +88,7 @@ export default function ViewCustomerDialog({ isOpen, onOpenChange, customer, ord
                             <TableBody>
                                 {orders.map(order => (
                                     <TableRow key={order.id}>
-                                        <TableCell className="font-mono text-xs">{order.id}</TableCell>
+                                        <TableCell className="font-mono text-xs">{order.id.substring(0, 6)}</TableCell>
                                         <TableCell>{format(new Date(order.date), "PPP")}</TableCell>
                                         <TableCell>
                                             <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>

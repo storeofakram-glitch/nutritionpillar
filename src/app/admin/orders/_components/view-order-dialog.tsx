@@ -39,7 +39,7 @@ export default function ViewOrderDialog({ isOpen, onOpenChange, order }: ViewOrd
         <DialogHeader>
           <DialogTitle>Order Details</DialogTitle>
           <DialogDescription>
-            Order ID: {order.id}
+            Order ID: {order.id.substring(0, 6)}
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
