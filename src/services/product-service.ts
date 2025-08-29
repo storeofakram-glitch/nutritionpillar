@@ -1,3 +1,4 @@
+
 'use server';
 
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
@@ -16,6 +17,7 @@ export async function getProducts(): Promise<Product[]> {
 export async function addProduct(product: Omit<Product, 'id'>) {
     try {
         const docRef = await addDoc(productsCollection, product);
+        revalidatePath('/');
         revalidatePath('/admin/products');
         revalidatePath('/admin/finance');
         return { success: true, id: docRef.id };
@@ -29,6 +31,7 @@ export async function updateProduct(id: string, product: Partial<Omit<Product, '
     try {
         const docRef = doc(db, 'products', id);
         await updateDoc(docRef, product);
+        revalidatePath('/');
         revalidatePath('/admin/products');
         revalidatePath('/admin/finance');
         return { success: true };
@@ -42,6 +45,7 @@ export async function deleteProduct(id: string) {
     try {
         const docRef = doc(db, 'products', id);
         await deleteDoc(docRef);
+        revalidatePath('/');
         revalidatePath('/admin/products');
         revalidatePath('/admin/finance');
         return { success: true };
