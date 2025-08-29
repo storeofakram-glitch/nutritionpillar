@@ -64,3 +64,18 @@ export type Order = {
   items: CartItem[];
   promoCode?: { code: string; discountAmount: number } | null;
 };
+
+export type Expense = {
+    id: string;
+    description: string;
+    amount: number;
+    date: string;
+};
+
+export type Transaction = {
+    id: string;
+    type: 'Revenue' | 'Expense';
+    description: string;
+    date: string;
+    amount: number;
+}
