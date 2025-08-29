@@ -26,7 +26,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import EditShippingZoneDialog from "./edit-shipping-zone-dialog"
 import DeleteShippingZoneDialog from "./delete-shipping-zone-dialog"
-import { Badge } from "@/components/ui/badge"
 
 export default function ShippingZonesTable() {
   const [shippingOptions, setShippingOptions] = useState<ShippingState[]>([])
@@ -98,14 +97,28 @@ export default function ShippingZonesTable() {
         {shippingOptions.map((option) => (
           <TableRow key={option.id}>
             <TableCell className="font-medium">{option.state}</TableCell>
-            <TableCell className="max-w-[400px]">
-                <div className="flex flex-wrap gap-2">
+            <TableCell>
+              {option.cities.length > 0 ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="link" className="p-0 h-auto font-normal">
+                      {option.cities.length} {option.cities.length === 1 ? "city" : "cities"}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="max-h-60 overflow-y-auto">
+                    <DropdownMenuLabel>Cities & Prices</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
                     {option.cities.map(city => (
-                        <Badge key={city.name} variant="secondary" className="whitespace-nowrap">
-                            {city.name}: ${city.price}
-                        </Badge>
+                      <DropdownMenuItem key={city.name} className="flex justify-between gap-4 cursor-default">
+                        <span>{city.name}</span>
+                        <span className="text-muted-foreground">${city.price}</span>
+                      </DropdownMenuItem>
                     ))}
-                </div>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <span className="text-sm text-muted-foreground">No cities defined</span>
+              )}
             </TableCell>
             <TableCell className="text-right">
               <DropdownMenu>
