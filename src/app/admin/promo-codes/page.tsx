@@ -1,6 +1,6 @@
 'use client'
 
-import { useFormState } from "react-dom"
+import { useActionState } from "react"
 import { generatePromoCode } from "./actions"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -14,7 +14,7 @@ const initialState = {
 }
 
 function GeneratePromoCodeForm() {
-    const [state, formAction] = useFormState(generatePromoCode, initialState);
+    const [state, formAction] = useActionState(generatePromoCode, initialState);
 
     return (
         <form action={formAction} className="flex flex-col sm:flex-row sm:items-center gap-4">
