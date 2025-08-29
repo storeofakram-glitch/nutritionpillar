@@ -1,7 +1,7 @@
 
 'use server';
 
-import { collection, getDocs, addDoc, query, orderBy, doc, runTransaction, getDoc, setDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, query, orderBy, doc, runTransaction, getDoc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Order } from '@/types';
 import { revalidatePath } from 'next/cache';
@@ -15,7 +15,6 @@ async function getNextOrderNumber(): Promise<number> {
             const counterDoc = await transaction.get(counterDocRef);
             
             if (!counterDoc.exists()) {
-                // If counter doesn't exist, initialize it
                 transaction.set(counterDocRef, { currentNumber: 1 });
                 return 1;
             }
@@ -27,8 +26,6 @@ async function getNextOrderNumber(): Promise<number> {
         return orderNumber;
     } catch (e) {
         console.error("Transaction failed: ", e);
-        // Fallback or error handling
-        // For simplicity, we'll throw an error, but in production, you might want a retry mechanism
         throw new Error("Could not generate a new order number.");
     }
 }
@@ -61,4 +58,30 @@ export async function getTotalRevenue(): Promise<number> {
     const orders = snapshot.docs.map(doc => doc.data() as Order);
     const totalRevenue = orders.reduce((sum, order) => sum + order.amount, 0);
     return totalRevenue;
+}
+
+export async function updateOrderStatus(id: string, status: Order['status']) {
+    try {
+        const docRef = doc(db, 'orders', id);
+        await updateDoc(docRef, { status });
+        revalidatePath('/admin/orders');
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating order status: ", error);
+        return { success: false, error: (error as Error).message };
+    }
+}
+
+export async function deleteOrder(id: string) {
+    try {
+        const docRef = doc(db, 'orders', id);
+        await deleteDoc(docRef);
+        revalidatePath('/admin/orders');
+        revalidatePath('/admin/finance');
+        revalidatePath('/admin/customers');
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting order: ", error);
+        return { success: false, error: (error as Error).message };
+    }
 }
