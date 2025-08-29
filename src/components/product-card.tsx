@@ -43,14 +43,6 @@ export default function ProductCard({ product }: ProductCardProps) {
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
-        {product.quantity <= 10 && (
-           <Badge 
-            variant={isOutOfStock ? "destructive" : "secondary"}
-            className="absolute top-2 right-2"
-          >
-            {isOutOfStock ? "Out of Stock" : `${product.quantity} left`}
-          </Badge>
-        )}
       </CardHeader>
       <CardContent className="p-4 flex-grow flex flex-col">
         <p className="text-sm text-muted-foreground">{product.category}</p>
@@ -60,6 +52,14 @@ export default function ProductCard({ product }: ProductCardProps) {
         <p className="text-2xl font-bold font-headline text-primary">
           DZD {product.price.toFixed(2)}
         </p>
+         {product.quantity <= 10 && (
+           <Badge 
+            variant={isOutOfStock ? "destructive" : "secondary"}
+            className="mt-2 self-start"
+          >
+            {isOutOfStock ? "Out of Stock" : `${product.quantity} left`}
+          </Badge>
+        )}
       </CardContent>
       <CardFooter className="p-4 pt-0">
         <Button className="w-full font-bold" onClick={handleAddToCart} disabled={isOutOfStock}>
