@@ -2,9 +2,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import ProductGrid from '@/components/product-grid';
-import { products } from '@/lib/mock-data';
+import { getProducts } from '@/services/product-service';
 
-export default function Home() {
+export default async function Home() {
+  const products = await getProducts();
+
   return (
     <div className="flex flex-col">
       <section className="relative w-full h-[60vh] md:h-[70vh] bg-gray-900 text-white">
