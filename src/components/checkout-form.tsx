@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useCart } from '@/contexts/cart-context';
-import { shippingOptions, promoCodes } from '@/lib/mock-data';
-import type { City } from '@/types';
+import { promoCodes } from '@/lib/mock-data';
+import type { City, ShippingState } from '@/types';
+import { getShippingOptions } from '@/services/shipping-service';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,12 +19,21 @@ export default function CheckoutForm() {
   const { toast } = useToast();
   const router = useRouter();
 
+  const [shippingOptions, setShippingOptions] = useState<ShippingState[]>([]);
   const [selectedState, setSelectedState] = useState<string>('');
   const [selectedCity, setSelectedCity] = useState<string>('');
   const [promoCode, setPromoCode] = useState('');
   const [appliedPromo, setAppliedPromo] = useState<{ code: string; discountAmount: number } | null>(null);
   
   const [clientInfo, setClientInfo] = useState({ fullName: '', phone: '', address: '' });
+
+  useEffect(() => {
+    async function fetchOptions() {
+      const options = await getShippingOptions();
+      setShippingOptions(options);
+    }
+    fetchOptions();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -32,7 +42,7 @@ export default function CheckoutForm() {
 
   const availableCities: City[] = useMemo(() => {
     return shippingOptions.find(s => s.state === selectedState)?.cities || [];
-  }, [selectedState]);
+  }, [selectedState, shippingOptions]);
 
   const shippingPrice = useMemo(() => {
     return availableCities.find(c => c.name === selectedCity)?.price || 0;
