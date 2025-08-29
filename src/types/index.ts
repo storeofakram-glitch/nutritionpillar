@@ -32,10 +32,12 @@ export type ShippingState = {
 };
 
 export type PromoCode = {
+  id: string;
   code: string;
-  discount: number; // can be percentage or fixed amount
+  discount: number;
   type: 'percentage' | 'fixed';
-  used: boolean;
+  expiresAt: Date;
+  isActive: boolean;
 };
 
 export type Order = {

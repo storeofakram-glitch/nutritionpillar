@@ -9,12 +9,15 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { products } from "@/lib/mock-data"
-import { MoreHorizontal, PlusCircle } from "lucide-react"
+import { MoreHorizontal } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import Image from "next/image"
+import { getProducts } from "@/services/product-service"
+import AddProductDialog from "./_components/add-product-dialog"
 
-export default function AdminProductsPage() {
+export default async function AdminProductsPage() {
+  const products = await getProducts();
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -23,10 +26,7 @@ export default function AdminProductsPage() {
             <CardDescription>Manage your products and view their sales performance.</CardDescription>
         </div>
         <div>
-            <Button size="sm" className="gap-1">
-                <PlusCircle className="h-3.5 w-3.5" />
-                Add Product
-            </Button>
+            <AddProductDialog />
         </div>
       </CardHeader>
       <CardContent>
@@ -55,7 +55,7 @@ export default function AdminProductsPage() {
                             alt={product.name}
                             className="aspect-square rounded-md object-cover"
                             height="64"
-                            src={product.imageUrl}
+                            src={product.imageUrl || "https://picsum.photos/64"}
                             width="64"
                         />
                     </TableCell>
