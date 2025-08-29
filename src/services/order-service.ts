@@ -1,14 +1,13 @@
 
 'use server';
 
-import { collection, getDocs, addDoc, query, orderBy, doc, runTransaction, getDoc, setDoc, updateDoc, deleteDoc, where, writeBatch } from 'firebase/firestore';
+import { collection, doc, runTransaction, getDocs, query, where, orderBy, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Order, Product, OrderItem, OrderInput } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { getShippingOptions } from './shipping-service';
 
 const ordersCollection = collection(db, 'orders');
-const productsCollection = collection(db, 'products');
 const counterDocRef = doc(db, 'counters', 'orders');
 
 async function getNextOrderNumber(): Promise<number> {
@@ -17,6 +16,7 @@ async function getNextOrderNumber(): Promise<number> {
             const counterDoc = await transaction.get(counterDocRef);
             
             if (!counterDoc.exists()) {
+                // Initialize the counter if it doesn't exist.
                 transaction.set(counterDocRef, { currentNumber: 1 });
                 return 1;
             }
@@ -27,7 +27,8 @@ async function getNextOrderNumber(): Promise<number> {
         });
         return orderNumber;
     } catch (e) {
-        console.error("Transaction failed: ", e);
+        console.error("Transaction failed to get next order number: ", e);
+        // Fallback or re-throw, for now re-throwing
         throw new Error("Could not generate a new order number.");
     }
 }
@@ -71,13 +72,16 @@ export async function addOrder(orderInput: OrderInput) {
                 
                 calculatedSubtotal += productData.price * item.quantity;
 
-                finalOrderItems.push({
+                // Build the final order item, ensuring no undefined values are present.
+                const finalItem: OrderItem = {
                     product: productData,
                     quantity: item.quantity,
-                    selectedColor: item.selectedColor,
-                    selectedFlavor: item.selectedFlavor,
-                    selectedSize: item.selectedSize
-                });
+                };
+                if (item.selectedColor) finalItem.selectedColor = item.selectedColor;
+                if (item.selectedFlavor) finalItem.selectedFlavor = item.selectedFlavor;
+                if (item.selectedSize) finalItem.selectedSize = item.selectedSize;
+
+                finalOrderItems.push(finalItem);
             }
 
             // Calculate shipping
@@ -93,7 +97,7 @@ export async function addOrder(orderInput: OrderInput) {
             const newOrderData: Omit<Order, 'id'> = {
                 customer: orderInput.customer,
                 shippingAddress: orderInput.shippingAddress,
-                promoCode: orderInput.promoCode,
+                promoCode: orderInput.promoCode || null, // Ensure promoCode is null, not undefined
                 items: finalOrderItems,
                 amount: finalAmount,
                 orderNumber,
@@ -105,6 +109,7 @@ export async function addOrder(orderInput: OrderInput) {
             transaction.set(newOrderRef, newOrderData);
         });
         
+        // Revalidate paths after successful transaction
         revalidatePath('/');
         revalidatePath('/cart');
         revalidatePath('/admin/orders');

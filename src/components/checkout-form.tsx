@@ -101,7 +101,6 @@ export default function CheckoutForm() {
             selectedFlavor: item.selectedFlavor,
         })),
         promoCode: appliedPromo,
-        // We let the server calculate the final amount for security
     };
     
     const result = await addOrder(orderData);
