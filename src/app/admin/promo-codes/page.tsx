@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useState, useEffect } from "react"
+import { useState, useTransition } from "react"
 import { generatePromoCode } from "./actions"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,50 +9,31 @@ import { Badge } from "@/components/ui/badge"
 import { promoCodes as initialPromoCodes } from "@/lib/mock-data"
 import type { PromoCode } from "@/types"
 import { Loader2 } from "lucide-react"
-
-const initialState: { message: string; codes: PromoCode[] | null } = {
-  message: "",
-  codes: null,
-}
-
-function GeneratePromoCodeForm({ onCodeGenerated }: { onCodeGenerated: (newCode: PromoCode) => void }) {
-    const [state, formAction] = useActionState(generatePromoCode, initialState);
-    const [isPending, setIsPending] = useState(false);
-
-    useEffect(() => {
-        if (state.message && state.codes) {
-            const newCode = state.codes.find(c => !initialPromoCodes.some(ic => ic.code === c.code));
-            if (newCode) {
-                onCodeGenerated(newCode);
-            }
-        }
-        setIsPending(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [state]);
-
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setIsPending(true);
-        const formData = new FormData(event.currentTarget);
-        formAction(formData);
-    };
-
-    return (
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <Button type="submit" disabled={isPending}>
-                {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Generate New Promo Code
-            </Button>
-            {state?.message && !state?.codes && <p className="text-destructive text-sm">{state.message}</p>}
-        </form>
-    )
-}
+import { useToast } from "@/hooks/use-toast"
 
 export default function AdminPromoCodesPage() {
   const [codes, setCodes] = useState<PromoCode[]>(initialPromoCodes);
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
 
-  const handleCodeGenerated = (newCode: PromoCode) => {
-    setCodes(prevCodes => [newCode, ...prevCodes]);
+  const handleGenerateCode = () => {
+    startTransition(async () => {
+      try {
+        const newCode = await generatePromoCode();
+        setCodes(prevCodes => [newCode, ...prevCodes]);
+        toast({
+          title: "Success!",
+          description: `Generated new promo code: ${newCode.code}`
+        });
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to generate promo code."
+        });
+        console.error(error);
+      }
+    });
   };
 
   return (
@@ -65,7 +46,10 @@ export default function AdminPromoCodesPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <GeneratePromoCodeForm onCodeGenerated={handleCodeGenerated} />
+          <Button onClick={handleGenerateCode} disabled={isPending}>
+            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Generate New Promo Code
+          </Button>
         </CardContent>
       </Card>
       
