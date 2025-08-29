@@ -44,12 +44,14 @@ export type PromoCode = {
   used: boolean;
 };
 
+export type Customer = {
+  name: string;
+  email: string;
+}
+
 export type Order = {
   id: string;
-  customer: {
-    name: string;
-    email: string;
-  };
+  customer: Customer;
   date: string; // Keep as string to match Firestore data
   amount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'canceled';

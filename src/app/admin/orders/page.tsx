@@ -15,8 +15,9 @@ import { MoreHorizontal, RefreshCw } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState, useTransition } from "react";
-import type { Order } from "@/types";
+import type { Customer, Order } from "@/types";
 import { getOrders } from "@/services/order-service";
+import { getCustomerOrders } from "@/services/admin-service";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import ViewOrderDialog from "./_components/view-order-dialog";
@@ -24,6 +25,7 @@ import ViewCustomerDialog from "../customers/_components/view-customer-dialog";
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [customerOrders, setCustomerOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
 
@@ -54,8 +56,10 @@ export default function AdminOrdersPage() {
     setIsViewOrderOpen(true);
   }
 
-  const handleViewCustomer = (order: Order) => {
-    setSelectedOrder(order);
+  const handleViewCustomer = async (customer: Customer) => {
+    setSelectedOrder({ customer } as Order); // A bit of a hack to pass customer data
+    const orders = await getCustomerOrders(customer.email);
+    setCustomerOrders(orders);
     setIsViewCustomerOpen(true);
   }
 
@@ -141,7 +145,7 @@ export default function AdminOrdersPage() {
                               <DropdownMenuContent align="end">
                                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                   <DropdownMenuItem onSelect={() => handleViewOrder(order)}>View Order</DropdownMenuItem>
-                                  <DropdownMenuItem onSelect={() => handleViewCustomer(order)}>View Customer</DropdownMenuItem>
+                                  <DropdownMenuItem onSelect={() => handleViewCustomer(order.customer)}>View Customer</DropdownMenuItem>
                               </DropdownMenuContent>
                           </DropdownMenu>
                       </TableCell>
@@ -163,7 +167,7 @@ export default function AdminOrdersPage() {
                 isOpen={isViewCustomerOpen}
                 onOpenChange={setIsViewCustomerOpen}
                 customer={selectedOrder.customer}
-                orders={orders.filter(o => o.customer.email === selectedOrder.customer.email)}
+                orders={customerOrders}
             />
         </>
       )}

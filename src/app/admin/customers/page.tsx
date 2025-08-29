@@ -10,23 +10,17 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { orders as mockOrders } from "@/lib/mock-data"
 import { MoreHorizontal, RefreshCw } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState, useTransition } from "react";
-import { getOrders } from "@/services/order-service";
-import type { Order } from "@/types";
+import { getCustomerOrders, getCustomers } from "@/services/admin-service";
+import type { Order, Customer } from "@/types";
 import ViewCustomerDialog from "./_components/view-customer-dialog";
 
-type Customer = {
-    name: string;
-    email: string;
-}
-
 export default function AdminCustomersPage() {
-    const [orders, setOrders] = useState<Order[]>([]);
     const [customers, setCustomers] = useState<Customer[]>([]);
+    const [customerOrders, setCustomerOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
     const [isPending, startTransition] = useTransition();
 
@@ -37,15 +31,8 @@ export default function AdminCustomersPage() {
         setLoading(true);
         startTransition(async () => {
             try {
-                const fetchedOrders = await getOrders();
-                setOrders(fetchedOrders);
-                const uniqueCustomers = fetchedOrders.map(order => order.customer).reduce((acc, current) => {
-                    if (!acc.find(c => c.email === current.email)) {
-                        acc.push(current);
-                    }
-                    return acc;
-                }, [] as Customer[]);
-                setCustomers(uniqueCustomers);
+                const fetchedCustomers = await getCustomers();
+                setCustomers(fetchedCustomers);
             } catch (error) {
                 console.error("Failed to fetch data:", error);
             } finally {
@@ -58,8 +45,10 @@ export default function AdminCustomersPage() {
         fetchAndProcessData();
     }, []);
 
-    const handleViewCustomer = (customer: Customer) => {
+    const handleViewCustomer = async (customer: Customer) => {
         setSelectedCustomer(customer);
+        const orders = await getCustomerOrders(customer.email);
+        setCustomerOrders(orders);
         setIsViewCustomerOpen(true);
     }
     
@@ -121,7 +110,7 @@ export default function AdminCustomersPage() {
                     isOpen={isViewCustomerOpen}
                     onOpenChange={setIsViewCustomerOpen}
                     customer={selectedCustomer}
-                    orders={orders.filter(o => o.customer.email === selectedCustomer.email)}
+                    orders={customerOrders}
                 />
             )}
         </>
