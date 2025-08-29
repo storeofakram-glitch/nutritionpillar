@@ -17,6 +17,7 @@ export async function getProducts(): Promise<Product[]> {
 export async function addProduct(product: Omit<Product, 'id'>) {
     try {
         const docRef = await addDoc(productsCollection, product);
+        // Revalidate all relevant paths after adding a product
         revalidatePath('/');
         revalidatePath('/admin/products');
         revalidatePath('/admin/finance');
@@ -31,6 +32,7 @@ export async function updateProduct(id: string, product: Partial<Omit<Product, '
     try {
         const docRef = doc(db, 'products', id);
         await updateDoc(docRef, product);
+        // Revalidate all relevant paths after updating a product
         revalidatePath('/');
         revalidatePath('/admin/products');
         revalidatePath('/admin/finance');
@@ -45,6 +47,7 @@ export async function deleteProduct(id: string) {
     try {
         const docRef = doc(db, 'products', id);
         await deleteDoc(docRef);
+        // Revalidate all relevant paths after deleting a product
         revalidatePath('/');
         revalidatePath('/admin/products');
         revalidatePath('/admin/finance');

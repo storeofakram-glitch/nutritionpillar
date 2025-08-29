@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 
 export default function AdminProductsPage() {
+  // We use a key to force re-mounting of the ProductTable component.
+  // This is a simple way to trigger a data refresh.
   const [refreshKey, setRefreshKey] = useState(0);
 
   const handleRefresh = () => {
@@ -33,6 +35,7 @@ export default function AdminProductsPage() {
         </div>
       </CardHeader>
       <CardContent>
+        {/* The key prop ensures the component re-mounts and re-fetches data */}
         <ProductTable key={refreshKey} />
       </CardContent>
     </Card>

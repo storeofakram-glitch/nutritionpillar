@@ -1,3 +1,4 @@
+
 "use client"
 
 import {
@@ -20,9 +21,10 @@ interface AddProductDialogProps {
 export default function AddProductDialog({ onProductAdded }: AddProductDialogProps) {
   const [open, setOpen] = useState(false)
 
+  // This function will be called by the form on successful submission
   const handleFormSubmit = () => {
-    onProductAdded();
-    setOpen(false);
+    onProductAdded(); // Trigger the refresh in the parent page
+    setOpen(false);   // Close the dialog
   }
 
   return (

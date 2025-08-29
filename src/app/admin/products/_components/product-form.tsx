@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useForm } from "react-hook-form"
@@ -70,8 +71,9 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
         title: isEditMode ? "Product Updated" : "Product Added",
         description: `"${data.name}" has been successfully ${isEditMode ? 'updated' : 'added'}.`,
       })
-      form.reset();
+      // Only call the onFormSubmit callback on success
       onFormSubmit();
+      form.reset(); // Reset form fields after successful submission
     } else {
       toast({
         variant: "destructive",
