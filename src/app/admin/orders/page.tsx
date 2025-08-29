@@ -11,20 +11,60 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { orders } from "@/lib/mock-data"
 import { MoreHorizontal, RefreshCw } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { useState } from "react";
+import { useEffect, useState, useTransition } from "react";
+import type { Order } from "@/types";
+import { getOrders } from "@/services/order-service";
+import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
 
 export default function AdminOrdersPage() {
-  const [key, setKey] = useState(0);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isPending, startTransition] = useTransition();
 
-  const refreshOrders = () => {
-    // In a real app, this would refetch from an API
-    // For now, it just forces a rerender of the component
-    setKey(prevKey => prevKey + 1);
+  const fetchOrders = () => {
+    setLoading(true);
+    startTransition(async () => {
+      try {
+        const fetchedOrders = await getOrders();
+        setOrders(fetchedOrders);
+      } catch (error) {
+        console.error("Failed to fetch orders:", error);
+      } finally {
+        setLoading(false);
+      }
+    });
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const getStatusVariant = (status: Order['status']) => {
+    switch (status) {
+        case 'delivered': return 'default';
+        case 'pending': return 'secondary';
+        case 'shipped': return 'outline';
+        case 'processing': return 'destructive'; // No direct mapping, using destructive for visibility
+        case 'canceled': return 'destructive';
+        default: return 'secondary';
+    }
   }
+
+  const renderSkeleton = () => (
+    Array.from({ length: 5 }).map((_, i) => (
+      <TableRow key={i}>
+        <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+        <TableCell className="hidden sm:table-cell"><Skeleton className="h-5 w-16" /></TableCell>
+        <TableCell className="hidden sm:table-cell"><Skeleton className="h-5 w-28" /></TableCell>
+        <TableCell className="text-right"><Skeleton className="h-5 w-20 ml-auto" /></TableCell>
+        <TableCell className="text-right"><MoreHorizontal className="h-4 w-4 text-muted-foreground" /></TableCell>
+      </TableRow>
+    ))
+  );
 
   return (
     <Card>
@@ -36,14 +76,14 @@ export default function AdminOrdersPage() {
               A list of all the orders in your store.
             </CardDescription>
           </div>
-          <Button variant="outline" size="icon" onClick={refreshOrders}>
-            <RefreshCw className="h-4 w-4" />
+          <Button variant="outline" size="icon" onClick={fetchOrders} disabled={isPending}>
+            <RefreshCw className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
             <span className="sr-only">Refresh</span>
           </Button>
         </div>
       </CardHeader>
       <CardContent>
-        <Table key={key}>
+        <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Customer</TableHead>
@@ -56,7 +96,7 @@ export default function AdminOrdersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orders.map(order => (
+            {loading ? renderSkeleton() : orders.map(order => (
                 <TableRow key={order.id}>
                     <TableCell>
                         <div className="font-medium">{order.customer.name}</div>
@@ -65,12 +105,12 @@ export default function AdminOrdersPage() {
                         </div>
                     </TableCell>
                     <TableCell className="hidden sm:table-cell">
-                        <Badge className="text-xs" variant={order.status === 'delivered' ? 'default' : 'secondary'}>
+                        <Badge className="text-xs" variant={getStatusVariant(order.status)}>
                             {order.status}
                         </Badge>
                     </TableCell>
                     <TableCell className="hidden sm:table-cell">
-                        {order.date}
+                        {format(new Date(order.date), "PPP")}
                     </TableCell>
                     <TableCell className="text-right">DZD {order.amount.toFixed(2)}</TableCell>
                     <TableCell className="text-right">

@@ -1,3 +1,4 @@
+
 export type Product = {
   id: string;
   name: string;
@@ -58,4 +59,5 @@ export type Order = {
     phone: string;
   };
   items: CartItem[];
+  promoCode?: { code: string; discountAmount: number } | null;
 };

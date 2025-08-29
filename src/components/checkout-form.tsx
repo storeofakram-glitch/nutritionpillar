@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
@@ -5,6 +6,7 @@ import { useCart } from '@/contexts/cart-context';
 import { promoCodes } from '@/lib/mock-data';
 import type { City, ShippingState } from '@/types';
 import { getShippingOptions } from '@/services/shipping-service';
+import { addOrder } from '@/services/order-service';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -25,7 +27,8 @@ export default function CheckoutForm() {
   const [promoCode, setPromoCode] = useState('');
   const [appliedPromo, setAppliedPromo] = useState<{ code: string; discountAmount: number } | null>(null);
   
-  const [clientInfo, setClientInfo] = useState({ fullName: '', phone: '', address: '' });
+  const [clientInfo, setClientInfo] = useState({ fullName: '', phone: '', address: '', email: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     async function fetchOptions() {
@@ -69,24 +72,60 @@ export default function CheckoutForm() {
   const discountAmount = appliedPromo?.discountAmount || 0;
   const total = subtotal - discountAmount + shippingPrice;
 
-  const handleSubmitOrder = (e: React.FormEvent) => {
+  const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (cartItems.length === 0) {
         toast({ variant: 'destructive', title: 'Error', description: 'Your cart is empty.' });
         return;
     }
-    if (!clientInfo.fullName || !clientInfo.phone || !clientInfo.address || !selectedState || !selectedCity) {
+    if (!clientInfo.fullName || !clientInfo.phone || !clientInfo.address || !clientInfo.email || !selectedState || !selectedCity) {
         toast({ variant: 'destructive', title: 'Error', description: 'Please fill all required fields.' });
         return;
     }
+    
+    setIsSubmitting(true);
 
-    const orderData = { ...clientInfo, state: selectedState, city: selectedCity, shippingPrice, products: cartItems, subtotal, promoCode: appliedPromo, total, status: 'pending' };
+    const orderData = {
+        customer: { name: clientInfo.fullName, email: clientInfo.email },
+        date: new Date().toISOString(),
+        amount: total,
+        status: 'pending' as const,
+        shippingAddress: { 
+            address: clientInfo.address, 
+            city: selectedCity, 
+            state: selectedState, 
+            phone: clientInfo.phone 
+        },
+        items: cartItems.map(item => ({
+            product: {
+                id: item.product.id,
+                name: item.product.name,
+                price: item.product.price,
+                imageUrl: item.product.imageUrl,
+                category: item.product.category,
+                description: item.product.description,
+                quantity: item.product.quantity
+            },
+            quantity: item.quantity,
+            selectedSize: item.selectedSize,
+            selectedColor: item.selectedColor,
+            selectedFlavor: item.selectedFlavor,
+        })),
+        promoCode: appliedPromo,
+    };
     
-    console.log('Order Submitted:', orderData);
-    
-    toast({ title: 'Order Placed!', description: 'Thank you for your purchase.' });
-    clearCart();
-    router.push('/');
+    // @ts-ignore
+    const result = await addOrder(orderData);
+
+    setIsSubmitting(false);
+
+    if (result.success) {
+        toast({ title: 'Order Placed!', description: 'Thank you for your purchase.' });
+        clearCart();
+        router.push('/');
+    } else {
+        toast({ variant: 'destructive', title: 'Error', description: 'There was a problem placing your order. Please try again.' });
+    }
   };
 
   return (
@@ -105,7 +144,7 @@ export default function CheckoutForm() {
                 <Select onValueChange={setSelectedState} value={selectedState}>
                   <SelectTrigger id="state"><SelectValue placeholder="Select State" /></SelectTrigger>
                   <SelectContent>
-                    {shippingOptions.map(s => <SelectItem key={s.state} value={s.state}>{s.state}</SelectItem>)}
+                    {shippingOptions.map(s => <SelectItem key={s.id} value={s.state}>{s.state}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -127,6 +166,10 @@ export default function CheckoutForm() {
             <div>
               <Label htmlFor="fullName">Full Name</Label>
               <Input id="fullName" value={clientInfo.fullName} onChange={handleInputChange} placeholder="John Doe" required />
+            </div>
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" value={clientInfo.email} onChange={handleInputChange} placeholder="you@example.com" required />
             </div>
             <div>
               <Label htmlFor="phone">Phone Number</Label>
@@ -158,7 +201,9 @@ export default function CheckoutForm() {
             <div className="flex justify-between font-bold text-lg"><span>Total</span><span>DZD {total.toFixed(2)}</span></div>
           </div>
 
-          <Button type="submit" className="w-full font-bold" size="lg" disabled={cartItems.length === 0}>Place Order</Button>
+          <Button type="submit" className="w-full font-bold" size="lg" disabled={cartItems.length === 0 || isSubmitting}>
+            {isSubmitting ? "Placing Order..." : "Place Order"}
+          </Button>
         </form>
       </CardContent>
     </Card>
