@@ -13,7 +13,6 @@ export default function Header() {
 
   const navLinks = [
     { href: '/', label: 'Home' },
-    { href: '/recommendation', label: 'AI Recommendation' },
     { href: '/admin', label: 'Admin' },
   ];
 

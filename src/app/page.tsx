@@ -26,9 +26,6 @@ export default function Home() {
             <Button asChild size="lg" className="font-bold">
               <Link href="#products">Shop Now</Link>
             </Button>
-            <Button asChild size="lg" variant="secondary" className="font-bold">
-               <Link href="/recommendation">Get AI Recommendation</Link>
-            </Button>
           </div>
         </div>
       </section>
