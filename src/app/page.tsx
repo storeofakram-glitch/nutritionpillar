@@ -22,7 +22,7 @@ export default async function Home() {
             Fuel Your Greatness
           </h1>
           <p className="text-lg md:text-xl max-w-2xl mb-8">
-            Discover premium supplements at FitFactor. Quality ingredients for peak performance and optimal health.
+            Discover premium supplements at Nutrition Pillar. Quality ingredients for peak performance and optimal health.
           </p>
           <div className="flex gap-4">
             <Button asChild size="lg" className="font-bold">

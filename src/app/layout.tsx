@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import FirebaseProvider from '@/components/firebase-provider';
 
 export const metadata: Metadata = {
-  title: 'FitFactor - Your Supplement Marketplace',
+  title: 'Nutrition Pillar - Your Supplement Marketplace',
   description: 'High-quality supplements to fuel your fitness journey.',
 };
 
