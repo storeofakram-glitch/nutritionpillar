@@ -28,7 +28,7 @@ export default function TransactionHistory({ orders, expenses, isLoading }: Tran
     const revenueTransactions: Transaction[] = orders.map(order => ({
         id: order.id,
         type: 'Revenue',
-        description: `Order #${order.id.substring(0, 7)} from ${order.customer.name}`,
+        description: `Order #${String(order.orderNumber).padStart(6, '0')} from ${order.customer.name}`,
         date: order.date,
         amount: order.amount
     }));

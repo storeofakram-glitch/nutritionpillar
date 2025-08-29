@@ -57,9 +57,11 @@ export default function AdminOrdersPage() {
   }
 
   const handleViewCustomer = async (customer: Customer) => {
-    setSelectedOrder({ customer } as Order); // A bit of a hack to pass customer data
-    const orders = await getCustomerOrders(customer.email);
-    setCustomerOrders(orders);
+    // A bit of a hack to pass customer data, but it's fine for the dialog
+    const tempOrder = orders.find(o => o.customer.email === customer.email) || { customer } as Order;
+    setSelectedOrder(tempOrder); 
+    const customerOrders = await getCustomerOrders(customer.email);
+    setCustomerOrders(customerOrders);
     setIsViewCustomerOpen(true);
   }
 
@@ -77,7 +79,8 @@ export default function AdminOrdersPage() {
   const renderSkeleton = () => (
     Array.from({ length: 5 }).map((_, i) => (
       <TableRow key={i}>
-        <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+        <TableCell><Skeleton className="h-5 w-12" /></TableCell>
+        <TableCell><Skeleton className="h-5 w-32" /></TableCell>
         <TableCell className="hidden sm:table-cell"><Skeleton className="h-5 w-16" /></TableCell>
         <TableCell className="hidden sm:table-cell"><Skeleton className="h-5 w-28" /></TableCell>
         <TableCell className="text-right"><Skeleton className="h-5 w-20 ml-auto" /></TableCell>
@@ -107,6 +110,7 @@ export default function AdminOrdersPage() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Order</TableHead>
                 <TableHead>Customer</TableHead>
                 <TableHead className="hidden sm:table-cell">Status</TableHead>
                 <TableHead className="hidden sm:table-cell">Date</TableHead>
@@ -119,6 +123,9 @@ export default function AdminOrdersPage() {
             <TableBody>
               {loading ? renderSkeleton() : orders.map(order => (
                   <TableRow key={order.id}>
+                       <TableCell className="font-mono text-xs">
+                          #{String(order.orderNumber).padStart(6, '0')}
+                      </TableCell>
                       <TableCell>
                           <div className="font-medium">{order.customer.name}</div>
                           <div className="hidden text-sm text-muted-foreground md:inline">

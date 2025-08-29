@@ -120,7 +120,7 @@ export default function CheckoutForm() {
     setIsSubmitting(false);
 
     if (result.success) {
-        toast({ title: 'Order Placed!', description: 'Thank you for your purchase.' });
+        toast({ title: `Order #${String(result.orderNumber).padStart(6, '0')} Placed!`, description: 'Thank you for your purchase.' });
         clearCart();
         router.push('/');
     } else {

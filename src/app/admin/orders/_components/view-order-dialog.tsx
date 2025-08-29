@@ -39,7 +39,7 @@ export default function ViewOrderDialog({ isOpen, onOpenChange, order }: ViewOrd
         <DialogHeader>
           <DialogTitle>Order Details</DialogTitle>
           <DialogDescription>
-            Order ID: {order.id.substring(0, 6)}
+            Order N°: {String(order.orderNumber).padStart(6, '0')}
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh]">
@@ -94,8 +94,8 @@ export default function ViewOrderDialog({ isOpen, onOpenChange, order }: ViewOrd
                 <div>
                     <h3 className="font-semibold mb-4">Items Ordered</h3>
                     <div className="space-y-4">
-                        {order.items.map(item => (
-                            <div key={item.product.id} className="flex items-start gap-4">
+                        {order.items.map((item, index) => (
+                            <div key={`${item.product.id}-${index}`} className="flex items-start gap-4">
                                 <Image 
                                     src={item.product.imageUrl} 
                                     alt={item.product.name}

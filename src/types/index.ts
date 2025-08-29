@@ -51,6 +51,7 @@ export type Customer = {
 
 export type Order = {
   id: string;
+  orderNumber: number;
   customer: Customer;
   date: string; // Keep as string to match Firestore data
   amount: number;
