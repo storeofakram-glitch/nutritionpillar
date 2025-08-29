@@ -2,20 +2,23 @@
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { getTotalRevenue, getOrders } from "@/services/order-service"
-import { DollarSign, TrendingDown, TrendingUp, RefreshCw } from "lucide-react"
+import { getTotalRevenue, getOrders, getTotalCostOfGoodsSold } from "@/services/order-service"
+import { DollarSign, TrendingDown, TrendingUp, RefreshCw, ShoppingCart, MinusCircle, Package } from "lucide-react"
 import { useEffect, useState, useTransition, useMemo } from "react"
 import AddExpenseDialog from "./_components/add-expense-dialog"
 import { getExpenses, getTotalExpenses } from "@/services/expense-service"
 import FinanceChart from "./_components/finance-chart"
 import TransactionHistory from "./_components/transaction-history"
-import type { Order, Expense, MonthlyFinanceData } from "@/types"
+import type { Order, Expense, MonthlyFinanceData, Product } from "@/types"
 import { Button } from "@/components/ui/button"
 import { format } from "date-fns"
+import { getProducts } from "@/services/product-service"
 
 export default function AdminFinancePage() {
     const [totalRevenue, setTotalRevenue] = useState(0)
     const [totalExpenses, setTotalExpenses] = useState(0)
+    const [totalCOGS, setTotalCOGS] = useState(0);
+    const [inventoryValue, setInventoryValue] = useState(0);
     const [orders, setOrders] = useState<Order[]>([]);
     const [expenses, setExpenses] = useState<Expense[]>([]);
     
@@ -26,16 +29,25 @@ export default function AdminFinancePage() {
         setLoading(true)
         startTransition(async () => {
             try {
-                const [revenue, expensesTotal, fetchedOrders, fetchedExpenses] = await Promise.all([
+                const [revenue, expensesTotal, cogs, fetchedOrders, fetchedExpenses, fetchedProducts] = await Promise.all([
                     getTotalRevenue(),
                     getTotalExpenses(),
+                    getTotalCostOfGoodsSold(),
                     getOrders(),
-                    getExpenses()
+                    getExpenses(),
+                    getProducts(),
                 ]);
                 setTotalRevenue(revenue);
                 setTotalExpenses(expensesTotal);
+                setTotalCOGS(cogs);
                 setOrders(fetchedOrders);
                 setExpenses(fetchedExpenses);
+                
+                const totalInventoryValue = fetchedProducts.reduce((sum, product) => {
+                    return sum + (product.buyingPrice || 0) * product.quantity;
+                }, 0);
+                setInventoryValue(totalInventoryValue);
+
             } catch (error) {
                 console.error("Failed to fetch finance data:", error)
             } finally {
@@ -76,7 +88,8 @@ export default function AdminFinancePage() {
 
     }, [orders, expenses]);
 
-    const netProfit = totalRevenue - totalExpenses
+    const grossProfit = totalRevenue - totalCOGS;
+    const netProfit = grossProfit - totalExpenses
 
     return (
         <div className="space-y-6">
@@ -94,7 +107,7 @@ export default function AdminFinancePage() {
                  </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
@@ -106,13 +119,43 @@ export default function AdminFinancePage() {
                         ) : (
                             <div className="text-2xl font-bold">DZD {totalRevenue.toFixed(2)}</div>
                         )}
-                        <p className="text-xs text-muted-foreground">Based on all delivered orders</p>
+                        <p className="text-xs text-muted-foreground">From delivered orders</p>
+                    </CardContent>
+                </Card>
+                 <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Cost of Goods Sold</CardTitle>
+                        <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                         {loading ? (
+                            <div className="h-8 w-32 animate-pulse rounded-md bg-muted" />
+                        ) : (
+                            <div className="text-2xl font-bold">DZD {totalCOGS.toFixed(2)}</div>
+                        )}
+                        <p className="text-xs text-muted-foreground">Total cost of delivered products</p>
+                    </CardContent>
+                </Card>
+                 <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Gross Profit</CardTitle>
+                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        {loading ? (
+                             <div className="h-8 w-32 animate-pulse rounded-md bg-muted" />
+                        ) : (
+                            <div className={`text-2xl font-bold ${grossProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                DZD {grossProfit.toFixed(2)}
+                            </div>
+                        )}
+                        <p className="text-xs text-muted-foreground">Revenue - COGS</p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
-                        <TrendingDown className="h-4 w-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium">Other Expenses</CardTitle>
+                        <MinusCircle className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                          {loading ? (
@@ -136,7 +179,21 @@ export default function AdminFinancePage() {
                                 DZD {netProfit.toFixed(2)}
                             </div>
                         )}
-                        <p className="text-xs text-muted-foreground">Total Revenue - Total Expenses</p>
+                        <p className="text-xs text-muted-foreground">Gross Profit - Expenses</p>
+                    </CardContent>
+                </Card>
+                 <Card className="md:col-span-2 lg:col-span-3 xl:col-span-2">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Total Inventory Value</CardTitle>
+                        <Package className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        {loading ? (
+                             <div className="h-8 w-32 animate-pulse rounded-md bg-muted" />
+                        ) : (
+                            <div className="text-2xl font-bold">DZD {inventoryValue.toFixed(2)}</div>
+                        )}
+                        <p className="text-xs text-muted-foreground">Value of all products in stock at buying price</p>
                     </CardContent>
                 </Card>
             </div>

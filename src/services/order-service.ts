@@ -61,6 +61,22 @@ export async function getTotalRevenue(): Promise<number> {
     return totalRevenue;
 }
 
+export async function getTotalCostOfGoodsSold(): Promise<number> {
+    const q = query(ordersCollection, where('status', '==', 'delivered'));
+    const snapshot = await getDocs(q);
+    const orders = snapshot.docs.map(doc => doc.data() as Order);
+    
+    const totalCOGS = orders.reduce((totalSum, order) => {
+        const orderCOGS = order.items.reduce((orderSum, item) => {
+            const buyingPrice = item.product.buyingPrice || 0;
+            return orderSum + (buyingPrice * item.quantity);
+        }, 0);
+        return totalSum + orderCOGS;
+    }, 0);
+
+    return totalCOGS;
+}
+
 export async function updateOrderStatus(id: string, status: Order['status']) {
     try {
         const docRef = doc(db, 'orders', id);

@@ -23,6 +23,7 @@ const productSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   description: z.string().min(10, "Description must be at least 10 characters."),
   price: z.coerce.number().positive("Price must be a positive number."),
+  buyingPrice: z.coerce.number().min(0, "Buying price must be a non-negative number.").optional(),
   quantity: z.coerce.number().int().min(0, "Quantity must be a non-negative integer."),
   category: z.string({ required_error: "Please select a category."}).min(1, "Please select a category."),
   imageUrl: z.string().url("Please enter a valid image URL."),
@@ -52,6 +53,7 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
       name: product?.name || "",
       description: product?.description || "",
       price: product?.price || 0,
+      buyingPrice: product?.buyingPrice || 0,
       quantity: product?.quantity || 0,
       category: product?.category || "",
       imageUrl: product?.imageUrl || "",
@@ -114,7 +116,7 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
             name="price"
             render={({ field }) => (
                 <FormItem>
-                <FormLabel>Price</FormLabel>
+                <FormLabel>Selling Price</FormLabel>
                 <FormControl>
                     <Input type="number" placeholder="49.99" {...field} />
                 </FormControl>
@@ -122,6 +124,21 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
                 </FormItem>
             )}
             />
+            <FormField
+            control={form.control}
+            name="buyingPrice"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>Buying Price</FormLabel>
+                <FormControl>
+                    <Input type="number" placeholder="25.00" {...field} />
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
             <FormField
             control={form.control}
             name="quantity"
@@ -135,31 +152,32 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
                 </FormItem>
             )}
             />
+             <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
         </div>
-        <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        
         <FormField
           control={form.control}
           name="imageUrl"

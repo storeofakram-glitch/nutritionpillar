@@ -17,6 +17,7 @@ export async function addProduct(product: Omit<Product, 'id'>) {
     try {
         const docRef = await addDoc(productsCollection, product);
         revalidatePath('/admin/products');
+        revalidatePath('/admin/finance');
         return { success: true, id: docRef.id };
     } catch (error) {
         console.error("Error adding product: ", error);
@@ -29,6 +30,7 @@ export async function updateProduct(id: string, product: Partial<Omit<Product, '
         const docRef = doc(db, 'products', id);
         await updateDoc(docRef, product);
         revalidatePath('/admin/products');
+        revalidatePath('/admin/finance');
         return { success: true };
     } catch (error) {
         console.error("Error updating product: ", error);
@@ -41,6 +43,7 @@ export async function deleteProduct(id: string) {
         const docRef = doc(db, 'products', id);
         await deleteDoc(docRef);
         revalidatePath('/admin/products');
+        revalidatePath('/admin/finance');
         return { success: true };
     } catch (error) {
         console.error("Error deleting product: ", error);

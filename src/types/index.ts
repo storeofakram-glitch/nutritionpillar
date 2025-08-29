@@ -5,6 +5,7 @@ export type Product = {
   name: string;
   description: string;
   price: number;
+  buyingPrice?: number;
   quantity: number;
   category: string;
   imageUrl: string;
@@ -49,6 +50,22 @@ export type Customer = {
   email: string;
 }
 
+export type OrderItem = {
+    product: {
+        id: string;
+        name: string;
+        price: number;
+        buyingPrice?: number;
+        imageUrl: string;
+        category: string;
+        description: string;
+    };
+    quantity: number;
+    selectedSize?: string;
+    selectedColor?: string;
+    selectedFlavor?: string;
+}
+
 export type Order = {
   id: string;
   orderNumber: number;
@@ -62,7 +79,7 @@ export type Order = {
     state: string;
     phone: string;
   };
-  items: CartItem[];
+  items: OrderItem[];
   promoCode?: { code: string; discountAmount: number } | null;
 };
 

@@ -101,10 +101,10 @@ export default function CheckoutForm() {
                 id: item.product.id,
                 name: item.product.name,
                 price: item.product.price,
+                buyingPrice: item.product.buyingPrice,
                 imageUrl: item.product.imageUrl,
                 category: item.product.category,
                 description: item.product.description,
-                quantity: item.product.quantity
             },
             quantity: item.quantity,
             selectedSize: item.selectedSize,
@@ -120,7 +120,7 @@ export default function CheckoutForm() {
     setIsSubmitting(false);
 
     if (result.success) {
-        toast({ title: "Order Placed Successfully!", description: 'Thank you for your purchase. We will contact you soon.' });
+        toast({ title: "Order Placed Successfully!", description: "Thank you for your purchase. We will contact you soon." });
         clearCart();
         router.push('/');
     } else {
