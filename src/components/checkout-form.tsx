@@ -4,7 +4,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useCart } from '@/contexts/cart-context';
 import { promoCodes } from '@/lib/mock-data';
-import type { City, ShippingState } from '@/types';
+import type { City, ShippingState, Order } from '@/types';
 import { getShippingOptions } from '@/services/shipping-service';
 import { addOrder } from '@/services/order-service';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+
+type OrderInput = Omit<Order, 'id' | 'orderNumber'>;
 
 export default function CheckoutForm() {
   const { cartTotal, cartItems, clearCart } = useCart();
@@ -85,7 +87,7 @@ export default function CheckoutForm() {
     
     setIsSubmitting(true);
 
-    const orderData = {
+    const orderData: OrderInput = {
         customer: { name: clientInfo.fullName, email: clientInfo.email },
         date: new Date().toISOString(),
         amount: total,
@@ -114,7 +116,6 @@ export default function CheckoutForm() {
         promoCode: appliedPromo,
     };
     
-    // @ts-ignore
     const result = await addOrder(orderData);
 
     setIsSubmitting(false);
