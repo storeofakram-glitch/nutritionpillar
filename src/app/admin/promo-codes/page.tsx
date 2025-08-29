@@ -1,51 +1,71 @@
 'use client'
 
-import { useActionState } from "react"
+import { useActionState, useState, useEffect } from "react"
 import { generatePromoCode } from "./actions"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { promoCodes } from "@/lib/mock-data" // Using mock data for display
+import { promoCodes as initialPromoCodes } from "@/lib/mock-data"
+import type { PromoCode } from "@/types"
+import { Loader2 } from "lucide-react"
 
-const initialState = {
+const initialState: { message: string; codes: PromoCode[] | null } = {
   message: "",
-  code: null,
+  codes: null,
 }
 
-function GeneratePromoCodeForm() {
+function GeneratePromoCodeForm({ onCodeGenerated }: { onCodeGenerated: (newCode: PromoCode) => void }) {
     const [state, formAction] = useActionState(generatePromoCode, initialState);
+    const [isPending, setIsPending] = useState(false);
+
+    useEffect(() => {
+        if (state.message && state.codes) {
+            const newCode = state.codes.find(c => !initialPromoCodes.some(ic => ic.code === c.code));
+            if (newCode) {
+                onCodeGenerated(newCode);
+            }
+        }
+        setIsPending(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [state]);
+
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setIsPending(true);
+        const formData = new FormData(event.currentTarget);
+        formAction(formData);
+    };
 
     return (
-        <form action={formAction} className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <Button type="submit">Generate New Promo Code</Button>
-            {state?.code && (
-                <div className="p-2 bg-secondary rounded-md text-sm">
-                    <span className="font-semibold">New Code:</span>
-                    <Badge variant="outline" className="ml-2 font-mono">{state.code.code}</Badge> -
-                    <span className="text-muted-foreground ml-1">
-                        {state.code.type === 'percentage' ? `${state.code.discount}% off` : `$${state.code.discount} off`}
-                    </span>
-                </div>
-            )}
-            {state?.message && !state?.code && <p className="text-destructive text-sm">{state.message}</p>}
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <Button type="submit" disabled={isPending}>
+                {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Generate New Promo Code
+            </Button>
+            {state?.message && !state?.codes && <p className="text-destructive text-sm">{state.message}</p>}
         </form>
     )
 }
 
-
 export default function AdminPromoCodesPage() {
+  const [codes, setCodes] = useState<PromoCode[]>(initialPromoCodes);
+
+  const handleCodeGenerated = (newCode: PromoCode) => {
+    setCodes(prevCodes => [newCode, ...prevCodes]);
+  };
+
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle>Generate Code</CardTitle>
           <CardDescription>
-            Generate a new unique promotional code for your customers.
+            Generate a new unique promotional code for your customers. The new code will be added to the top of the list below.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <GeneratePromoCodeForm />
+          <GeneratePromoCodeForm onCodeGenerated={handleCodeGenerated} />
         </CardContent>
       </Card>
       
@@ -65,10 +85,10 @@ export default function AdminPromoCodesPage() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {promoCodes.map((p) => (
+                    {codes.map((p) => (
                         <TableRow key={p.code}>
                             <TableCell className="font-mono">{p.code}</TableCell>
-                            <TableCell>{p.discount}</TableCell>
+                            <TableCell>{p.type === 'percentage' ? `${p.discount}%` : `$${p.discount}`}</TableCell>
                             <TableCell>{p.type}</TableCell>
                             <TableCell>
                                 <Badge variant={p.used ? "secondary" : "default"}>
