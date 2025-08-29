@@ -13,13 +13,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { MoreHorizontal, RefreshCw } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { useEffect, useState, useTransition } from "react";
-import { getCustomerOrders, getCustomers } from "@/services/admin-service";
+import { useEffect, useState, useTransition, useMemo } from "react";
+import { getCustomerOrders } from "@/services/admin-service";
+import { getOrders } from "@/services/order-service";
 import type { Order, Customer } from "@/types";
 import ViewCustomerDialog from "./_components/view-customer-dialog";
 
 export default function AdminCustomersPage() {
-    const [customers, setCustomers] = useState<Customer[]>([]);
+    const [orders, setOrders] = useState<Order[]>([]);
     const [customerOrders, setCustomerOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
     const [isPending, startTransition] = useTransition();
@@ -31,8 +32,8 @@ export default function AdminCustomersPage() {
         setLoading(true);
         startTransition(async () => {
             try {
-                const fetchedCustomers = await getCustomers();
-                setCustomers(fetchedCustomers);
+                const fetchedOrders = await getOrders();
+                setOrders(fetchedOrders);
             } catch (error) {
                 console.error("Failed to fetch data:", error);
             } finally {
@@ -45,6 +46,24 @@ export default function AdminCustomersPage() {
         fetchAndProcessData();
     }, []);
 
+    const { deliveredCustomers, canceledCustomers } = useMemo(() => {
+        const delivered = new Map<string, Customer>();
+        const canceled = new Map<string, Customer>();
+        
+        orders.forEach(order => {
+            if (order.status === 'delivered') {
+                delivered.set(order.customer.email, order.customer);
+            } else if (order.status === 'canceled') {
+                canceled.set(order.customer.email, order.customer);
+            }
+        });
+
+        return {
+            deliveredCustomers: Array.from(delivered.values()),
+            canceledCustomers: Array.from(canceled.values()),
+        };
+    }, [orders]);
+
     const handleViewCustomer = async (customer: Customer) => {
         setSelectedCustomer(customer);
         const orders = await getCustomerOrders(customer.email);
@@ -52,56 +71,80 @@ export default function AdminCustomersPage() {
         setIsViewCustomerOpen(true);
     }
     
+    const CustomerTable = ({ customers }: { customers: Customer[] }) => (
+         <Table>
+            <TableHeader>
+                <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>
+                    <span className="sr-only">Actions</span>
+                </TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                {customers.map(customer => (
+                    <TableRow key={customer.email}>
+                        <TableCell className="font-medium">{customer.name}</TableCell>
+                        <TableCell>{customer.email}</TableCell>
+                        <TableCell className="text-right">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button size="icon" variant="ghost">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                    <span className="sr-only">Actions</span>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                    <DropdownMenuItem onSelect={() => handleViewCustomer(customer)}>View Details</DropdownMenuItem>
+                                    <DropdownMenuItem onSelect={() => handleViewCustomer(customer)}>View Orders</DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </TableCell>
+                    </TableRow>
+                ))}
+                {customers.length === 0 && (
+                    <TableRow>
+                        <TableCell colSpan={3} className="text-center text-muted-foreground h-24">
+                            No customers found in this category.
+                        </TableCell>
+                    </TableRow>
+                )}
+            </TableBody>
+        </Table>
+    );
+
     return (
-        <>
+        <div className="space-y-6">
+            <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                    <h1 className="text-2xl font-bold font-headline tracking-tight">Customers</h1>
+                    <p className="text-muted-foreground">View and manage your customers, segmented by order status.</p>
+                </div>
+                <Button variant="outline" size="icon" onClick={fetchAndProcessData} disabled={isPending}>
+                    <RefreshCw className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
+                    <span className="sr-only">Refresh</span>
+                </Button>
+            </div>
+
             <Card>
                 <CardHeader>
-                    <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                            <CardTitle>Customers</CardTitle>
-                            <CardDescription>View and manage your customers.</CardDescription>
-                        </div>
-                        <Button variant="outline" size="icon" onClick={fetchAndProcessData} disabled={isPending}>
-                           <RefreshCw className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
-                           <span className="sr-only">Refresh</span>
-                        </Button>
-                    </div>
+                    <CardTitle>Valued Customers (Completed Orders)</CardTitle>
+                    <CardDescription>Customers who have successfully received an order.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                <Table>
-                        <TableHeader>
-                            <TableRow>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>
-                                <span className="sr-only">Actions</span>
-                            </TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {customers.map(customer => (
-                                <TableRow key={customer.email}>
-                                    <TableCell className="font-medium">{customer.name}</TableCell>
-                                    <TableCell>{customer.email}</TableCell>
-                                    <TableCell className="text-right">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button size="icon" variant="ghost">
-                                                <MoreHorizontal className="h-4 w-4" />
-                                                <span className="sr-only">Actions</span>
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                <DropdownMenuItem onSelect={() => handleViewCustomer(customer)}>View Details</DropdownMenuItem>
-                                                <DropdownMenuItem onSelect={() => handleViewCustomer(customer)}>View Orders</DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                    <CustomerTable customers={deliveredCustomers} />
+                </CardContent>
+            </Card>
+
+             <Card>
+                <CardHeader>
+                    <CardTitle>Customers with Canceled Orders</CardTitle>
+                    <CardDescription>Customers who have had an order canceled.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                     <CustomerTable customers={canceledCustomers} />
                 </CardContent>
             </Card>
 
@@ -113,6 +156,6 @@ export default function AdminCustomersPage() {
                     orders={customerOrders}
                 />
             )}
-        </>
+        </div>
     )
 }
