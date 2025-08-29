@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useTransition } from "react"
 import Image from "next/image"
 import { MoreHorizontal } from "lucide-react"
 
@@ -22,31 +22,58 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
+import EditProductDialog from "./edit-product-dialog"
+import DeleteProductDialog from "./delete-product-dialog"
 
 export default function ProductTable() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const [isPending, startTransition] = useTransition()
+  
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  useEffect(() => {
-    async function fetchProducts() {
+  const fetchProducts = () => {
+    setLoading(true);
+    startTransition(async () => {
       try {
         const fetchedProducts = await getProducts()
         setProducts(fetchedProducts)
       } catch (error) {
         console.error("Failed to fetch products:", error)
-        // Handle error (e.g., show a toast message)
       } finally {
         setLoading(false)
       }
-    }
+    })
+  }
 
+  useEffect(() => {
     fetchProducts()
   }, [])
+  
+  const handleEditClick = (product: Product) => {
+    setSelectedProduct(product);
+    setIsEditDialogOpen(true);
+  };
+  
+  const handleDeleteClick = (product: Product) => {
+    setSelectedProduct(product);
+    setIsDeleteDialogOpen(true);
+  }
 
-  if (loading) {
+  const onDialogClose = () => {
+    setIsEditDialogOpen(false);
+    setIsDeleteDialogOpen(false);
+    setSelectedProduct(null);
+    fetchProducts();
+  }
+
+  if (loading && !products.length) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-12 w-full" />
@@ -57,6 +84,7 @@ export default function ProductTable() {
   }
 
   return (
+    <>
     <Table>
       <TableHeader>
         <TableRow>
@@ -104,8 +132,9 @@ export default function ProductTable() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                  <DropdownMenuItem>Edit</DropdownMenuItem>
-                  <DropdownMenuItem>Delete</DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => handleEditClick(product)}>Edit</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onSelect={() => handleDeleteClick(product)} className="text-red-600">Delete</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </TableCell>
@@ -113,5 +142,23 @@ export default function ProductTable() {
         ))}
       </TableBody>
     </Table>
+    
+    {selectedProduct && (
+        <>
+            <EditProductDialog 
+                isOpen={isEditDialogOpen}
+                onOpenChange={setIsEditDialogOpen}
+                product={selectedProduct}
+                onDialogClose={onDialogClose}
+            />
+            <DeleteProductDialog
+                isOpen={isDeleteDialogOpen}
+                onOpenChange={setIsDeleteDialogOpen}
+                product={selectedProduct}
+                onDialogClose={onDialogClose}
+            />
+        </>
+    )}
+    </>
   )
 }

@@ -15,15 +15,16 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { addProduct } from "@/services/product-service"
+import { addProduct, updateProduct } from "@/services/product-service"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import type { Product } from "@/types"
 
 const productSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   description: z.string().min(10, "Description must be at least 10 characters."),
   price: z.coerce.number().positive("Price must be a positive number."),
   quantity: z.coerce.number().int().min(0, "Quantity must be a non-negative integer."),
-  category: z.string({ required_error: "Please select a category."}).min(2, "Category must be at least 2 characters."),
+  category: z.string({ required_error: "Please select a category."}).min(1, "Please select a category."),
   imageUrl: z.string().url("Please enter a valid image URL."),
 })
 
@@ -31,6 +32,7 @@ type ProductFormValues = z.infer<typeof productSchema>
 
 interface ProductFormProps {
   onFormSubmit: () => void;
+  product?: Product;
 }
 
 const categories = [
@@ -40,26 +42,31 @@ const categories = [
     "Health & Wellness",
 ]
 
-export function ProductForm({ onFormSubmit }: ProductFormProps) {
+export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
   const { toast } = useToast()
+  const isEditMode = !!product;
+
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      price: 0,
-      quantity: 0,
-      category: "",
-      imageUrl: "",
+      name: product?.name || "",
+      description: product?.description || "",
+      price: product?.price || 0,
+      quantity: product?.quantity || 0,
+      category: product?.category || "",
+      imageUrl: product?.imageUrl || "",
     },
   })
 
   async function onSubmit(data: ProductFormValues) {
-    const result = await addProduct(data);
+    const result = isEditMode
+        ? await updateProduct(product.id, data)
+        : await addProduct(data);
+
     if (result.success) {
       toast({
-        title: "Product Added",
-        description: `"${data.name}" has been successfully added.`,
+        title: isEditMode ? "Product Updated" : "Product Added",
+        description: `"${data.name}" has been successfully ${isEditMode ? 'updated' : 'added'}.`,
       })
       form.reset();
       onFormSubmit();
@@ -167,7 +174,9 @@ export function ProductForm({ onFormSubmit }: ProductFormProps) {
           )}
         />
         <Button type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? "Adding..." : "Add Product"}
+          {form.formState.isSubmitting 
+            ? isEditMode ? "Saving..." : "Adding..." 
+            : isEditMode ? "Save Changes" : "Add Product"}
         </Button>
       </form>
     </Form>

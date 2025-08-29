@@ -23,3 +23,27 @@ export async function addProduct(product: Omit<Product, 'id'>) {
         return { success: false, error: (error as Error).message };
     }
 }
+
+export async function updateProduct(id: string, product: Partial<Omit<Product, 'id'>>) {
+    try {
+        const docRef = doc(db, 'products', id);
+        await updateDoc(docRef, product);
+        revalidatePath('/admin/products');
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating product: ", error);
+        return { success: false, error: (error as Error).message };
+    }
+}
+
+export async function deleteProduct(id: string) {
+    try {
+        const docRef = doc(db, 'products', id);
+        await deleteDoc(docRef);
+        revalidatePath('/admin/products');
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting product: ", error);
+        return { success: false, error: (error as Error).message };
+    }
+}
