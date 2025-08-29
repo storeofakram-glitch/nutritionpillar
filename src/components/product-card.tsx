@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -8,6 +9,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { useCart } from '@/contexts/cart-context';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 interface ProductCardProps {
   product: Product;
@@ -56,10 +58,24 @@ export default function ProductCard({ product }: ProductCardProps) {
       </CardHeader>
       <CardContent className="p-4 flex-grow flex flex-col">
         <p className="text-sm text-muted-foreground">{product.category}</p>
-        <CardTitle className="text-lg font-headline leading-tight mt-1 mb-2 flex-grow">
-          {product.name}
-        </CardTitle>
-        <p className="text-2xl font-bold font-headline text-primary">
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <CardTitle className="text-lg font-headline leading-tight mt-1 mb-2 line-clamp-1">
+                        {product.name}
+                    </CardTitle>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>{product.name}</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
+
+        <p className="text-sm text-muted-foreground line-clamp-2 h-[40px] mb-2">{product.description}</p>
+        
+        <div className="flex-grow" />
+
+        <p className="text-2xl font-bold font-headline text-primary mt-auto">
           DZD {product.price.toFixed(2)}
         </p>
          {getStockBadge()}
