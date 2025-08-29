@@ -126,7 +126,14 @@ export async function getTotalRevenue(): Promise<number> {
     const q = query(ordersCollection, where('status', '==', 'delivered'));
     const snapshot = await getDocs(q);
     const orders = snapshot.docs.map(doc => doc.data() as Order);
-    const totalRevenue = orders.reduce((sum, order) => sum + order.amount, 0);
+
+    const totalRevenue = orders.reduce((totalSum, order) => {
+        const orderSubtotal = order.items.reduce((orderSum, item) => {
+            return orderSum + (item.product.price * item.quantity);
+        }, 0);
+        return totalSum + orderSubtotal;
+    }, 0);
+    
     return totalRevenue;
 }
 

@@ -71,7 +71,9 @@ export default function AdminFinancePage() {
         orders.forEach(order => {
             if (order.status === 'delivered') {
                 const monthIndex = new Date(order.date).getMonth();
-                data[monthIndex].revenue += order.amount;
+                // Recalculate revenue without shipping for the chart
+                const orderRevenue = order.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+                data[monthIndex].revenue += orderRevenue;
             }
         });
 
@@ -119,7 +121,7 @@ export default function AdminFinancePage() {
                         ) : (
                             <div className="text-2xl font-bold">DZD {totalRevenue.toFixed(2)}</div>
                         )}
-                        <p className="text-xs text-muted-foreground">From delivered orders</p>
+                        <p className="text-xs text-muted-foreground">From delivered orders (shipping excluded)</p>
                     </CardContent>
                 </Card>
                  <Card>
