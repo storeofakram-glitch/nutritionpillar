@@ -53,7 +53,7 @@ export default function CartItems() {
                   {item.selectedFlavor && `Flavor: ${item.selectedFlavor}`}
                   {item.selectedSize && ` / Size: ${item.selectedSize}`}
                 </p>
-                <p className="text-sm font-bold text-primary">${item.product.price.toFixed(2)}</p>
+                <p className="text-sm font-bold text-primary">DZD {item.product.price.toFixed(2)}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Input

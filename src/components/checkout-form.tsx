@@ -141,11 +141,11 @@ export default function CheckoutForm() {
 
           {/* Order Totals Section */}
           <div className="space-y-2 text-sm">
-            <div className="flex justify-between"><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
-            {discountAmount > 0 && <div className="flex justify-between text-green-600"><span>Discount</span><span>-${discountAmount.toFixed(2)}</span></div>}
-            <div className="flex justify-between"><span>Shipping</span><span>${shippingPrice.toFixed(2)}</span></div>
+            <div className="flex justify-between"><span>Subtotal</span><span>DZD {subtotal.toFixed(2)}</span></div>
+            {discountAmount > 0 && <div className="flex justify-between text-green-600"><span>Discount</span><span>-DZD {discountAmount.toFixed(2)}</span></div>}
+            <div className="flex justify-between"><span>Shipping</span><span>DZD {shippingPrice.toFixed(2)}</span></div>
             <Separator />
-            <div className="flex justify-between font-bold text-lg"><span>Total</span><span>${total.toFixed(2)}</span></div>
+            <div className="flex justify-between font-bold text-lg"><span>Total</span><span>DZD {total.toFixed(2)}</span></div>
           </div>
 
           <Button type="submit" className="w-full font-bold" size="lg" disabled={cartItems.length === 0}>Place Order</Button>

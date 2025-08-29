@@ -39,6 +39,7 @@ export type PromoCode = {
   type: 'percentage' | 'fixed';
   expiresAt: Date;
   isActive: boolean;
+  used: boolean;
 };
 
 export type Order = {

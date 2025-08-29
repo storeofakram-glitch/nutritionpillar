@@ -52,7 +52,7 @@ export default function AdminOrdersPage() {
                     <TableCell className="hidden sm:table-cell">
                         {order.date}
                     </TableCell>
-                    <TableCell className="text-right">${order.amount.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">DZD {order.amount.toFixed(2)}</TableCell>
                     <TableCell className="text-right">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>

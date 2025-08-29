@@ -111,7 +111,7 @@ export default function ShippingZonesTable() {
                     {option.cities.map(city => (
                       <DropdownMenuItem key={city.name} className="flex justify-between gap-4 cursor-default">
                         <span>{city.name}</span>
-                        <span className="text-muted-foreground">${city.price}</span>
+                        <span className="text-muted-foreground">DZD {city.price}</span>
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>

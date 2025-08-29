@@ -117,7 +117,7 @@ export default function ProductTable() {
               <Badge variant="outline">{product.category}</Badge>
             </TableCell>
             <TableCell className="hidden md:table-cell">
-              ${product.price.toFixed(2)}
+              DZD {product.price.toFixed(2)}
             </TableCell>
             <TableCell className="hidden md:table-cell">
               {product.quantity}

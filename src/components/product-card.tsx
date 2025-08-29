@@ -46,7 +46,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.name}
         </CardTitle>
         <p className="text-2xl font-bold font-headline text-primary">
-          ${product.price.toFixed(2)}
+          DZD {product.price.toFixed(2)}
         </p>
       </CardContent>
       <CardFooter className="p-4 pt-0">

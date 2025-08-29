@@ -101,6 +101,7 @@ export const products: Product[] = [
 
 export const shippingOptions: ShippingState[] = [
   {
+    id: '1',
     state: 'Algiers',
     cities: [
       { name: 'Algiers Center', price: 400 },
@@ -109,6 +110,7 @@ export const shippingOptions: ShippingState[] = [
     ],
   },
   {
+    id: '2',
     state: 'Oran',
     cities: [
       { name: 'Oran Center', price: 600 },
@@ -116,6 +118,7 @@ export const shippingOptions: ShippingState[] = [
     ],
   },
   {
+    id: '3',
     state: 'Constantine',
     cities: [
       { name: 'Constantine Center', price: 500 },
@@ -125,10 +128,10 @@ export const shippingOptions: ShippingState[] = [
 ];
 
 export const promoCodes: PromoCode[] = [
-    { code: 'SAVE10', discount: 10, type: 'percentage', used: false },
-    { code: 'FIT20', discount: 20, type: 'percentage', used: false },
-    { code: 'FREESHIP', discount: 0, type: 'fixed', used: true }, // Example for a used or different type
-    { code: '500OFF', discount: 500, type: 'fixed', used: false },
+    { id: '1', code: 'SAVE10', discount: 10, type: 'percentage', used: false, expiresAt: new Date('2025-12-31'), isActive: true },
+    { id: '2', code: 'FIT20', discount: 20, type: 'percentage', used: false, expiresAt: new Date('2025-12-31'), isActive: true },
+    { id: '3', code: 'FREESHIP', discount: 0, type: 'fixed', used: true, expiresAt: new Date('2024-01-01'), isActive: false },
+    { id: '4', code: '500OFF', discount: 500, type: 'fixed', used: false, expiresAt: new Date('2025-12-31'), isActive: true },
 ];
 
 export const orders: Order[] = [
