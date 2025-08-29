@@ -57,8 +57,10 @@ export default function AdminFinancePage() {
         }));
 
         orders.forEach(order => {
-            const monthIndex = new Date(order.date).getMonth();
-            data[monthIndex].revenue += order.amount;
+            if (order.status === 'delivered') {
+                const monthIndex = new Date(order.date).getMonth();
+                data[monthIndex].revenue += order.amount;
+            }
         });
 
         expenses.forEach(expense => {
@@ -104,7 +106,7 @@ export default function AdminFinancePage() {
                         ) : (
                             <div className="text-2xl font-bold">DZD {totalRevenue.toFixed(2)}</div>
                         )}
-                        <p className="text-xs text-muted-foreground">Based on all completed orders</p>
+                        <p className="text-xs text-muted-foreground">Based on all delivered orders</p>
                     </CardContent>
                 </Card>
                 <Card>

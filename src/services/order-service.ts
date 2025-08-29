@@ -1,7 +1,7 @@
 
 'use server';
 
-import { collection, getDocs, addDoc, query, orderBy, doc, runTransaction, getDoc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, query, orderBy, doc, runTransaction, getDoc, setDoc, updateDoc, deleteDoc, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Order } from '@/types';
 import { revalidatePath } from 'next/cache';
@@ -46,7 +46,7 @@ export async function addOrder(order: Omit<Order, 'id' | 'orderNumber'>) {
 
         revalidatePath('/admin/orders');
         revalidatePath('/admin/finance');
-        return { success: true, id: docRef.id, orderNumber };
+        return { success: true, id: docRef.id };
     } catch (error) {
         console.error("Error adding order: ", error);
         return { success: false, error: (error as Error).message };
@@ -54,7 +54,8 @@ export async function addOrder(order: Omit<Order, 'id' | 'orderNumber'>) {
 }
 
 export async function getTotalRevenue(): Promise<number> {
-    const snapshot = await getDocs(ordersCollection);
+    const q = query(ordersCollection, where('status', '==', 'delivered'));
+    const snapshot = await getDocs(q);
     const orders = snapshot.docs.map(doc => doc.data() as Order);
     const totalRevenue = orders.reduce((sum, order) => sum + order.amount, 0);
     return totalRevenue;
@@ -65,6 +66,8 @@ export async function updateOrderStatus(id: string, status: Order['status']) {
         const docRef = doc(db, 'orders', id);
         await updateDoc(docRef, { status });
         revalidatePath('/admin/orders');
+        revalidatePath('/admin/finance');
+        revalidatePath('/admin/customers');
         return { success: true };
     } catch (error) {
         console.error("Error updating order status: ", error);

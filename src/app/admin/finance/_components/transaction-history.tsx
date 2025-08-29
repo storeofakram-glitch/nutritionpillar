@@ -25,13 +25,15 @@ interface TransactionHistoryProps {
 export default function TransactionHistory({ orders, expenses, isLoading }: TransactionHistoryProps) {
   
   const transactions: Transaction[] = useMemo(() => {
-    const revenueTransactions: Transaction[] = orders.map(order => ({
-        id: order.id,
-        type: 'Revenue',
-        description: `Order #${String(order.orderNumber).padStart(6, '0')} from ${order.customer.name}`,
-        date: order.date,
-        amount: order.amount
-    }));
+    const revenueTransactions: Transaction[] = orders
+        .filter(order => order.status === 'delivered')
+        .map(order => ({
+            id: order.id,
+            type: 'Revenue',
+            description: `Order #${String(order.orderNumber).padStart(6, '0')} from ${order.customer.name}`,
+            date: order.date,
+            amount: order.amount
+        }));
 
     const expenseTransactions: Transaction[] = expenses.map(expense => ({
         id: expense.id,
@@ -61,7 +63,7 @@ export default function TransactionHistory({ orders, expenses, isLoading }: Tran
     <Card>
       <CardHeader>
         <CardTitle>Recent Transactions</CardTitle>
-        <CardDescription>A log of all revenue and expenses.</CardDescription>
+        <CardDescription>A log of all revenue (from delivered orders) and expenses.</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
