@@ -1,7 +1,7 @@
 
 "use client"
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Legend } from "recharts"
 import {
   Card,
   CardContent,
@@ -13,13 +13,14 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
   ChartConfig,
 } from "@/components/ui/chart"
+import type { MonthlyFinanceData } from "@/types"
 
 interface FinanceChartProps {
-    revenue: number;
-    expenses: number;
-    profit: number;
+    data: MonthlyFinanceData[];
 }
 
 const chartConfig = {
@@ -37,23 +38,20 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export default function FinanceChart({ revenue, expenses, profit }: FinanceChartProps) {
-    const chartData = [
-        { label: "Metrics", revenue, expenses, profit },
-    ];
+export default function FinanceChart({ data }: FinanceChartProps) {
   
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Financial Summary</CardTitle>
-                <CardDescription>A visual summary of your key financial metrics.</CardDescription>
+                <CardTitle>Monthly Financial Summary</CardTitle>
+                <CardDescription>A visual summary of your financial metrics by month for the current year.</CardDescription>
             </CardHeader>
             <CardContent>
-                <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
-                    <BarChart accessibilityLayer data={chartData}>
+                <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
+                    <BarChart accessibilityLayer data={data}>
                          <CartesianGrid vertical={false} />
                          <XAxis
-                            dataKey="label"
+                            dataKey="month"
                             tickLine={false}
                             tickMargin={10}
                             axisLine={false}
@@ -64,15 +62,10 @@ export default function FinanceChart({ revenue, expenses, profit }: FinanceChart
                         <ChartTooltip
                             cursor={false}
                             content={<ChartTooltipContent 
-                                formatter={(value, name) => (
-                                    <div className="flex flex-col">
-                                        <span className="font-semibold">{chartConfig[name as keyof typeof chartConfig].label}</span>
-                                        <span>DZD {Number(value).toFixed(2)}</span>
-                                    </div>
-                                )}
-                                labelClassName="hidden"
+                                formatter={(value, name) => `DZD ${Number(value).toFixed(2)}`}
                             />}
                         />
+                        <ChartLegend content={<ChartLegendContent />} />
                         <Bar dataKey="revenue" fill="var(--color-revenue)" radius={4} />
                         <Bar dataKey="expenses" fill="var(--color-expenses)" radius={4} />
                         <Bar dataKey="profit" fill="var(--color-profit)" radius={4} />

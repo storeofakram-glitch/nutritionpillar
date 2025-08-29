@@ -79,3 +79,10 @@ export type Transaction = {
     date: string;
     amount: number;
 }
+
+export type MonthlyFinanceData = {
+    month: string;
+    revenue: number;
+    expenses: number;
+    profit: number;
+};

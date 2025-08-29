@@ -4,13 +4,14 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { getTotalRevenue, getOrders } from "@/services/order-service"
 import { DollarSign, TrendingDown, TrendingUp, RefreshCw } from "lucide-react"
-import { useEffect, useState, useTransition } from "react"
+import { useEffect, useState, useTransition, useMemo } from "react"
 import AddExpenseDialog from "./_components/add-expense-dialog"
 import { getExpenses, getTotalExpenses } from "@/services/expense-service"
 import FinanceChart from "./_components/finance-chart"
 import TransactionHistory from "./_components/transaction-history"
-import type { Order, Expense } from "@/types"
+import type { Order, Expense, MonthlyFinanceData } from "@/types"
 import { Button } from "@/components/ui/button"
+import { format } from "date-fns"
 
 export default function AdminFinancePage() {
     const [totalRevenue, setTotalRevenue] = useState(0)
@@ -46,6 +47,32 @@ export default function AdminFinancePage() {
     useEffect(() => {
         fetchFinanceData()
     }, [])
+
+    const monthlyData: MonthlyFinanceData[] = useMemo(() => {
+        const data: MonthlyFinanceData[] = Array(12).fill(null).map((_, i) => ({
+            month: format(new Date(0, i), 'MMM'),
+            revenue: 0,
+            expenses: 0,
+            profit: 0
+        }));
+
+        orders.forEach(order => {
+            const monthIndex = new Date(order.date).getMonth();
+            data[monthIndex].revenue += order.amount;
+        });
+
+        expenses.forEach(expense => {
+            const monthIndex = new Date(expense.date).getMonth();
+            data[monthIndex].expenses += expense.amount;
+        });
+
+        data.forEach(monthData => {
+            monthData.profit = monthData.revenue - monthData.expenses;
+        });
+
+        return data;
+
+    }, [orders, expenses]);
 
     const netProfit = totalRevenue - totalExpenses
 
@@ -112,7 +139,7 @@ export default function AdminFinancePage() {
                 </Card>
             </div>
 
-            <FinanceChart revenue={totalRevenue} expenses={totalExpenses} profit={netProfit} />
+            <FinanceChart data={monthlyData} />
 
             <TransactionHistory orders={orders} expenses={expenses} isLoading={loading} />
         </div>
