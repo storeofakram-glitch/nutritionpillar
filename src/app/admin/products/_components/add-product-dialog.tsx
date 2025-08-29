@@ -16,6 +16,10 @@ import { useState } from "react"
 export default function AddProductDialog() {
   const [open, setOpen] = useState(false)
 
+  const handleFormSubmit = () => {
+    setOpen(false);
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -31,7 +35,7 @@ export default function AddProductDialog() {
             Fill in the details below to add a new product to your store.
           </DialogDescription>
         </DialogHeader>
-        <ProductForm onFormSubmit={() => setOpen(false)} />
+        <ProductForm onFormSubmit={handleFormSubmit} />
       </DialogContent>
     </Dialog>
   )
