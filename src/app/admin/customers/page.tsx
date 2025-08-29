@@ -51,10 +51,18 @@ export default function AdminCustomersPage() {
         const canceled = new Map<string, Customer>();
         
         orders.forEach(order => {
+            // A customer is considered "valued" if they have at least one delivered order.
             if (order.status === 'delivered') {
-                delivered.set(order.customer.email, order.customer);
-            } else if (order.status === 'canceled') {
-                canceled.set(order.customer.email, order.customer);
+                if (!delivered.has(order.customer.email)) {
+                    delivered.set(order.customer.email, order.customer);
+                }
+            } 
+            
+            // A customer is in the "canceled" list if they have at least one canceled order.
+            if (order.status === 'canceled') {
+                 if (!canceled.has(order.customer.email)) {
+                    canceled.set(order.customer.email, order.customer);
+                }
             }
         });
 
