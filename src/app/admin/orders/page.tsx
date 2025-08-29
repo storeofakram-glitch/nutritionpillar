@@ -24,7 +24,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition, useMemo } from "react";
 import type { Customer, Order } from "@/types";
 import { getOrders, updateOrderStatus } from "@/services/order-service";
 import { getCustomerOrders } from "@/services/admin-service";
@@ -34,6 +34,7 @@ import ViewOrderDialog from "./_components/view-order-dialog";
 import ViewCustomerDialog from "../customers/_components/view-customer-dialog";
 import DeleteOrderDialog from "./_components/delete-order-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 const orderStatuses: Order['status'][] = ['pending', 'processing', 'shipped', 'delivered', 'canceled'];
 
@@ -66,6 +67,16 @@ export default function AdminOrdersPage() {
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  const customersWithCanceledOrders = useMemo(() => {
+    const customerEmails = new Set<string>();
+    orders.forEach(order => {
+        if (order.status === 'canceled') {
+            customerEmails.add(order.customer.email);
+        }
+    });
+    return customerEmails;
+  }, [orders]);
 
   const handleViewOrder = (order: Order) => {
     setSelectedOrder(order);
@@ -167,7 +178,12 @@ export default function AdminOrdersPage() {
             </TableHeader>
             <TableBody>
               {loading ? renderSkeleton() : orders.map(order => (
-                  <TableRow key={order.id}>
+                  <TableRow 
+                    key={order.id}
+                    className={cn(
+                        customersWithCanceledOrders.has(order.customer.email) && 'bg-red-50/50 hover:bg-red-50/80 dark:bg-red-950/50 dark:hover:bg-red-950/80'
+                    )}
+                  >
                        <TableCell className="font-mono text-xs">
                           #{String(order.orderNumber).padStart(6, '0')}
                       </TableCell>
