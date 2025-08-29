@@ -46,7 +46,7 @@ export default function AdminLayout({
                 <span className="text-lg font-headline font-semibold">FitFactor</span>
             </div>
           </SidebarHeader>
-          <SidebarContent>
+          <SidebarContent className="pt-8">
             <SidebarMenu>
               {navItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
@@ -81,7 +81,7 @@ export default function AdminLayout({
                 <SidebarTrigger className="md:hidden" />
                 <div className="flex-1">
                     <h1 className="text-lg font-semibold font-headline">
-                        {navItems.find(item => pathname.startsWith(item.href))?.label || 'Admin'}
+                        {navItems.find(item => pathname.startsWith(item.href) && (item.href === '/admin' ? pathname === item.href : true))?.label || 'Admin'}
                     </h1>
                 </div>
             </header>
