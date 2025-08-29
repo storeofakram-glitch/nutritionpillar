@@ -1,5 +1,6 @@
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -35,16 +36,6 @@ export type ShippingState = {
   cities: City[];
 };
 
-export type PromoCode = {
-  id: string;
-  code: string;
-  discount: number;
-  type: 'percentage' | 'fixed';
-  expiresAt: Date;
-  isActive: boolean;
-  used: boolean;
-};
-
 export type Customer = {
   name: string;
   email: string;
@@ -72,7 +63,6 @@ export type Order = {
     phone: string;
   };
   items: OrderItem[];
-  promoCode?: { code: string; discountAmount: number } | null;
 };
 
 export type OrderItemInput = {
@@ -87,7 +77,6 @@ export type OrderInput = {
   customer: Customer;
   shippingAddress: Order['shippingAddress'];
   items: OrderItemInput[];
-  promoCode?: { code: string; discountAmount: number } | null;
 };
 
 export type Expense = {
@@ -111,3 +100,4 @@ export type MonthlyFinanceData = {
     expenses: number;
     profit: number;
 };
+

@@ -91,13 +91,11 @@ export async function addOrder(orderInput: OrderInput) {
             const shippingPrice = cityData?.price || 0;
 
             // Calculate final amount on the server
-            const discountAmount = orderInput.promoCode?.discountAmount || 0;
-            const finalAmount = calculatedSubtotal - discountAmount + shippingPrice;
+            const finalAmount = calculatedSubtotal + shippingPrice;
 
             const newOrderData: Omit<Order, 'id'> = {
                 customer: orderInput.customer,
                 shippingAddress: orderInput.shippingAddress,
-                promoCode: orderInput.promoCode || null, // Ensure promoCode is null, not undefined
                 items: finalOrderItems,
                 amount: finalAmount,
                 orderNumber,

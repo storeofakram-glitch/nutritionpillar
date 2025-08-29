@@ -82,19 +82,6 @@ export default function ViewOrderDialog({ isOpen, onOpenChange, order }: ViewOrd
                     <p className="text-sm font-mono bg-muted p-1 rounded-md inline-block">{order.id.substring(0, 6).toUpperCase()}</p>
                 </div>
 
-
-                {order.promoCode && (
-                     <>
-                        <Separator />
-                        <div className="space-y-1">
-                            <h3 className="font-semibold">Promotion Applied</h3>
-                            <p className="text-sm">Code: <span className="font-mono bg-muted p-1 rounded-md">{order.promoCode.code}</span></p>
-                            <p className="text-sm text-green-600">Discount: -DZD {order.promoCode.discountAmount.toFixed(2)}</p>
-                        </div>
-                     </>
-                )}
-
-
                 <Separator />
 
                 <div>

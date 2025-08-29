@@ -1,4 +1,4 @@
-import type { Product, ShippingState, PromoCode, Order } from '@/types';
+import type { Product, ShippingState, Order } from '@/types';
 
 export const products: Product[] = [
   {
@@ -127,16 +127,10 @@ export const shippingOptions: ShippingState[] = [
   },
 ];
 
-export const promoCodes: PromoCode[] = [
-    { id: '1', code: 'SAVE10', discount: 10, type: 'percentage', used: false, expiresAt: new Date('2025-12-31'), isActive: true },
-    { id: '2', code: 'FIT20', discount: 20, type: 'percentage', used: false, expiresAt: new Date('2025-12-31'), isActive: true },
-    { id: '3', code: 'FREESHIP', discount: 0, type: 'fixed', used: true, expiresAt: new Date('2024-01-01'), isActive: false },
-    { id: '4', code: '500OFF', discount: 500, type: 'fixed', used: false, expiresAt: new Date('2025-12-31'), isActive: true },
-];
-
 export const orders: Order[] = [
   {
     id: 'ORD-001',
+    orderNumber: 1,
     customer: { name: 'John Doe', email: 'john.doe@email.com' },
     date: '2024-05-15',
     amount: 124.97,
@@ -149,6 +143,7 @@ export const orders: Order[] = [
   },
   {
     id: 'ORD-002',
+    orderNumber: 2,
     customer: { name: 'Jane Smith', email: 'jane.smith@email.com' },
     date: '2024-05-16',
     amount: 39.99,
@@ -158,6 +153,7 @@ export const orders: Order[] = [
   },
   {
     id: 'ORD-003',
+    orderNumber: 3,
     customer: { name: 'Ali Benali', email: 'ali.benali@email.com' },
     date: '2024-05-17',
     amount: 78.97,
@@ -170,6 +166,7 @@ export const orders: Order[] = [
   },
   {
     id: 'ORD-004',
+    orderNumber: 4,
     customer: { name: 'Fatima Zohra', email: 'fatima.zohra@email.com' },
     date: '2024-05-18',
     amount: 52.99,
