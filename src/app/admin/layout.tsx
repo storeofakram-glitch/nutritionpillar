@@ -17,7 +17,7 @@ import {
   SidebarFooter,
   SidebarInset
 } from "@/components/ui/sidebar"
-import { Dumbbell, Home, Package, ShoppingCart, Tag, Truck, User } from "lucide-react"
+import { Dumbbell, Home, Package, ShoppingCart, Tag, Truck, Users, BrainCircuit, ArrowLeft } from "lucide-react"
 
 export default function AdminLayout({
   children,
@@ -30,8 +30,10 @@ export default function AdminLayout({
     { href: "/admin", label: "Dashboard", icon: Home },
     { href: "/admin/products", label: "Products", icon: Package },
     { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
+    { href: "/admin/customers", label: "Customers", icon: Users },
     { href: "/admin/shipping", label: "Shipping", icon: Truck },
     { href: "/admin/promo-codes", label: "Promo Codes", icon: Tag },
+    { href: "/admin/ai-tools", label: "AI Tools", icon: BrainCircuit },
   ]
   
   return (
@@ -50,7 +52,7 @@ export default function AdminLayout({
                 <SidebarMenuItem key={item.href}>
                   <Link href={item.href}>
                     <SidebarMenuButton 
-                        isActive={pathname === item.href}
+                        isActive={pathname.startsWith(item.href) && (item.href === '/admin' ? pathname === item.href : true) }
                         tooltip={item.label}
                     >
                         <item.icon />
@@ -66,8 +68,8 @@ export default function AdminLayout({
                 <SidebarMenuItem>
                     <Link href="/">
                         <SidebarMenuButton tooltip="Back to site">
-                            <User />
-                            <span>Client View</span>
+                            <ArrowLeft />
+                            <span>Back to Site</span>
                         </SidebarMenuButton>
                     </Link>
                 </SidebarMenuItem>
@@ -79,7 +81,7 @@ export default function AdminLayout({
                 <SidebarTrigger className="md:hidden" />
                 <div className="flex-1">
                     <h1 className="text-lg font-semibold font-headline">
-                        {navItems.find(item => item.href === pathname)?.label || 'Admin'}
+                        {navItems.find(item => pathname.startsWith(item.href))?.label || 'Admin'}
                     </h1>
                 </div>
             </header>
