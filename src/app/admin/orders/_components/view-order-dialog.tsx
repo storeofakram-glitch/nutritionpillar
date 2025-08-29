@@ -77,6 +77,12 @@ export default function ViewOrderDialog({ isOpen, onOpenChange, order }: ViewOrd
                     </div>
                 </div>
 
+                 <div className="space-y-1">
+                    <h3 className="font-semibold">Order ID</h3>
+                    <p className="text-sm font-mono bg-muted p-1 rounded-md inline-block">{order.id}</p>
+                </div>
+
+
                 {order.promoCode && (
                      <>
                         <Separator />
