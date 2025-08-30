@@ -1,7 +1,7 @@
 
 'use server';
 
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Product } from '@/types';
 import { revalidatePath } from 'next/cache';
@@ -13,6 +13,21 @@ export async function getProducts(): Promise<Product[]> {
     const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
     return products;
 }
+
+export async function getProductById(id: string): Promise<Product | null> {
+    try {
+        const docRef = doc(db, 'products', id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            return { id: docSnap.id, ...docSnap.data() } as Product;
+        }
+        return null;
+    } catch (error) {
+        console.error("Error getting product by ID: ", error);
+        return null;
+    }
+}
+
 
 export async function addProduct(product: Omit<Product, 'id'>) {
     try {
