@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { getProductById } from '@/services/product-service';
 import type { Product } from '@/types';
-import { notFound, useRouter } from 'next/navigation';
+import { notFound, useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +15,7 @@ import { useCart } from '@/contexts/cart-context';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
+export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
@@ -24,22 +24,25 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
   const { addToCart } = useCart();
   const router = useRouter();
+  const params = useParams();
+  const productId = typeof params.id === 'string' ? params.id : '';
 
   useEffect(() => {
     async function fetchProduct() {
-      const fetchedProduct = await getProductById(params.id);
-      if (!fetchedProduct) {
-        notFound();
-      }
-      setProduct(fetchedProduct);
-      // Set default selections
-      if (fetchedProduct?.options?.sizes?.[0]) setSelectedSize(fetchedProduct.options.sizes[0]);
-      if (fetchedProduct?.options?.flavors?.[0]) setSelectedFlavor(fetchedProduct.options.flavors[0]);
-      if (fetchedProduct?.options?.colors?.[0]) setSelectedColor(fetchedProduct.options.colors[0]);
-      setLoading(false);
+        if (!productId) return;
+        const fetchedProduct = await getProductById(productId);
+        if (!fetchedProduct) {
+            notFound();
+        }
+        setProduct(fetchedProduct);
+        // Set default selections
+        if (fetchedProduct?.options?.sizes?.[0]) setSelectedSize(fetchedProduct.options.sizes[0]);
+        if (fetchedProduct?.options?.flavors?.[0]) setSelectedFlavor(fetchedProduct.options.flavors[0]);
+        if (fetchedProduct?.options?.colors?.[0]) setSelectedColor(fetchedProduct.options.colors[0]);
+        setLoading(false);
     }
     fetchProduct();
-  }, [params.id]);
+  }, [productId]);
 
   const handleAddToCart = () => {
     if (!product) return;
