@@ -1,52 +1,81 @@
+
 'use client';
 
 import Link from 'next/link';
-import { ShoppingBag } from 'lucide-react';
+import { Menu, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/cart-context';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose
+} from "@/components/ui/sheet"
+import * as React from 'react';
 
 export default function Header() {
   const { cartCount } = useCart();
   const pathname = usePathname();
+  const [isSheetOpen, setIsSheetOpen] = React.useState(false);
 
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
     { href: '/faq', label: 'FAQ' },
     { href: '/contact', label: 'Contact' },
-    { href: '/admin', label: 'Admin' },
   ];
+  
+  const NavLink = ({ href, children }: { href: string, children: React.ReactNode }) => (
+    <Link
+      href={href}
+      onClick={() => setIsSheetOpen(false)}
+      className={cn(
+        'transition-colors hover:text-foreground/80',
+        pathname === href ? 'text-foreground' : 'text-foreground/60'
+      )}
+    >
+      {children}
+    </Link>
+  );
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center">
+        <div className="flex items-center gap-4 md:hidden">
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+                <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                        <Menu className="h-5 w-5" />
+                        <span className="sr-only">Toggle Menu</span>
+                    </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-full max-w-xs sm:max-w-sm">
+                   <nav className="flex flex-col gap-6 text-lg font-medium mt-8">
+                       {navLinks.map(link => (
+                          <SheetClose asChild key={link.href}>
+                             <NavLink href={link.href}>{link.label}</NavLink>
+                          </SheetClose>
+                        ))}
+                   </nav>
+                </SheetContent>
+            </Sheet>
+        </div>
+
         <Link href="/" className="mr-6 flex items-center space-x-2">
           <span className="font-bold font-headline text-lg">Nutrition Pillar</span>
         </Link>
         <nav className="hidden md:flex items-center gap-6 text-sm">
           {navLinks.map(link => (
-             // Do not show admin link on the main site navigation
-            !link.href.startsWith('/admin') && (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  'transition-colors hover:text-foreground/80',
-                  pathname === link.href ? 'text-foreground' : 'text-foreground/60'
-                )}
-              >
-                {link.label}
-              </Link>
-            )
+              <NavLink key={link.href} href={link.href}>{link.label}</NavLink>
           ))}
         </nav>
         <div className="flex flex-1 items-center justify-end gap-2">
           <Link
             href="/admin"
             className={cn(
-                'text-sm transition-colors hover:text-foreground/80 text-foreground/60',
+                'text-sm transition-colors hover:text-foreground/80 text-foreground/60 hidden sm:inline-block',
                 pathname.startsWith('/admin') && 'text-foreground'
             )}
             >
