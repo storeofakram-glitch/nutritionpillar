@@ -6,6 +6,7 @@ import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
 import { cn } from '@/lib/utils';
 import FirebaseProvider from '@/components/firebase-provider';
+import BottomNav from '@/components/layout/bottom-nav';
 
 export const metadata: Metadata = {
   title: 'Nutrition Pillar - Your Supplement Marketplace',
@@ -29,8 +30,9 @@ export default function RootLayout({
           <CartProvider>
             <div className="relative flex min-h-dvh flex-col bg-background">
               <Header />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1 pb-24 md:pb-0">{children}</main>
               <Footer />
+              <BottomNav />
             </div>
             <Toaster />
           </CartProvider>
