@@ -4,9 +4,18 @@ import { Button } from '@/components/ui/button';
 import ProductGrid from '@/components/product-grid';
 import { getProducts } from '@/services/product-service';
 import Marquee from '@/components/ui/marquee';
+import { cn } from '@/lib/utils';
 
 export default async function Home() {
   const products = await getProducts();
+
+  const featuredLogos = [
+    { src: 'https://picsum.photos/150/75?random=21', alt: 'Brand Logo 1', hint: 'brand logo' },
+    { src: 'https://picsum.photos/150/75?random=22', alt: 'Brand Logo 2', hint: 'brand logo' },
+    { src: 'https://picsum.photos/150/75?random=23', alt: 'Brand Logo 3', hint: 'brand logo' },
+    { src: 'https://picsum.photos/150/75?random=24', alt: 'Brand Logo 4', hint: 'brand logo' },
+    { src: 'https://picsum.photos/150/75?random=25', alt: 'Brand Logo 5', hint: 'brand logo' },
+  ];
 
   return (
     <div className="flex flex-col">
@@ -40,6 +49,27 @@ export default async function Home() {
           <span className="mx-8 font-semibold text-muted-foreground">Follow us on social media for updates</span>
           <span className="mx-8 font-semibold text-muted-foreground">Quality you can trust</span>
         </Marquee>
+      </section>
+
+      <section className="py-12 bg-background">
+        <div className="container mx-auto px-4">
+          <h3 className="text-center text-lg font-semibold text-muted-foreground uppercase tracking-wider mb-8">
+            As Featured In
+          </h3>
+          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-8">
+            {featuredLogos.map((logo, index) => (
+              <div key={index} className="relative h-12 w-32">
+                <Image
+                  src={logo.src}
+                  alt={logo.alt}
+                  data-ai-hint={logo.hint}
+                  fill
+                  className="object-contain grayscale transition-all duration-300 hover:grayscale-0"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section id="products" className="py-12 md:py-20">
