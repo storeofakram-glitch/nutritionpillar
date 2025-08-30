@@ -45,11 +45,6 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <Marquee>
-        <span className="mx-4">Free shipping on orders over 10,000 DZD</span>
-        <span className="mx-4">Check out our new arrivals!</span>
-        <span className="mx-4">Follow us on social media for updates</span>
-      </Marquee>
       <div className="container flex h-14 max-w-screen-2xl items-center">
         <div className="flex items-center gap-4 md:hidden">
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>

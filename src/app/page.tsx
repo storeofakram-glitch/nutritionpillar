@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import ProductGrid from '@/components/product-grid';
 import { getProducts } from '@/services/product-service';
+import Marquee from '@/components/ui/marquee';
 
 export default async function Home() {
   const products = await getProducts();
@@ -30,6 +31,15 @@ export default async function Home() {
             </Button>
           </div>
         </div>
+      </section>
+
+      <section className="bg-muted border-y">
+        <Marquee>
+          <span className="mx-8 font-semibold text-muted-foreground">Free shipping on orders over 10,000 DZD</span>
+          <span className="mx-8 font-semibold text-muted-foreground">Check out our new arrivals!</span>
+          <span className="mx-8 font-semibold text-muted-foreground">Follow us on social media for updates</span>
+          <span className="mx-8 font-semibold text-muted-foreground">Quality you can trust</span>
+        </Marquee>
       </section>
 
       <section id="products" className="py-12 md:py-20">
