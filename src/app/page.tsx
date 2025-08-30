@@ -19,10 +19,10 @@ export default async function Home() {
         />
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center p-4">
           <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight">
-            Fuel Your Greatness
+            Welcome to Nutrition Pillar
           </h1>
           <p className="text-lg md:text-xl max-w-2xl mb-8">
-            Discover premium supplements at Nutrition Pillar. Quality ingredients for peak performance and optimal health.
+            Your one-stop shop for premium supplements. We provide quality ingredients for your peak performance and optimal health.
           </p>
           <div className="flex gap-4">
             <Button asChild size="lg" className="font-bold">
