@@ -54,7 +54,7 @@ export default async function Home() {
       <section className="py-12 bg-background">
         <div className="container mx-auto px-4">
           <h3 className="text-center text-lg font-semibold text-muted-foreground uppercase tracking-wider mb-8">
-            As Featured In
+            Partnership
           </h3>
           <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-8">
             {featuredLogos.map((logo, index) => (
