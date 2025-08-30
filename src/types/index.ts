@@ -1,6 +1,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -10,6 +11,7 @@ export type Product = {
   quantity: number;
   category: string;
   imageUrl: string;
+  sponsored?: boolean;
   options?: {
     sizes?: string[];
     colors?: string[];
@@ -100,4 +102,5 @@ export type MonthlyFinanceData = {
     expenses: number;
     profit: number;
 };
+
 

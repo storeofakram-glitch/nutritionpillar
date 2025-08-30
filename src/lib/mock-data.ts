@@ -9,6 +9,7 @@ export const products: Product[] = [
     quantity: 100,
     category: 'Protein',
     imageUrl: 'https://picsum.photos/400/400?random=1',
+    sponsored: true,
     options: {
       sizes: ['1kg', '2kg', '5kg'],
       flavors: ['Chocolate', 'Vanilla', 'Strawberry'],
@@ -22,6 +23,7 @@ export const products: Product[] = [
     quantity: 200,
     category: 'Performance',
     imageUrl: 'https://picsum.photos/400/400?random=2',
+    sponsored: true,
     options: {
       sizes: ['300g', '500g'],
     },

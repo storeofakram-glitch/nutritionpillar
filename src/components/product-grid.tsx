@@ -7,6 +7,7 @@ import ProductCard from './product-card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search } from 'lucide-react';
+import { Separator } from './ui/separator';
 
 interface ProductGridProps {
   products: Product[];
@@ -40,21 +41,28 @@ export default function ProductGrid({ products }: ProductGridProps) {
     };
   }, [products]);
   
-  const filteredProducts = useMemo(() => {
-    return products.filter(product => {
+  const { sponsoredProducts, regularProducts } = useMemo(() => {
+    const filtered = products.filter(product => {
       const searchMatch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || product.category.toLowerCase().includes(searchTerm.toLowerCase());
       const categoryMatch = filters.category === 'all' || product.category === filters.category;
       const sizeMatch = filters.size === 'all' || product.options?.sizes?.includes(filters.size);
       const colorMatch = filters.color === 'all' || product.options?.colors?.includes(filters.color);
       const flavorMatch = filters.flavor === 'all' || product.options?.flavors?.includes(filters.flavor);
-
       return searchMatch && categoryMatch && sizeMatch && colorMatch && flavorMatch;
     });
+
+    return {
+        sponsoredProducts: filtered.filter(p => p.sponsored),
+        regularProducts: filtered.filter(p => !p.sponsored)
+    }
   }, [products, searchTerm, filters]);
 
   const handleFilterChange = (filterType: keyof typeof filters) => (value: string) => {
     setFilters(prev => ({ ...prev, [filterType]: value }));
   };
+
+  const hasSponsoredProducts = sponsoredProducts.length > 0;
+  const hasRegularProducts = regularProducts.length > 0;
 
   return (
     <div>
@@ -78,17 +86,35 @@ export default function ProductGrid({ products }: ProductGridProps) {
         </Select>
       </div>
 
-      {filteredProducts.length > 0 ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {filteredProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+      {hasSponsoredProducts && (
+        <div className="mb-12">
+            <h3 className="text-2xl font-bold font-headline mb-6">Sponsored Products</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+              {sponsoredProducts.map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
         </div>
-      ) : (
+      )}
+
+      {hasRegularProducts && hasSponsoredProducts && <Separator className="my-12" />}
+
+      {hasRegularProducts ? (
+        <div>
+            {hasSponsoredProducts && (
+                 <h3 className="text-2xl font-bold font-headline mb-6">All Products</h3>
+            )}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {regularProducts.map(product => (
+                <ProductCard key={product.id} product={product} />
+            ))}
+            </div>
+        </div>
+      ) : !hasSponsoredProducts ? (
         <div className="text-center py-16">
             <p className="text-muted-foreground text-lg">No products found matching your criteria.</p>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
