@@ -56,8 +56,6 @@ export default function ProductCard({ product }: ProductCardProps) {
                     </TooltipContent>
                 </Tooltip>
             </TooltipProvider>
-
-            <p className="text-sm text-muted-foreground line-clamp-2 h-[40px] mb-2">{product.description}</p>
             
             <div className="flex-grow" />
 
