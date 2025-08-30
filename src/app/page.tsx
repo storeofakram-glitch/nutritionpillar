@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -5,6 +6,7 @@ import ProductGrid from '@/components/product-grid';
 import { getProducts } from '@/services/product-service';
 import Marquee from '@/components/ui/marquee';
 import { cn } from '@/lib/utils';
+import { ArrowRight } from 'lucide-react';
 
 export default async function Home() {
   const products = await getProducts();
@@ -68,6 +70,36 @@ export default async function Home() {
                 />
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-12 md:py-16 bg-muted">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-8 items-center bg-card p-8 rounded-lg shadow-lg">
+            <div className="relative w-full aspect-video rounded-lg overflow-hidden">
+                <Image
+                    src="https://picsum.photos/600/400?random=30"
+                    alt="Featured Promotion"
+                    data-ai-hint="promotional banner"
+                    fill
+                    className="object-cover"
+                />
+            </div>
+            <div className="text-center md:text-left">
+                <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">
+                    Limited Time Offer!
+                </h2>
+                <p className="text-muted-foreground mb-6">
+                    Get 20% off on all pre-workout supplements this week only. Don't miss out on this opportunity to fuel your workouts for less.
+                </p>
+                <Button asChild size="lg" className="font-bold">
+                    <Link href="#products">
+                        Shop Pre-Workouts
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                </Button>
+            </div>
           </div>
         </div>
       </section>
