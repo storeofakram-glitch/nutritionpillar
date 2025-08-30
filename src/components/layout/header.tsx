@@ -10,6 +10,8 @@ import { cn } from '@/lib/utils';
 import {
   Sheet,
   SheetContent,
+  SheetHeader,
+  SheetTitle,
   SheetTrigger,
   SheetClose
 } from "@/components/ui/sheet"
@@ -52,6 +54,9 @@ export default function Header() {
                     </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-full max-w-xs sm:max-w-sm">
+                    <SheetHeader className="text-left">
+                        <SheetTitle>Navigation Menu</SheetTitle>
+                    </SheetHeader>
                    <nav className="flex flex-col gap-6 text-lg font-medium mt-8">
                        {navLinks.map(link => (
                           <SheetClose asChild key={link.href}>
