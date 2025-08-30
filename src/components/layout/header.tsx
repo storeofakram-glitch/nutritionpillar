@@ -13,6 +13,9 @@ export default function Header() {
 
   const navLinks = [
     { href: '/', label: 'Home' },
+    { href: '/about', label: 'About' },
+    { href: '/faq', label: 'FAQ' },
+    { href: '/contact', label: 'Contact' },
     { href: '/admin', label: 'Admin' },
   ];
 
@@ -24,19 +27,31 @@ export default function Header() {
         </Link>
         <nav className="hidden md:flex items-center gap-6 text-sm">
           {navLinks.map(link => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                'transition-colors hover:text-foreground/80',
-                pathname === link.href ? 'text-foreground' : 'text-foreground/60'
-              )}
-            >
-              {link.label}
-            </Link>
+             // Do not show admin link on the main site navigation
+            !link.href.startsWith('/admin') && (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  'transition-colors hover:text-foreground/80',
+                  pathname === link.href ? 'text-foreground' : 'text-foreground/60'
+                )}
+              >
+                {link.label}
+              </Link>
+            )
           ))}
         </nav>
-        <div className="flex flex-1 items-center justify-end">
+        <div className="flex flex-1 items-center justify-end gap-2">
+          <Link
+            href="/admin"
+            className={cn(
+                'text-sm transition-colors hover:text-foreground/80 text-foreground/60',
+                pathname.startsWith('/admin') && 'text-foreground'
+            )}
+            >
+                Admin
+          </Link>
           <Button asChild variant="ghost" size="icon">
             <Link href="/cart" className="relative">
               <ShoppingBag className="h-5 w-5" />
