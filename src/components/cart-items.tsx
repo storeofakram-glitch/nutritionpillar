@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -6,7 +7,7 @@ import { useCart } from "@/contexts/cart-context";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Trash2, ShoppingBag } from "lucide-react";
+import { Trash2, ShoppingBag, ArrowLeft } from "lucide-react";
 
 export default function CartItems() {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -30,11 +31,19 @@ export default function CartItems() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-row items-center justify-between gap-4">
         <CardTitle className="text-2xl font-headline">Shopping Cart</CardTitle>
-        <Button variant="outline" size="sm" onClick={clearCart} disabled={cartItems.length === 0}>
-          Clear Cart
-        </Button>
+        <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" asChild>
+                <Link href="/">
+                    <ArrowLeft className="h-3.5 w-3.5" />
+                    Continue Shopping
+                </Link>
+            </Button>
+            <Button variant="destructive" size="sm" onClick={clearCart} disabled={cartItems.length === 0}>
+                Clear Cart
+            </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="divide-y">
