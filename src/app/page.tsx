@@ -54,7 +54,7 @@ export default async function Home() {
       <section className="relative w-full h-[60vh] md:h-[70vh] bg-gray-900 text-white overflow-hidden">
         <Image
             src={hero.imageUrl}
-            alt={hero.alt}
+            alt={hero.alt || "Hero image"}
             data-ai-hint="athlete training"
             fill
             className="object-cover"
@@ -103,7 +103,7 @@ export default async function Home() {
               <div key={index} className="relative h-12 w-32 flex-shrink-0">
                 <Image
                   src={logo.src}
-                  alt={logo.alt}
+                  alt={logo.alt || `Partnership logo ${index + 1}`}
                   data-ai-hint={logo.hint}
                   fill
                   className="object-contain grayscale transition-all duration-300 hover:grayscale-0"
@@ -120,7 +120,7 @@ export default async function Home() {
             <div className="relative w-full aspect-video rounded-lg overflow-hidden">
                 <Image
                     src={adBanner.imageUrl}
-                    alt={adBanner.imageAlt}
+                    alt={adBanner.imageAlt || "Promotional banner"}
                     data-ai-hint="promotional banner"
                     fill
                     className="object-cover"
