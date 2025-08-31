@@ -16,7 +16,8 @@ import {
   SheetClose
 } from "@/components/ui/sheet"
 import * as React from 'react';
-import Marquee from '@/components/ui/marquee';
+import { SearchDialog } from '../search-dialog';
+
 
 export default function Header() {
   const { cartCount } = useCart();
@@ -78,7 +79,8 @@ export default function Header() {
           ))}
         </nav>
         <div className="flex flex-1 items-center justify-end gap-2">
-          <Link
+           <SearchDialog />
+           <Link
             href="/admin"
             className={cn(
                 'text-sm transition-colors hover:text-foreground/80 text-foreground/60 hidden sm:inline-block',
