@@ -7,17 +7,37 @@ import { getProducts } from '@/services/product-service';
 import Marquee from '@/components/ui/marquee';
 import { cn } from '@/lib/utils';
 import { ArrowRight } from 'lucide-react';
+import { getSiteSettings } from '@/services/site-settings-service';
+import type { SiteSettings } from '@/types';
 
 export default async function Home() {
   const products = await getProducts();
+  const siteSettings: SiteSettings | null = await getSiteSettings();
 
-  const featuredLogos = [
+  const marqueeMessages = siteSettings?.marquee?.messages || [
+    { text: 'Free shipping on orders over 10,000 DZD' },
+    { text: 'Check out our new arrivals!' },
+    { text: 'Follow us on social media for updates' },
+    { text: 'Quality you can trust' },
+  ];
+
+  const partnershipLogos = siteSettings?.partnershipLogos || [
     { src: 'https://picsum.photos/150/75?random=21', alt: 'Brand Logo 1', hint: 'brand logo' },
     { src: 'https://picsum.photos/150/75?random=22', alt: 'Brand Logo 2', hint: 'brand logo' },
     { src: 'https://picsum.photos/150/75?random=23', alt: 'Brand Logo 3', hint: 'brand logo' },
     { src: 'https://picsum.photos/150/75?random=24', alt: 'Brand Logo 4', hint: 'brand logo' },
     { src: 'https://picsum.photos/150/75?random=25', alt: 'Brand Logo 5', hint: 'brand logo' },
   ];
+  
+  const adBanner = siteSettings?.adBanner || {
+    imageUrl: 'https://picsum.photos/600/400?random=30',
+    alt: 'Featured Promotion',
+    title: 'Limited Time Offer!',
+    description: "Get 20% off on all pre-workout supplements this week only. Don't miss out on this opportunity to fuel your workouts for less.",
+    buttonText: 'Shop Pre-Workouts',
+    buttonLink: '#products'
+  };
+
 
   return (
     <div className="flex flex-col">
@@ -46,10 +66,9 @@ export default async function Home() {
 
       <section className="bg-muted border-y">
         <Marquee>
-          <span className="mx-8 font-semibold text-muted-foreground">Free shipping on orders over 10,000 DZD</span>
-          <span className="mx-8 font-semibold text-muted-foreground">Check out our new arrivals!</span>
-          <span className="mx-8 font-semibold text-muted-foreground">Follow us on social media for updates</span>
-          <span className="mx-8 font-semibold text-muted-foreground">Quality you can trust</span>
+          {marqueeMessages.map((msg, i) => (
+            <span key={i} className="mx-8 font-semibold text-muted-foreground">{msg.text}</span>
+          ))}
         </Marquee>
       </section>
 
@@ -59,7 +78,7 @@ export default async function Home() {
             Partnership
           </h3>
           <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-8">
-            {featuredLogos.map((logo, index) => (
+            {partnershipLogos.map((logo, index) => (
               <div key={index} className="relative h-12 w-32">
                 <Image
                   src={logo.src}
@@ -79,8 +98,8 @@ export default async function Home() {
           <div className="grid md:grid-cols-2 gap-8 items-center bg-card p-8 rounded-lg shadow-lg">
             <div className="relative w-full aspect-video rounded-lg overflow-hidden">
                 <Image
-                    src="https://picsum.photos/600/400?random=30"
-                    alt="Featured Promotion"
+                    src={adBanner.imageUrl}
+                    alt={adBanner.alt}
                     data-ai-hint="promotional banner"
                     fill
                     className="object-cover"
@@ -88,14 +107,14 @@ export default async function Home() {
             </div>
             <div className="text-center md:text-left">
                 <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">
-                    Limited Time Offer!
+                    {adBanner.title}
                 </h2>
                 <p className="text-muted-foreground mb-6">
-                    Get 20% off on all pre-workout supplements this week only. Don't miss out on this opportunity to fuel your workouts for less.
+                    {adBanner.description}
                 </p>
                 <Button asChild size="lg" className="font-bold">
-                    <Link href="#products">
-                        Shop Pre-Workouts
+                    <Link href={adBanner.buttonLink}>
+                        {adBanner.buttonText}
                         <ArrowRight className="ml-2 h-5 w-5" />
                     </Link>
                 </Button>

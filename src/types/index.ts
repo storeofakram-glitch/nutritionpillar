@@ -2,6 +2,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -104,3 +105,30 @@ export type MonthlyFinanceData = {
 };
 
 
+// Types for Site Appearance Settings
+export type MarqueeMessage = {
+  text: string;
+};
+
+export type PartnershipLogo = {
+  src: string;
+  alt: string;
+  hint?: string;
+};
+
+export type AdBanner = {
+  imageUrl: string;
+  alt: string;
+  title: string;
+  description: string;
+  buttonText: string;
+  buttonLink: string;
+};
+
+export type SiteSettings = {
+  marquee: {
+    messages: MarqueeMessage[];
+  };
+  partnershipLogos: PartnershipLogo[];
+  adBanner: AdBanner;
+};
