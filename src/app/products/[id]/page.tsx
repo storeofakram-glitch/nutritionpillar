@@ -24,13 +24,12 @@ export default function ProductDetailPage() {
   const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
   const { addToCart } = useCart();
   const router = useRouter();
-  const params = useParams();
-  const productId = params.id as string;
+  const { id: productId } = useParams();
 
   useEffect(() => {
     async function fetchProduct() {
         if (!productId) return;
-        const fetchedProduct = await getProductById(productId);
+        const fetchedProduct = await getProductById(productId as string);
         if (!fetchedProduct) {
             notFound();
         }
