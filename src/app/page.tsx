@@ -73,7 +73,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="bg-muted border-y">
+      <section className="bg-muted border-y border-primary">
         <Marquee>
           {marqueeMessages.map((msg, i) => (
             <div key={i} className="flex items-center gap-4 mx-8">
