@@ -99,9 +99,9 @@ export default async function Home() {
           <h3 className="text-center text-lg font-semibold text-muted-foreground uppercase tracking-wider mb-8">
             Partnership
           </h3>
-          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-8">
+          <div className="flex items-center gap-x-12 overflow-x-auto pb-4 md:pb-0 md:flex-wrap md:justify-center md:overflow-x-visible">
             {partnershipLogos.map((logo, index) => (
-              <div key={index} className="relative h-12 w-32">
+              <div key={index} className="relative h-12 w-32 flex-shrink-0">
                 <Image
                   src={logo.src}
                   alt={logo.alt}
