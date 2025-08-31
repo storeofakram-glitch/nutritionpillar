@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -125,10 +126,10 @@ const Carousel = React.forwardRef<
       }
 
       onSelect(api)
-      setScrollSnaps(api.scrollSnaps());
+      setScrollSnaps(api.scrollSnaps);
       api.on("reInit", (api) => {
           onSelect(api);
-          setScrollSnaps(api.scrollSnaps());
+          setScrollSnaps(api.scrollSnaps);
       });
       api.on("select", onSelect)
 
