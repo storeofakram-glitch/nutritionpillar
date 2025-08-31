@@ -1,3 +1,4 @@
+
 // This is a new file for the Appearance management page in the admin dashboard.
 "use client";
 
@@ -147,6 +148,7 @@ export default function AdminAppearancePage() {
                       <FormItem>
                         <FormLabel>Logo Image URL</FormLabel>
                         <FormControl><Input {...field} placeholder="https://..." /></FormControl>
+                        <FormDescription>Recommended size: 150x75 pixels.</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -189,6 +191,7 @@ export default function AdminAppearancePage() {
                         <FormItem>
                             <FormLabel>Image URL</FormLabel>
                             <FormControl><Input {...field} placeholder="https://picsum.photos/600/400" /></FormControl>
+                            <FormDescription>Recommended aspect ratio: 16:9 (e.g., 1200x675 pixels).</FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
