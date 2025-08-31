@@ -11,13 +11,14 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
+import { cn } from "@/lib/utils";
 
 const SmallProductCard = ({ product }: { product: Product }) => {
   const isOutOfStock = product.quantity === 0;
 
   return (
-    <Link href={`/products/${product.id}`} className="block h-full">
-      <div className="text-center">
+    <Link href={`/products/${product.id}`} className="block h-full group">
+      <div className="text-center h-full flex flex-col p-2 rounded-lg border border-transparent group-hover:border-accent/50 group-hover:shadow-lg group-hover:shadow-accent/10 transition-all duration-300 group-hover:-translate-y-1">
         <div className="relative w-full aspect-square mb-4 bg-gray-50 rounded-lg overflow-hidden">
             <Image
                 src={product.imageUrl}
@@ -32,8 +33,10 @@ const SmallProductCard = ({ product }: { product: Product }) => {
                 </div>
             )}
         </div>
-        <h3 className="font-semibold text-sm truncate">{product.name}</h3>
-        <p className="font-bold text-primary">DZD {product.price.toFixed(2)}</p>
+        <div className="flex flex-col flex-grow">
+            <h3 className="font-semibold text-sm truncate flex-grow">{product.name}</h3>
+            <p className="font-bold text-primary mt-1">DZD {product.price.toFixed(2)}</p>
+        </div>
       </div>
     </Link>
   );
@@ -65,7 +68,7 @@ export default async function NewArrivalsCarousel() {
             <CarouselContent>
                 {newArrivals.map((product) => (
                     <CarouselItem key={product.id} className="md:basis-1/4 lg:basis-1/6">
-                        <div className="p-1">
+                        <div className="p-1 h-full">
                             <SmallProductCard product={product} />
                         </div>
                     </CarouselItem>
