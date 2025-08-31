@@ -52,7 +52,7 @@ export function SearchDialog() {
       <Button
         variant="ghost"
         size="icon"
-        className="text-muted-foreground"
+        className="text-foreground/80"
         onClick={() => setOpen(true)}
       >
         <Search className="h-5 w-5" />
