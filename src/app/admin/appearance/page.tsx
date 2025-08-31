@@ -2,7 +2,7 @@
 // This is a new file for the Appearance management page in the admin dashboard.
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,7 +15,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PlusCircle, Trash2 } from "lucide-react";
+import { PlusCircle, Trash2, ChevronDown } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { cn } from "@/lib/utils";
 
 // Schemas for form validation
 const marqueeMessageSchema = z.object({
@@ -50,6 +52,9 @@ const siteSettingsSchema = z.object({
 export default function AdminAppearancePage() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
+  const [isMarqueeOpen, setIsMarqueeOpen] = useState(true);
+  const [isLogosOpen, setIsLogosOpen] = useState(false);
+  const [isBannerOpen, setIsBannerOpen] = useState(false);
 
   const form = useForm<z.infer<typeof siteSettingsSchema>>({
     resolver: zodResolver(siteSettingsSchema),
@@ -70,7 +75,7 @@ export default function AdminAppearancePage() {
     name: "partnershipLogos",
   });
 
-  useEffect(() => {
+  useState(() => {
     async function loadSettings() {
       setLoading(true);
       const settings = await getSiteSettings();
@@ -82,7 +87,7 @@ export default function AdminAppearancePage() {
       setLoading(false);
     }
     loadSettings();
-  }, [form]);
+  });
 
   const onSubmit = async (data: z.infer<typeof siteSettingsSchema>) => {
     const result = await saveSiteSettings(data);
@@ -106,120 +111,154 @@ export default function AdminAppearancePage() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {/* Marquee Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Marquee Settings</CardTitle>
-            <CardDescription>Manage the scrolling text and logos at the top of the homepage.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {marqueeFields.map((field, index) => (
-              <div key={field.id} className="p-4 border rounded-lg space-y-4 relative">
-                <div className="flex items-start gap-4">
-                    <div className="flex-grow space-y-4">
-                        <FormField
-                        control={form.control}
-                        name={`marquee.messages.${index}.text`}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Message Text</FormLabel>
-                                <FormControl><Input {...field} placeholder={`Message ${index + 1}`} /></FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                         <FormField
-                        control={form.control}
-                        name={`marquee.messages.${index}.logoUrl`}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Logo URL (Optional)</FormLabel>
-                                <FormControl><Input {...field} placeholder="https://..." /></FormControl>
-                                <FormDescription>Recommended size: 24x24 pixels.</FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                         <FormField
-                        control={form.control}
-                        name={`marquee.messages.${index}.logoAlt`}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Logo Alt Text</FormLabel>
-                                <FormControl><Input {...field} placeholder="Logo description" /></FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                    </div>
-                    <Button type="button" variant="ghost" size="icon" onClick={() => removeMarquee(index)}>
-                        <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                </div>
-              </div>
-            ))}
-            <Button type="button" variant="outline" size="sm" onClick={() => appendMarquee({ text: "", logoUrl: "", logoAlt: "" })}>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Add Message
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Partnership Logos */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Partnership Logos</CardTitle>
-            <CardDescription>Manage the logos displayed in the partnership section.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {logoFields.map((field, index) => (
-              <div key={field.id} className="p-4 border rounded-lg space-y-4 relative">
-                <div className="flex items-start gap-4">
-                    <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                        control={form.control}
-                        name={`partnershipLogos.${index}.src`}
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Logo Image URL</FormLabel>
-                            <FormControl><Input {...field} placeholder="https://..." /></FormControl>
-                            <FormDescription>Recommended size: 150x75 pixels.</FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name={`partnershipLogos.${index}.alt`}
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Alt Text</FormLabel>
-                            <FormControl><Input {...field} placeholder="Brand Name" /></FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    </div>
-                    <Button type="button" variant="ghost" size="icon" onClick={() => removeLogo(index)}>
-                        <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                </div>
-              </div>
-            ))}
-             <Button type="button" variant="outline" size="sm" onClick={() => appendLogo({ src: "", alt: "", hint: "brand logo" })}>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Add Logo
-            </Button>
-          </CardContent>
-        </Card>
         
-        {/* Ad Banner */}
-        <Card>
-            <CardHeader>
-                <CardTitle>Ad Banner</CardTitle>
-                <CardDescription>Manage the main promotional ad banner on the homepage.</CardDescription>
+        <Collapsible open={isMarqueeOpen} onOpenChange={setIsMarqueeOpen}>
+            <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                    <CardTitle>Marquee Settings</CardTitle>
+                    <CardDescription>Manage the scrolling text and logos at the top of the homepage.</CardDescription>
+                </div>
+                 <CollapsibleTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                        <ChevronDown className={cn("h-5 w-5 transition-transform", isMarqueeOpen && "rotate-180")} />
+                        <span className="sr-only">{isMarqueeOpen ? 'Collapse' : 'Expand'}</span>
+                    </Button>
+                </CollapsibleTrigger>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CollapsibleContent>
+                <CardContent className="space-y-4 pt-4">
+                    {marqueeFields.map((field, index) => (
+                    <div key={field.id} className="p-4 border rounded-lg space-y-4 relative">
+                        <div className="flex items-start gap-4">
+                            <div className="flex-grow space-y-4">
+                                <FormField
+                                control={form.control}
+                                name={`marquee.messages.${index}.text`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Message Text</FormLabel>
+                                        <FormControl><Input {...field} placeholder={`Message ${index + 1}`} /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                                />
+                                <FormField
+                                control={form.control}
+                                name={`marquee.messages.${index}.logoUrl`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Logo URL (Optional)</FormLabel>
+                                        <FormControl><Input {...field} placeholder="https://..." /></FormControl>
+                                        <FormDescription>Recommended size: 24x24 pixels.</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                                />
+                                <FormField
+                                control={form.control}
+                                name={`marquee.messages.${index}.logoAlt`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Logo Alt Text</FormLabel>
+                                        <FormControl><Input {...field} placeholder="Logo description" /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                                />
+                            </div>
+                            <Button type="button" variant="ghost" size="icon" onClick={() => removeMarquee(index)}>
+                                <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                        </div>
+                    </div>
+                    ))}
+                    <Button type="button" variant="outline" size="sm" onClick={() => appendMarquee({ text: "", logoUrl: "", logoAlt: "" })}>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add Message
+                    </Button>
+                </CardContent>
+            </CollapsibleContent>
+            </Card>
+        </Collapsible>
+
+
+        <Collapsible open={isLogosOpen} onOpenChange={setIsLogosOpen}>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                    <CardTitle>Partnership Logos</CardTitle>
+                    <CardDescription>Manage the logos displayed in the partnership section.</CardDescription>
+                </div>
+                 <CollapsibleTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                        <ChevronDown className={cn("h-5 w-5 transition-transform", isLogosOpen && "rotate-180")} />
+                        <span className="sr-only">{isLogosOpen ? 'Collapse' : 'Expand'}</span>
+                    </Button>
+                </CollapsibleTrigger>
+            </CardHeader>
+            <CollapsibleContent>
+            <CardContent className="space-y-6 pt-4">
+                {logoFields.map((field, index) => (
+                <div key={field.id} className="p-4 border rounded-lg space-y-4 relative">
+                    <div className="flex items-start gap-4">
+                        <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormField
+                            control={form.control}
+                            name={`partnershipLogos.${index}.src`}
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Logo Image URL</FormLabel>
+                                <FormControl><Input {...field} placeholder="https://..." /></FormControl>
+                                <FormDescription>Recommended size: 150x75 pixels.</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name={`partnershipLogos.${index}.alt`}
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Alt Text</FormLabel>
+                                <FormControl><Input {...field} placeholder="Brand Name" /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        </div>
+                        <Button type="button" variant="ghost" size="icon" onClick={() => removeLogo(index)}>
+                            <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                    </div>
+                </div>
+                ))}
+                <Button type="button" variant="outline" size="sm" onClick={() => appendLogo({ src: "", alt: "", hint: "brand logo" })}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add Logo
+                </Button>
+            </CardContent>
+            </CollapsibleContent>
+          </Card>
+        </Collapsible>
+        
+        
+        <Collapsible open={isBannerOpen} onOpenChange={setIsBannerOpen}>
+            <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                    <CardTitle>Ad Banner</CardTitle>
+                    <CardDescription>Manage the main promotional ad banner on the homepage.</CardDescription>
+                </div>
+                 <CollapsibleTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                        <ChevronDown className={cn("h-5 w-5 transition-transform", isBannerOpen && "rotate-180")} />
+                         <span className="sr-only">{isBannerOpen ? 'Collapse' : 'Expand'}</span>
+                    </Button>
+                </CollapsibleTrigger>
+            </CardHeader>
+            <CollapsibleContent>
+            <CardContent className="space-y-4 pt-4">
                 <FormField
                     control={form.control}
                     name="adBanner.imageUrl"
@@ -290,7 +329,10 @@ export default function AdminAppearancePage() {
                     />
                 </div>
             </CardContent>
-        </Card>
+            </CollapsibleContent>
+            </Card>
+        </Collapsible>
+        
 
         <Button type="submit" size="lg" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? "Saving..." : "Save All Settings"}
