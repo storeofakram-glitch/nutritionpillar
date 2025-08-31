@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,6 +20,7 @@ import { useToast } from "@/hooks/use-toast"
 import { addProduct, updateProduct } from "@/services/product-service"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import type { Product } from "@/types"
+import { Switch } from "@/components/ui/switch"
 
 const productSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -28,6 +30,7 @@ const productSchema = z.object({
   quantity: z.coerce.number().int().min(0, "Quantity must be a non-negative integer."),
   category: z.string({ required_error: "Please select a category."}).min(1, "Please select a category."),
   imageUrl: z.string().url("Please enter a valid image URL."),
+  sponsored: z.boolean().optional(),
 })
 
 type ProductFormValues = z.infer<typeof productSchema>
@@ -58,6 +61,7 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
       quantity: product?.quantity || 0,
       category: product?.category || "",
       imageUrl: product?.imageUrl || "",
+      sponsored: product?.sponsored || false,
     },
   })
 
@@ -193,6 +197,28 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="sponsored"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+              <div className="space-y-0.5">
+                <FormLabel>Sponsored Product</FormLabel>
+                <FormDescription>
+                  Sponsored products appear at the top of the product list.
+                </FormDescription>
+              </div>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
         <Button type="submit" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting 
             ? isEditMode ? "Saving..." : "Adding..." 
