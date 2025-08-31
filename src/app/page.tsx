@@ -93,27 +93,6 @@ export default async function Home() {
         </Marquee>
       </section>
 
-      <section className="py-12 bg-background">
-        <div className="container mx-auto px-4">
-          <h3 className="text-center text-lg font-semibold text-muted-foreground uppercase tracking-wider mb-8">
-            Partnership
-          </h3>
-          <div className="flex items-center gap-x-12 overflow-x-auto pb-4 md:pb-0 md:flex-wrap md:justify-center md:overflow-x-visible">
-            {partnershipLogos.map((logo, index) => (
-              <div key={index} className="relative h-12 w-32 flex-shrink-0">
-                <Image
-                  src={logo.src}
-                  alt={logo.alt || `Partnership logo ${index + 1}`}
-                  data-ai-hint={logo.hint}
-                  fill
-                  className="object-contain grayscale transition-all duration-300 hover:grayscale-0"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="py-12 md:py-16 bg-muted">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8 items-center bg-card p-8 rounded-lg shadow-lg">
@@ -148,6 +127,27 @@ export default async function Home() {
         <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold font-headline text-center mb-10">Our Products</h2>
             <ProductGrid products={products} />
+        </div>
+      </section>
+      
+      <section className="py-12 bg-background">
+        <div className="container mx-auto px-4">
+          <h3 className="text-center text-lg font-semibold text-muted-foreground uppercase tracking-wider mb-8">
+            Partnership
+          </h3>
+          <div className="flex items-center gap-x-12 overflow-x-auto pb-4 md:pb-0 md:flex-wrap md:justify-center md:overflow-x-visible">
+            {partnershipLogos.map((logo, index) => (
+              <div key={index} className="relative h-12 w-32 flex-shrink-0">
+                <Image
+                  src={logo.src}
+                  alt={logo.alt || `Partnership logo ${index + 1}`}
+                  data-ai-hint={logo.hint}
+                  fill
+                  className="object-contain grayscale transition-all duration-300 hover:grayscale-0"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     </div>
