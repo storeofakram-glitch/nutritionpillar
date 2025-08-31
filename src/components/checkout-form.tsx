@@ -3,7 +3,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useCart } from '@/contexts/cart-context';
-import type { City, ShippingState, OrderInput } from '@/types';
+import type { City, ShippingState, OrderInput, PaymentMethod } from '@/types';
 import { getShippingOptions } from '@/services/shipping-service';
 import { addOrder } from '@/services/order-service';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+import { CreditCard } from 'lucide-react';
 
 export default function CheckoutForm() {
   const { cartTotal, cartItems, clearCart } = useCart();
@@ -25,6 +27,9 @@ export default function CheckoutForm() {
   const [selectedCity, setSelectedCity] = useState<string>('');
   
   const [clientInfo, setClientInfo] = useState({ fullName: '', phone: '', address: '', email: '' });
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('Pay on Delivery');
+  const [cardInfo, setCardInfo] = useState({ number: '', name: '', expiry: '', cvv: '' });
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -38,6 +43,11 @@ export default function CheckoutForm() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setClientInfo(prev => ({ ...prev, [id]: value }));
+  };
+  
+  const handleCardInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setCardInfo(prev => ({ ...prev, [id]: value }));
   };
 
   const availableCities: City[] = useMemo(() => {
@@ -61,6 +71,10 @@ export default function CheckoutForm() {
         toast({ variant: 'destructive', title: 'Error', description: 'Please fill all required fields.' });
         return;
     }
+    if (paymentMethod !== 'Pay on Delivery' && (!cardInfo.number || !cardInfo.name || !cardInfo.expiry || !cardInfo.cvv)) {
+        toast({ variant: 'destructive', title: 'Error', description: 'Please fill in all card details.' });
+        return;
+    }
     
     setIsSubmitting(true);
 
@@ -79,6 +93,7 @@ export default function CheckoutForm() {
             selectedColor: item.selectedColor,
             selectedFlavor: item.selectedFlavor,
         })),
+        paymentMethod: paymentMethod,
     };
     
     const result = await addOrder(orderData);
@@ -101,9 +116,29 @@ export default function CheckoutForm() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmitOrder} className="space-y-6">
-          {/* Shipping Section */}
+          
+          <div className="space-y-2">
+            <h3 className="font-semibold">Your Information</h3>
+            <div>
+              <Label htmlFor="fullName">Full Name</Label>
+              <Input id="fullName" value={clientInfo.fullName} onChange={handleInputChange} placeholder="John Doe" required />
+            </div>
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" value={clientInfo.email} onChange={handleInputChange} placeholder="you@example.com" required />
+            </div>
+            <div>
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input id="phone" type="tel" value={clientInfo.phone} onChange={handleInputChange} placeholder="0555 123 456" required />
+            </div>
+          </div>
+          
           <div className="space-y-2">
             <h3 className="font-semibold">Shipping</h3>
+            <div>
+              <Label htmlFor="address">Address</Label>
+              <Input id="address" value={clientInfo.address} onChange={handleInputChange} placeholder="123 Main St, Apt 4B" required />
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="state">State (Wilaya)</Label>
@@ -125,29 +160,54 @@ export default function CheckoutForm() {
               </div>
             </div>
           </div>
-
-          {/* Client Info Section */}
-          <div className="space-y-2">
-            <h3 className="font-semibold">Your Information</h3>
-            <div>
-              <Label htmlFor="fullName">Full Name</Label>
-              <Input id="fullName" value={clientInfo.fullName} onChange={handleInputChange} placeholder="John Doe" required />
-            </div>
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" value={clientInfo.email} onChange={handleInputChange} placeholder="you@example.com" required />
-            </div>
-            <div>
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input id="phone" type="tel" value={clientInfo.phone} onChange={handleInputChange} placeholder="0555 123 456" required />
-            </div>
-            <div>
-              <Label htmlFor="address">Address</Label>
-              <Input id="address" value={clientInfo.address} onChange={handleInputChange} placeholder="123 Main St, Apt 4B" required />
-            </div>
-          </div>
           
           <Separator />
+          
+          <div className="space-y-4">
+             <h3 className="font-semibold">Payment Method</h3>
+             <RadioGroup value={paymentMethod} onValueChange={(val) => setPaymentMethod(val as PaymentMethod)} className="grid grid-cols-1 gap-4">
+                <Label htmlFor="pay-on-delivery" className="flex items-center gap-3 rounded-md border p-4 cursor-pointer hover:bg-accent has-[[data-state=checked]]:border-primary">
+                    <RadioGroupItem value="Pay on Delivery" id="pay-on-delivery" />
+                    <span>Pay on Delivery</span>
+                </Label>
+                <Label htmlFor="cib-card" className="flex items-center gap-3 rounded-md border p-4 cursor-pointer hover:bg-accent has-[[data-state=checked]]:border-primary">
+                    <RadioGroupItem value="CIB Card" id="cib-card" />
+                    <span>CIB Card</span>
+                </Label>
+                <Label htmlFor="edahabia-card" className="flex items-center gap-3 rounded-md border p-4 cursor-pointer hover:bg-accent has-[[data-state=checked]]:border-primary">
+                    <RadioGroupItem value="EDAHABIA Card" id="edahabia-card" />
+                    <span>EDAHABIA Card</span>
+                </Label>
+             </RadioGroup>
+          </div>
+
+          {paymentMethod !== 'Pay on Delivery' && (
+            <div className="space-y-4 rounded-md border p-4">
+                <div className="flex items-center justify-between">
+                    <h3 className="font-semibold">Payment Details</h3>
+                    <CreditCard className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="card-number">Card Number</Label>
+                    <Input id="number" value={cardInfo.number} onChange={handleCardInputChange} placeholder="•••• •••• •••• ••••" required />
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="card-name">Name on Card</Label>
+                    <Input id="name" value={cardInfo.name} onChange={handleCardInputChange} placeholder="John Doe" required />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                     <div className="space-y-2">
+                        <Label htmlFor="card-expiry">Expiry (MM/YY)</Label>
+                        <Input id="expiry" value={cardInfo.expiry} onChange={handleCardInputChange} placeholder="MM/YY" required />
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="card-cvv">CVV</Label>
+                        <Input id="cvv" value={cardInfo.cvv} onChange={handleCardInputChange} placeholder="123" required />
+                    </div>
+                </div>
+            </div>
+          )}
+
 
           {/* Order Totals Section */}
           <div className="space-y-2 text-sm">

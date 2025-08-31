@@ -101,6 +101,7 @@ export async function addOrder(orderInput: OrderInput) {
                 orderNumber,
                 date: new Date().toISOString(),
                 status: 'pending',
+                paymentMethod: orderInput.paymentMethod || 'Pay on Delivery',
             };
 
             const newOrderRef = doc(collection(db, 'orders'));

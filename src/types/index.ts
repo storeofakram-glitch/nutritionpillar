@@ -5,6 +5,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -54,6 +55,8 @@ export type OrderItem = {
     selectedFlavor?: string;
 }
 
+export type PaymentMethod = 'Pay on Delivery' | 'CIB Card' | 'EDAHABIA Card';
+
 export type Order = {
   id: string;
   orderNumber: number;
@@ -61,6 +64,7 @@ export type Order = {
   date: string; // Keep as string to match Firestore data
   amount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'canceled';
+  paymentMethod?: PaymentMethod;
   shippingAddress: {
     address: string;
     city: string;
@@ -82,6 +86,7 @@ export type OrderInput = {
   customer: Customer;
   shippingAddress: Order['shippingAddress'];
   items: OrderItemInput[];
+  paymentMethod?: PaymentMethod;
 };
 
 export type Expense = {

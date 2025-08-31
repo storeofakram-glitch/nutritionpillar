@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator"
 import type { Order } from "@/types"
 import { format } from "date-fns"
 import Image from "next/image"
+import { CreditCard, Truck } from "lucide-react"
 
 interface ViewOrderDialogProps {
     isOpen: boolean;
@@ -35,7 +36,7 @@ export default function ViewOrderDialog({ isOpen, onOpenChange, order }: ViewOrd
   
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>Order Details</DialogTitle>
           <DialogDescription>
@@ -60,7 +61,7 @@ export default function ViewOrderDialog({ isOpen, onOpenChange, order }: ViewOrd
 
                 <Separator />
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div className="space-y-1">
                         <h3 className="font-semibold">Order Date</h3>
                         <p className="text-sm">{format(new Date(order.date), "PPP p")}</p>
@@ -72,6 +73,13 @@ export default function ViewOrderDialog({ isOpen, onOpenChange, order }: ViewOrd
                         </Badge>
                     </div>
                     <div className="space-y-1">
+                        <h3 className="font-semibold">Payment Method</h3>
+                        <div className="flex items-center gap-2 text-sm">
+                           {order.paymentMethod?.includes('Card') ? <CreditCard className="h-4 w-4 text-muted-foreground" /> : <Truck className="h-4 w-4 text-muted-foreground" />}
+                           <span>{order.paymentMethod || 'Pay on Delivery'}</span>
+                        </div>
+                    </div>
+                     <div className="space-y-1">
                         <h3 className="font-semibold">Total Amount</h3>
                         <p className="text-sm font-bold">DZD {order.amount.toFixed(2)}</p>
                     </div>
