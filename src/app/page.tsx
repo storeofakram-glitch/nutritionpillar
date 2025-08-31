@@ -57,7 +57,8 @@ export default async function Home() {
                     src={image.url}
                     alt={image.alt}
                     data-ai-hint="athlete training"
-                    fill
+                    width={1920}
+                    height={1080}
                     className="object-cover h-full w-full"
                 />
             ))}
