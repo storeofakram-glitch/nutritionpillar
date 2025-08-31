@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 
 // Schemas for form validation
 const heroSettingsSchema = z.object({
-    imageUrl: z.string().url({ message: "Please enter a valid URL." }),
+    imageUrl: z.string().url({ message: "Please enter a valid URL." }).or(z.literal('')),
     alt: z.string().min(1, { message: "Alt text is required." }),
     title: z.string().min(1, { message: "Title is required." }),
     description: z.string().min(1, { message: "Description is required." }),
@@ -36,13 +36,13 @@ const marqueeMessageSchema = z.object({
 });
 
 const logoSchema = z.object({
-  src: z.string().url({ message: "Please enter a valid URL." }),
+  src: z.string().url({ message: "Please enter a valid URL." }).or(z.literal('')),
   alt: z.string().min(1, { message: "Alt text is required." }),
   hint: z.string().optional(),
 });
 
 const adBannerSchema = z.object({
-  imageUrl: z.string().url({ message: "Please enter a valid URL." }),
+  imageUrl: z.string().url({ message: "Please enter a valid URL." }).or(z.literal('')),
   alt: z.string().min(1, { message: "Alt text is required." }),
   title: z.string().min(1, { message: "Title is required." }),
   description: z.string().min(1, { message: "Description is required." }),
@@ -53,7 +53,7 @@ const adBannerSchema = z.object({
 const aboutPageSettingsSchema = z.object({
     title: z.string().min(1, "Title is required."),
     subtitle: z.string().min(1, "Subtitle is required."),
-    imageUrl: z.string().url({ message: "Please enter a valid URL." }),
+    imageUrl: z.string().url({ message: "Please enter a valid URL." }).or(z.literal('')),
     imageAlt: z.string().min(1, "Image alt text is required."),
     storyTitle: z.string().min(1, "Story title is required."),
     storyContent1: z.string().min(1, "Story content is required."),
@@ -77,6 +77,15 @@ const siteSettingsSchema = z.object({
   aboutPage: aboutPageSettingsSchema,
 });
 
+const emptyValues: SiteSettings = {
+    hero: { imageUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "" },
+    marquee: { messages: [{ text: "", logoUrl: "", logoAlt: "" }] },
+    partnershipLogos: [{ src: "", alt: "", hint: "" }],
+    adBanner: { imageUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "" },
+    aboutPage: { title: "", subtitle: "", imageUrl: "", imageAlt: "", storyTitle: "", storyContent1: "", storyContent2: "", missionTitle: "", missionContent: "", visionTitle: "", visionContent: "", valuesTitle: "", valuesContent: "" },
+};
+
+
 export default function AdminAppearancePage() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
@@ -88,17 +97,7 @@ export default function AdminAppearancePage() {
 
   const form = useForm<z.infer<typeof siteSettingsSchema>>({
     resolver: zodResolver(siteSettingsSchema),
-    defaultValues: async () => {
-        const settings = await getSiteSettings();
-        const messages = settings?.marquee?.messages.map(m => ({ text: m.text, logoUrl: m.logoUrl || '', logoAlt: m.logoAlt || '' })) || [];
-        return {
-            hero: settings?.hero || { imageUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "" },
-            marquee: { messages: messages.length > 0 ? messages : [{ text: "", logoUrl: "", logoAlt: "" }] },
-            partnershipLogos: settings?.partnershipLogos || [{ src: "", alt: "", hint: "" }],
-            adBanner: settings?.adBanner || { imageUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "" },
-            aboutPage: settings?.aboutPage || { title: "", subtitle: "", imageUrl: "", imageAlt: "", storyTitle: "", storyContent1: "", storyContent2: "", missionTitle: "", missionContent: "", visionTitle: "", visionContent: "", valuesTitle: "", valuesContent: "" },
-        }
-    }
+    defaultValues: emptyValues,
   });
   
   useEffect(() => {
@@ -108,13 +107,15 @@ export default function AdminAppearancePage() {
       if (settings) {
         // Ensure marquee messages have all fields to avoid uncontrolled component errors
         const messages = settings.marquee?.messages.map(m => ({ text: m.text, logoUrl: m.logoUrl || '', logoAlt: m.logoAlt || '' })) || [];
+        const partnershipLogos = settings.partnershipLogos?.map(l => ({ ...l, src: l.src || '', alt: l.alt || '' })) || [];
+        
         form.reset({
-             hero: settings.hero,
-             marquee: { messages: messages.length > 0 ? messages : [{ text: "", logoUrl: "", logoAlt: "" }] }, 
-             partnershipLogos: settings.partnershipLogos,
-             adBanner: settings.adBanner,
-             aboutPage: settings.aboutPage,
-            });
+             hero: { ...emptyValues.hero, ...settings.hero },
+             marquee: { messages: messages.length > 0 ? messages : emptyValues.marquee.messages }, 
+             partnershipLogos: partnershipLogos.length > 0 ? partnershipLogos : emptyValues.partnershipLogos,
+             adBanner: { ...emptyValues.adBanner, ...settings.adBanner },
+             aboutPage: { ...emptyValues.aboutPage, ...settings.aboutPage },
+        });
       }
       setLoading(false);
     }
