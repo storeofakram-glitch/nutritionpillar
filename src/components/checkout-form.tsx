@@ -201,7 +201,7 @@ export default function CheckoutForm() {
                         <Input id="expiry" value={cardInfo.expiry} onChange={handleCardInputChange} placeholder="MM/YY" required />
                     </div>
                      <div className="space-y-2">
-                        <Label htmlFor="card-cvv">CVV</Label>
+                        <Label htmlFor="cvv">CVV2</Label>
                         <Input id="cvv" value={cardInfo.cvv} onChange={handleCardInputChange} placeholder="123" required />
                     </div>
                 </div>
