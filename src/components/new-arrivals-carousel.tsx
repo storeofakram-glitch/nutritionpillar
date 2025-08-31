@@ -1,0 +1,80 @@
+
+import { getProducts } from "@/services/product-service";
+import type { Product } from "@/types";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Image from "next/image";
+import Link from "next/link";
+import { Badge } from "./ui/badge";
+
+const SmallProductCard = ({ product }: { product: Product }) => {
+  const isOutOfStock = product.quantity === 0;
+
+  return (
+    <Link href={`/products/${product.id}`} className="block h-full">
+      <div className="text-center">
+        <div className="relative w-full aspect-square mb-4 bg-gray-50 rounded-lg overflow-hidden">
+            <Image
+                src={product.imageUrl}
+                alt={product.name}
+                fill
+                className="object-contain p-4"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 15vw"
+            />
+            {isOutOfStock && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                    <Badge variant="destructive">Out of Stock</Badge>
+                </div>
+            )}
+        </div>
+        <h3 className="font-semibold text-sm truncate">{product.name}</h3>
+        <p className="font-bold text-primary">DZD {product.price.toFixed(2)}</p>
+      </div>
+    </Link>
+  );
+};
+
+export default async function NewArrivalsCarousel() {
+  const allProducts = await getProducts();
+  // Assuming newer products are added to the end of the collection
+  const newArrivals = allProducts.slice(-8).reverse();
+
+  if (newArrivals.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="py-12 md:py-20 bg-background">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-10">
+            <p className="text-sm font-bold text-muted-foreground tracking-widest uppercase">LATEST ADDED</p>
+            <h2 className="text-3xl md:text-4xl font-bold font-headline mt-2">New Arrivals</h2>
+        </div>
+        <Carousel
+            opts={{
+                align: "start",
+                loop: true,
+            }}
+            className="w-full"
+        >
+            <CarouselContent>
+                {newArrivals.map((product) => (
+                    <CarouselItem key={product.id} className="md:basis-1/4 lg:basis-1/6">
+                        <div className="p-1">
+                            <SmallProductCard product={product} />
+                        </div>
+                    </CarouselItem>
+                ))}
+            </CarouselContent>
+            <CarouselPrevious className="hidden md:flex" />
+            <CarouselNext className="hidden md:flex" />
+        </Carousel>
+      </div>
+    </section>
+  );
+}

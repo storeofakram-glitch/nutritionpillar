@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { ArrowRight } from 'lucide-react';
 import { getSiteSettings } from '@/services/site-settings-service';
 import type { SiteSettings } from '@/types';
+import NewArrivalsCarousel from '@/components/new-arrivals-carousel';
 
 export default async function Home() {
   const products = await getProducts();
@@ -122,6 +123,8 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <NewArrivalsCarousel />
 
       <section id="products" className="py-12 md:py-20">
         <div className="container mx-auto px-4">
