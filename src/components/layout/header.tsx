@@ -36,7 +36,7 @@ export default function Header() {
       onClick={() => setIsSheetOpen(false)}
       className={cn(
         'transition-colors hover:text-primary',
-        (pathname === href) ? 'text-primary font-semibold' : 'text-foreground/60'
+        pathname === href ? 'text-primary font-semibold' : 'text-foreground/60'
       )}
     >
       {children}
