@@ -51,14 +51,12 @@ export function SearchDialog() {
     <>
       <Button
         variant="ghost"
-        className="gap-2 text-muted-foreground"
+        size="icon"
+        className="text-muted-foreground"
         onClick={() => setOpen(true)}
       >
         <Search className="h-5 w-5" />
-        <span className="hidden sm:inline-block">Search...</span>
-        <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-          <span className="text-xs">⌘</span>K
-        </kbd>
+        <span className="sr-only">Search</span>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Type a product name..." />
