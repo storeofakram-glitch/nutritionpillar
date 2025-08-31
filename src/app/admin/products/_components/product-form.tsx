@@ -193,6 +193,9 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
               <FormControl>
                 <Input placeholder="https://..." {...field} />
               </FormControl>
+              <FormDescription>
+                Recommended aspect ratio: 1:1 (e.g., 400x400 pixels).
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
