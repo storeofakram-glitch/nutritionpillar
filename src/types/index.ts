@@ -3,6 +3,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -108,6 +109,8 @@ export type MonthlyFinanceData = {
 // Types for Site Appearance Settings
 export type MarqueeMessage = {
   text: string;
+  logoUrl?: string;
+  logoAlt?: string;
 };
 
 export type PartnershipLogo = {

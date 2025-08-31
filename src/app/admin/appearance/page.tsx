@@ -18,6 +18,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PlusCircle, Trash2 } from "lucide-react";
 
 // Schemas for form validation
+const marqueeMessageSchema = z.object({
+  text: z.string().min(1, "Message cannot be empty."),
+  logoUrl: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
+  logoAlt: z.string().optional(),
+});
+
 const logoSchema = z.object({
   src: z.string().url({ message: "Please enter a valid URL." }),
   alt: z.string().min(1, { message: "Alt text is required." }),
@@ -35,7 +41,7 @@ const adBannerSchema = z.object({
 
 const siteSettingsSchema = z.object({
   marquee: z.object({
-    messages: z.array(z.object({ text: z.string().min(1, "Message cannot be empty.") }))
+    messages: z.array(marqueeMessageSchema)
   }),
   partnershipLogos: z.array(logoSchema),
   adBanner: adBannerSchema,
@@ -48,7 +54,7 @@ export default function AdminAppearancePage() {
   const form = useForm<z.infer<typeof siteSettingsSchema>>({
     resolver: zodResolver(siteSettingsSchema),
     defaultValues: {
-      marquee: { messages: [{ text: "" }] },
+      marquee: { messages: [{ text: "", logoUrl: "", logoAlt: "" }] },
       partnershipLogos: [{ src: "", alt: "", hint: "" }],
       adBanner: { imageUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "" },
     },
@@ -69,7 +75,9 @@ export default function AdminAppearancePage() {
       setLoading(true);
       const settings = await getSiteSettings();
       if (settings) {
-        form.reset(settings);
+        // Ensure marquee messages have all fields to avoid uncontrolled component errors
+        const messages = settings.marquee?.messages.map(m => ({ text: m.text, logoUrl: m.logoUrl || '', logoAlt: m.logoAlt || '' })) || [];
+        form.reset({ ...settings, marquee: { messages } });
       }
       setLoading(false);
     }
@@ -102,29 +110,55 @@ export default function AdminAppearancePage() {
         <Card>
           <CardHeader>
             <CardTitle>Marquee Settings</CardTitle>
-            <CardDescription>Manage the scrolling text messages at the top of the homepage.</CardDescription>
+            <CardDescription>Manage the scrolling text and logos at the top of the homepage.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {marqueeFields.map((field, index) => (
-              <div key={field.id} className="flex items-center gap-2">
-                <FormField
-                  control={form.control}
-                  name={`marquee.messages.${index}.text`}
-                  render={({ field }) => (
-                    <FormItem className="flex-grow">
-                      <FormControl>
-                        <Input {...field} placeholder={`Message ${index + 1}`} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="button" variant="ghost" size="icon" onClick={() => removeMarquee(index)}>
-                  <Trash2 className="h-4 w-4 text-red-500" />
-                </Button>
+              <div key={field.id} className="p-4 border rounded-lg space-y-4 relative">
+                <div className="flex items-start gap-4">
+                    <div className="flex-grow space-y-4">
+                        <FormField
+                        control={form.control}
+                        name={`marquee.messages.${index}.text`}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Message Text</FormLabel>
+                                <FormControl><Input {...field} placeholder={`Message ${index + 1}`} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                         <FormField
+                        control={form.control}
+                        name={`marquee.messages.${index}.logoUrl`}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Logo URL (Optional)</FormLabel>
+                                <FormControl><Input {...field} placeholder="https://..." /></FormControl>
+                                <FormDescription>Recommended size: 24x24 pixels.</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                         <FormField
+                        control={form.control}
+                        name={`marquee.messages.${index}.logoAlt`}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Logo Alt Text</FormLabel>
+                                <FormControl><Input {...field} placeholder="Logo description" /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                    </div>
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeMarquee(index)}>
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                </div>
               </div>
             ))}
-            <Button type="button" variant="outline" size="sm" onClick={() => appendMarquee({ text: "" })}>
+            <Button type="button" variant="outline" size="sm" onClick={() => appendMarquee({ text: "", logoUrl: "", logoAlt: "" })}>
               <PlusCircle className="mr-2 h-4 w-4" />
               Add Message
             </Button>

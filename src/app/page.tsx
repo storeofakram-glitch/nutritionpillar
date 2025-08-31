@@ -67,7 +67,18 @@ export default async function Home() {
       <section className="bg-muted border-y">
         <Marquee>
           {marqueeMessages.map((msg, i) => (
-            <span key={i} className="mx-8 font-semibold text-muted-foreground">{msg.text}</span>
+            <div key={i} className="flex items-center gap-4 mx-8">
+                {msg.logoUrl && (
+                    <Image 
+                        src={msg.logoUrl}
+                        alt={msg.logoAlt || 'Marquee Logo'}
+                        width={24}
+                        height={24}
+                        className="object-contain"
+                    />
+                )}
+                <span className="font-semibold text-muted-foreground">{msg.text}</span>
+            </div>
           ))}
         </Marquee>
       </section>
