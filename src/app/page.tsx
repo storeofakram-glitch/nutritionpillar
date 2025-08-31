@@ -14,6 +14,15 @@ export default async function Home() {
   const products = await getProducts();
   const siteSettings: SiteSettings | null = await getSiteSettings();
 
+  const hero = siteSettings?.hero || {
+    imageUrl: 'https://picsum.photos/1920/1080',
+    alt: 'Athlete training',
+    title: 'Welcome to Nutrition Pillar',
+    description: 'Your one-stop shop for premium supplements. We provide quality ingredients for your peak performance and optimal health.',
+    buttonText: 'Shop Now',
+    buttonLink: '#products'
+  };
+  
   const marqueeMessages = siteSettings?.marquee?.messages || [
     { text: 'Free shipping on orders over 10,000 DZD' },
     { text: 'Check out our new arrivals!' },
@@ -43,22 +52,22 @@ export default async function Home() {
     <div className="flex flex-col">
       <section className="relative w-full h-[60vh] md:h-[70vh] bg-gray-900 text-white">
         <Image
-          src="https://picsum.photos/1920/1080"
-          alt="Athlete training"
+          src={hero.imageUrl}
+          alt={hero.alt}
           data-ai-hint="athlete training"
           fill
           className="object-cover opacity-40"
         />
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center p-4">
           <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight">
-            Welcome to Nutrition Pillar
+            {hero.title}
           </h1>
           <p className="text-lg md:text-xl max-w-2xl mb-8">
-            Your one-stop shop for premium supplements. We provide quality ingredients for your peak performance and optimal health.
+            {hero.description}
           </p>
           <div className="flex gap-4">
             <Button asChild size="lg" className="font-bold">
-              <Link href="#products">Shop Now</Link>
+              <Link href={hero.buttonLink}>{hero.buttonText}</Link>
             </Button>
           </div>
         </div>

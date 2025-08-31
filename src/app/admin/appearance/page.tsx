@@ -20,6 +20,15 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { cn } from "@/lib/utils";
 
 // Schemas for form validation
+const heroSettingsSchema = z.object({
+    imageUrl: z.string().url({ message: "Please enter a valid URL." }),
+    alt: z.string().min(1, { message: "Alt text is required." }),
+    title: z.string().min(1, { message: "Title is required." }),
+    description: z.string().min(1, { message: "Description is required." }),
+    buttonText: z.string().min(1, { message: "Button text is required." }),
+    buttonLink: z.string().min(1, { message: "Button link is required." }),
+});
+
 const marqueeMessageSchema = z.object({
   text: z.string().min(1, "Message cannot be empty."),
   logoUrl: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
@@ -41,29 +50,76 @@ const adBannerSchema = z.object({
   buttonLink: z.string().min(1, { message: "Button link is required." }),
 });
 
+const aboutPageSettingsSchema = z.object({
+    title: z.string().min(1, "Title is required."),
+    subtitle: z.string().min(1, "Subtitle is required."),
+    imageUrl: z.string().url({ message: "Please enter a valid URL." }),
+    imageAlt: z.string().min(1, "Image alt text is required."),
+    storyTitle: z.string().min(1, "Story title is required."),
+    storyContent1: z.string().min(1, "Story content is required."),
+    storyContent2: z.string().min(1, "Story content is required."),
+    missionTitle: z.string().min(1, "Mission title is required."),
+    missionContent: z.string().min(1, "Mission content is required."),
+    visionTitle: z.string().min(1, "Vision title is required."),
+    visionContent: z.string().min(1, "Vision content is required."),
+    valuesTitle: z.string().min(1, "Values title is required."),
+    valuesContent: z.string().min(1, "Values content is required."),
+});
+
+
 const siteSettingsSchema = z.object({
+  hero: heroSettingsSchema,
   marquee: z.object({
     messages: z.array(marqueeMessageSchema)
   }),
   partnershipLogos: z.array(logoSchema),
   adBanner: adBannerSchema,
+  aboutPage: aboutPageSettingsSchema,
 });
 
 export default function AdminAppearancePage() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
-  const [isMarqueeOpen, setIsMarqueeOpen] = useState(true);
+  const [isHeroOpen, setIsHeroOpen] = useState(true);
+  const [isMarqueeOpen, setIsMarqueeOpen] = useState(false);
   const [isLogosOpen, setIsLogosOpen] = useState(false);
   const [isBannerOpen, setIsBannerOpen] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
 
   const form = useForm<z.infer<typeof siteSettingsSchema>>({
     resolver: zodResolver(siteSettingsSchema),
-    defaultValues: {
-      marquee: { messages: [{ text: "", logoUrl: "", logoAlt: "" }] },
-      partnershipLogos: [{ src: "", alt: "", hint: "" }],
-      adBanner: { imageUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "" },
-    },
+    defaultValues: async () => {
+        const settings = await getSiteSettings();
+        const messages = settings?.marquee?.messages.map(m => ({ text: m.text, logoUrl: m.logoUrl || '', logoAlt: m.logoAlt || '' })) || [];
+        return {
+            hero: settings?.hero || { imageUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "" },
+            marquee: { messages: messages.length > 0 ? messages : [{ text: "", logoUrl: "", logoAlt: "" }] },
+            partnershipLogos: settings?.partnershipLogos || [{ src: "", alt: "", hint: "" }],
+            adBanner: settings?.adBanner || { imageUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "" },
+            aboutPage: settings?.aboutPage || { title: "", subtitle: "", imageUrl: "", imageAlt: "", storyTitle: "", storyContent1: "", storyContent2: "", missionTitle: "", missionContent: "", visionTitle: "", visionContent: "", valuesTitle: "", valuesContent: "" },
+        }
+    }
   });
+  
+  useEffect(() => {
+    async function loadSettings() {
+      setLoading(true);
+      const settings = await getSiteSettings();
+      if (settings) {
+        // Ensure marquee messages have all fields to avoid uncontrolled component errors
+        const messages = settings.marquee?.messages.map(m => ({ text: m.text, logoUrl: m.logoUrl || '', logoAlt: m.logoAlt || '' })) || [];
+        form.reset({
+             hero: settings.hero,
+             marquee: { messages: messages.length > 0 ? messages : [{ text: "", logoUrl: "", logoAlt: "" }] }, 
+             partnershipLogos: settings.partnershipLogos,
+             adBanner: settings.adBanner,
+             aboutPage: settings.aboutPage,
+            });
+      }
+      setLoading(false);
+    }
+    loadSettings();
+  }, [form]);
 
   const { fields: marqueeFields, append: appendMarquee, remove: removeMarquee } = useFieldArray({
     control: form.control,
@@ -74,20 +130,6 @@ export default function AdminAppearancePage() {
     control: form.control,
     name: "partnershipLogos",
   });
-
-  useEffect(() => {
-    async function loadSettings() {
-      setLoading(true);
-      const settings = await getSiteSettings();
-      if (settings) {
-        // Ensure marquee messages have all fields to avoid uncontrolled component errors
-        const messages = settings.marquee?.messages.map(m => ({ text: m.text, logoUrl: m.logoUrl || '', logoAlt: m.logoAlt || '' })) || [];
-        form.reset({ ...settings, marquee: { messages } });
-      }
-      setLoading(false);
-    }
-    loadSettings();
-  }, [form]);
 
   const onSubmit = async (data: z.infer<typeof siteSettingsSchema>) => {
     const result = await saveSiteSettings(data);
@@ -101,6 +143,7 @@ export default function AdminAppearancePage() {
   if (loading) {
     return (
         <div className="space-y-6">
+            <Skeleton className="h-96 w-full" />
             <Skeleton className="h-48 w-full" />
             <Skeleton className="h-64 w-full" />
             <Skeleton className="h-96 w-full" />
@@ -111,6 +154,72 @@ export default function AdminAppearancePage() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        
+        <Collapsible open={isHeroOpen} onOpenChange={setIsHeroOpen}>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>Hero Section</CardTitle>
+                        <CardDescription>Manage the main hero banner on the homepage.</CardDescription>
+                    </div>
+                    <CollapsibleTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <ChevronDown className={cn("h-5 w-5 transition-transform", isHeroOpen && "rotate-180")} />
+                            <span className="sr-only">{isHeroOpen ? 'Collapse' : 'Expand'}</span>
+                        </Button>
+                    </CollapsibleTrigger>
+                </CardHeader>
+                <CollapsibleContent>
+                    <CardContent className="space-y-4 pt-4">
+                        <FormField control={form.control} name="hero.imageUrl" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Image URL</FormLabel>
+                                <FormControl><Input {...field} placeholder="https://picsum.photos/1920/1080" /></FormControl>
+                                <FormDescription>Recommended aspect ratio: 16:9 (e.g., 1920x1080 pixels).</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="hero.alt" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Image Alt Text</FormLabel>
+                                <FormControl><Input {...field} placeholder="Hero banner image" /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="hero.title" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Title</FormLabel>
+                                <FormControl><Input {...field} placeholder="Welcome to..." /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="hero.description" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Description</FormLabel>
+                                <FormControl><Textarea {...field} placeholder="Your one-stop shop for..." /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                             <FormField control={form.control} name="hero.buttonText" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Button Text</FormLabel>
+                                    <FormControl><Input {...field} placeholder="Shop Now" /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                             <FormField control={form.control} name="hero.buttonLink" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Button Link</FormLabel>
+                                    <FormControl><Input {...field} placeholder="/#products" /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                        </div>
+                    </CardContent>
+                </CollapsibleContent>
+            </Card>
+        </Collapsible>
         
         <Collapsible open={isMarqueeOpen} onOpenChange={setIsMarqueeOpen}>
             <Card>
@@ -333,6 +442,72 @@ export default function AdminAppearancePage() {
             </Card>
         </Collapsible>
         
+        <Collapsible open={isAboutOpen} onOpenChange={setIsAboutOpen}>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>About Page Settings</CardTitle>
+                        <CardDescription>Manage all the content on the About Us page.</CardDescription>
+                    </div>
+                    <CollapsibleTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <ChevronDown className={cn("h-5 w-5 transition-transform", isAboutOpen && "rotate-180")} />
+                            <span className="sr-only">{isAboutOpen ? 'Collapse' : 'Expand'}</span>
+                        </Button>
+                    </CollapsibleTrigger>
+                </CardHeader>
+                <CollapsibleContent>
+                    <CardContent className="space-y-4 pt-4">
+                         <FormField control={form.control} name="aboutPage.title" render={({ field }) => (
+                            <FormItem><FormLabel>Main Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                         <FormField control={form.control} name="aboutPage.subtitle" render={({ field }) => (
+                            <FormItem><FormLabel>Subtitle</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={form.control} name="aboutPage.imageUrl" render={({ field }) => (
+                            <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input {...field} /></FormControl><FormDescription>Recommended aspect ratio: 1:1 (e.g., 600x600).</FormDescription><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={form.control} name="aboutPage.imageAlt" render={({ field }) => (
+                            <FormItem><FormLabel>Image Alt Text</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={form.control} name="aboutPage.storyTitle" render={({ field }) => (
+                            <FormItem><FormLabel>Story Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={form.control} name="aboutPage.storyContent1" render={({ field }) => (
+                            <FormItem><FormLabel>Story Paragraph 1</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={form.control} name="aboutPage.storyContent2" render={({ field }) => (
+                            <FormItem><FormLabel>Story Paragraph 2</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem>
+                        )} />
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                             <FormField control={form.control} name="aboutPage.missionTitle" render={({ field }) => (
+                                <FormItem><FormLabel>Mission Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                             <FormField control={form.control} name="aboutPage.missionContent" render={({ field }) => (
+                                <FormItem><FormLabel>Mission Content</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
+                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                             <FormField control={form.control} name="aboutPage.visionTitle" render={({ field }) => (
+                                <FormItem><FormLabel>Vision Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                             <FormField control={form.control} name="aboutPage.visionContent" render={({ field }) => (
+                                <FormItem><FormLabel>Vision Content</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
+                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                             <FormField control={form.control} name="aboutPage.valuesTitle" render={({ field }) => (
+                                <FormItem><FormLabel>Values Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                             <FormField control={form.control} name="aboutPage.valuesContent" render={({ field }) => (
+                                <FormItem><FormLabel>Values Content</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
+                    </CardContent>
+                </CollapsibleContent>
+            </Card>
+        </Collapsible>
 
         <Button type="submit" size="lg" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? "Saving..." : "Save All Settings"}
