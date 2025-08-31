@@ -15,7 +15,7 @@ import { useCart } from '@/contexts/cart-context';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 
-export default function ProductDetailPage() {
+export default function ProductDetailPage({ params }: { params: { id: string } }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
@@ -24,7 +24,7 @@ export default function ProductDetailPage() {
   const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
   const { addToCart } = useCart();
   const router = useRouter();
-  const { id: productId } = useParams<{ id: string }>();
+  const { id: productId } = params;
 
   useEffect(() => {
     async function fetchProduct() {
