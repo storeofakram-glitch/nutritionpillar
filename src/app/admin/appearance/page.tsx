@@ -174,34 +174,36 @@ export default function AdminAppearancePage() {
           <CardContent className="space-y-6">
             {logoFields.map((field, index) => (
               <div key={field.id} className="p-4 border rounded-lg space-y-4 relative">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name={`partnershipLogos.${index}.src`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Logo Image URL</FormLabel>
-                        <FormControl><Input {...field} placeholder="https://..." /></FormControl>
-                        <FormDescription>Recommended size: 150x75 pixels.</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`partnershipLogos.${index}.alt`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Alt Text</FormLabel>
-                        <FormControl><Input {...field} placeholder="Brand Name" /></FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <div className="flex items-start gap-4">
+                    <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                        control={form.control}
+                        name={`partnershipLogos.${index}.src`}
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Logo Image URL</FormLabel>
+                            <FormControl><Input {...field} placeholder="https://..." /></FormControl>
+                            <FormDescription>Recommended size: 150x75 pixels.</FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name={`partnershipLogos.${index}.alt`}
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Alt Text</FormLabel>
+                            <FormControl><Input {...field} placeholder="Brand Name" /></FormControl>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    </div>
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeLogo(index)}>
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
                 </div>
-                 <Button type="button" variant="destructive" size="sm" className="absolute top-2 right-2" onClick={() => removeLogo(index)}>
-                    Remove
-                </Button>
               </div>
             ))}
              <Button type="button" variant="outline" size="sm" onClick={() => appendLogo({ src: "", alt: "", hint: "brand logo" })}>
