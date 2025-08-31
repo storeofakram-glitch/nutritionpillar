@@ -2,7 +2,7 @@
 // This is a new file for the Appearance management page in the admin dashboard.
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -75,7 +75,7 @@ export default function AdminAppearancePage() {
     name: "partnershipLogos",
   });
 
-  useState(() => {
+  useEffect(() => {
     async function loadSettings() {
       setLoading(true);
       const settings = await getSiteSettings();
@@ -87,7 +87,7 @@ export default function AdminAppearancePage() {
       setLoading(false);
     }
     loadSettings();
-  });
+  }, [form]);
 
   const onSubmit = async (data: z.infer<typeof siteSettingsSchema>) => {
     const result = await saveSiteSettings(data);
