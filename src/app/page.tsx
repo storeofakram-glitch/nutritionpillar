@@ -16,8 +16,7 @@ export default async function Home() {
   const siteSettings: SiteSettings | null = await getSiteSettings();
 
   const hero = siteSettings?.hero || {
-    imageUrl: 'https://picsum.photos/1920/1080',
-    alt: 'Athlete training',
+    images: [{ url: 'https://picsum.photos/1920/1080', alt: 'Athlete training' }],
     title: 'Welcome to Nutrition Pillar',
     description: 'Your one-stop shop for premium supplements. We provide quality ingredients for your peak performance and optimal health.',
     buttonText: 'Shop Now',
@@ -40,8 +39,7 @@ export default async function Home() {
   ];
   
   const adBanner = siteSettings?.adBanner || {
-    imageUrl: 'https://picsum.photos/600/400?random=30',
-    alt: 'Featured Promotion',
+    images: [{ url: 'https://picsum.photos/600/400?random=30', alt: 'Featured Promotion' }],
     title: 'Limited Time Offer!',
     description: "Get 20% off on all pre-workout supplements this week only. Don't miss out on this opportunity to fuel your workouts for less.",
     buttonText: 'Shop Pre-Workouts',
@@ -51,15 +49,20 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col">
-      <section className="relative w-full h-[60vh] md:h-[70vh] bg-gray-900 text-white">
-        <Image
-          src={hero.imageUrl}
-          alt={hero.alt}
-          data-ai-hint="athlete training"
-          fill
-          className="object-cover opacity-40"
-        />
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center p-4">
+      <section className="relative w-full h-[60vh] md:h-[70vh] bg-gray-900 text-white overflow-hidden">
+        <Marquee vertical reverse className="h-full">
+            {(hero.images || []).map((image, i) => (
+                 <Image
+                    key={i}
+                    src={image.url}
+                    alt={image.alt}
+                    data-ai-hint="athlete training"
+                    fill
+                    className="object-cover opacity-40 h-full w-full"
+                />
+            ))}
+        </Marquee>
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center h-full text-center p-4">
           <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight">
             {hero.title}
           </h1>
@@ -87,7 +90,7 @@ export default async function Home() {
                         className="object-contain"
                     />
                 )}
-                <span className="font-semibold text-muted-foreground whitespace-nowrap">{msg.text}</span>
+                <span className="font-semibold text-foreground whitespace-nowrap">{msg.text}</span>
                 <div className="h-2 w-2 bg-primary rounded-full" />
             </div>
           ))}
@@ -120,8 +123,8 @@ export default async function Home() {
           <div className="grid md:grid-cols-2 gap-8 items-center bg-card p-8 rounded-lg shadow-lg">
             <div className="relative w-full aspect-video rounded-lg overflow-hidden">
                 <Image
-                    src={adBanner.imageUrl}
-                    alt={adBanner.alt}
+                    src={(adBanner.images[0] || { url: 'https://picsum.photos/600/400?random=30' }).url}
+                    alt={(adBanner.images[0] || { alt: 'Promotional Banner' }).alt}
                     data-ai-hint="promotional banner"
                     fill
                     className="object-cover"
