@@ -1,4 +1,5 @@
 
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -76,7 +77,7 @@ export default async function Home() {
       <section className="bg-muted border-y border-primary">
         <Marquee>
           {marqueeMessages.map((msg, i) => (
-            <div key={i} className="flex items-center gap-4 mx-8">
+            <div key={i} className="flex items-center gap-6 mx-8">
                 {msg.logoUrl && (
                     <Image 
                         src={msg.logoUrl}
@@ -86,7 +87,8 @@ export default async function Home() {
                         className="object-contain"
                     />
                 )}
-                <span className="font-semibold text-muted-foreground">{msg.text}</span>
+                <span className="font-semibold text-muted-foreground whitespace-nowrap">{msg.text}</span>
+                <div className="h-2 w-2 bg-primary rounded-full" />
             </div>
           ))}
         </Marquee>
