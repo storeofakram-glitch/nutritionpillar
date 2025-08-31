@@ -37,7 +37,7 @@ export default function Header() {
       onClick={() => setIsSheetOpen(false)}
       className={cn(
         'transition-colors hover:text-primary',
-        pathname === href ? 'text-primary font-semibold' : 'text-muted-foreground'
+        pathname === href ? 'text-primary font-semibold' : 'text-foreground/80'
       )}
     >
       {children}
@@ -83,7 +83,7 @@ export default function Header() {
            <Link
             href="/admin"
             className={cn(
-                'text-sm transition-colors hover:text-primary text-muted-foreground hidden sm:inline-block',
+                'text-sm transition-colors hover:text-primary text-foreground/80 hidden sm:inline-block',
                 pathname.startsWith('/admin') && 'text-primary font-semibold'
             )}
             >
