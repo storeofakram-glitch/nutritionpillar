@@ -1,8 +1,8 @@
 
+
 // This is a new file for the Appearance management page in the admin dashboard.
 "use client";
 
-import { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PlusCircle, Trash2, ChevronDown } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 // Schemas for form validation
 const heroSettingsSchema = z.object({
@@ -41,14 +42,19 @@ const logoSchema = z.object({
   hint: z.string().optional(),
 });
 
-const adBannerSchema = z.object({
-  imageUrl: z.string().url({ message: "Please enter a valid URL." }).or(z.literal('')),
+const adBannerImageSchema = z.object({
+  url: z.string().url({ message: "Please enter a valid URL." }).or(z.literal('')),
   alt: z.string().min(1, { message: "Alt text is required." }),
+});
+
+const adBannerSchema = z.object({
+  images: z.array(adBannerImageSchema),
   title: z.string().min(1, { message: "Title is required." }),
   description: z.string().min(1, { message: "Description is required." }),
   buttonText: z.string().min(1, { message: "Button text is required." }),
   buttonLink: z.string().min(1, { message: "Button link is required." }),
 });
+
 
 const aboutPageSettingsSchema = z.object({
     title: z.string().min(1, "Title is required."),
@@ -81,7 +87,7 @@ const emptyValues: SiteSettings = {
     hero: { imageUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "" },
     marquee: { messages: [{ text: "", logoUrl: "", logoAlt: "" }] },
     partnershipLogos: [{ src: "", alt: "", hint: "" }],
-    adBanner: { imageUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "" },
+    adBanner: { images: [{ url: "", alt: "" }], title: "", description: "", buttonText: "", buttonLink: "" },
     aboutPage: { title: "", subtitle: "", imageUrl: "", imageAlt: "", storyTitle: "", storyContent1: "", storyContent2: "", missionTitle: "", missionContent: "", visionTitle: "", visionContent: "", valuesTitle: "", valuesContent: "" },
 };
 
@@ -105,15 +111,20 @@ export default function AdminAppearancePage() {
       setLoading(true);
       const settings = await getSiteSettings();
       if (settings) {
-        // Ensure marquee messages have all fields to avoid uncontrolled component errors
-        const messages = settings.marquee?.messages.map(m => ({ text: m.text, logoUrl: m.logoUrl || '', logoAlt: m.logoAlt || '' })) || [];
+        // Ensure nested arrays have default values to avoid uncontrolled component errors
+        const messages = settings.marquee?.messages?.map(m => ({ text: m.text, logoUrl: m.logoUrl || '', logoAlt: m.logoAlt || '' })) || [];
         const partnershipLogos = settings.partnershipLogos?.map(l => ({ ...l, src: l.src || '', alt: l.alt || '' })) || [];
-        
+        const adBannerImages = settings.adBanner?.images?.map(i => ({ url: i.url || '', alt: i.alt || '' })) || [];
+
         form.reset({
              hero: { ...emptyValues.hero, ...settings.hero },
              marquee: { messages: messages.length > 0 ? messages : emptyValues.marquee.messages }, 
              partnershipLogos: partnershipLogos.length > 0 ? partnershipLogos : emptyValues.partnershipLogos,
-             adBanner: { ...emptyValues.adBanner, ...settings.adBanner },
+             adBanner: { 
+                ...emptyValues.adBanner, 
+                ...settings.adBanner,
+                images: adBannerImages.length > 0 ? adBannerImages : emptyValues.adBanner.images,
+              },
              aboutPage: { ...emptyValues.aboutPage, ...settings.aboutPage },
         });
       }
@@ -130,6 +141,11 @@ export default function AdminAppearancePage() {
   const { fields: logoFields, append: appendLogo, remove: removeLogo } = useFieldArray({
     control: form.control,
     name: "partnershipLogos",
+  });
+  
+  const { fields: adBannerFields, append: appendAdBanner, remove: removeAdBanner } = useFieldArray({
+    control: form.control,
+    name: "adBanner.images",
   });
 
   const onSubmit = async (data: z.infer<typeof siteSettingsSchema>) => {
@@ -355,91 +371,65 @@ export default function AdminAppearancePage() {
         
         <Collapsible open={isBannerOpen} onOpenChange={setIsBannerOpen}>
             <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                    <CardTitle>Ad Banner</CardTitle>
-                    <CardDescription>Manage the main promotional ad banner on the homepage.</CardDescription>
-                </div>
-                 <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                        <ChevronDown className={cn("h-5 w-5 transition-transform", isBannerOpen && "rotate-180")} />
-                         <span className="sr-only">{isBannerOpen ? 'Collapse' : 'Expand'}</span>
-                    </Button>
-                </CollapsibleTrigger>
-            </CardHeader>
-            <CollapsibleContent>
-            <CardContent className="space-y-4 pt-4">
-                <FormField
-                    control={form.control}
-                    name="adBanner.imageUrl"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Image URL</FormLabel>
-                            <FormControl><Input {...field} placeholder="https://picsum.photos/600/400" /></FormControl>
-                            <FormDescription>Recommended aspect ratio: 16:9 (e.g., 1200x675 pixels).</FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                 <FormField
-                    control={form.control}
-                    name="adBanner.alt"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Image Alt Text</FormLabel>
-                            <FormControl><Input {...field} placeholder="Promotional banner" /></FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                 <FormField
-                    control={form.control}
-                    name="adBanner.title"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Title</FormLabel>
-                            <FormControl><Input {...field} placeholder="Limited Time Offer!" /></FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                 <FormField
-                    control={form.control}
-                    name="adBanner.description"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Description</FormLabel>
-                            <FormControl><Textarea {...field} placeholder="Get 20% off..." /></FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                        control={form.control}
-                        name="adBanner.buttonText"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Button Text</FormLabel>
-                                <FormControl><Input {...field} placeholder="Shop Now" /></FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                     <FormField
-                        control={form.control}
-                        name="adBanner.buttonLink"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Button Link</FormLabel>
-                                <FormControl><Input {...field} placeholder="/#products" /></FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-            </CardContent>
-            </CollapsibleContent>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>Ad Banner</CardTitle>
+                        <CardDescription>Manage the promotional ad banner on the homepage.</CardDescription>
+                    </div>
+                    <CollapsibleTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <ChevronDown className={cn("h-5 w-5 transition-transform", isBannerOpen && "rotate-180")} />
+                            <span className="sr-only">{isBannerOpen ? 'Collapse' : 'Expand'}</span>
+                        </Button>
+                    </CollapsibleTrigger>
+                </CardHeader>
+                <CollapsibleContent>
+                    <CardContent className="space-y-4 pt-4">
+                        <div className="space-y-4 p-4 border rounded-lg">
+                            {adBannerFields.map((field, index) => (
+                                <div key={field.id} className="grid grid-cols-[1fr_auto] gap-4 items-center">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <FormField control={form.control} name={`adBanner.images.${index}.url`} render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Image URL</FormLabel>
+                                                <FormControl><Input {...field} placeholder="https://picsum.photos/600/400" /></FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )} />
+                                        <FormField control={form.control} name={`adBanner.images.${index}.alt`} render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Image Alt Text</FormLabel>
+                                                <FormControl><Input {...field} placeholder="Promotional banner image" /></FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )} />
+                                    </div>
+                                    <Button type="button" variant="ghost" size="icon" onClick={() => removeAdBanner(index)}>
+                                        <Trash2 className="h-4 w-4 text-red-500" />
+                                    </Button>
+                                </div>
+                            ))}
+                            <Button type="button" variant="outline" size="sm" onClick={() => appendAdBanner({ url: "", alt: "" })}>
+                                <PlusCircle className="mr-2 h-4 w-4" /> Add Image
+                            </Button>
+                        </div>
+
+                        <FormField control={form.control} name="adBanner.title" render={({ field }) => (
+                            <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} placeholder="Limited Time Offer!" /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={form.control} name="adBanner.description" render={({ field }) => (
+                            <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} placeholder="Get 20% off..." /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField control={form.control} name="adBanner.buttonText" render={({ field }) => (
+                                <FormItem><FormLabel>Button Text</FormLabel><FormControl><Input {...field} placeholder="Shop Now" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                            <FormField control={form.control} name="adBanner.buttonLink" render={({ field }) => (
+                                <FormItem><FormLabel>Button Link</FormLabel><FormControl><Input {...field} placeholder="/#products" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
+                    </CardContent>
+                </CollapsibleContent>
             </Card>
         </Collapsible>
         

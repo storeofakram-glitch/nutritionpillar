@@ -16,7 +16,8 @@ export default async function Home() {
   const siteSettings: SiteSettings | null = await getSiteSettings();
 
   const hero = siteSettings?.hero || {
-    images: [{ url: 'https://picsum.photos/1920/1080', alt: 'Athlete training' }],
+    imageUrl: 'https://picsum.photos/1920/1080', 
+    alt: 'Athlete training',
     title: 'Welcome to Nutrition Pillar',
     description: 'Your one-stop shop for premium supplements. We provide quality ingredients for your peak performance and optimal health.',
     buttonText: 'Shop Now',
@@ -50,19 +51,13 @@ export default async function Home() {
   return (
     <div className="flex flex-col">
       <section className="relative w-full h-[60vh] md:h-[70vh] bg-gray-900 text-white overflow-hidden">
-        <Marquee vertical reverse className="h-full">
-            {(hero.images || []).map((image, i) => (
-                 <Image
-                    key={i}
-                    src={image.url}
-                    alt={image.alt}
-                    data-ai-hint="athlete training"
-                    width={1920}
-                    height={1080}
-                    className="object-cover h-full w-full"
-                />
-            ))}
-        </Marquee>
+        <Image
+            src={hero.imageUrl}
+            alt={hero.alt}
+            data-ai-hint="athlete training"
+            fill
+            className="object-cover"
+        />
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center h-full text-center p-4 bg-black/60">
           <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight">
             {hero.title}
@@ -122,13 +117,19 @@ export default async function Home() {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8 items-center bg-card p-8 rounded-lg shadow-lg">
             <div className="relative w-full aspect-video rounded-lg overflow-hidden">
-                <Image
-                    src={(adBanner.images[0] || { url: 'https://picsum.photos/600/400?random=30' }).url}
-                    alt={(adBanner.images[0] || { alt: 'Promotional Banner' }).alt}
-                    data-ai-hint="promotional banner"
-                    fill
-                    className="object-cover"
-                />
+                <Marquee vertical reverse className="h-full">
+                    {(adBanner.images || []).map((image, i) => (
+                        <Image
+                            key={i}
+                            src={image.url}
+                            alt={image.alt}
+                            data-ai-hint="promotional banner"
+                            width={600}
+                            height={400}
+                            className="object-cover w-full h-auto"
+                        />
+                    ))}
+                </Marquee>
             </div>
             <div className="text-center md:text-left">
                 <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">

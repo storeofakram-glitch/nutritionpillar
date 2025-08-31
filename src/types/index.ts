@@ -6,6 +6,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -134,9 +135,13 @@ export type PartnershipLogo = {
   hint?: string;
 };
 
-export type AdBanner = {
-  imageUrl: string;
+export type AdBannerImage = {
+  url: string;
   alt: string;
+};
+
+export type AdBanner = {
+  images: AdBannerImage[];
   title: string;
   description: string;
   buttonText: string;
