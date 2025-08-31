@@ -24,8 +24,7 @@ export default function ProductDetailPage() {
   const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
   const { addToCart } = useCart();
   const router = useRouter();
-  const params = useParams();
-  const productId = typeof params.id === 'string' ? params.id : '';
+  const { id: productId } = useParams<{ id: string }>();
 
   useEffect(() => {
     async function fetchProduct() {
