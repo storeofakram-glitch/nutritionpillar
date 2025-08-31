@@ -40,7 +40,8 @@ export default async function Home() {
   ];
   
   const adBanner = siteSettings?.adBanner || {
-    images: [{ url: 'https://picsum.photos/600/400?random=30', alt: 'Featured Promotion' }],
+    imageUrl: 'https://picsum.photos/600/400?random=30',
+    imageAlt: 'Featured Promotion',
     title: 'Limited Time Offer!',
     description: "Get 20% off on all pre-workout supplements this week only. Don't miss out on this opportunity to fuel your workouts for less.",
     buttonText: 'Shop Pre-Workouts',
@@ -117,19 +118,13 @@ export default async function Home() {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8 items-center bg-card p-8 rounded-lg shadow-lg">
             <div className="relative w-full aspect-video rounded-lg overflow-hidden">
-                <Marquee vertical reverse className="h-full">
-                    {(adBanner.images || []).map((image, i) => (
-                        <Image
-                            key={i}
-                            src={image.url}
-                            alt={image.alt}
-                            data-ai-hint="promotional banner"
-                            width={600}
-                            height={400}
-                            className="object-cover w-full h-auto"
-                        />
-                    ))}
-                </Marquee>
+                <Image
+                    src={adBanner.imageUrl}
+                    alt={adBanner.imageAlt}
+                    data-ai-hint="promotional banner"
+                    fill
+                    className="object-cover"
+                />
             </div>
             <div className="text-center md:text-left">
                 <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">
