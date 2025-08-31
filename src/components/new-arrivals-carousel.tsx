@@ -7,6 +7,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  CarouselDots,
 } from "@/components/ui/carousel";
 import Image from "next/image";
 import Link from "next/link";
@@ -67,7 +68,7 @@ export default async function NewArrivalsCarousel() {
         >
             <CarouselContent>
                 {newArrivals.map((product) => (
-                    <CarouselItem key={product.id} className="md:basis-1/4 lg:basis-1/6">
+                    <CarouselItem key={product.id} className="basis-1/2 md:basis-1/4 lg:basis-1/6">
                         <div className="p-1 h-full">
                             <SmallProductCard product={product} />
                         </div>
@@ -76,6 +77,7 @@ export default async function NewArrivalsCarousel() {
             </CarouselContent>
             <CarouselPrevious className="hidden md:flex" />
             <CarouselNext className="hidden md:flex" />
+            <CarouselDots className="md:hidden" />
         </Carousel>
       </div>
     </section>
