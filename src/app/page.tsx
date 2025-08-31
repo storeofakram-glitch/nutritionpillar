@@ -58,11 +58,11 @@ export default async function Home() {
                     alt={image.alt}
                     data-ai-hint="athlete training"
                     fill
-                    className="object-cover opacity-40 h-full w-full"
+                    className="object-cover h-full w-full"
                 />
             ))}
         </Marquee>
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center h-full text-center p-4">
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center h-full text-center p-4 bg-black/60">
           <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight">
             {hero.title}
           </h1>
@@ -91,7 +91,6 @@ export default async function Home() {
                     />
                 )}
                 <span className="font-semibold text-foreground whitespace-nowrap">{msg.text}</span>
-                <div className="h-2 w-2 bg-primary rounded-full" />
             </div>
           ))}
         </Marquee>
