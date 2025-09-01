@@ -17,36 +17,33 @@ export default async function Home() {
   const siteSettings: SiteSettings | null = await getSiteSettings();
 
   const hero = siteSettings?.hero || {
-    imageUrl: 'https://picsum.photos/1920/1080', 
-    alt: 'Athlete training',
-    title: 'Welcome to Nutrition Pillar',
-    description: 'Your one-stop shop for premium supplements. We provide quality ingredients for your peak performance and optimal health.',
+    imageUrl: 'https://github.com/akramFit/Nutrition-Pillar-Assets/blob/main/hero%20image%20(np%20store).png?raw=true', 
+    alt: 'Nutrition Pillar',
+    title: 'Welcome to Nutritionn Pillar ',
+    description: '\nYour one-stop shop for premium supplements. We provide quality ingredients for your peak performance and optimal health.',
     buttonText: 'Shop Now',
-    buttonLink: '#products'
+    buttonLink: '/#products'
   };
   
   const marqueeMessages = siteSettings?.marquee?.messages || [
-    { text: 'Free shipping on orders over 10,000 DZD' },
-    { text: 'Check out our new arrivals!' },
-    { text: 'Follow us on social media for updates' },
-    { text: 'Quality you can trust' },
+    { text: 'akram fit training', logoUrl: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', logoAlt: 'akram fit' },
   ];
 
   const partnershipLogos = siteSettings?.partnershipLogos || [
-    { src: 'https://picsum.photos/150/75?random=21', alt: 'Brand Logo 1', hint: 'brand logo' },
-    { src: 'https://picsum.photos/150/75?random=22', alt: 'Brand Logo 2', hint: 'brand logo' },
-    { src: 'https://picsum.photos/150/75?random=23', alt: 'Brand Logo 3', hint: 'brand logo' },
-    { src: 'https://picsum.photos/150/75?random=24', alt: 'Brand Logo 4', hint: 'brand logo' },
-    { src: 'https://picsum.photos/150/75?random=25', alt: 'Brand Logo 5', hint: 'brand logo' },
+    { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: '' },
+    { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: 'brand logo' },
+    { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: 'brand logo' },
+    { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: 'brand logo' },
+    { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: 'brand logo' },
   ];
   
   const adBanner = siteSettings?.adBanner || {
-    imageUrl: 'https://picsum.photos/600/400?random=30',
-    imageAlt: 'Featured Promotion',
-    title: 'Limited Time Offer!',
-    description: "Get 20% off on all pre-workout supplements this week only. Don't miss out on this opportunity to fuel your workouts for less.",
-    buttonText: 'Shop Pre-Workouts',
-    buttonLink: '#products'
+    imageUrl: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/5.png?raw=true',
+    imageAlt: 'Promotional banner',
+    title: 'the must popular transformation',
+    description: "to get a transformation like this just apply ",
+    buttonText: 'apply',
+    buttonLink: 'www.akramfit.com'
   };
 
 
@@ -126,14 +123,14 @@ export default async function Home() {
 
       <NewArrivalsCarousel />
 
-      <section id="products" className="py-12 md:py-20">
+      <section id="products" className="py-12 md:py-16">
         <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold font-headline text-center mb-10">Our Products</h2>
             <ProductGrid products={products} />
         </div>
       </section>
       
-      <section className="py-12 bg-background">
+      <section className="py-12 md:py-16 bg-background">
         <div className="container mx-auto px-4">
           <h3 className="text-center text-lg font-semibold text-muted-foreground uppercase tracking-wider mb-8">
             Partnership

@@ -53,7 +53,7 @@ export default async function NewArrivalsCarousel() {
   }
 
   return (
-    <section className="py-12 md:py-20 bg-background">
+    <section className="py-12 md:py-16 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
             <p className="text-sm font-bold text-muted-foreground tracking-widest uppercase">LATEST ADDED</p>
