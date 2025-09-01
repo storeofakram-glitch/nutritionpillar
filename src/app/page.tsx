@@ -75,7 +75,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="bg-muted border-y border-primary">
+      <section className="bg-primary border-y border-primary/50">
         <Marquee>
           {marqueeMessages.map((msg, i) => (
             <div key={i} className="flex items-center gap-6 mx-8">
@@ -88,7 +88,7 @@ export default async function Home() {
                         className="object-contain"
                     />
                 )}
-                <span className="font-semibold text-foreground whitespace-nowrap">{msg.text}</span>
+                <span className="font-semibold text-primary-foreground whitespace-nowrap">{msg.text}</span>
             </div>
           ))}
         </Marquee>
