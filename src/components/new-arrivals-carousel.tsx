@@ -32,6 +32,9 @@ const SmallProductCard = ({ product }: { product: Product }) => {
                 className="object-contain p-4"
                 sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 15vw"
             />
+            <Badge className="absolute top-2 left-2 z-10 rounded-full h-10 w-10 flex items-center justify-center text-xs font-bold">
+                New
+            </Badge>
             {isOutOfStock && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                     <Badge variant="destructive">Out of Stock</Badge>
