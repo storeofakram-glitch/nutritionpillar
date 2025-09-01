@@ -37,7 +37,6 @@ const SmallProductCard = ({ product }: { product: Product }) => {
         </div>
         <div className="flex flex-col flex-grow">
             <h3 className="font-semibold text-sm truncate flex-grow">{product.name}</h3>
-            <p className="font-bold text-primary mt-1">DZD {product.price.toFixed(2)}</p>
         </div>
       </div>
     </Link>
