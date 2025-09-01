@@ -1,4 +1,6 @@
 
+'use client';
+
 import { getProducts } from "@/services/product-service";
 import type { Product } from "@/types";
 import {
@@ -13,6 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 const SmallProductCard = ({ product }: { product: Product }) => {
   const isOutOfStock = product.quantity === 0;
@@ -43,11 +46,26 @@ const SmallProductCard = ({ product }: { product: Product }) => {
   );
 };
 
-export default async function NewArrivalsCarousel() {
-  const allProducts = await getProducts();
-  // Assuming newer products are added to the end of the collection
-  const newArrivals = allProducts.slice(-8).reverse();
+export default function NewArrivalsCarousel() {
+  const [newArrivals, setNewArrivals] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    async function fetchNewArrivals() {
+      const allProducts = await getProducts();
+      // Assuming newer products are added to the end of the collection
+      const arrivals = allProducts.slice(-8).reverse();
+      setNewArrivals(arrivals);
+      setLoading(false);
+    }
+    fetchNewArrivals();
+  }, []);
+
+  if (loading) {
+    // Optional: add a loading skeleton here
+    return null;
+  }
+  
   if (newArrivals.length === 0) {
     return null;
   }

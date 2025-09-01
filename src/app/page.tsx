@@ -1,4 +1,5 @@
 
+'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -6,16 +7,31 @@ import { Button } from '@/components/ui/button';
 import ProductGrid from '@/components/product-grid';
 import { getProducts } from '@/services/product-service';
 import Marquee from '@/components/ui/marquee';
-import { cn } from '@/lib/utils';
 import { ArrowRight } from 'lucide-react';
 import { getSiteSettings } from '@/services/site-settings-service';
-import type { SiteSettings } from '@/types';
+import type { SiteSettings, Product } from '@/types';
 import NewArrivalsCarousel from '@/components/new-arrivals-carousel';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { useEffect, useState } from 'react';
 
-export default async function Home() {
-  const products = await getProducts();
-  const siteSettings: SiteSettings | null = await getSiteSettings();
+export default function Home() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      const [productsData, settingsData] = await Promise.all([
+        getProducts(),
+        getSiteSettings(),
+      ]);
+      setProducts(productsData);
+      setSiteSettings(settingsData);
+      setLoading(false);
+    }
+    fetchData();
+  }, []);
+
 
   const hero = siteSettings?.hero || {
     imageUrl: 'https://github.com/akramFit/Nutrition-Pillar-Assets/blob/main/hero%20image%20(np%20store).png?raw=true', 
