@@ -64,7 +64,7 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
       category: product?.category || "",
       imageUrls: product?.imageUrls?.map(url => ({ value: url })) || [{ value: "" }],
       sponsored: product?.sponsored || false,
-      discountPercentage: product?.discountPercentage || 0,
+      discountPercentage: product?.discountPercentage || undefined,
     },
   })
 
@@ -76,7 +76,8 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
   async function onSubmit(data: ProductFormValues) {
     const productData = {
         ...data,
-        imageUrls: data.imageUrls.map(item => item.value)
+        imageUrls: data.imageUrls.map(item => item.value),
+        discountPercentage: data.discountPercentage || 0,
     };
 
     const result = isEditMode
@@ -266,7 +267,7 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
                 </FormDescription>
               </div>
               <FormControl>
-                 <Input type="number" placeholder="e.g. 15" {...field} className="w-24" />
+                 <Input type="number" placeholder="e.g. 15" {...field} value={field.value ?? ''} className="w-24" />
               </FormControl>
                <FormMessage />
             </FormItem>
