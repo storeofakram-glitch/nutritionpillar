@@ -102,7 +102,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </CardContent>
         <CardFooter className="p-4 pt-0">
             <Button className="w-full font-bold" disabled={isOutOfStock} asChild>
-                <span>
+                <span className='w-full'>
                     {isOutOfStock ? "Out of Stock" : "View Details"}
                     <ArrowRight className="ml-2 h-4 w-4" />
                 </span>
