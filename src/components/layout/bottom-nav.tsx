@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, ShoppingBag } from 'lucide-react';
+import { Home, ShoppingBag, Mail } from 'lucide-react';
 import { useCart } from '@/contexts/cart-context';
 import { cn } from '@/lib/utils';
 
@@ -14,6 +14,7 @@ export default function BottomNav() {
   const navLinks = [
     { href: '/', label: 'Shop', icon: Home },
     { href: '/cart', label: 'Cart', icon: ShoppingBag, count: cartCount },
+    { href: '/contact', label: 'Contact', icon: Mail },
   ];
 
   return (
