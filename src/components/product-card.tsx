@@ -90,11 +90,11 @@ export default function ProductCard({ product }: ProductCardProps) {
             <div className="flex-grow" />
 
             <div className="flex items-baseline gap-2 mt-auto pt-2">
-                <p className="text-2xl font-bold font-headline text-primary">
+                <p className="text-xl font-bold font-headline text-primary">
                     DZD {discountPrice.toFixed(2)}
                 </p>
                 {hasDiscount && (
-                    <p className="text-lg font-medium text-muted-foreground line-through">
+                    <p className="text-base font-medium text-muted-foreground line-through">
                         DZD {originalPrice.toFixed(2)}
                     </p>
                 )}
