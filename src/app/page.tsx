@@ -136,34 +136,36 @@ export default async function Home() {
       
       <section className="py-12 md:py-16 bg-background">
         <div className="container mx-auto px-4">
-          <h3 className="text-center text-lg font-semibold text-muted-foreground uppercase tracking-wider mb-8">
-            Partnership
-          </h3>
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full max-w-4xl mx-auto"
-          >
-            <CarouselContent>
-              {partnershipLogos.map((logo, index) => (
-                <CarouselItem key={index} className="basis-1/3 md:basis-1/4 lg:basis-1/5">
-                  <div className="relative h-16">
-                    <Image
-                      src={logo.src}
-                      alt={logo.alt || `Partnership logo ${index + 1}`}
-                      data-ai-hint={logo.hint}
-                      fill
-                      className="object-contain grayscale transition-all duration-300 hover:grayscale-0"
-                    />
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden sm:flex" />
-            <CarouselNext className="hidden sm:flex" />
-          </Carousel>
+          <div className="bg-card p-8 rounded-lg shadow-lg shadow-primary/20">
+            <h3 className="text-center text-lg font-semibold text-card-foreground uppercase tracking-wider mb-8">
+              Partnership
+            </h3>
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full max-w-4xl mx-auto"
+            >
+              <CarouselContent>
+                {partnershipLogos.map((logo, index) => (
+                  <CarouselItem key={index} className="basis-1/3 md:basis-1/4 lg:basis-1/5">
+                    <div className="relative h-16">
+                      <Image
+                        src={logo.src}
+                        alt={logo.alt || `Partnership logo ${index + 1}`}
+                        data-ai-hint={logo.hint}
+                        fill
+                        className="object-contain grayscale transition-all duration-300 hover:grayscale-0"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden sm:flex" />
+              <CarouselNext className="hidden sm:flex" />
+            </Carousel>
+          </div>
         </div>
       </section>
     </div>
