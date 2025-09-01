@@ -11,6 +11,7 @@ import { ArrowRight } from 'lucide-react';
 import { getSiteSettings } from '@/services/site-settings-service';
 import type { SiteSettings } from '@/types';
 import NewArrivalsCarousel from '@/components/new-arrivals-carousel';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 export default async function Home() {
   const products = await getProducts();
@@ -31,6 +32,9 @@ export default async function Home() {
 
   const partnershipLogos = siteSettings?.partnershipLogos || [
     { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: '' },
+    { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: 'brand logo' },
+    { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: 'brand logo' },
+    { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: 'brand logo' },
     { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: 'brand logo' },
     { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: 'brand logo' },
     { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: 'brand logo' },
@@ -135,19 +139,31 @@ export default async function Home() {
           <h3 className="text-center text-lg font-semibold text-muted-foreground uppercase tracking-wider mb-8">
             Partnership
           </h3>
-          <div className="flex items-center gap-x-12 overflow-x-auto pb-4 md:pb-0 md:flex-wrap md:justify-center md:overflow-x-visible">
-            {partnershipLogos.map((logo, index) => (
-              <div key={index} className="relative h-12 w-32 flex-shrink-0">
-                <Image
-                  src={logo.src}
-                  alt={logo.alt || `Partnership logo ${index + 1}`}
-                  data-ai-hint={logo.hint}
-                  fill
-                  className="object-contain grayscale transition-all duration-300 hover:grayscale-0"
-                />
-              </div>
-            ))}
-          </div>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full max-w-4xl mx-auto"
+          >
+            <CarouselContent>
+              {partnershipLogos.map((logo, index) => (
+                <CarouselItem key={index} className="basis-1/3 md:basis-1/4 lg:basis-1/5">
+                  <div className="relative h-16">
+                    <Image
+                      src={logo.src}
+                      alt={logo.alt || `Partnership logo ${index + 1}`}
+                      data-ai-hint={logo.hint}
+                      fill
+                      className="object-contain grayscale transition-all duration-300 hover:grayscale-0"
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="hidden sm:flex" />
+            <CarouselNext className="hidden sm:flex" />
+          </Carousel>
         </div>
       </section>
     </div>
