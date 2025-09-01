@@ -149,7 +149,7 @@ export default function ProductDetailPage() {
             )}
           </div>
           
-          {showTimer && product.discountEndDate && (
+          {showTimer && (
             <div className="p-4 rounded-lg bg-yellow-400/10 border border-yellow-400/20">
                 <CountdownTimer endDate={product.discountEndDate} />
             </div>

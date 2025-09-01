@@ -83,9 +83,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </Tooltip>
             </TooltipProvider>
             
-            {showTimer && product.discountEndDate && (
-                <CountdownTimer endDate={product.discountEndDate} className="mt-2" />
-            )}
+            {showTimer && <CountdownTimer endDate={product.discountEndDate} className="mt-2" />}
 
             <div className="flex-grow" />
 
