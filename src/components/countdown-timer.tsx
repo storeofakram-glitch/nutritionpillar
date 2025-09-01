@@ -57,16 +57,16 @@ export default function CountdownTimer({ endDate, className }: CountdownTimerPro
   
   return (
     <div className={cn("flex items-center gap-2 text-center", className)}>
-        <Timer className="h-5 w-5 text-destructive" />
+        <Timer className="h-5 w-5 text-yellow-500" />
         <div className="flex items-center gap-1.5">
             {timerComponents.map((part, index) => (
                 <div key={part.label} className="flex items-center gap-1.5">
                     <div className="flex flex-col">
-                        <span className="text-sm font-bold text-destructive tabular-nums">
+                        <span className="text-sm font-bold text-yellow-600 dark:text-yellow-400 tabular-nums">
                             {String(part.value).padStart(2, '0')}
                         </span>
                     </div>
-                    {index < timerComponents.length - 1 && <span className="text-destructive font-bold">:</span>}
+                    {index < timerComponents.length - 1 && <span className="text-yellow-500 font-bold">:</span>}
                 </div>
             ))}
         </div>
