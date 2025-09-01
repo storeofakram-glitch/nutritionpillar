@@ -49,7 +49,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col">
-      <section className="relative w-full h-[60vh] md:h-[70vh] bg-gray-900 text-white overflow-hidden">
+      <section className="relative w-full h-[60vh] md:h-[70vh] text-white overflow-hidden shadow-[0_0_15px_5px] shadow-primary/50">
         <Image
             src={hero.imageUrl}
             alt={hero.alt || "Hero image"}
