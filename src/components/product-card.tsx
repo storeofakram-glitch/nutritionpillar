@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import { ArrowRight } from 'lucide-react';
+import CountdownTimer from './countdown-timer';
 
 interface ProductCardProps {
   product: Product;
@@ -30,10 +31,13 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   const imageUrl = (product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : "https://picsum.photos/400/400?random=1";
   
+  const hasDiscount = product.discountPercentage && product.discountPercentage > 0;
   const originalPrice = product.price;
-  const discountPrice = (product.discountPercentage && product.discountPercentage > 0)
-    ? originalPrice - (originalPrice * (product.discountPercentage / 100))
+  const discountPrice = hasDiscount
+    ? originalPrice - (originalPrice * (product.discountPercentage! / 100))
     : originalPrice;
+  
+  const showTimer = hasDiscount && product.discountEndDate && new Date(product.discountEndDate) > new Date();
 
   return (
     <Link href={`/products/${product.id}`} className="flex h-full">
@@ -45,7 +49,7 @@ export default function ProductCard({ product }: ProductCardProps) {
              {product.sponsored && (
                 <Badge className="absolute top-2 left-2 z-10 bg-yellow-400 text-yellow-900 font-bold hover:bg-yellow-400">Sponsored</Badge>
             )}
-             {product.discountPercentage && product.discountPercentage > 0 && (
+             {hasDiscount && (
                  <Badge 
                     variant="destructive"
                     className="absolute top-2 right-2 z-10 rounded-full h-12 w-12 flex items-center justify-center text-base font-bold"
@@ -78,13 +82,17 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </Tooltip>
             </TooltipProvider>
             
+            {showTimer && product.discountEndDate && (
+                <CountdownTimer endDate={product.discountEndDate} className="mt-2" />
+            )}
+
             <div className="flex-grow" />
 
-            <div className="flex items-baseline gap-2 mt-auto">
+            <div className="flex items-baseline gap-2 mt-auto pt-2">
                 <p className="text-2xl font-bold font-headline text-primary">
                     DZD {discountPrice.toFixed(2)}
                 </p>
-                {product.discountPercentage && product.discountPercentage > 0 && (
+                {hasDiscount && (
                     <p className="text-lg font-medium text-muted-foreground line-through">
                         DZD {originalPrice.toFixed(2)}
                     </p>

@@ -15,6 +15,7 @@ import { useCart } from '@/contexts/cart-context';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselDots } from '@/components/ui/carousel';
+import CountdownTimer from '@/components/countdown-timer';
 
 export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
@@ -87,10 +88,13 @@ export default function ProductDetailPage() {
     return <Badge variant="default" className="bg-green-600 hover:bg-green-700">In Stock</Badge>;
   }
 
+  const hasDiscount = product.discountPercentage && product.discountPercentage > 0;
   const originalPrice = product.price;
-  const discountPrice = product.discountPercentage 
-    ? originalPrice - (originalPrice * (product.discountPercentage / 100))
+  const discountPrice = hasDiscount
+    ? originalPrice - (originalPrice * (product.discountPercentage! / 100))
     : originalPrice;
+
+  const showTimer = hasDiscount && product.discountEndDate && new Date(product.discountEndDate) > new Date();
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
@@ -116,7 +120,7 @@ export default function ProductDetailPage() {
                 <CarouselNext className="right-2" />
                 <CarouselDots />
             </Carousel>
-             {product.discountPercentage && product.discountPercentage > 0 && (
+             {hasDiscount && (
                  <Badge 
                     variant="destructive"
                     className="absolute top-4 right-4 z-10 rounded-full h-16 w-16 flex items-center justify-center text-lg font-bold"
@@ -137,12 +141,18 @@ export default function ProductDetailPage() {
             <p className="text-4xl font-bold font-headline text-primary">
                 DZD {discountPrice.toFixed(2)}
             </p>
-            {product.discountPercentage && product.discountPercentage > 0 && (
+            {hasDiscount && (
                 <p className="text-2xl font-medium text-muted-foreground line-through">
                     DZD {originalPrice.toFixed(2)}
                 </p>
             )}
           </div>
+          
+          {showTimer && product.discountEndDate && (
+            <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20">
+                <CountdownTimer endDate={product.discountEndDate} />
+            </div>
+          )}
 
           <p className="text-base text-muted-foreground leading-relaxed">
             {product.description}

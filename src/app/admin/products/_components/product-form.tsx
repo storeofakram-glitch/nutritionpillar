@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useForm, useFieldArray } from "react-hook-form"
@@ -20,7 +21,11 @@ import { addProduct, updateProduct } from "@/services/product-service"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import type { Product } from "@/types"
 import { Switch } from "@/components/ui/switch"
-import { PlusCircle, Trash2 } from "lucide-react"
+import { PlusCircle, Trash2, CalendarIcon } from "lucide-react"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
+import { format } from "date-fns"
+import { cn } from "@/lib/utils"
 
 const productSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -32,6 +37,7 @@ const productSchema = z.object({
   imageUrls: z.array(z.object({ value: z.string().url("Must be a valid URL.") })).min(1, "At least one image URL is required."),
   sponsored: z.boolean().optional(),
   discountPercentage: z.coerce.number().min(0, "Discount must be non-negative.").max(100, "Discount cannot exceed 100.").optional(),
+  discountEndDate: z.date().optional(),
 })
 
 type ProductFormValues = z.infer<typeof productSchema>
@@ -65,7 +71,8 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
       category: product?.category || "",
       imageUrls: product?.imageUrls?.map(url => ({ value: url })) || [{ value: "" }],
       sponsored: product?.sponsored || false,
-      discountPercentage: product?.discountPercentage || undefined,
+      discountPercentage: product?.discountPercentage || 0,
+      discountEndDate: product?.discountEndDate ? new Date(product.discountEndDate) : undefined,
     },
   })
 
@@ -74,11 +81,14 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
     name: "imageUrls"
   });
 
+  const watchDiscount = form.watch("discountPercentage");
+
   async function onSubmit(data: ProductFormValues) {
     const productData = {
         ...data,
         imageUrls: data.imageUrls.map(item => item.value),
         discountPercentage: data.discountPercentage || 0,
+        discountEndDate: data.discountEndDate?.toISOString(),
     };
 
     const result = isEditMode
@@ -256,24 +266,66 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
           )}
         />
         
-        <FormField
-          control={form.control}
-          name="discountPercentage"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-              <div className="space-y-0.5">
-                <FormLabel>Discount Percentage</FormLabel>
-                <FormDescription>
-                  Set a discount percentage (0 for no discount).
-                </FormDescription>
-              </div>
-              <FormControl>
-                 <Input type="number" placeholder="e.g. 15" {...field} value={field.value ?? ''} className="w-24" />
-              </FormControl>
-               <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-lg border p-3 shadow-sm">
+            <FormField
+                control={form.control}
+                name="discountPercentage"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Discount (%)</FormLabel>
+                    <FormControl>
+                        <Input type="number" placeholder="e.g. 15" {...field} value={field.value ?? ''} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="discountEndDate"
+                render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                    <FormLabel>Discount End Date</FormLabel>
+                    <Popover>
+                        <PopoverTrigger asChild>
+                        <FormControl>
+                            <Button
+                            variant={"outline"}
+                            className={cn(
+                                "pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                            )}
+                            disabled={!watchDiscount || watchDiscount === 0}
+                            >
+                            {field.value ? (
+                                format(field.value, "PPP")
+                            ) : (
+                                <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                        </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                                date < new Date() || !watchDiscount || watchDiscount === 0
+                            }
+                            initialFocus
+                        />
+                        </PopoverContent>
+                    </Popover>
+                    <FormDescription>
+                        The sale ends at midnight on this date.
+                    </FormDescription>
+                    <FormMessage />
+                    </FormItem>
+                )}
+            />
+        </div>
 
         <Button type="submit" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting 
