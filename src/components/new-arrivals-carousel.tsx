@@ -19,7 +19,7 @@ const SmallProductCard = ({ product }: { product: Product }) => {
 
   return (
     <Link href={`/products/${product.id}`} className="block h-full group">
-      <div className="text-center h-full flex flex-col p-2 rounded-lg border border-transparent group-hover:border-accent/50 group-hover:shadow-lg group-hover:shadow-accent/10 transition-all duration-300 group-hover:-translate-y-1">
+      <div className="text-center h-full flex flex-col p-2 rounded-lg border border-primary/50 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:-translate-y-1">
         <div className="relative w-full aspect-square mb-4 rounded-lg overflow-hidden">
             <Image
                 src={product.imageUrl}
@@ -53,7 +53,7 @@ export default async function NewArrivalsCarousel() {
   }
 
   return (
-    <section className="py-12 md:py-16 bg-background">
+    <section className="py-8 md:py-12 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
             <p className="text-sm font-bold text-muted-foreground tracking-widest uppercase">LATEST ADDED</p>
