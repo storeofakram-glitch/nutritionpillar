@@ -29,6 +29,11 @@ export default function ProductCard({ product }: ProductCardProps) {
   }
 
   const imageUrl = (product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : "https://picsum.photos/400/400?random=1";
+  
+  const originalPrice = product.price;
+  const discountPrice = product.discountPercentage 
+    ? originalPrice - (originalPrice * (product.discountPercentage / 100))
+    : originalPrice;
 
   return (
     <Link href={`/products/${product.id}`} className="flex h-full">
@@ -39,6 +44,14 @@ export default function ProductCard({ product }: ProductCardProps) {
         <CardHeader className="p-0 relative">
              {product.sponsored && (
                 <Badge className="absolute top-2 left-2 z-10 bg-yellow-400 text-yellow-900 font-bold hover:bg-yellow-400">Sponsored</Badge>
+            )}
+             {product.discountPercentage && product.discountPercentage > 0 && (
+                 <Badge 
+                    variant="destructive"
+                    className="absolute top-2 right-2 z-10 rounded-full h-12 w-12 flex items-center justify-center text-base font-bold"
+                >
+                    -{product.discountPercentage}%
+                </Badge>
             )}
             <div className="relative w-full aspect-square">
             <Image
@@ -67,9 +80,16 @@ export default function ProductCard({ product }: ProductCardProps) {
             
             <div className="flex-grow" />
 
-            <p className="text-2xl font-bold font-headline text-primary mt-auto">
-            DZD {product.price.toFixed(2)}
-            </p>
+            <div className="flex items-baseline gap-2 mt-auto">
+                <p className="text-2xl font-bold font-headline text-primary">
+                    DZD {discountPrice.toFixed(2)}
+                </p>
+                {product.discountPercentage && product.discountPercentage > 0 && (
+                    <p className="text-lg font-medium text-muted-foreground line-through">
+                        DZD {originalPrice.toFixed(2)}
+                    </p>
+                )}
+            </div>
             {getStockBadge()}
         </CardContent>
         <CardFooter className="p-4 pt-0">

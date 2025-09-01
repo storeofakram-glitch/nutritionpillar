@@ -1,14 +1,4 @@
 
-
-
-
-
-
-
-
-
-
-
 export type Product = {
   id: string;
   name: string;
@@ -19,6 +9,7 @@ export type Product = {
   category: string;
   imageUrls: string[];
   sponsored?: boolean;
+  discountPercentage?: number;
   options?: {
     sizes?: string[];
     colors?: string[];

@@ -87,10 +87,15 @@ export default function ProductDetailPage() {
     return <Badge variant="default" className="bg-green-600 hover:bg-green-700">In Stock</Badge>;
   }
 
+  const originalPrice = product.price;
+  const discountPrice = product.discountPercentage 
+    ? originalPrice - (originalPrice * (product.discountPercentage / 100))
+    : originalPrice;
+
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
       <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start">
-        <div className="w-full">
+        <div className="w-full relative">
             <Carousel>
                 <CarouselContent>
                     {product.imageUrls.map((url, index) => (
@@ -111,6 +116,14 @@ export default function ProductDetailPage() {
                 <CarouselNext className="right-2" />
                 <CarouselDots />
             </Carousel>
+             {product.discountPercentage && product.discountPercentage > 0 && (
+                 <Badge 
+                    variant="destructive"
+                    className="absolute top-4 right-4 z-10 rounded-full h-16 w-16 flex items-center justify-center text-lg font-bold"
+                >
+                    -{product.discountPercentage}%
+                </Badge>
+            )}
         </div>
         
         <div className="flex flex-col gap-6">
@@ -120,9 +133,16 @@ export default function ProductDetailPage() {
             <div className="mt-2">{getStockBadge()}</div>
           </div>
 
-          <p className="text-4xl font-bold font-headline text-primary">
-            DZD {product.price.toFixed(2)}
-          </p>
+          <div className="flex items-baseline gap-2">
+            <p className="text-4xl font-bold font-headline text-primary">
+                DZD {discountPrice.toFixed(2)}
+            </p>
+            {product.discountPercentage && product.discountPercentage > 0 && (
+                <p className="text-2xl font-medium text-muted-foreground line-through">
+                    DZD {originalPrice.toFixed(2)}
+                </p>
+            )}
+          </div>
 
           <p className="text-base text-muted-foreground leading-relaxed">
             {product.description}
