@@ -20,7 +20,7 @@ const SmallProductCard = ({ product }: { product: Product }) => {
   return (
     <Link href={`/products/${product.id}`} className="block h-full group">
       <div className="text-center h-full flex flex-col p-2 rounded-lg border border-transparent group-hover:border-accent/50 group-hover:shadow-lg group-hover:shadow-accent/10 transition-all duration-300 group-hover:-translate-y-1">
-        <div className="relative w-full aspect-square mb-4 bg-gray-50 rounded-lg overflow-hidden">
+        <div className="relative w-full aspect-square mb-4 bg-gray-900 border border-primary/20 rounded-lg overflow-hidden">
             <Image
                 src={product.imageUrl}
                 alt={product.name}
