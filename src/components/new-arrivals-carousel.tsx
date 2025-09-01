@@ -23,7 +23,7 @@ const SmallProductCard = ({ product }: { product: Product }) => {
 
   return (
     <Link href={`/products/${product.id}`} className="block h-full group">
-      <div className="text-center h-full flex flex-col p-2 rounded-lg border border-primary/50 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:-translate-y-1">
+      <div className="text-center h-full flex flex-col p-2 rounded-lg border border-primary/50 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:-translate-y-1 overflow-hidden">
         <div className="relative w-full aspect-square mb-4 rounded-lg overflow-hidden">
             <Image
                 src={imageUrl}
@@ -38,8 +38,10 @@ const SmallProductCard = ({ product }: { product: Product }) => {
                 </div>
             )}
         </div>
-        <div className="flex flex-col flex-grow">
-            <h3 className="font-semibold text-sm truncate flex-grow">{product.name}</h3>
+        <div className="flex flex-col flex-grow justify-end">
+             <div className="bg-primary text-primary-foreground py-2 px-1 rounded-md mt-auto">
+                <h3 className="font-semibold text-sm truncate">{product.name}</h3>
+            </div>
         </div>
       </div>
     </Link>
