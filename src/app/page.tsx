@@ -94,7 +94,7 @@ export default async function Home() {
         </Marquee>
       </section>
 
-      <section className="py-12 md:py-16 bg-muted">
+      <section className="py-12 md:py-16 bg-background">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8 items-center bg-card p-8 rounded-lg shadow-lg">
             <div className="relative w-full aspect-video rounded-lg overflow-hidden">
