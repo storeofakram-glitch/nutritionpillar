@@ -8,6 +8,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -16,7 +17,7 @@ export type Product = {
   buyingPrice?: number;
   quantity: number;
   category: string;
-  imageUrl: string;
+  imageUrls: string[];
   sponsored?: boolean;
   options?: {
     sizes?: string[];

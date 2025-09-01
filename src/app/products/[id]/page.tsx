@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/contexts/cart-context';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselDots } from '@/components/ui/carousel';
 
 export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
@@ -89,14 +90,27 @@ export default function ProductDetailPage() {
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
       <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start">
-        <div className="w-full aspect-square relative overflow-hidden rounded-lg shadow-lg">
-          <Image
-            src={product.imageUrl}
-            alt={product.name}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 50vw"
-          />
+        <div className="w-full">
+            <Carousel>
+                <CarouselContent>
+                    {product.imageUrls.map((url, index) => (
+                        <CarouselItem key={index}>
+                            <div className="w-full aspect-square relative overflow-hidden rounded-lg shadow-lg">
+                                <Image
+                                    src={url}
+                                    alt={`${product.name} image ${index + 1}`}
+                                    fill
+                                    className="object-cover"
+                                    sizes="(max-width: 768px) 100vw, 50vw"
+                                />
+                            </div>
+                        </CarouselItem>
+                    ))}
+                </CarouselContent>
+                <CarouselPrevious className="left-2" />
+                <CarouselNext className="right-2" />
+                <CarouselDots />
+            </Carousel>
         </div>
         
         <div className="flex flex-col gap-6">

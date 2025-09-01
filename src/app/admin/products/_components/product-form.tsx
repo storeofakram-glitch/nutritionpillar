@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useForm } from "react-hook-form"
+import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
@@ -21,6 +21,7 @@ import { addProduct, updateProduct } from "@/services/product-service"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import type { Product } from "@/types"
 import { Switch } from "@/components/ui/switch"
+import { PlusCircle, Trash2 } from "lucide-react"
 
 const productSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -29,7 +30,7 @@ const productSchema = z.object({
   buyingPrice: z.coerce.number().min(0, "Buying price must be a non-negative number.").optional(),
   quantity: z.coerce.number().int().min(0, "Quantity must be a non-negative integer."),
   category: z.string({ required_error: "Please select a category."}).min(1, "Please select a category."),
-  imageUrl: z.string().url("Please enter a valid image URL."),
+  imageUrls: z.array(z.object({ value: z.string().url("Must be a valid URL.") })).min(1, "At least one image URL is required."),
   sponsored: z.boolean().optional(),
 })
 
@@ -60,24 +61,33 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
       buyingPrice: product?.buyingPrice || 0,
       quantity: product?.quantity || 0,
       category: product?.category || "",
-      imageUrl: product?.imageUrl || "",
+      imageUrls: product?.imageUrls?.map(url => ({ value: url })) || [{ value: "" }],
       sponsored: product?.sponsored || false,
     },
   })
 
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "imageUrls"
+  });
+
   async function onSubmit(data: ProductFormValues) {
+    const productData = {
+        ...data,
+        imageUrls: data.imageUrls.map(item => item.value)
+    };
+
     const result = isEditMode
-        ? await updateProduct(product.id, data)
-        : await addProduct(data);
+        ? await updateProduct(product.id, productData)
+        : await addProduct(productData);
 
     if (result.success) {
       toast({
         title: isEditMode ? "Product Updated" : "Product Added",
         description: `"${data.name}" has been successfully ${isEditMode ? 'updated' : 'added'}.`,
       })
-      // Only call the onFormSubmit callback on success
       onFormSubmit();
-      form.reset(); // Reset form fields after successful submission
+      form.reset();
     } else {
       toast({
         variant: "destructive",
@@ -184,22 +194,42 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
             />
         </div>
         
-        <FormField
-          control={form.control}
-          name="imageUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Image URL</FormLabel>
-              <FormControl>
-                <Input placeholder="https://..." {...field} />
-              </FormControl>
-              <FormDescription>
-                Recommended aspect ratio: 1:1 (e.g., 400x400 pixels).
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="space-y-4">
+            <FormLabel>Image URLs</FormLabel>
+            {fields.map((field, index) => (
+                <FormField
+                    key={field.id}
+                    control={form.control}
+                    name={`imageUrls.${index}.value`}
+                    render={({ field }) => (
+                        <FormItem>
+                            <div className="flex items-center gap-2">
+                                <FormControl>
+                                    <Input placeholder="https://..." {...field} />
+                                </FormControl>
+                                <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= 1}>
+                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                </Button>
+                            </div>
+                             <FormMessage />
+                        </FormItem>
+                    )}
+                />
+            ))}
+             <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => append({ value: "" })}
+            >
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add Image URL
+            </Button>
+            <FormDescription>
+                The first image will be the primary thumbnail.
+            </FormDescription>
+        </div>
+
 
         <FormField
           control={form.control}

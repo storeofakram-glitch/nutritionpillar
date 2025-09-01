@@ -49,6 +49,7 @@ export async function updateProduct(id: string, product: Partial<Omit<Product, '
         await updateDoc(docRef, product);
         // Revalidate all relevant paths after updating a product
         revalidatePath('/');
+        revalidatePath(`/products/${id}`);
         revalidatePath('/admin/products');
         revalidatePath('/admin/finance');
         return { success: true };

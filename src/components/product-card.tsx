@@ -28,6 +28,8 @@ export default function ProductCard({ product }: ProductCardProps) {
     return <Badge variant="default" className="mt-2 self-start bg-green-600 hover:bg-green-700">In Stock</Badge>;
   }
 
+  const imageUrl = (product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : "https://picsum.photos/400/400?random=1";
+
   return (
     <Link href={`/products/${product.id}`} className="flex h-full">
         <Card className={cn(
@@ -40,7 +42,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             )}
             <div className="relative w-full aspect-square">
             <Image
-                src={product.imageUrl}
+                src={imageUrl}
                 alt={product.name}
                 fill
                 className={cn("object-cover", isOutOfStock && "grayscale")}

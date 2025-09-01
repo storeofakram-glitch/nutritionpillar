@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useEffect, useState, useTransition } from "react"
@@ -108,7 +109,7 @@ export default function ProductTable() {
                 alt={product.name}
                 className="aspect-square rounded-md object-cover"
                 height="64"
-                src={product.imageUrl || "https://picsum.photos/64"}
+                src={product.imageUrls?.[0] || "https://picsum.photos/64"}
                 width="64"
               />
             </TableCell>

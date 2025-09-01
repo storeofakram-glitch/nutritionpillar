@@ -50,7 +50,7 @@ export default function CartItems() {
           {cartItems.map(item => (
             <div key={item.product.id} className="flex items-center gap-4 py-4">
               <Image
-                src={item.product.imageUrl}
+                src={item.product.imageUrls[0]}
                 alt={item.product.name}
                 width={80}
                 height={80}

@@ -16,13 +16,14 @@ import { cn } from "@/lib/utils";
 
 const SmallProductCard = ({ product }: { product: Product }) => {
   const isOutOfStock = product.quantity === 0;
+  const imageUrl = (product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : "https://picsum.photos/400/400?random=1";
 
   return (
     <Link href={`/products/${product.id}`} className="block h-full group">
       <div className="text-center h-full flex flex-col p-2 rounded-lg border border-primary/50 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:-translate-y-1">
         <div className="relative w-full aspect-square mb-4 rounded-lg overflow-hidden">
             <Image
-                src={product.imageUrl}
+                src={imageUrl}
                 alt={product.name}
                 fill
                 className="object-contain p-4"
