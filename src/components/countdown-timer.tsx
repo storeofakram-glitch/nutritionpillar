@@ -6,12 +6,14 @@ import { cn } from '@/lib/utils';
 import { Timer } from 'lucide-react';
 
 interface CountdownTimerProps {
-  endDate: string;
+  endDate?: string;
   className?: string;
 }
 
 export default function CountdownTimer({ endDate, className }: CountdownTimerProps) {
   const calculateTimeLeft = () => {
+    if (!endDate) return null;
+
     const difference = +new Date(endDate) - +new Date();
     let timeLeft = {
       days: 0,
@@ -27,9 +29,10 @@ export default function CountdownTimer({ endDate, className }: CountdownTimerPro
         minutes: Math.floor((difference / 1000 / 60) % 60),
         seconds: Math.floor((difference / 1000) % 60),
       };
+      return timeLeft;
     }
 
-    return timeLeft;
+    return null;
   };
 
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
@@ -37,6 +40,8 @@ export default function CountdownTimer({ endDate, className }: CountdownTimerPro
 
   useEffect(() => {
     setIsClient(true);
+    if (!endDate) return;
+
     const timer = setTimeout(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
@@ -44,6 +49,10 @@ export default function CountdownTimer({ endDate, className }: CountdownTimerPro
     return () => clearTimeout(timer);
   });
 
+  if (!isClient || !timeLeft) {
+    return null;
+  }
+  
   const timerComponents = [
     { label: 'Days', value: timeLeft.days },
     { label: 'Hrs', value: timeLeft.hours },
@@ -51,10 +60,6 @@ export default function CountdownTimer({ endDate, className }: CountdownTimerPro
     { label: 'Secs', value: timeLeft.seconds },
   ];
 
-  if (!isClient || +new Date(endDate) < +new Date()) {
-    return null;
-  }
-  
   return (
     <div className={cn("flex items-center gap-2 text-center", className)}>
         <Timer className="h-5 w-5 text-yellow-500" />
