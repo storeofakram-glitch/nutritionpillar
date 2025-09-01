@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useForm, useFieldArray } from "react-hook-form"
@@ -47,6 +46,8 @@ const categories = [
     "Performance",
     "Pre-Workout",
     "Health & Wellness",
+    "Mass gainer",
+    "Fat burner",
 ]
 
 export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
