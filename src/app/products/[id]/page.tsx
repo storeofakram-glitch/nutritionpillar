@@ -124,6 +124,7 @@ export default function ProductDetailPage() {
                  <Badge 
                     variant="destructive"
                     className="absolute top-4 right-4 z-10 rounded-full h-16 w-16 flex items-center justify-center text-lg font-bold"
+                    style={{ backgroundColor: '#FF0000' }}
                 >
                     -{product.discountPercentage}%
                 </Badge>

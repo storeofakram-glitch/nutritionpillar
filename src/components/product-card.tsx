@@ -53,6 +53,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                  <Badge 
                     variant="destructive"
                     className="absolute top-2 right-2 z-10 rounded-full h-12 w-12 flex items-center justify-center text-base font-bold"
+                    style={{ backgroundColor: '#FF0000' }}
                 >
                     -{product.discountPercentage}%
                 </Badge>
