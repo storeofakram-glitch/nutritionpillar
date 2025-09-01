@@ -23,7 +23,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         return <Badge variant="destructive" className="mt-2 self-start">Out of Stock</Badge>;
     }
     if (product.quantity <= 10) {
-        return <Badge variant="secondary" className="mt-2 self-start">{product.quantity} left</Badge>;
+        return <Badge className="mt-2 self-start bg-yellow-400 text-yellow-900 hover:bg-yellow-400/80">{product.quantity} left</Badge>;
     }
     return <Badge variant="default" className="mt-2 self-start bg-green-600 hover:bg-green-700">In Stock</Badge>;
   }
@@ -31,7 +31,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const imageUrl = (product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : "https://picsum.photos/400/400?random=1";
   
   const originalPrice = product.price;
-  const discountPrice = product.discountPercentage 
+  const discountPrice = (product.discountPercentage && product.discountPercentage > 0)
     ? originalPrice - (originalPrice * (product.discountPercentage / 100))
     : originalPrice;
 
