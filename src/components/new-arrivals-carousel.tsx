@@ -23,7 +23,7 @@ const SmallProductCard = ({ product }: { product: Product }) => {
 
   return (
     <Link href={`/products/${product.id}`} className="block h-full group">
-      <div className="relative text-center h-full flex flex-col p-2 rounded-lg border border-primary/50 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:-translate-y-1 overflow-hidden">
+      <div className="relative text-center h-full flex flex-col p-2 rounded-lg border border-primary/50 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:-translate-y-1">
         <Badge className="absolute top-2 left-2 z-10 rounded-full h-10 w-10 flex items-center justify-center text-xs font-bold">
             New
         </Badge>
