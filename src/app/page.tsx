@@ -49,7 +49,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col">
-      <section className="relative w-full h-[60vh] md:h-[70vh] text-white overflow-hidden shadow-[0_0_15px_5px] shadow-primary/50">
+      <section className="relative w-full h-[60vh] md:h-[70vh] text-white overflow-hidden">
         <Image
             src={hero.imageUrl}
             alt={hero.alt || "Hero image"}
@@ -93,7 +93,7 @@ export default async function Home() {
 
       <section className="py-8 md:py-12 bg-background">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-8 items-center bg-card p-8 rounded-lg shadow-lg">
+          <div className="grid md:grid-cols-2 gap-8 items-center bg-card p-8 rounded-lg shadow-lg shadow-primary/20">
             <div className="relative w-full aspect-video rounded-lg overflow-hidden">
                 <Image
                     src={adBanner.imageUrl}
