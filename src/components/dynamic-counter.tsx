@@ -19,7 +19,9 @@ export default function DynamicCounter({ endValue, duration = 3000, className, s
   });
 
   useEffect(() => {
-    if (inView) {
+    // When the component comes into view and the endValue is greater than 0, start the animation.
+    if (inView && endValue > 0) {
+      setCount(0); // Reset count to 0 to start animation from the beginning
       let startTime: number;
       const animateCount = (timestamp: number) => {
         if (!startTime) startTime = timestamp;
@@ -41,6 +43,9 @@ export default function DynamicCounter({ endValue, duration = 3000, className, s
         }
       };
       requestAnimationFrame(animateCount);
+    } else if (!inView || endValue === 0) {
+      // If not in view or endValue is 0, just set the count to the endValue (which would be 0)
+      setCount(endValue);
     }
   }, [inView, endValue, duration]);
 

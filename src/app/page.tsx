@@ -24,6 +24,7 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
+      setLoading(true);
       const [productsData, settingsData] = await Promise.all([
         getProducts(),
         getSiteSettings(),
@@ -66,7 +67,11 @@ export default function Home() {
     title: 'the must popular transformation',
     description: "to get a transformation like this just apply ",
     buttonText: 'apply',
-    buttonLink: 'www.akramfit.com'
+    buttonLink: 'www.akramfit.com',
+    counter1Value: 0,
+    counter1Label: 'Happy Clients',
+    counter2Value: 0,
+    counter2Label: 'Transformations',
   };
 
 
@@ -134,22 +139,16 @@ export default function Home() {
                     {adBanner.description}
                 </p>
 
-                {(adBanner.counter1Value || adBanner.counter2Value) && (
-                  <div className="flex justify-center md:justify-start gap-4 mb-6">
-                    {adBanner.counter1Value && adBanner.counter1Label && (
-                        <div className="flex flex-col items-center justify-center p-3 rounded-lg bg-primary/10 border border-primary/20">
-                            <DynamicCounter endValue={adBanner.counter1Value} suffix="+" className="text-2xl font-bold text-primary" />
-                            <p className="text-xs text-muted-foreground mt-1">{adBanner.counter1Label}</p>
-                        </div>
-                    )}
-                    {adBanner.counter2Value && adBanner.counter2Label && (
-                       <div className="flex flex-col items-center justify-center p-3 rounded-lg bg-primary/10 border border-primary/20">
-                            <DynamicCounter endValue={adBanner.counter2Value} suffix="+" className="text-2xl font-bold text-primary" />
-                            <p className="text-xs text-muted-foreground mt-1">{adBanner.counter2Label}</p>
-                        </div>
-                    )}
-                  </div>
-                )}
+                <div className="flex justify-center md:justify-start gap-4 mb-6">
+                    <div className="flex flex-col items-center justify-center p-3 rounded-lg bg-primary/10 border border-primary/20">
+                        <DynamicCounter endValue={loading ? 0 : (adBanner.counter1Value || 0)} suffix="+" className="text-2xl font-bold text-primary" />
+                        <p className="text-xs text-muted-foreground mt-1">{adBanner.counter1Label || 'Happy Clients'}</p>
+                    </div>
+                    <div className="flex flex-col items-center justify-center p-3 rounded-lg bg-primary/10 border border-primary/20">
+                        <DynamicCounter endValue={loading ? 0 : (adBanner.counter2Value || 0)} suffix="+" className="text-2xl font-bold text-primary" />
+                        <p className="text-xs text-muted-foreground mt-1">{adBanner.counter2Label || 'Transformations'}</p>
+                    </div>
+                </div>
 
                 <Button asChild size="lg" className="font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
                     <Link href={adBanner.buttonLink}>
@@ -199,8 +198,8 @@ export default function Home() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="hidden sm:flex" />
-              <CarouselNext className="hidden sm:flex" />
+              <CarouselPrevious className="flex" />
+              <CarouselNext className="flex" />
             </Carousel>
           </div>
         </div>
