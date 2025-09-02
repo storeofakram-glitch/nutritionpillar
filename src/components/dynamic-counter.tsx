@@ -11,7 +11,7 @@ interface DynamicCounterProps {
   suffix?: string;
 }
 
-export default function DynamicCounter({ endValue, duration = 2000, className, suffix }: DynamicCounterProps) {
+export default function DynamicCounter({ endValue, duration = 3000, className, suffix }: DynamicCounterProps) {
   const [count, setCount] = useState(0);
   const { ref, inView } = useInView({
     triggerOnce: true,
