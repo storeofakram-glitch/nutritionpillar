@@ -43,7 +43,7 @@ const SmallProductCard = ({ product }: { product: Product }) => {
         </div>
         <div className="flex flex-col flex-grow justify-end">
              <div className="bg-primary text-primary-foreground py-2 px-1 rounded-md mt-auto">
-                <h3 className="font-semibold text-sm truncate">{product.name}</h3>
+                <h3 className="font-bold text-sm truncate">{product.name}</h3>
             </div>
         </div>
       </div>
