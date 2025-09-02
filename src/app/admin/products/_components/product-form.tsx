@@ -36,6 +36,7 @@ const productSchema = z.object({
   category: z.string({ required_error: "Please select a category."}).min(1, "Please select a category."),
   imageUrls: z.array(z.object({ value: z.string().url("Must be a valid URL.") })).min(1, "At least one image URL is required."),
   sponsored: z.boolean().optional(),
+  isNewArrival: z.boolean().optional(),
   discountPercentage: z.coerce.number().min(0, "Discount must be non-negative.").max(100, "Discount cannot exceed 100.").optional(),
   discountEndDate: z.date().optional(),
 })
@@ -71,6 +72,7 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
       category: product?.category || "",
       imageUrls: product?.imageUrls?.map(url => ({ value: url })) || [{ value: "" }],
       sponsored: product?.sponsored || false,
+      isNewArrival: product?.isNewArrival || false,
       discountPercentage: product?.discountPercentage || 0,
       discountEndDate: product?.discountEndDate ? new Date(product.discountEndDate) : undefined,
     },
@@ -254,6 +256,27 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
                 <FormLabel>Sponsored Product</FormLabel>
                 <FormDescription>
                   Sponsored products appear at the top of the product list.
+                </FormDescription>
+              </div>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        
+         <FormField
+          control={form.control}
+          name="isNewArrival"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+              <div className="space-y-0.5">
+                <FormLabel>New Arrival</FormLabel>
+                <FormDescription>
+                  New arrivals appear in the homepage carousel.
                 </FormDescription>
               </div>
               <FormControl>

@@ -58,8 +58,8 @@ export default function NewArrivalsCarousel() {
   useEffect(() => {
     async function fetchNewArrivals() {
       const allProducts = await getProducts();
-      // Assuming newer products are added to the end of the collection
-      const arrivals = allProducts.slice(-8).reverse();
+      // Filter for products explicitly marked as new arrivals
+      const arrivals = allProducts.filter(p => p.isNewArrival);
       setNewArrivals(arrivals);
       setLoading(false);
     }
@@ -98,8 +98,8 @@ export default function NewArrivalsCarousel() {
                     </CarouselItem>
                 ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious className="flex" />
+            <CarouselNext className="flex" />
             <CarouselDots />
         </Carousel>
       </div>

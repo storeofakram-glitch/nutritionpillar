@@ -10,6 +10,7 @@ export type Product = {
   category: string;
   imageUrls: string[];
   sponsored?: boolean;
+  isNewArrival?: boolean;
   discountPercentage?: number;
   discountEndDate?: string; // ISO 8601 string
   options?: {
