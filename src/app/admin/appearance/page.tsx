@@ -1,6 +1,5 @@
 
 
-
 // This is a new file for the Appearance management page in the admin dashboard.
 "use client";
 
@@ -88,7 +87,7 @@ const emptyValues: SiteSettings = {
     hero: { imageUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "" },
     marquee: { messages: [{ text: "", logoUrl: "", logoAlt: "" }] },
     partnershipLogos: [{ src: "", alt: "", hint: "" }],
-    adBanner: { imageUrl: "", imageAlt: "", title: "", description: "", buttonText: "", buttonLink: "" },
+    adBanner: { imageUrl: "", imageAlt: "", title: "", description: "", buttonText: "", buttonLink: "", counter1Value: 0, counter1Label: '', counter2Value: 0, counter2Label: '' },
     aboutPage: { title: "", subtitle: "", imageUrl: "", imageAlt: "", storyTitle: "", storyContent1: "", storyContent2: "", missionTitle: "", missionContent: "", visionTitle: "", visionContent: "", valuesTitle: "", valuesContent: "" },
 };
 
@@ -401,18 +400,18 @@ export default function AdminAppearancePage() {
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField control={form.control} name="adBanner.counter1Value" render={({ field }) => (
-                                <FormItem><FormLabel>Counter 1 Value</FormLabel><FormControl><Input type="number" {...field} placeholder="e.g. 1000" /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Counter 1 Value</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
                             <FormField control={form.control} name="adBanner.counter1Label" render={({ field }) => (
-                                <FormItem><FormLabel>Counter 1 Label</FormLabel><FormControl><Input {...field} placeholder="e.g. Happy Clients" /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Counter 1 Label</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="e.g. Happy Clients" /></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField control={form.control} name="adBanner.counter2Value" render={({ field }) => (
-                                <FormItem><FormLabel>Counter 2 Value</FormLabel><FormControl><Input type="number" {...field} placeholder="e.g. 50" /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Counter 2 Value</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} placeholder="e.g. 50" /></FormControl><FormMessage /></FormItem>
                             )} />
                             <FormField control={form.control} name="adBanner.counter2Label" render={({ field }) => (
-                                <FormItem><FormLabel>Counter 2 Label</FormLabel><FormControl><Input {...field} placeholder="e.g. Products Sold" /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Counter 2 Label</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="e.g. Products Sold" /></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
 
@@ -503,3 +502,5 @@ export default function AdminAppearancePage() {
     </Form>
   );
 }
+
+    

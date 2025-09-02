@@ -161,7 +161,7 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
                 <FormItem>
                 <FormLabel>Buying Price</FormLabel>
                 <FormControl>
-                    <Input type="number" placeholder="25.00" {...field} />
+                    <Input type="number" placeholder="25.00" {...field} value={field.value ?? ''}/>
                 </FormControl>
                 <FormMessage />
                 </FormItem>
@@ -336,3 +336,5 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
     </Form>
   )
 }
+
+    
