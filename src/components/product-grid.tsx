@@ -68,7 +68,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
   const hasRegularProducts = regularProducts.length > 0;
 
   // We only want to show the "All Products" heading if there are sponsored products to differentiate from.
-  const showAllProductsHeading = hasSponsoredProducts && regularProducts.filter(p => !p.sponsored).length > 0;
+  const showAllProductsHeading = hasSponsoredProducts && regularProducts.length > 0;
 
   return (
     <div>
@@ -111,7 +111,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
                  <h3 className="text-2xl font-bold font-headline mb-6">All Products</h3>
             )}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {regularProducts.filter(p => !p.sponsored).map(product => (
+            {regularProducts.map(product => (
                 <ProductCard key={product.id} product={product} />
             ))}
             </div>
