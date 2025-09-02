@@ -98,9 +98,9 @@ export default function NewArrivalsCarousel() {
                     </CarouselItem>
                 ))}
             </CarouselContent>
-            <CarouselPrevious className="hidden md:flex" />
-            <CarouselNext className="hidden md:flex" />
-            <CarouselDots className="md:hidden" />
+            <CarouselPrevious />
+            <CarouselNext />
+            <CarouselDots />
         </Carousel>
       </div>
     </section>
