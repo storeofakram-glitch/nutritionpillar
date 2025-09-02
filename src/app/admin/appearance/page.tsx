@@ -378,8 +378,8 @@ export default function AdminAppearancePage() {
                         <FormField control={form.control} name="adBanner.imageUrl" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Image URL</FormLabel>
-                                <FormControl><Input {...field} placeholder="https://picsum.photos/600/400" /></FormControl>
-                                <FormDescription>Recommended aspect ratio: 4:3 or 16:9.</FormDescription>
+                                <FormControl><Input {...field} placeholder="https://picsum.photos/1200/600" /></FormControl>
+                                <FormDescription>Recommended size: 1200x600 pixels.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )} />
@@ -502,5 +502,3 @@ export default function AdminAppearancePage() {
     </Form>
   );
 }
-
-    
