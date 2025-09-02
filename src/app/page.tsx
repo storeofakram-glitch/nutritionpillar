@@ -15,6 +15,7 @@ import NewArrivalsCarousel from '@/components/new-arrivals-carousel';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useEffect, useState } from 'react';
 import DynamicCounter from '@/components/dynamic-counter';
+import { Badge } from '@/components/ui/badge';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -134,18 +135,18 @@ export default function Home() {
                 </p>
 
                 {(adBanner.counter1Value || adBanner.counter2Value) && (
-                  <div className="flex justify-center md:justify-start gap-8 mb-6">
+                  <div className="flex justify-center md:justify-start gap-4 mb-6">
                     {adBanner.counter1Value && adBanner.counter1Label && (
-                      <div className="text-center">
-                        <DynamicCounter endValue={adBanner.counter1Value} suffix="+" className="text-3xl font-bold text-primary" />
-                        <p className="text-sm text-muted-foreground">{adBanner.counter1Label}</p>
-                      </div>
+                        <div className="flex flex-col items-center justify-center p-3 rounded-lg bg-primary/10 border border-primary/20">
+                            <DynamicCounter endValue={adBanner.counter1Value} suffix="+" className="text-2xl font-bold text-primary" />
+                            <p className="text-xs text-muted-foreground mt-1">{adBanner.counter1Label}</p>
+                        </div>
                     )}
                     {adBanner.counter2Value && adBanner.counter2Label && (
-                      <div className="text-center">
-                        <DynamicCounter endValue={adBanner.counter2Value} suffix="+" className="text-3xl font-bold text-primary" />
-                        <p className="text-sm text-muted-foreground">{adBanner.counter2Label}</p>
-                      </div>
+                       <div className="flex flex-col items-center justify-center p-3 rounded-lg bg-primary/10 border border-primary/20">
+                            <DynamicCounter endValue={adBanner.counter2Value} suffix="+" className="text-2xl font-bold text-primary" />
+                            <p className="text-xs text-muted-foreground mt-1">{adBanner.counter2Label}</p>
+                        </div>
                     )}
                   </div>
                 )}
