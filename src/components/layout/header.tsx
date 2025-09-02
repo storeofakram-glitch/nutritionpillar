@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/sheet"
 import * as React from 'react';
 import { SearchDialog } from '../search-dialog';
+import Image from 'next/image';
 
 
 export default function Header() {
@@ -71,6 +72,14 @@ export default function Header() {
         </div>
 
         <Link href="/" className="mr-6 flex items-center space-x-2">
+          <Image
+            src="https://picsum.photos/32/32"
+            alt="Nutrition Pillar Logo"
+            width={32}
+            height={32}
+            className="h-8 w-8 rounded-full"
+            data-ai-hint="logo"
+          />
           <span className="font-bold font-headline text-lg">Nutrition Pillar</span>
         </Link>
         <nav className="hidden md:flex items-center gap-6 text-sm">
