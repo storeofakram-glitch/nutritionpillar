@@ -24,12 +24,19 @@ export default function DynamicCounter({ endValue, duration = 3000, className, s
       const animateCount = (timestamp: number) => {
         if (!startTime) startTime = timestamp;
         const progress = timestamp - startTime;
-        const currentCount = Math.min(Math.floor((progress / duration) * endValue), endValue);
+        
+        // Calculate what fraction of the duration has passed
+        const progressFraction = Math.min(progress / duration, 1);
+        
+        // Calculate the current count based on that fraction
+        const currentCount = Math.floor(progressFraction * endValue);
+        
         setCount(currentCount);
 
         if (progress < duration) {
           requestAnimationFrame(animateCount);
         } else {
+            // Ensure it ends exactly on the endValue
             setCount(endValue);
         }
       };
