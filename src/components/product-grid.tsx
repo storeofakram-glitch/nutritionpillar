@@ -22,6 +22,10 @@ export default function ProductGrid({ products }: ProductGridProps) {
     flavor: 'all',
   });
 
+  const handleFilterChange = (filterName: keyof typeof filters) => (value: string) => {
+    setFilters(prev => ({ ...prev, [filterName]: value }));
+  };
+
   const availableFilters = useMemo(() => {
     const categories = new Set<string>();
     const sizes = new Set<string>();
@@ -51,18 +55,20 @@ export default function ProductGrid({ products }: ProductGridProps) {
       return searchMatch && categoryMatch && sizeMatch && colorMatch && flavorMatch;
     });
 
+    const sponsored = filtered.filter(p => p.sponsored);
+    
+    // "regular" list now contains ALL filtered products.
     return {
-        sponsoredProducts: filtered.filter(p => p.sponsored),
-        regularProducts: filtered.filter(p => !p.sponsored)
+        sponsoredProducts: sponsored,
+        regularProducts: filtered,
     }
   }, [products, searchTerm, filters]);
 
-  const handleFilterChange = (filterType: keyof typeof filters) => (value: string) => {
-    setFilters(prev => ({ ...prev, [filterType]: value }));
-  };
-
   const hasSponsoredProducts = sponsoredProducts.length > 0;
   const hasRegularProducts = regularProducts.length > 0;
+
+  // We only want to show the "All Products" heading if there are sponsored products to differentiate from.
+  const showAllProductsHeading = hasSponsoredProducts && regularProducts.filter(p => !p.sponsored).length > 0;
 
   return (
     <div>
@@ -97,15 +103,15 @@ export default function ProductGrid({ products }: ProductGridProps) {
         </div>
       )}
 
-      {hasRegularProducts && hasSponsoredProducts && <Separator className="my-12" />}
+      {hasSponsoredProducts && hasRegularProducts && <Separator className="my-12" />}
 
       {hasRegularProducts ? (
         <div>
-            {hasSponsoredProducts && (
+            {showAllProductsHeading && (
                  <h3 className="text-2xl font-bold font-headline mb-6">All Products</h3>
             )}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {regularProducts.map(product => (
+            {regularProducts.filter(p => !p.sponsored).map(product => (
                 <ProductCard key={product.id} product={product} />
             ))}
             </div>
