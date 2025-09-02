@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import Image from 'next/image';
@@ -13,6 +14,7 @@ import type { SiteSettings, Product } from '@/types';
 import NewArrivalsCarousel from '@/components/new-arrivals-carousel';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useEffect, useState } from 'react';
+import DynamicCounter from '@/components/dynamic-counter';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -130,6 +132,24 @@ export default function Home() {
                 <p className="text-muted-foreground mb-6">
                     {adBanner.description}
                 </p>
+
+                {(adBanner.counter1Value || adBanner.counter2Value) && (
+                  <div className="flex justify-center md:justify-start gap-8 mb-6">
+                    {adBanner.counter1Value && adBanner.counter1Label && (
+                      <div className="text-center">
+                        <DynamicCounter endValue={adBanner.counter1Value} suffix="+" className="text-3xl font-bold text-primary" />
+                        <p className="text-sm text-muted-foreground">{adBanner.counter1Label}</p>
+                      </div>
+                    )}
+                    {adBanner.counter2Value && adBanner.counter2Label && (
+                      <div className="text-center">
+                        <DynamicCounter endValue={adBanner.counter2Value} suffix="+" className="text-3xl font-bold text-primary" />
+                        <p className="text-sm text-muted-foreground">{adBanner.counter2Label}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <Button asChild size="lg" className="font-bold">
                     <Link href={adBanner.buttonLink}>
                         {adBanner.buttonText}

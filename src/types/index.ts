@@ -1,4 +1,5 @@
 
+
 export type Product = {
   id: string;
   name: string;
@@ -136,6 +137,10 @@ export type AdBanner = {
   description: string;
   buttonText: string;
   buttonLink: string;
+  counter1Value?: number;
+  counter1Label?: string;
+  counter2Value?: number;
+  counter2Label?: string;
 };
 
 export type AboutPageSettings = {

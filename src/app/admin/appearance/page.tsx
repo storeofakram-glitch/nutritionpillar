@@ -1,5 +1,6 @@
 
 
+
 // This is a new file for the Appearance management page in the admin dashboard.
 "use client";
 
@@ -49,6 +50,10 @@ const adBannerSchema = z.object({
   description: z.string().min(1, { message: "Description is required." }),
   buttonText: z.string().min(1, { message: "Button text is required." }),
   buttonLink: z.string().min(1, { message: "Button link is required." }),
+  counter1Value: z.coerce.number().optional(),
+  counter1Label: z.string().optional(),
+  counter2Value: z.coerce.number().optional(),
+  counter2Label: z.string().optional(),
 });
 
 
@@ -393,6 +398,24 @@ export default function AdminAppearancePage() {
                         <FormField control={form.control} name="adBanner.description" render={({ field }) => (
                             <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} placeholder="Get 20% off..." /></FormControl><FormMessage /></FormItem>
                         )} />
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField control={form.control} name="adBanner.counter1Value" render={({ field }) => (
+                                <FormItem><FormLabel>Counter 1 Value</FormLabel><FormControl><Input type="number" {...field} placeholder="e.g. 1000" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                            <FormField control={form.control} name="adBanner.counter1Label" render={({ field }) => (
+                                <FormItem><FormLabel>Counter 1 Label</FormLabel><FormControl><Input {...field} placeholder="e.g. Happy Clients" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField control={form.control} name="adBanner.counter2Value" render={({ field }) => (
+                                <FormItem><FormLabel>Counter 2 Value</FormLabel><FormControl><Input type="number" {...field} placeholder="e.g. 50" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                            <FormField control={form.control} name="adBanner.counter2Label" render={({ field }) => (
+                                <FormItem><FormLabel>Counter 2 Label</FormLabel><FormControl><Input {...field} placeholder="e.g. Products Sold" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField control={form.control} name="adBanner.buttonText" render={({ field }) => (
                                 <FormItem><FormLabel>Button Text</FormLabel><FormControl><Input {...field} placeholder="Shop Now" /></FormControl><FormMessage /></FormItem>
