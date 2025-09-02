@@ -108,8 +108,8 @@ export default function Home() {
                     <Image 
                         src={msg.logoUrl}
                         alt={msg.logoAlt || 'Marquee Logo'}
-                        width={24}
-                        height={24}
+                        width={36}
+                        height={36}
                         className="object-contain"
                     />
                 )}

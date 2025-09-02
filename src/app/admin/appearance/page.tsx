@@ -266,7 +266,7 @@ export default function AdminAppearancePage() {
                                     <FormItem>
                                         <FormLabel>Logo URL (Optional)</FormLabel>
                                         <FormControl><Input {...field} placeholder="https://..." /></FormControl>
-                                        <FormDescription>Recommended size: 24x24 pixels.</FormDescription>
+                                        <FormDescription>Recommended size: 36x36 pixels.</FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )}

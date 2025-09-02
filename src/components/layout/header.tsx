@@ -73,7 +73,7 @@ export default function Header() {
 
         <Link href="/" className="mr-6 flex items-center space-x-2">
           <Image
-            src="https://picsum.photos/32/32"
+            src="https://github.com/akramFit/Nutrition-Pillar-Assets/blob/main/logo%20nutrition%20pillar.png?raw=true"
             alt="Nutrition Pillar Logo"
             width={32}
             height={32}
