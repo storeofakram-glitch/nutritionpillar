@@ -151,7 +151,7 @@ export default function Home() {
                   </div>
                 )}
 
-                <Button asChild size="lg" className="font-bold">
+                <Button asChild size="lg" className="font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
                     <Link href={adBanner.buttonLink}>
                         {adBanner.buttonText}
                         <ArrowRight className="ml-2 h-5 w-5" />
