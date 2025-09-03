@@ -18,10 +18,11 @@ import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { addMembership, updateMembership } from "@/services/membership-service"
 import type { Membership, Product } from "@/types"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { getProducts } from "@/services/product-service"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Search } from "lucide-react"
 
 const membershipSchema = z.object({
   customerName: z.string().min(2, "Name is required."),
@@ -41,6 +42,7 @@ export function MembershipForm({ onFormSubmit, membership }: MembershipFormProps
   const isEditMode = !!membership;
   const [products, setProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     async function loadProducts() {
@@ -51,6 +53,11 @@ export function MembershipForm({ onFormSubmit, membership }: MembershipFormProps
     }
     loadProducts();
   }, []);
+
+  const filteredProducts = useMemo(() => {
+    if (!searchTerm) return products;
+    return products.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  }, [products, searchTerm]);
 
   const form = useForm<MembershipFormValues>({
     resolver: zodResolver(membershipSchema),
@@ -129,9 +136,21 @@ export function MembershipForm({ onFormSubmit, membership }: MembershipFormProps
                         Select the products to recommend to this member.
                         </FormDescription>
                     </div>
-                    <ScrollArea className="h-72 w-full rounded-md border p-4">
+
+                    <div className="relative mb-4">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            placeholder="Search products..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="pl-8"
+                        />
+                    </div>
+
+                    <ScrollArea className="h-60 w-full rounded-md border">
+                        <div className="p-4 space-y-2">
                         {loadingProducts ? <p>Loading products...</p> : 
-                            products.map((product) => (
+                            filteredProducts.map((product) => (
                                 <FormField
                                 key={product.id}
                                 control={form.control}
@@ -165,6 +184,10 @@ export function MembershipForm({ onFormSubmit, membership }: MembershipFormProps
                                 />
                             ))
                         }
+                        {filteredProducts.length === 0 && !loadingProducts && (
+                            <p className="text-center text-sm text-muted-foreground">No products found.</p>
+                        )}
+                        </div>
                     </ScrollArea>
                     <FormMessage />
                     </FormItem>
