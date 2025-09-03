@@ -1,5 +1,6 @@
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -34,7 +35,7 @@ export type City = {
 };
 
 export type ShippingState = {
-  id: string;
+  id:string;
   state: string;
   cities: City[];
 };
@@ -184,4 +185,9 @@ export type SiteSettings = {
   adBanner: AdBanner;
   aboutPage: AboutPageSettings;
   faqPage: FaqPageSettings;
+};
+
+export type RecommendedProduct = {
+  product: Product;
+  reason: string;
 };

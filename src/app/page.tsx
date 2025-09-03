@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import ProductGrid from '@/components/product-grid';
 import { getProducts } from '@/services/product-service';
 import Marquee from '@/components/ui/marquee';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, BrainCircuit } from 'lucide-react';
 import { getSiteSettings } from '@/services/site-settings-service';
 import type { SiteSettings, Product } from '@/types';
 import NewArrivalsCarousel from '@/components/new-arrivals-carousel';
@@ -18,6 +18,7 @@ import DynamicCounter from '@/components/dynamic-counter';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -38,7 +39,7 @@ export default function Home() {
     fetchData();
   }, []);
 
-  if (loading || !siteSettings) {
+  if (loading) {
     return (
       <div className="flex flex-col">
         <Skeleton className="h-[70vh] w-full" />
@@ -50,6 +51,14 @@ export default function Home() {
         </div>
       </div>
     );
+  }
+
+  if (!siteSettings) {
+      return (
+          <div className="flex items-center justify-center h-screen">
+              <p>Site under maintenance. Please check back soon.</p>
+          </div>
+      )
   }
 
   const { hero, marquee, adBanner, partnershipLogos } = siteSettings;
