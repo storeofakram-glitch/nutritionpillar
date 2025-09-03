@@ -100,14 +100,25 @@ export default function Home() {
       <section className="py-8 md:py-12 bg-background">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8 items-center bg-card p-8 rounded-lg shadow-lg shadow-primary/20">
-            <div className="relative w-full aspect-video rounded-lg overflow-hidden">
-                <Image
-                    src={adBanner.imageUrl}
-                    alt={adBanner.imageAlt || "Promotional banner"}
-                    data-ai-hint="promotional banner"
-                    fill
-                    className="object-cover"
-                />
+            <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black">
+                {adBanner.videoUrl ? (
+                    <iframe
+                        src={adBanner.videoUrl}
+                        title={adBanner.title}
+                        className="absolute top-0 left-0 w-full h-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        allowFullScreen
+                    ></iframe>
+                ) : (
+                    <Image
+                        src={adBanner.imageUrl}
+                        alt={adBanner.imageAlt || "Promotional banner"}
+                        data-ai-hint="promotional banner"
+                        fill
+                        className="object-cover"
+                    />
+                )}
             </div>
             <div className="text-center md:text-left">
                 <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">

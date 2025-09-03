@@ -45,6 +45,7 @@ const logoSchema = z.object({
 const adBannerSchema = z.object({
   imageUrl: z.string().url({ message: "Please enter a valid URL." }).or(z.literal('')),
   imageAlt: z.string().min(1, { message: "Alt text is required." }),
+  videoUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
   title: z.string().min(1, { message: "Title is required." }),
   description: z.string().min(1, { message: "Description is required." }),
   buttonText: z.string().min(1, { message: "Button text is required." }),
@@ -87,7 +88,7 @@ const emptyValues: SiteSettings = {
     hero: { imageUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "" },
     marquee: { messages: [{ text: "", logoUrl: "", logoAlt: "" }] },
     partnershipLogos: [{ src: "", alt: "", hint: "" }],
-    adBanner: { imageUrl: "", imageAlt: "", title: "", description: "", buttonText: "", buttonLink: "", counter1Value: 0, counter1Label: '', counter2Value: 0, counter2Label: '' },
+    adBanner: { imageUrl: "", imageAlt: "", videoUrl: "", title: "", description: "", buttonText: "", buttonLink: "", counter1Value: 0, counter1Label: '', counter2Value: 0, counter2Label: '' },
     aboutPage: { title: "", subtitle: "", imageUrl: "", imageAlt: "", storyTitle: "", storyContent1: "", storyContent2: "", missionTitle: "", missionContent: "", visionTitle: "", visionContent: "", valuesTitle: "", valuesContent: "" },
 };
 
@@ -375,11 +376,19 @@ export default function AdminAppearancePage() {
                 </CardHeader>
                 <CollapsibleContent>
                     <CardContent className="space-y-4 pt-4">
+                         <FormField control={form.control} name="adBanner.videoUrl" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Video URL (Optional)</FormLabel>
+                                <FormControl><Input {...field} value={field.value ?? ''} placeholder="https://www.youtube.com/embed/..." /></FormControl>
+                                <FormDescription>If provided, this video will replace the image. Use the embed URL from YouTube or Vimeo.</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
                         <FormField control={form.control} name="adBanner.imageUrl" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Image URL</FormLabel>
                                 <FormControl><Input {...field} placeholder="https://picsum.photos/1200/600" /></FormControl>
-                                <FormDescription>Recommended size: 1200x600 pixels.</FormDescription>
+                                <FormDescription>Recommended size: 1200x600 pixels. This is a fallback if no video URL is provided.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )} />

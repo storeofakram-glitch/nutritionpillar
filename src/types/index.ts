@@ -134,6 +134,7 @@ export type PartnershipLogo = {
 export type AdBanner = {
   imageUrl: string;
   imageAlt: string;
+  videoUrl?: string;
   title: string;
   description: string;
   buttonText: string;
