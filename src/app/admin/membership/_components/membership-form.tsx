@@ -24,10 +24,12 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Search } from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const membershipSchema = z.object({
   customerName: z.string().min(2, "Name is required."),
   coachingPlan: z.string().min(2, "Coaching plan is required."),
+  goal: z.string().optional(),
   recommendedProductIds: z.array(z.string()).optional(),
   codeGenerationMethod: z.enum(['auto', 'manual']).default('auto'),
   code: z.string().optional(),
@@ -48,6 +50,14 @@ interface MembershipFormProps {
   onFormSubmit: () => void;
   membership?: Membership;
 }
+
+const fitnessGoals = [
+    "Weight Loss",
+    "Muscle Gain",
+    "Performance",
+    "General Health",
+    "Body Recomposition",
+];
 
 export function MembershipForm({ onFormSubmit, membership }: MembershipFormProps) {
   const { toast } = useToast()
@@ -76,6 +86,7 @@ export function MembershipForm({ onFormSubmit, membership }: MembershipFormProps
     defaultValues: {
       customerName: membership?.customerName || "",
       coachingPlan: membership?.coachingPlan || "",
+      goal: membership?.goal || "",
       recommendedProductIds: membership?.recommendedProductIds || [],
       codeGenerationMethod: 'auto',
       code: '',
@@ -106,6 +117,7 @@ export function MembershipForm({ onFormSubmit, membership }: MembershipFormProps
     const membershipData: Partial<Membership> = {
       customerName: data.customerName,
       coachingPlan: data.coachingPlan,
+      goal: data.goal,
       type: 'Coaching',
       recommendedProductIds: [], // Recommendations are added in edit mode
     };
@@ -159,6 +171,30 @@ export function MembershipForm({ onFormSubmit, membership }: MembershipFormProps
                     <FormMessage />
                     </FormItem>
                 )}
+                />
+                 <FormField
+                    control={form.control}
+                    name="goal"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Fitness Goal</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select the client's goal" />
+                            </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                            {fitnessGoals.map((goal) => (
+                                <SelectItem key={goal} value={goal}>
+                                {goal}
+                                </SelectItem>
+                            ))}
+                            </SelectContent>
+                        </Select>
+                        <FormMessage />
+                        </FormItem>
+                    )}
                 />
                 <FormField
                   control={form.control}

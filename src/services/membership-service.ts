@@ -75,6 +75,7 @@ export async function addMembership(membership: Partial<Omit<Membership, 'id' | 
             type: membership.type || 'Coaching',
             code: membership.code || generateMembershipCode(),
             customerName: membership.customerName || '',
+            goal: membership.goal || 'Not specified',
             recommendedProductIds: membership.recommendedProductIds || [],
             createdAt: new Date().toISOString(),
         }

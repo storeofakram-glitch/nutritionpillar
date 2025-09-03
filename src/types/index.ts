@@ -193,6 +193,7 @@ export type Membership = {
   customerName: string;
   customerEmail?: string;
   coachingPlan?: string;
+  goal?: string;
   recommendedProductIds: string[];
   createdAt: string; // ISO 8601 string
 };
