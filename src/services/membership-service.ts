@@ -32,7 +32,7 @@ export async function getMemberships(): Promise<Membership[]> {
 /**
  * Finds a membership by its unique code and fetches the details of recommended products.
  * @param code The membership code to find.
- * @returns A promise that resolves to the membership details with products, or null if not found.
+ * @returns A promise that resolves to the membership details with products, or null if not found or expired.
  */
 export async function findMembershipByCode(code: string): Promise<MembershipWithProducts | null> {
     const q = query(membershipsCollection, where('code', '==', code.toUpperCase()));
@@ -44,6 +44,12 @@ export async function findMembershipByCode(code: string): Promise<MembershipWith
 
     const membershipDoc = snapshot.docs[0];
     const membershipData = { id: membershipDoc.id, ...membershipDoc.data() } as Membership;
+
+    // Check if the membership has expired
+    if (membershipData.expiresAt && new Date(membershipData.expiresAt) < new Date()) {
+        console.log(`Membership ${membershipData.code} has expired.`);
+        return null; // Treat expired memberships as invalid
+    }
 
     // Fetch full product details for recommended products
     const recommendedProducts: Product[] = [];
@@ -68,7 +74,7 @@ export async function findMembershipByCode(code: string): Promise<MembershipWith
  * @param membership The membership data to add.
  * @returns An object indicating success or failure.
  */
-export async function addMembership(membership: Partial<Omit<Membership, 'id' | 'createdAt'>>) {
+export async function addMembership(membership: Partial<Omit<Membership, 'id' | 'createdAt'>> & { membershipDurationDays?: number }) {
     try {
         const newMembership: Omit<Membership, 'id'> = {
             ...membership,
@@ -78,8 +84,18 @@ export async function addMembership(membership: Partial<Omit<Membership, 'id' | 
             goal: membership.goal || 'Not specified',
             recommendedProductIds: membership.recommendedProductIds || [],
             createdAt: new Date().toISOString(),
+        };
+
+        if (membership.membershipDurationDays && membership.membershipDurationDays > 0) {
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + membership.membershipDurationDays);
+            newMembership.expiresAt = expiryDate.toISOString();
         }
-        const docRef = await addDoc(membershipsCollection, newMembership);
+        
+        // Remove the temporary duration field before saving
+        const { membershipDurationDays, ...finalMembership } = newMembership;
+
+        const docRef = await addDoc(membershipsCollection, finalMembership);
         revalidatePath('/admin/membership');
         return { success: true, id: docRef.id };
     } catch (error) {

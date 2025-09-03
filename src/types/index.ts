@@ -196,6 +196,7 @@ export type Membership = {
   goal?: string;
   recommendedProductIds: string[];
   createdAt: string; // ISO 8601 string
+  expiresAt?: string; // ISO 8601 string
 };
 
 export type MembershipWithProducts = Omit<Membership, 'recommendedProductIds'> & {

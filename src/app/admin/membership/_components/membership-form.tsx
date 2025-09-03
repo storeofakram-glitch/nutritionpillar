@@ -30,6 +30,7 @@ const membershipSchema = z.object({
   customerName: z.string().min(2, "Name is required."),
   coachingPlan: z.string().min(2, "Coaching plan is required."),
   goal: z.string().optional(),
+  membershipDurationDays: z.coerce.number().int().min(0, "Duration must be a positive number.").optional(),
   recommendedProductIds: z.array(z.string()).optional(),
   codeGenerationMethod: z.enum(['auto', 'manual']).default('auto'),
   code: z.string().optional(),
@@ -87,6 +88,7 @@ export function MembershipForm({ onFormSubmit, membership }: MembershipFormProps
       customerName: membership?.customerName || "",
       coachingPlan: membership?.coachingPlan || "",
       goal: membership?.goal || "",
+      membershipDurationDays: 0,
       recommendedProductIds: membership?.recommendedProductIds || [],
       codeGenerationMethod: 'auto',
       code: '',
@@ -114,10 +116,11 @@ export function MembershipForm({ onFormSubmit, membership }: MembershipFormProps
     }
 
     // Add mode logic
-    const membershipData: Partial<Membership> = {
+    const membershipData: Partial<Membership> & { membershipDurationDays?: number } = {
       customerName: data.customerName,
       coachingPlan: data.coachingPlan,
       goal: data.goal,
+      membershipDurationDays: data.membershipDurationDays,
       type: 'Coaching',
       recommendedProductIds: [], // Recommendations are added in edit mode
     };
@@ -192,6 +195,18 @@ export function MembershipForm({ onFormSubmit, membership }: MembershipFormProps
                             ))}
                             </SelectContent>
                         </Select>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={form.control}
+                    name="membershipDurationDays"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Membership Duration (in days)</FormLabel>
+                        <FormControl><Input type="number" placeholder="e.g., 90" {...field} value={field.value ?? ''} /></FormControl>
+                        <FormDescription>Leave at 0 for no expiration.</FormDescription>
                         <FormMessage />
                         </FormItem>
                     )}

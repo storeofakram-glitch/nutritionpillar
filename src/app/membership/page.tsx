@@ -9,10 +9,11 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { findMembershipByCode } from '@/services/membership-service';
 import type { MembershipWithProducts, Product } from '@/types';
-import { CheckCircle, XCircle, Loader2, Award, ShoppingCart } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
+import { differenceInDays } from 'date-fns';
 
 export default function MembershipPage() {
     const [membershipCode, setMembershipCode] = useState('');
@@ -65,6 +66,12 @@ export default function MembershipPage() {
           </Button>
       </div>
     );
+
+    const getDaysLeft = (expiresAt?: string): number | null => {
+        if (!expiresAt) return null;
+        const days = differenceInDays(new Date(expiresAt), new Date());
+        return Math.max(0, days);
+    }
 
     return (
         <div className="container mx-auto px-4 py-12 md:py-16">
@@ -139,6 +146,15 @@ export default function MembershipPage() {
                                                 <span className="font-medium">Coaching Plan:</span>
                                             </div>
                                             <span className="font-bold">{result.coachingPlan}</span>
+                                        </div>
+                                     )}
+                                     {result.expiresAt && getDaysLeft(result.expiresAt) !== null && (
+                                         <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
+                                            <div className="flex items-center gap-2">
+                                                <CalendarClock className="h-4 w-4 text-muted-foreground" />
+                                                <span className="font-medium">Days Left:</span>
+                                            </div>
+                                            <span className="font-bold">{getDaysLeft(result.expiresAt)} days</span>
                                         </div>
                                      )}
                                     <Separator />
