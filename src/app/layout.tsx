@@ -11,6 +11,9 @@ import BottomNav from '@/components/layout/bottom-nav';
 export const metadata: Metadata = {
   title: 'Nutrition Pillar - Your Supplement Marketplace',
   description: 'High-quality supplements to fuel your fitness journey.',
+  icons: {
+    icon: 'https://github.com/akramFit/Nutrition-Pillar-Assets/blob/main/logo%20nutrition%20pillar.png?raw=true',
+  }
 };
 
 export default function RootLayout({
