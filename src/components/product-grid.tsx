@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Search } from 'lucide-react';
 import { Separator } from './ui/separator';
 import { Button } from './ui/button';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/carousel';
 
 interface ProductGridProps {
   products: Product[];
@@ -96,12 +97,26 @@ export default function ProductGrid({ products }: ProductGridProps) {
 
       {hasSponsoredProducts && (
         <div className="mb-12">
-            <h3 className="text-2xl font-bold font-headline mb-6">Sponsored Products</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-              {sponsoredProducts.map(product => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
+            <h3 className="text-2xl font-bold font-headline mb-6 text-center">Sponsored Products</h3>
+            <Carousel
+                opts={{
+                    align: "start",
+                    loop: sponsoredProducts.length > 5,
+                }}
+                className="w-full"
+            >
+                <CarouselContent>
+                    {sponsoredProducts.map(product => (
+                        <CarouselItem key={product.id} className="basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
+                           <div className="p-1 h-full">
+                                <ProductCard product={product} />
+                            </div>
+                        </CarouselItem>
+                    ))}
+                </CarouselContent>
+                 <CarouselPrevious className="hidden md:flex" />
+                 <CarouselNext className="hidden md:flex" />
+            </Carousel>
         </div>
       )}
 
