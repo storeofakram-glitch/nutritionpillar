@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -17,7 +18,7 @@ import {
   SidebarFooter,
   SidebarInset
 } from "@/components/ui/sidebar"
-import { Home, Package, ShoppingCart, Truck, Users, ArrowLeft, DollarSign, Brush } from "lucide-react"
+import { Home, Package, ShoppingCart, Truck, Users, ArrowLeft, DollarSign, Brush, ShieldCheck } from "lucide-react"
 
 export default function AdminLayout({
   children,
@@ -33,6 +34,7 @@ export default function AdminLayout({
     { href: "/admin/customers", label: "Customers", icon: Users },
     { href: "/admin/shipping", label: "Shipping", icon: Truck },
     { href: "/admin/finance", label: "Finance", icon: DollarSign },
+    { href: "/admin/membership", label: "Membership", icon: ShieldCheck },
     { href: "/admin/appearance", label: "Appearance", icon: Brush },
   ]
   

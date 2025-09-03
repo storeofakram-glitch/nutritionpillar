@@ -1,6 +1,5 @@
 
 
-
 export type Product = {
   id: string;
   name: string;
@@ -185,6 +184,21 @@ export type SiteSettings = {
   adBanner: AdBanner;
   aboutPage: AboutPageSettings;
   faqPage: FaqPageSettings;
+};
+
+export type Membership = {
+  id: string;
+  type: 'Coaching' | 'Fitness Pillar';
+  code: string;
+  customerName: string;
+  customerEmail?: string;
+  coachingPlan?: string;
+  recommendedProductIds: string[];
+  createdAt: string; // ISO 8601 string
+};
+
+export type MembershipWithProducts = Omit<Membership, 'recommendedProductIds'> & {
+    recommendedProducts: Product[];
 };
 
 export type RecommendedProduct = {
