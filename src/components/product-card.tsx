@@ -31,7 +31,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   const imageUrl = (product.imageUrls && product.imageUrls.length > 0) ? product.imageUrls[0] : "https://picsum.photos/400/400?random=1";
   
-  const hasDiscount = product.discountPercentage && product.discountPercentage > 0;
+  const hasDiscount = product.discountPercentage && product.discountPercentage > 0 && product.discountEndDate && new Date(product.discountEndDate) > new Date();
   const originalPrice = product.price;
   const discountPrice = hasDiscount
     ? originalPrice - (originalPrice * (product.discountPercentage! / 100))

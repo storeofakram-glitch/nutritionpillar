@@ -53,7 +53,7 @@ export default function ProductView({ product }: { product: Product }) {
     return <Badge variant="default" className="bg-green-600 hover:bg-green-700">In Stock</Badge>;
   }
 
-  const hasDiscount = product.discountPercentage && product.discountPercentage > 0;
+  const hasDiscount = product.discountPercentage && product.discountPercentage > 0 && product.discountEndDate && new Date(product.discountEndDate) > new Date();
   const originalPrice = product.price;
   const discountPrice = hasDiscount
     ? originalPrice - (originalPrice * (product.discountPercentage! / 100))
