@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import DynamicCounter from '@/components/dynamic-counter';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -132,7 +133,10 @@ export default function Home() {
                 )}
             </div>
             <div className="text-center md:text-left">
-                <h2 className="text-3xl md:text-4xl font-bold font-headline mb-4">
+                <h2 className={cn(
+                    "text-3xl md:text-4xl font-bold font-headline mb-4",
+                    adBanner.flashTitle && 'animate-flash'
+                )}>
                     {adBanner.title}
                 </h2>
                 <p className="text-muted-foreground mb-6">

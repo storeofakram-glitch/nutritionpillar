@@ -89,11 +89,16 @@ export default {
           from: { transform: "translateX(0)" },
           to: { transform: "translateX(calc(-100% - var(--gap)))" },
         },
+        flash: {
+          '0%, 100%': { color: 'hsl(var(--foreground))' },
+          '50%': { color: 'hsl(var(--primary))' },
+        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'marquee': 'marquee var(--duration) linear infinite',
+        'flash': 'flash 2s ease-in-out infinite',
       },
     },
   },

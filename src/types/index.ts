@@ -144,6 +144,7 @@ export type AdBanner = {
   counter1Label?: string;
   counter2Value?: number;
   counter2Label?: string;
+  flashTitle?: boolean;
 };
 
 export type AboutPageSettings = {

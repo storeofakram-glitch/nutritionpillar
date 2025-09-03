@@ -19,6 +19,7 @@ import { PlusCircle, Trash2, ChevronDown } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { Switch } from "@/components/ui/switch";
 
 // Schemas for form validation
 const heroSettingsSchema = z.object({
@@ -55,6 +56,7 @@ const adBannerSchema = z.object({
   counter1Label: z.string().optional(),
   counter2Value: z.coerce.number().optional(),
   counter2Label: z.string().optional(),
+  flashTitle: z.boolean().optional(),
 });
 
 
@@ -101,7 +103,7 @@ const emptyValues: SiteSettings = {
     hero: { imageUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "" },
     marquee: { messages: [{ text: "", logoUrl: "", logoAlt: "" }] },
     partnershipLogos: [{ src: "", alt: "", hint: "" }],
-    adBanner: { imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", title: "", description: "", buttonText: "", buttonLink: "", counter1Value: 0, counter1Label: '', counter2Value: 0, counter2Label: '' },
+    adBanner: { imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", title: "", description: "", buttonText: "", buttonLink: "", counter1Value: 0, counter1Label: '', counter2Value: 0, counter2Label: '', flashTitle: false },
     aboutPage: { title: "", subtitle: "", imageUrl: "", imageAlt: "", storyTitle: "", storyContent1: "", storyContent2: "", missionTitle: "", missionContent: "", visionTitle: "", visionContent: "", valuesTitle: "", valuesContent: "" },
     faqPage: { title: "", subtitle: "", faqs: [{ question: "", answer: "" }] },
 };
@@ -437,6 +439,26 @@ export default function AdminAppearancePage() {
                         <FormField control={form.control} name="adBanner.title" render={({ field }) => (
                             <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} placeholder="Limited Time Offer!" /></FormControl><FormMessage /></FormItem>
                         )} />
+                        <FormField
+                            control={form.control}
+                            name="adBanner.flashTitle"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                                <div className="space-y-0.5">
+                                    <FormLabel>Flash Title</FormLabel>
+                                    <FormDescription>
+                                    Make the title flash with an animation.
+                                    </FormDescription>
+                                </div>
+                                <FormControl>
+                                    <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                    />
+                                </FormControl>
+                                </FormItem>
+                            )}
+                        />
                         <FormField control={form.control} name="adBanner.description" render={({ field }) => (
                             <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} placeholder="Get 20% off..." /></FormControl><FormMessage /></FormItem>
                         )} />
