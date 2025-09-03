@@ -1,12 +1,12 @@
 
 'use server';
 
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, where, getDoc, orderBy } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, where, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import type { Membership, MembershipWithProducts, Order, Product } from '@/types';
+import type { Membership, MembershipWithProducts, Product, RecommendedProduct } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { getOrders } from './order-service';
-import { getProductById, getProducts } from './product-service';
+import { getProductById } from './product-service';
 import { randomBytes } from 'crypto';
 
 const membershipsCollection = collection(db, 'memberships');
@@ -52,19 +52,25 @@ export async function findMembershipByCode(code: string): Promise<MembershipWith
     }
 
     // Fetch full product details for recommended products
-    const recommendedProducts: Product[] = [];
-    if (membershipData.recommendedProductIds && membershipData.recommendedProductIds.length > 0) {
-        const productPromises = membershipData.recommendedProductIds.map(id => getProductById(id));
+    const recommendedProductsWithDetails: (RecommendedProduct & { product: Product })[] = [];
+    if (membershipData.recommendedProducts && membershipData.recommendedProducts.length > 0) {
+        const productPromises = membershipData.recommendedProducts.map(async (rec) => {
+            const product = await getProductById(rec.productId);
+            if (product) {
+                return { ...rec, product };
+            }
+            return null;
+        });
         const products = await Promise.all(productPromises);
-        recommendedProducts.push(...products.filter(p => p !== null) as Product[]);
+        recommendedProductsWithDetails.push(...products.filter(p => p !== null) as (RecommendedProduct & { product: Product })[]);
     }
-
-    // Omit recommendedProductIds and add recommendedProducts
-    const { recommendedProductIds, ...rest } = membershipData;
+    
+    // Omit the old structure and return the new one
+    const { recommendedProducts, ...rest } = membershipData;
 
     return {
         ...rest,
-        recommendedProducts: recommendedProducts,
+        recommendedProducts: recommendedProductsWithDetails,
     };
 }
 
@@ -82,7 +88,7 @@ export async function addMembership(membership: Partial<Omit<Membership, 'id' | 
             code: membership.code || generateMembershipCode(),
             customerName: membership.customerName || '',
             goal: membership.goal || 'Not specified',
-            recommendedProductIds: membership.recommendedProductIds || [],
+            recommendedProducts: membership.recommendedProducts || [],
             createdAt: new Date().toISOString(),
         };
 
@@ -174,7 +180,7 @@ export async function generateLoyaltyMemberships(): Promise<{ success: boolean; 
                     code: generateMembershipCode(),
                     customerName: customer.name,
                     customerEmail: email,
-                    recommendedProductIds: [],
+                    recommendedProducts: [],
                     createdAt: new Date().toISOString(),
                 };
                 await addDoc(membershipsCollection, newMembership);

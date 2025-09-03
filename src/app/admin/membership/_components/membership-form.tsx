@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useForm } from "react-hook-form"
+import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
@@ -25,13 +25,19 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Search } from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+
+const recommendedProductSchema = z.object({
+  productId: z.string(),
+  usage: z.string().min(1, "Usage instructions are required."),
+});
 
 const membershipSchema = z.object({
   customerName: z.string().min(2, "Name is required."),
   coachingPlan: z.string().min(2, "Coaching plan is required."),
   goal: z.string().optional(),
   membershipDurationDays: z.coerce.number().int().min(0, "Duration must be a positive number.").optional(),
-  recommendedProductIds: z.array(z.string()).optional(),
+  recommendedProducts: z.array(recommendedProductSchema).optional(),
   codeGenerationMethod: z.enum(['auto', 'manual']).default('auto'),
   code: z.string().optional(),
 }).refine(data => {
@@ -89,19 +95,25 @@ export function MembershipForm({ onFormSubmit, membership }: MembershipFormProps
       coachingPlan: membership?.coachingPlan || "",
       goal: membership?.goal || "",
       membershipDurationDays: 0,
-      recommendedProductIds: membership?.recommendedProductIds || [],
+      recommendedProducts: membership?.recommendedProducts || [],
       codeGenerationMethod: 'auto',
       code: '',
     },
   })
 
+  const { fields, append, remove, update } = useFieldArray({
+    control: form.control,
+    name: "recommendedProducts",
+  });
+  
+  const watchRecommendedProducts = form.watch('recommendedProducts');
+
   const watchCodeGenerationMethod = form.watch('codeGenerationMethod');
 
   async function onSubmit(data: MembershipFormValues) {
     if (isEditMode && membership) {
-      // Edit mode logic
       const result = await updateMembership(membership.id, {
-        recommendedProductIds: data.recommendedProductIds || [],
+        recommendedProducts: data.recommendedProducts || [],
       });
       if (result.success) {
         toast({
@@ -122,7 +134,7 @@ export function MembershipForm({ onFormSubmit, membership }: MembershipFormProps
       goal: data.goal,
       membershipDurationDays: data.membershipDurationDays,
       type: 'Coaching',
-      recommendedProductIds: [], // Recommendations are added in edit mode
+      recommendedProducts: [], // Recommendations are added in edit mode
     };
 
     if (data.codeGenerationMethod === 'manual') {
@@ -261,74 +273,72 @@ export function MembershipForm({ onFormSubmit, membership }: MembershipFormProps
                 )}
             </>
         ) : (
-             <FormField
-                control={form.control}
-                name="recommendedProductIds"
-                render={() => (
-                    <FormItem>
-                    <div className="mb-4">
-                        <FormLabel className="text-base">Recommended Products</FormLabel>
-                        <FormDescription>
-                        Select the products to recommend to this member.
-                        </FormDescription>
-                    </div>
+             <div className="space-y-4">
+                <div className="mb-4">
+                    <FormLabel className="text-base">Supplement Guide</FormLabel>
+                    <FormDescription>
+                        Select products to recommend and provide usage instructions.
+                    </FormDescription>
+                </div>
+                <div className="relative mb-4">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                        placeholder="Search products..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-8"
+                    />
+                </div>
+                <ScrollArea className="h-60 w-full rounded-md border">
+                    <div className="p-4 space-y-4">
+                        {loadingProducts ? <p>Loading products...</p> :
+                            filteredProducts.map((product) => {
+                                const recommendedProductIndex = watchRecommendedProducts?.findIndex(p => p.productId === product.id) ?? -1;
+                                const isChecked = recommendedProductIndex > -1;
 
-                    <div className="relative mb-4">
-                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                            placeholder="Search products..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-8"
-                        />
-                    </div>
-
-                    <ScrollArea className="h-60 w-full rounded-md border">
-                        <div className="p-4 space-y-2">
-                        {loadingProducts ? <p>Loading products...</p> : 
-                            filteredProducts.map((product) => (
-                                <FormField
-                                key={product.id}
-                                control={form.control}
-                                name="recommendedProductIds"
-                                render={({ field }) => {
-                                    return (
-                                    <FormItem
-                                        key={product.id}
-                                        className="flex flex-row items-start space-x-3 space-y-0"
-                                    >
-                                        <FormControl>
+                                return (
+                                <div key={product.id} className="space-y-2">
+                                    <div className="flex flex-row items-start space-x-3 space-y-0">
                                         <Checkbox
-                                            checked={field.value?.includes(product.id)}
+                                            checked={isChecked}
                                             onCheckedChange={(checked) => {
-                                            return checked
-                                                ? field.onChange([...(field.value || []), product.id])
-                                                : field.onChange(
-                                                    field.value?.filter(
-                                                    (value) => value !== product.id
-                                                    )
-                                                )
+                                                if (checked) {
+                                                    append({ productId: product.id, usage: "" });
+                                                } else {
+                                                    const indexToRemove = fields.findIndex(f => f.productId === product.id);
+                                                    if(indexToRemove > -1) remove(indexToRemove);
+                                                }
                                             }}
                                         />
-                                        </FormControl>
-                                        <FormLabel className="font-normal">
-                                            {product.name}
-                                        </FormLabel>
-                                    </FormItem>
-                                    )
-                                }}
-                                />
-                            ))
+                                        <FormLabel className="font-normal flex-grow">{product.name}</FormLabel>
+                                    </div>
+                                    {isChecked && (
+                                        <div className="pl-6">
+                                            <FormField
+                                                control={form.control}
+                                                name={`recommendedProducts.${recommendedProductIndex}.usage`}
+                                                render={({ field }) => (
+                                                  <FormItem>
+                                                    <FormLabel className="text-xs text-muted-foreground">Usage Instructions</FormLabel>
+                                                    <FormControl>
+                                                        <Textarea {...field} placeholder="e.g., 1 scoop with water, 30 mins pre-workout" rows={2} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                  </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                                )
+                            })
                         }
                         {filteredProducts.length === 0 && !loadingProducts && (
                             <p className="text-center text-sm text-muted-foreground">No products found.</p>
                         )}
-                        </div>
-                    </ScrollArea>
-                    <FormMessage />
-                    </FormItem>
-                )}
-            />
+                    </div>
+                </ScrollArea>
+             </div>
         )}
         
         <Button type="submit" disabled={form.formState.isSubmitting}>

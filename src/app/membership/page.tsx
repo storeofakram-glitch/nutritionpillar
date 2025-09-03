@@ -2,18 +2,19 @@
 "use client";
 
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { findMembershipByCode } from '@/services/membership-service';
-import type { MembershipWithProducts, Product } from '@/types';
-import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock } from 'lucide-react';
+import type { RecommendedProduct, MembershipWithProducts } from '@/types';
+import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { differenceInDays } from 'date-fns';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 export default function MembershipPage() {
     const [membershipCode, setMembershipCode] = useState('');
@@ -48,23 +49,42 @@ export default function MembershipPage() {
         }
     };
     
-    const ProductRecommendationCard = ({ product }: { product: Product }) => (
-      <div className="flex items-start gap-4 p-3 rounded-lg border bg-card">
-          <Image 
-              src={product.imageUrls[0]}
-              alt={product.name}
-              width={64}
-              height={64}
-              className="rounded-md object-cover"
-          />
-          <div className="flex-grow">
-              <p className="font-semibold">{product.name}</p>
-              <p className="text-sm text-primary font-bold">DZD {product.price.toFixed(2)}</p>
-          </div>
-          <Button size="sm" asChild>
-              <Link href={`/products/${product.id}`}>View</Link>
-          </Button>
-      </div>
+    const SupplementGuideTable = ({ recommendations }: { recommendations: (RecommendedProduct & { product: any })[] }) => (
+        <div className="w-full overflow-hidden rounded-lg border">
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Product</TableHead>
+                        <TableHead>Usage Instructions</TableHead>
+                        <TableHead className="text-right">Action</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {recommendations.map(rec => (
+                        <TableRow key={rec.productId}>
+                            <TableCell className="font-medium">
+                                <div className="flex items-center gap-3">
+                                    <Image
+                                        src={rec.product.imageUrls[0]}
+                                        alt={rec.product.name}
+                                        width={40}
+                                        height={40}
+                                        className="rounded-md object-cover"
+                                    />
+                                    <span>{rec.product.name}</span>
+                                </div>
+                            </TableCell>
+                            <TableCell className="text-muted-foreground whitespace-pre-wrap">{rec.usage}</TableCell>
+                            <TableCell className="text-right">
+                                <Button size="sm" asChild>
+                                    <Link href={`/products/${rec.product.id}`}>View</Link>
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </div>
     );
 
     const getDaysLeft = (expiresAt?: string): number | null => {
@@ -75,8 +95,8 @@ export default function MembershipPage() {
 
     return (
         <div className="container mx-auto px-4 py-12 md:py-16">
-            <div className="max-w-md mx-auto">
-                <Card>
+            <div className="max-w-2xl mx-auto">
+                <Card className="mb-8">
                     <CardHeader className="text-center">
                         <CardTitle className="text-3xl md:text-4xl font-bold font-headline">Membership Status</CardTitle>
                         <CardDescription className="text-lg">
@@ -128,46 +148,55 @@ export default function MembershipPage() {
                                         <CardTitle className="text-2xl">Membership Active!</CardTitle>
                                     </div>
                                     <CardDescription>
-                                        Welcome, {result.customerName}! Here are your personalized recommendations.
+                                        Welcome, {result.customerName}! Here is your personalized supplement guide.
                                     </CardDescription>
                                 </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
-                                        <div className="flex items-center gap-2">
-                                            <Award className="h-4 w-4 text-muted-foreground" />
-                                            <span className="font-medium">Membership Type:</span>
-                                        </div>
-                                        <span className="font-bold">{result.type}</span>
-                                    </div>
-                                     {result.coachingPlan && (
+                                <CardContent className="space-y-6">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
                                             <div className="flex items-center gap-2">
-                                                <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-                                                <span className="font-medium">Coaching Plan:</span>
+                                                <Award className="h-4 w-4 text-muted-foreground" />
+                                                <span className="font-medium">Membership Type:</span>
                                             </div>
-                                            <span className="font-bold">{result.coachingPlan}</span>
+                                            <span className="font-bold">{result.type}</span>
                                         </div>
-                                     )}
-                                     {result.expiresAt && getDaysLeft(result.expiresAt) !== null && (
-                                         <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
-                                            <div className="flex items-center gap-2">
-                                                <CalendarClock className="h-4 w-4 text-muted-foreground" />
-                                                <span className="font-medium">Days Left:</span>
+                                         {result.coachingPlan && (
+                                            <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
+                                                <div className="flex items-center gap-2">
+                                                    <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+                                                    <span className="font-medium">Coaching Plan:</span>
+                                                </div>
+                                                <span className="font-bold">{result.coachingPlan}</span>
                                             </div>
-                                            <span className="font-bold">{getDaysLeft(result.expiresAt)} days</span>
-                                        </div>
-                                     )}
+                                         )}
+                                         {result.goal && (
+                                            <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
+                                                <div className="flex items-center gap-2">
+                                                    <Info className="h-4 w-4 text-muted-foreground" />
+                                                    <span className="font-medium">Primary Goal:</span>
+                                                </div>
+                                                <span className="font-bold">{result.goal}</span>
+                                            </div>
+                                         )}
+                                         {result.expiresAt && getDaysLeft(result.expiresAt) !== null && (
+                                             <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
+                                                <div className="flex items-center gap-2">
+                                                    <CalendarClock className="h-4 w-4 text-muted-foreground" />
+                                                    <span className="font-medium">Days Left:</span>
+                                                </div>
+                                                <span className="font-bold">{getDaysLeft(result.expiresAt)} days</span>
+                                            </div>
+                                         )}
+                                    </div>
                                     <Separator />
-                                    <h3 className="font-semibold text-lg">Recommended Products</h3>
-                                    {result.recommendedProducts.length > 0 ? (
-                                        <div className="space-y-3">
-                                            {result.recommendedProducts.map(product => (
-                                                <ProductRecommendationCard key={product.id} product={product} />
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <p className="text-center text-muted-foreground py-4">No specific recommendations have been added for you yet. Check back soon!</p>
-                                    )}
+                                    <div>
+                                        <h3 className="font-semibold text-lg mb-4">Your Supplement Guide</h3>
+                                        {result.recommendedProducts.length > 0 ? (
+                                           <SupplementGuideTable recommendations={result.recommendedProducts} />
+                                        ) : (
+                                            <p className="text-center text-muted-foreground py-4">No specific recommendations have been added for you yet. Check back soon!</p>
+                                        )}
+                                    </div>
                                 </CardContent>
                             </Card>
                         )}

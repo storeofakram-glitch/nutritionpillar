@@ -29,11 +29,11 @@ export default function EditMembershipDialog({ isOpen, onOpenChange, membership,
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Edit Membership</DialogTitle>
+          <DialogTitle>Edit Supplement Guide</DialogTitle>
           <DialogDescription>
-            Manage product recommendations for {membership.customerName}.
+            Manage product recommendations and usage for {membership.customerName}.
           </DialogDescription>
         </DialogHeader>
         <MembershipForm membership={membership} onFormSubmit={onDialogClose} />

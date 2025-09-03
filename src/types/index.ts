@@ -186,6 +186,11 @@ export type SiteSettings = {
   faqPage: FaqPageSettings;
 };
 
+export type RecommendedProduct = {
+  productId: string;
+  usage: string;
+};
+
 export type Membership = {
   id: string;
   type: 'Coaching' | 'Fitness Pillar';
@@ -194,16 +199,12 @@ export type Membership = {
   customerEmail?: string;
   coachingPlan?: string;
   goal?: string;
-  recommendedProductIds: string[];
+  recommendedProducts: RecommendedProduct[];
   createdAt: string; // ISO 8601 string
   expiresAt?: string; // ISO 8601 string
 };
 
-export type MembershipWithProducts = Omit<Membership, 'recommendedProductIds'> & {
-    recommendedProducts: Product[];
+export type MembershipWithProducts = Omit<Membership, 'recommendedProducts'> & {
+    recommendedProducts: (RecommendedProduct & { product: Product })[];
 };
 
-export type RecommendedProduct = {
-  product: Product;
-  reason: string;
-};

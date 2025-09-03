@@ -19,7 +19,6 @@ import { useToast } from "@/hooks/use-toast";
 import type { Membership } from "@/types";
 import EditMembershipDialog from "./edit-membership-dialog";
 import DeleteMembershipDialog from "./delete-membership-dialog";
-import { format } from "date-fns";
 
 interface MembershipTableProps {
   memberships: Membership[];
@@ -95,7 +94,7 @@ export default function MembershipTable({ memberships, isLoading, onDataChange }
                          </Button>
                     </div>
                 </TableCell>
-                <TableCell>{membership.recommendedProductIds.length}</TableCell>
+                <TableCell>{membership.recommendedProducts.length}</TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -106,7 +105,7 @@ export default function MembershipTable({ memberships, isLoading, onDataChange }
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem onSelect={() => handleEdit(membership)}>Edit Recommendations</DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => handleEdit(membership)}>Edit Supplement Guide</DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onSelect={() => handleDelete(membership)} className="text-red-500">
                         Delete Membership
