@@ -94,7 +94,7 @@ export default function MembershipTable({ memberships, isLoading, onDataChange }
                          </Button>
                     </div>
                 </TableCell>
-                <TableCell>{membership.recommendedProducts.length}</TableCell>
+                <TableCell>{membership.recommendedProducts?.length || 0}</TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
