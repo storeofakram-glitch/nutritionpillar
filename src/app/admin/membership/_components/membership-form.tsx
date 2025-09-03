@@ -23,12 +23,24 @@ import { getProducts } from "@/services/product-service"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Search } from "lucide-react"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
 const membershipSchema = z.object({
   customerName: z.string().min(2, "Name is required."),
   coachingPlan: z.string().min(2, "Coaching plan is required."),
   recommendedProductIds: z.array(z.string()).optional(),
-})
+  codeGenerationMethod: z.enum(['auto', 'manual']).default('auto'),
+  code: z.string().optional(),
+}).refine(data => {
+    if (data.codeGenerationMethod === 'manual') {
+        return !!data.code && data.code.length > 0;
+    }
+    return true;
+}, {
+    message: "Manual code cannot be empty.",
+    path: ["code"],
+});
+
 
 type MembershipFormValues = z.infer<typeof membershipSchema>
 
@@ -65,24 +77,49 @@ export function MembershipForm({ onFormSubmit, membership }: MembershipFormProps
       customerName: membership?.customerName || "",
       coachingPlan: membership?.coachingPlan || "",
       recommendedProductIds: membership?.recommendedProductIds || [],
+      codeGenerationMethod: 'auto',
+      code: '',
     },
   })
 
+  const watchCodeGenerationMethod = form.watch('codeGenerationMethod');
+
   async function onSubmit(data: MembershipFormValues) {
-    const commonData = {
-        customerName: data.customerName,
-        coachingPlan: data.coachingPlan,
+    if (isEditMode && membership) {
+      // Edit mode logic
+      const result = await updateMembership(membership.id, {
         recommendedProductIds: data.recommendedProductIds || [],
+      });
+      if (result.success) {
+        toast({
+          title: "Membership Updated",
+          description: `Recommendations for "${membership.customerName}" have been successfully updated.`,
+        });
+        onFormSubmit();
+      } else {
+        toast({ variant: "destructive", title: "Error", description: result.error || "Something went wrong." });
+      }
+      return;
     }
 
-    const result = isEditMode
-        ? await updateMembership(membership.id, commonData)
-        : await addMembership({ ...commonData, type: 'Coaching', recommendedProductIds: [] }); // Recommendations are added in edit mode.
+    // Add mode logic
+    const membershipData: Partial<Membership> = {
+      customerName: data.customerName,
+      coachingPlan: data.coachingPlan,
+      type: 'Coaching',
+      recommendedProductIds: [], // Recommendations are added in edit mode
+    };
+
+    if (data.codeGenerationMethod === 'manual') {
+      membershipData.code = data.code;
+    }
+
+    const result = await addMembership(membershipData);
 
     if (result.success) {
       toast({
-        title: isEditMode ? "Membership Updated" : "Membership Added",
-        description: `Membership for "${data.customerName}" has been successfully ${isEditMode ? 'updated' : 'added'}.`,
+        title: "Membership Added",
+        description: `Membership for "${data.customerName}" has been successfully added.`,
       })
       onFormSubmit();
       form.reset();
@@ -123,6 +160,54 @@ export function MembershipForm({ onFormSubmit, membership }: MembershipFormProps
                     </FormItem>
                 )}
                 />
+                <FormField
+                  control={form.control}
+                  name="codeGenerationMethod"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Membership Code</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-col space-y-1"
+                        >
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="auto" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Generate Automatically
+                            </FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="manual" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Enter Manually
+                            </FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {watchCodeGenerationMethod === 'manual' && (
+                    <FormField
+                    control={form.control}
+                    name="code"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Manual Code</FormLabel>
+                        <FormControl><Input placeholder="Enter unique code" {...field} /></FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                )}
             </>
         ) : (
              <FormField

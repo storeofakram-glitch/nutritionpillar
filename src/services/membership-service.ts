@@ -68,11 +68,14 @@ export async function findMembershipByCode(code: string): Promise<MembershipWith
  * @param membership The membership data to add.
  * @returns An object indicating success or failure.
  */
-export async function addMembership(membership: Omit<Membership, 'id' | 'code' | 'createdAt'>) {
+export async function addMembership(membership: Partial<Omit<Membership, 'id' | 'createdAt'>>) {
     try {
         const newMembership: Omit<Membership, 'id'> = {
             ...membership,
-            code: generateMembershipCode(),
+            type: membership.type || 'Coaching',
+            code: membership.code || generateMembershipCode(),
+            customerName: membership.customerName || '',
+            recommendedProductIds: membership.recommendedProductIds || [],
             createdAt: new Date().toISOString(),
         }
         const docRef = await addDoc(membershipsCollection, newMembership);
