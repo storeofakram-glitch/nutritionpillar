@@ -16,6 +16,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { useEffect, useState } from 'react';
 import DynamicCounter from '@/components/dynamic-counter';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -36,44 +37,21 @@ export default function Home() {
     fetchData();
   }, []);
 
+  if (loading || !siteSettings) {
+    return (
+      <div className="flex flex-col">
+        <Skeleton className="h-[70vh] w-full" />
+        <div className="container mx-auto px-4 py-8 md:py-12">
+            <Skeleton className="h-48 w-full rounded-lg" />
+        </div>
+        <div className="container mx-auto px-4 py-8 md:py-12">
+            <Skeleton className="h-48 w-full rounded-lg" />
+        </div>
+      </div>
+    );
+  }
 
-  const hero = siteSettings?.hero || {
-    imageUrl: 'https://github.com/akramFit/Nutrition-Pillar-Assets/blob/main/hero%20image%20(np%20store).png?raw=true', 
-    alt: 'Nutrition Pillar',
-    title: 'Welcome to Nutritionn Pillar ',
-    description: '\nYour one-stop shop for premium supplements. We provide quality ingredients for your peak performance and optimal health.',
-    buttonText: 'Shop Now',
-    buttonLink: '/#products'
-  };
-  
-  const marqueeMessages = siteSettings?.marquee?.messages || [
-    { text: 'akram fit training', logoUrl: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', logoAlt: 'akram fit' },
-  ];
-
-  const partnershipLogos = siteSettings?.partnershipLogos || [
-    { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: '' },
-    { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: 'brand logo' },
-    { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: 'brand logo' },
-    { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: 'brand logo' },
-    { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: 'brand logo' },
-    { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: 'brand logo' },
-    { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: 'brand logo' },
-    { src: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/p.png?raw=true', alt: 'Akram Fit Training', hint: 'brand logo' },
-  ];
-  
-  const adBanner = siteSettings?.adBanner || {
-    imageUrl: 'https://github.com/akramFit/Akram-Fit-Training-Assets/blob/main/5.png?raw=true',
-    imageAlt: 'Promotional banner',
-    title: 'the must popular transformation',
-    description: "to get a transformation like this just apply ",
-    buttonText: 'apply',
-    buttonLink: 'www.akramfit.com',
-    counter1Value: 0,
-    counter1Label: 'Happy Clients',
-    counter2Value: 0,
-    counter2Label: 'Transformations',
-  };
-
+  const { hero, marquee, adBanner, partnershipLogos } = siteSettings;
 
   return (
     <div className="flex flex-col">
@@ -102,7 +80,7 @@ export default function Home() {
 
       <section className="bg-primary border-y border-primary/50">
         <Marquee>
-          {marqueeMessages.map((msg, i) => (
+          {marquee.messages.map((msg, i) => (
             <div key={i} className="flex items-center gap-6 mx-8">
                 {msg.logoUrl && (
                     <Image 
@@ -141,11 +119,11 @@ export default function Home() {
 
                 <div className="flex justify-center md:justify-start gap-4 mb-6">
                     <div className="flex flex-col items-center justify-center p-3 rounded-lg bg-primary/10 border border-primary/20">
-                        <DynamicCounter endValue={loading ? 0 : (adBanner.counter1Value || 0)} suffix="+" className="text-2xl font-bold text-primary" />
+                        <DynamicCounter endValue={adBanner.counter1Value || 0} suffix="+" className="text-2xl font-bold text-primary" />
                         <p className="text-xs text-muted-foreground mt-1">{adBanner.counter1Label || 'Happy Clients'}</p>
                     </div>
                     <div className="flex flex-col items-center justify-center p-3 rounded-lg bg-primary/10 border border-primary/20">
-                        <DynamicCounter endValue={loading ? 0 : (adBanner.counter2Value || 0)} suffix="+" className="text-2xl font-bold text-primary" />
+                        <DynamicCounter endValue={adBanner.counter2Value || 0} suffix="+" className="text-2xl font-bold text-primary" />
                         <p className="text-xs text-muted-foreground mt-1">{adBanner.counter2Label || 'Transformations'}</p>
                     </div>
                 </div>
