@@ -74,6 +74,17 @@ const aboutPageSettingsSchema = z.object({
     valuesContent: z.string().min(1, "Values content is required."),
 });
 
+const faqItemSchema = z.object({
+  question: z.string().min(1, "Question cannot be empty."),
+  answer: z.string().min(1, "Answer cannot be empty."),
+});
+
+const faqPageSettingsSchema = z.object({
+  title: z.string().min(1, "Title is required."),
+  subtitle: z.string().min(1, "Subtitle is required."),
+  faqs: z.array(faqItemSchema),
+});
+
 
 const siteSettingsSchema = z.object({
   hero: heroSettingsSchema,
@@ -83,6 +94,7 @@ const siteSettingsSchema = z.object({
   partnershipLogos: z.array(logoSchema),
   adBanner: adBannerSchema,
   aboutPage: aboutPageSettingsSchema,
+  faqPage: faqPageSettingsSchema,
 });
 
 const emptyValues: SiteSettings = {
@@ -91,6 +103,7 @@ const emptyValues: SiteSettings = {
     partnershipLogos: [{ src: "", alt: "", hint: "" }],
     adBanner: { imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", title: "", description: "", buttonText: "", buttonLink: "", counter1Value: 0, counter1Label: '', counter2Value: 0, counter2Label: '' },
     aboutPage: { title: "", subtitle: "", imageUrl: "", imageAlt: "", storyTitle: "", storyContent1: "", storyContent2: "", missionTitle: "", missionContent: "", visionTitle: "", visionContent: "", valuesTitle: "", valuesContent: "" },
+    faqPage: { title: "", subtitle: "", faqs: [{ question: "", answer: "" }] },
 };
 
 
@@ -102,6 +115,7 @@ export default function AdminAppearancePage() {
   const [isLogosOpen, setIsLogosOpen] = useState(false);
   const [isBannerOpen, setIsBannerOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [isFaqOpen, setIsFaqOpen] = useState(false);
 
   const form = useForm<z.infer<typeof siteSettingsSchema>>({
     resolver: zodResolver(siteSettingsSchema),
@@ -116,6 +130,7 @@ export default function AdminAppearancePage() {
         // Ensure nested arrays have default values to avoid uncontrolled component errors
         const messages = settings.marquee?.messages?.map(m => ({ text: m.text, logoUrl: m.logoUrl || '', logoAlt: m.logoAlt || '' })) || [];
         const partnershipLogos = settings.partnershipLogos?.map(l => ({ ...l, src: l.src || '', alt: l.alt || '' })) || [];
+        const faqs = settings.faqPage?.faqs?.map(f => ({ question: f.question || '', answer: f.answer || '' })) || [];
         
         form.reset({
              hero: { ...emptyValues.hero, ...settings.hero },
@@ -123,6 +138,11 @@ export default function AdminAppearancePage() {
              partnershipLogos: partnershipLogos.length > 0 ? partnershipLogos : emptyValues.partnershipLogos,
              adBanner: { ...emptyValues.adBanner, ...settings.adBanner },
              aboutPage: { ...emptyValues.aboutPage, ...settings.aboutPage },
+             faqPage: { 
+                title: settings.faqPage?.title || emptyValues.faqPage.title,
+                subtitle: settings.faqPage?.subtitle || emptyValues.faqPage.subtitle,
+                faqs: faqs.length > 0 ? faqs : emptyValues.faqPage.faqs,
+             }
         });
       }
       setLoading(false);
@@ -138,6 +158,11 @@ export default function AdminAppearancePage() {
   const { fields: logoFields, append: appendLogo, remove: removeLogo } = useFieldArray({
     control: form.control,
     name: "partnershipLogos",
+  });
+  
+  const { fields: faqFields, append: appendFaq, remove: removeFaq } = useFieldArray({
+    control: form.control,
+    name: "faqPage.faqs",
   });
 
   const onSubmit = async (data: z.infer<typeof siteSettingsSchema>) => {
@@ -508,6 +533,75 @@ export default function AdminAppearancePage() {
                                 <FormItem><FormLabel>Values Content</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
+                    </CardContent>
+                </CollapsibleContent>
+            </Card>
+        </Collapsible>
+        
+        <Collapsible open={isFaqOpen} onOpenChange={setIsFaqOpen}>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>FAQ Page Settings</CardTitle>
+                        <CardDescription>Manage the title, subtitle, and questions on the FAQ page.</CardDescription>
+                    </div>
+                    <CollapsibleTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <ChevronDown className={cn("h-5 w-5 transition-transform", isFaqOpen && "rotate-180")} />
+                            <span className="sr-only">{isFaqOpen ? 'Collapse' : 'Expand'}</span>
+                        </Button>
+                    </CollapsibleTrigger>
+                </CardHeader>
+                <CollapsibleContent>
+                    <CardContent className="space-y-4 pt-4">
+                        <FormField control={form.control} name="faqPage.title" render={({ field }) => (
+                            <FormItem><FormLabel>Main Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={form.control} name="faqPage.subtitle" render={({ field }) => (
+                            <FormItem><FormLabel>Subtitle</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        
+                        <div className="space-y-4">
+                            <FormLabel>Questions & Answers</FormLabel>
+                            {faqFields.map((field, index) => (
+                            <div key={field.id} className="p-4 border rounded-lg space-y-4 relative">
+                                <div className="flex items-start gap-4">
+                                    <div className="flex-grow space-y-2">
+                                        <FormField
+                                        control={form.control}
+                                        name={`faqPage.faqs.${index}.question`}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Question</FormLabel>
+                                                <FormControl><Input {...field} /></FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                        />
+                                        <FormField
+                                        control={form.control}
+                                        name={`faqPage.faqs.${index}.answer`}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Answer</FormLabel>
+                                                <FormControl><Textarea {...field} rows={3} /></FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                        />
+                                    </div>
+                                    <Button type="button" variant="ghost" size="icon" onClick={() => removeFaq(index)}>
+                                        <Trash2 className="h-4 w-4 text-red-500" />
+                                    </Button>
+                                </div>
+                            </div>
+                            ))}
+                            <Button type="button" variant="outline" size="sm" onClick={() => appendFaq({ question: "", answer: "" })}>
+                                <PlusCircle className="mr-2 h-4 w-4" />
+                                Add FAQ
+                            </Button>
+                        </div>
+
                     </CardContent>
                 </CollapsibleContent>
             </Card>

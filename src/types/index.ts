@@ -162,6 +162,17 @@ export type AboutPageSettings = {
     valuesContent: string;
 };
 
+export type FaqItem = {
+    question: string;
+    answer: string;
+};
+
+export type FaqPageSettings = {
+    title: string;
+    subtitle: string;
+    faqs: FaqItem[];
+};
+
 export type SiteSettings = {
   hero: HeroSettings;
   marquee: {
@@ -170,4 +181,5 @@ export type SiteSettings = {
   partnershipLogos: PartnershipLogo[];
   adBanner: AdBanner;
   aboutPage: AboutPageSettings;
+  faqPage: FaqPageSettings;
 };
