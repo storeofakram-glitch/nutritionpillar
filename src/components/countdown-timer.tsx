@@ -63,6 +63,7 @@ export default function CountdownTimer({ endDate, className }: CountdownTimerPro
   return (
     <div className={cn("flex items-center gap-2 text-center", className)}>
         <Timer className="h-5 w-5 text-yellow-500" />
+        <span className="text-xs font-semibold text-yellow-600 dark:text-yellow-400">Ends in:</span>
         <div className="flex items-center gap-1.5">
             {timerComponents.map((part, index) => (
                 <div key={part.label} className="flex items-center gap-1.5">
