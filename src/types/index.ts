@@ -112,6 +112,7 @@ export type MonthlyFinanceData = {
 // Types for Site Appearance Settings
 export type HeroSettings = {
     imageUrl: string;
+    videoUrl?: string;
     alt: string;
     title: string;
     description: string;

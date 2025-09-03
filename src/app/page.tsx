@@ -57,13 +57,26 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       <section className="relative w-full h-[60vh] md:h-[70vh] text-white overflow-hidden">
-        <Image
-            src={hero.imageUrl}
-            alt={hero.alt || "Hero image"}
-            data-ai-hint="athlete training"
-            fill
-            className="object-cover"
-        />
+        {hero.videoUrl ? (
+            <video
+                src={hero.videoUrl}
+                className="absolute top-0 left-0 w-full h-full object-cover"
+                autoPlay
+                loop
+                muted
+                playsInline
+            >
+                Your browser does not support the video tag.
+            </video>
+        ) : (
+            <Image
+                src={hero.imageUrl}
+                alt={hero.alt || "Hero image"}
+                data-ai-hint="athlete training"
+                fill
+                className="object-cover"
+            />
+        )}
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center h-full text-center p-4 bg-black/60">
           <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight">
             {hero.title}

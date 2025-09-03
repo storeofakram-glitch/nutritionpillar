@@ -24,6 +24,7 @@ import { Switch } from "@/components/ui/switch";
 // Schemas for form validation
 const heroSettingsSchema = z.object({
     imageUrl: z.string().url({ message: "Please enter a valid URL." }).or(z.literal('')),
+    videoUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
     alt: z.string().min(1, { message: "Alt text is required." }),
     title: z.string().min(1, { message: "Title is required." }),
     description: z.string().min(1, { message: "Description is required." }),
@@ -100,7 +101,7 @@ const siteSettingsSchema = z.object({
 });
 
 const emptyValues: SiteSettings = {
-    hero: { imageUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "" },
+    hero: { imageUrl: "", videoUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "" },
     marquee: { messages: [{ text: "", logoUrl: "", logoAlt: "" }] },
     partnershipLogos: [{ src: "", alt: "", hint: "" }],
     adBanner: { imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", title: "", description: "", buttonText: "", buttonLink: "", counter1Value: 0, counter1Label: '', counter2Value: 0, counter2Label: '', flashTitle: false },
@@ -207,11 +208,19 @@ export default function AdminAppearancePage() {
                 </CardHeader>
                 <CollapsibleContent>
                     <CardContent className="space-y-4 pt-4">
+                        <FormField control={form.control} name="hero.videoUrl" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Video URL (Optional)</FormLabel>
+                                <FormControl><Input {...field} value={field.value ?? ''} placeholder="https://example.com/video.mp4" /></FormControl>
+                                <FormDescription>A direct link to a video file (.mp4, .webm). This will autoplay silently in the background and override the image.</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
                         <FormField control={form.control} name="hero.imageUrl" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Image URL</FormLabel>
+                                <FormLabel>Fallback Image URL</FormLabel>
                                 <FormControl><Input {...field} placeholder="https://picsum.photos/1920/1080" /></FormControl>
-                                <FormDescription>Recommended aspect ratio: 16:9 (e.g., 1920x1080 pixels).</FormDescription>
+                                <FormDescription>Required. Shown if no video is provided. Recommended aspect ratio: 16:9.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )} />
