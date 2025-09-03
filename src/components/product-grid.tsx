@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search } from 'lucide-react';
 import { Separator } from './ui/separator';
+import { Button } from './ui/button';
 
 interface ProductGridProps {
   products: Product[];
@@ -21,6 +22,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
     color: 'all',
     flavor: 'all',
   });
+  const [showAll, setShowAll] = useState(false);
 
   const handleFilterChange = (filterName: keyof typeof filters) => (value: string) => {
     setFilters(prev => ({ ...prev, [filterName]: value }));
@@ -57,17 +59,17 @@ export default function ProductGrid({ products }: ProductGridProps) {
 
     const sponsored = filtered.filter(p => p.sponsored);
     
-    // "regular" list now contains ALL filtered products.
     return {
         sponsoredProducts: sponsored,
         regularProducts: filtered,
     }
   }, [products, searchTerm, filters]);
 
+  const displayedProducts = showAll ? regularProducts : regularProducts.slice(0, 6);
+
   const hasSponsoredProducts = sponsoredProducts.length > 0;
   const hasRegularProducts = regularProducts.length > 0;
 
-  // We only want to show the "All Products" heading if there are sponsored products to differentiate from.
   const showAllProductsHeading = hasSponsoredProducts && regularProducts.length > 0;
 
   return (
@@ -111,10 +113,15 @@ export default function ProductGrid({ products }: ProductGridProps) {
                  <h3 className="text-2xl font-bold font-headline mb-6">All Products</h3>
             )}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {regularProducts.map(product => (
+            {displayedProducts.map(product => (
                 <ProductCard key={product.id} product={product} />
             ))}
             </div>
+            {!showAll && regularProducts.length > 6 && (
+                <div className="text-center mt-12">
+                    <Button onClick={() => setShowAll(true)} size="lg">Show All Products ({regularProducts.length})</Button>
+                </div>
+            )}
         </div>
       ) : !hasSponsoredProducts ? (
         <div className="text-center py-16">
