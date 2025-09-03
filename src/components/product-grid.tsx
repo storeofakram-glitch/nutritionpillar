@@ -65,7 +65,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
     }
   }, [products, searchTerm, filters]);
 
-  const displayedProducts = showAll ? regularProducts : regularProducts.slice(0, 6);
+  const displayedProducts = showAll ? regularProducts : regularProducts.slice(0, 8);
 
   const hasSponsoredProducts = sponsoredProducts.length > 0;
   const hasRegularProducts = regularProducts.length > 0;
@@ -117,7 +117,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
                 <ProductCard key={product.id} product={product} />
             ))}
             </div>
-            {!showAll && regularProducts.length > 6 && (
+            {!showAll && regularProducts.length > 8 && (
                 <div className="text-center mt-12">
                     <Button onClick={() => setShowAll(true)} size="lg">Show All Products ({regularProducts.length})</Button>
                 </div>
