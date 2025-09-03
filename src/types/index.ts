@@ -135,6 +135,7 @@ export type AdBanner = {
   imageUrl: string;
   imageAlt: string;
   videoUrl?: string;
+  backgroundVideoUrl?: string;
   title: string;
   description: string;
   buttonText: string;

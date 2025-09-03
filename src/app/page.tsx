@@ -101,7 +101,18 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8 items-center bg-card p-8 rounded-lg shadow-lg shadow-primary/20">
             <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black">
-                {adBanner.videoUrl ? (
+                {adBanner.backgroundVideoUrl ? (
+                    <video
+                        src={adBanner.backgroundVideoUrl}
+                        className="absolute top-0 left-0 w-full h-full object-cover"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                    >
+                        Your browser does not support the video tag.
+                    </video>
+                ) : adBanner.videoUrl ? (
                     <iframe
                         src={adBanner.videoUrl}
                         title={adBanner.title}
