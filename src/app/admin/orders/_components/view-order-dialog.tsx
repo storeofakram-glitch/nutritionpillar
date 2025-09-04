@@ -98,7 +98,7 @@ export default function ViewOrderDialog({ isOpen, onOpenChange, order }: ViewOrd
                         {order.items.map((item, index) => (
                             <div key={`${item.product.id}-${index}`} className="flex items-start gap-4">
                                 <Image 
-                                    src={item.product.imageUrls[0]} 
+                                    src={item.product.imageUrls?.[0] || 'https://picsum.photos/64'}
                                     alt={item.product.name}
                                     width={64}
                                     height={64}
