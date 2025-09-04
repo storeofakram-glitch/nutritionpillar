@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu, ShoppingBag } from 'lucide-react';
+import { Menu, ShoppingBag, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/cart-context';
 import { usePathname } from 'next/navigation';
@@ -29,6 +29,7 @@ export default function Header() {
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
     { href: '/faq', label: 'FAQ' },
+    { href: '/membership', label: 'Membership' },
     { href: '/contact', label: 'Contact' },
   ];
   
