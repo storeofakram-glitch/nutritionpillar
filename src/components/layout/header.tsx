@@ -19,19 +19,18 @@ import * as React from 'react';
 import { SearchDialog } from '../search-dialog';
 import Image from 'next/image';
 
-
-export default function Header() {
-  const { cartCount } = useCart();
-  const pathname = usePathname();
-  const [isSheetOpen, setIsSheetOpen] = React.useState(false);
-
-  const navLinks = [
+const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
     { href: '/faq', label: 'FAQ' },
     { href: '/membership', label: 'Membership' },
     { href: '/contact', label: 'Contact' },
-  ];
+];
+
+export default function Header() {
+  const { cartCount } = useCart();
+  const pathname = usePathname();
+  const [isSheetOpen, setIsSheetOpen] = React.useState(false);
   
   const NavLink = ({ href, children }: { href: string, children: React.ReactNode }) => (
     <Link
