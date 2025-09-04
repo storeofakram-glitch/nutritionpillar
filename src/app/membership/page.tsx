@@ -96,7 +96,7 @@ export default function MembershipPage() {
     return (
         <div className="container mx-auto px-4 py-12 md:py-16">
             <div className="max-w-2xl mx-auto">
-                <Card className="mb-8">
+                <Card className="mb-8 shadow-lg shadow-primary/20">
                     <CardHeader className="text-center">
                         <CardTitle className="text-3xl md:text-4xl font-bold font-headline">Membership Status</CardTitle>
                         <CardDescription className="text-lg">
