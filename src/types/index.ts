@@ -197,6 +197,7 @@ export type Membership = {
   code: string;
   customerName: string;
   customerEmail?: string;
+  customerPhone?: string; // Added field for loyalty members
   coachingPlan?: string;
   goal?: string;
   recommendedProducts: RecommendedProduct[];
@@ -207,4 +208,3 @@ export type Membership = {
 export type MembershipWithProducts = Omit<Membership, 'recommendedProducts'> & {
     recommendedProducts: (RecommendedProduct & { product: Product })[];
 };
-

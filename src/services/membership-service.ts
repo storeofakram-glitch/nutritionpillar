@@ -160,26 +160,32 @@ export async function generateLoyaltyMemberships(): Promise<{ success: boolean; 
 
         const deliveredOrders = orders.filter(o => o.status === 'delivered');
         
-        // Count delivered orders per customer
+        // Count delivered orders per customer phone number
         const orderCounts = deliveredOrders.reduce((acc, order) => {
-            const email = order.customer.email.toLowerCase();
-            acc[email] = (acc[email] || { count: 0, name: order.customer.name });
-            acc[email].count += 1;
-            return acc;
-        }, {} as Record<string, { count: number; name: string }>);
+            const phone = order.shippingAddress.phone;
+            if (!phone) return acc; // Skip orders without a phone number
 
-        const existingMemberEmails = new Set(existingMemberships.map(m => m.customerEmail?.toLowerCase()).filter(Boolean));
+            acc[phone] = (acc[phone] || { count: 0, name: order.customer.name, email: order.customer.email });
+            acc[phone].count += 1;
+            // Update name and email to the latest one, in case it changes
+            acc[phone].name = order.customer.name;
+            acc[phone].email = order.customer.email;
+            return acc;
+        }, {} as Record<string, { count: number; name: string, email: string }>);
+
+        const existingMemberPhones = new Set(existingMemberships.map(m => m.customerPhone).filter(Boolean));
         let newMembershipsCount = 0;
 
-        for (const email in orderCounts) {
-            const customer = orderCounts[email];
-            if (customer.count >= 5 && !existingMemberEmails.has(email)) {
+        for (const phone in orderCounts) {
+            const customer = orderCounts[phone];
+            if (customer.count >= 5 && !existingMemberPhones.has(phone)) {
                 // This customer is eligible and doesn't have a membership yet
                 const newMembership: Omit<Membership, 'id'> = {
                     type: 'Fitness Pillar',
                     code: generateMembershipCode(),
                     customerName: customer.name,
-                    customerEmail: email,
+                    customerEmail: customer.email,
+                    customerPhone: phone,
                     recommendedProducts: [],
                     createdAt: new Date().toISOString(),
                 };
