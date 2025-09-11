@@ -1,6 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import CustomerExportForm from "./_components/customer-export-form";
+import MembershipExportCard from "./_components/membership-export-card";
 
 export default function AdminMarketingPage() {
   return (
@@ -11,6 +12,8 @@ export default function AdminMarketingPage() {
         </div>
         
         <CustomerExportForm />
+
+        <MembershipExportCard />
 
     </div>
   );
