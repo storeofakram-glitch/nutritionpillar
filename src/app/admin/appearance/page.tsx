@@ -15,11 +15,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PlusCircle, Trash2, ChevronDown } from "lucide-react";
+import { PlusCircle, Trash2, ChevronDown, Info } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Switch } from "@/components/ui/switch";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 // Schemas for form validation
 const heroSettingsSchema = z.object({
@@ -697,7 +698,34 @@ export default function AdminAppearancePage() {
                         )} />
                         <FormField control={form.control} name="termsPage.content" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Content (Markdown supported)</FormLabel>
+                                <div className="flex items-center gap-2">
+                                    <FormLabel>Content (Markdown supported)</FormLabel>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button variant="outline" size="sm" className="text-xs gap-1.5">
+                                                <Info className="h-3 w-3" />
+                                                Formatting Help
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-80">
+                                            <div className="grid gap-4">
+                                                <div className="space-y-2">
+                                                    <h4 className="font-medium leading-none">Markdown Tips</h4>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        Use markdown to format your text.
+                                                    </p>
+                                                </div>
+                                                <div className="text-sm">
+                                                    <p><code className="font-mono bg-muted p-1 rounded"># Heading 1</code></p>
+                                                    <p><code className="font-mono bg-muted p-1 rounded">## Heading 2</code></p>
+                                                    <p><code className="font-mono bg-muted p-1 rounded">**Bold Text**</code></p>
+                                                    <p><code className="font-mono bg-muted p-1 rounded">*Italic Text*</code></p>
+                                                    <p><code className="font-mono bg-muted p-1 rounded">- List Item</code></p>
+                                                </div>
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                </div>
                                 <FormControl><Textarea {...field} rows={20} /></FormControl>
                                 <FormDescription>Use markdown for formatting (e.g., # Heading, * list item).</FormDescription>
                                 <FormMessage />
