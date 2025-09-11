@@ -3,8 +3,9 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useCart } from '@/contexts/cart-context';
-import type { City, ShippingState, OrderInput, PaymentMethod } from '@/types';
+import type { City, ShippingState, OrderInput, PaymentMethod, SiteSettings, TermsPageSettings } from '@/types';
 import { getShippingOptions } from '@/services/shipping-service';
+import { getSiteSettings } from '@/services/site-settings-service';
 import { addOrder } from '@/services/order-service';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +19,9 @@ import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { CreditCard } from 'lucide-react';
 import { Checkbox } from './ui/checkbox';
 import Link from 'next/link';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import ReactMarkdown from 'react-markdown';
+import { ScrollArea } from './ui/scroll-area';
 
 export default function CheckoutForm() {
   const { cartTotal, cartItems, clearCart } = useCart();
@@ -25,6 +29,7 @@ export default function CheckoutForm() {
   const router = useRouter();
 
   const [shippingOptions, setShippingOptions] = useState<ShippingState[]>([]);
+  const [termsContent, setTermsContent] = useState<TermsPageSettings | null>(null);
   const [selectedState, setSelectedState] = useState<string>('');
   const [selectedCity, setSelectedCity] = useState<string>('');
   
@@ -36,11 +41,17 @@ export default function CheckoutForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    async function fetchOptions() {
-      const options = await getShippingOptions();
-      setShippingOptions(options);
+    async function fetchData() {
+      const [shippingData, settingsData] = await Promise.all([
+        getShippingOptions(),
+        getSiteSettings()
+      ]);
+      setShippingOptions(shippingData);
+      if (settingsData?.termsPage) {
+        setTermsContent(settingsData.termsPage);
+      }
     }
-    fetchOptions();
+    fetchData();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -227,10 +238,30 @@ export default function CheckoutForm() {
           <div className="space-y-4">
             <div className="flex items-start space-x-3">
                 <Checkbox id="terms" checked={agreedToTerms} onCheckedChange={(checked) => setAgreedToTerms(!!checked)} className="mt-0.5" />
-                <Label htmlFor="terms" className="text-sm font-normal text-muted-foreground">
-                    I agree to the terms and conditions.
-                    <Link href="/terms-of-service" target="_blank" className="p-0 h-auto ml-1 text-sm text-primary underline-offset-4 hover:underline">Read Terms</Link>
-                </Label>
+                <div className="grid gap-1.5 leading-none">
+                    <Label htmlFor="terms" className="text-sm font-normal text-muted-foreground">
+                        I agree to the terms and conditions.
+                    </Label>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant="link" type="button" className="p-0 h-auto text-sm text-primary underline-offset-4 hover:underline">Read Terms</Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-3xl">
+                            <DialogHeader>
+                                <DialogTitle>{termsContent?.title || "Terms of Service"}</DialogTitle>
+                            </DialogHeader>
+                            <ScrollArea className="max-h-[60vh]">
+                                <div className="prose prose-sm dark:prose-invert p-1">
+                                    {termsContent ? (
+                                        <ReactMarkdown>{termsContent.content}</ReactMarkdown>
+                                    ) : (
+                                        <p>Loading terms...</p>
+                                    )}
+                                </div>
+                            </ScrollArea>
+                        </DialogContent>
+                    </Dialog>
+                </div>
             </div>
 
             <Button type="submit" className="w-full font-bold" size="lg" disabled={cartItems.length === 0 || isSubmitting || !agreedToTerms}>
@@ -242,5 +273,3 @@ export default function CheckoutForm() {
     </Card>
   );
 }
-
-    
