@@ -208,3 +208,14 @@ export type Membership = {
 export type MembershipWithProducts = Omit<Membership, 'recommendedProducts'> & {
     recommendedProducts: (RecommendedProduct & { product: Product })[];
 };
+
+export type ContactSubmission = {
+    id: string;
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+    createdAt: string; // ISO 8601 string
+    status: 'new' | 'read' | 'archived';
+};
+
