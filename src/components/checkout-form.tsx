@@ -16,6 +16,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { CreditCard } from 'lucide-react';
+import { Checkbox } from './ui/checkbox';
+import Link from 'next/link';
 
 export default function CheckoutForm() {
   const { cartTotal, cartItems, clearCart } = useCart();
@@ -30,6 +32,7 @@ export default function CheckoutForm() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('Pay on Delivery');
   const [cardInfo, setCardInfo] = useState({ number: '', name: '', expiry: '', cvv: '' });
   
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -73,6 +76,10 @@ export default function CheckoutForm() {
     }
     if (paymentMethod !== 'Pay on Delivery' && (!cardInfo.number || !cardInfo.name || !cardInfo.expiry || !cardInfo.cvv)) {
         toast({ variant: 'destructive', title: 'Error', description: 'Please fill in all card details.' });
+        return;
+    }
+     if (!agreedToTerms) {
+        toast({ variant: 'destructive', title: 'Agreement Required', description: 'You must agree to the terms and conditions.' });
         return;
     }
     
@@ -216,10 +223,22 @@ export default function CheckoutForm() {
             <Separator />
             <div className="flex justify-between font-bold text-lg"><span>Total</span><span>DZD {total.toFixed(2)}</span></div>
           </div>
+          
+          <div className="space-y-4">
+            <div className="flex items-start space-x-3">
+                <Checkbox id="terms" checked={agreedToTerms} onCheckedChange={(checked) => setAgreedToTerms(!!checked)} className="mt-0.5" />
+                <Label htmlFor="terms" className="text-sm font-normal text-muted-foreground">
+                    I agree to the terms and conditions.
+                    <Button asChild variant="link" className="p-0 h-auto ml-1 text-sm">
+                        <Link href="/terms-of-service" target="_blank">Read Terms</Link>
+                    </Button>
+                </Label>
+            </div>
 
-          <Button type="submit" className="w-full font-bold" size="lg" disabled={cartItems.length === 0 || isSubmitting}>
-            {isSubmitting ? "Placing Order..." : "Place Order"}
-          </Button>
+            <Button type="submit" className="w-full font-bold" size="lg" disabled={cartItems.length === 0 || isSubmitting || !agreedToTerms}>
+                {isSubmitting ? "Placing Order..." : "Place Order"}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>
