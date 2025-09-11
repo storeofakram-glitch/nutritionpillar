@@ -105,7 +105,7 @@ export default function MembershipTable({ memberships, isLoading, onDataChange }
           <TableHeader>
             <TableRow>
               <TableHead>Customer Name</TableHead>
-              <TableHead>Email / Plan</TableHead>
+              <TableHead>Identifier / Plan</TableHead>
               <TableHead>Membership Code</TableHead>
               <TableHead>Recommendations</TableHead>
               <TableHead>
@@ -117,7 +117,9 @@ export default function MembershipTable({ memberships, isLoading, onDataChange }
             {isLoading ? renderSkeleton() : memberships.map(membership => (
               <TableRow key={membership.id}>
                 <TableCell className="font-medium">{membership.customerName}</TableCell>
-                <TableCell className="text-muted-foreground">{membership.customerEmail || membership.coachingPlan}</TableCell>
+                <TableCell className="text-muted-foreground">
+                    {membership.type === 'Fitness Pillar' ? membership.customerPhone : (membership.customerEmail || membership.coachingPlan)}
+                </TableCell>
                 <TableCell>
                     <div className="flex items-center gap-2">
                         <Badge variant="outline">{membership.code}</Badge>
