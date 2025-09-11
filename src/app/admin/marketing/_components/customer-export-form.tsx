@@ -57,12 +57,21 @@ export default function CustomerExportForm() {
             checked ? [...prev, category] : prev.filter(c => c !== category)
         );
     };
+    
+    const handleSelectAllCategories = (checked: boolean) => {
+        setSelectedCategories(checked ? productCategories : []);
+    };
 
     const handleStateChange = (state: string, checked: boolean) => {
         setSelectedStates(prev => 
             checked ? [...prev, state] : prev.filter(s => s !== state)
         );
     };
+
+    const handleSelectAllStates = (checked: boolean) => {
+        setSelectedStates(checked ? states : []);
+    };
+
 
     const handleDownload = () => {
         if (loading) return;
@@ -129,10 +138,21 @@ export default function CustomerExportForm() {
         });
     };
 
-    const CheckboxList = ({ title, items, selectedItems, onCheckedChange }: { title: string; items: string[]; selectedItems: string[]; onCheckedChange: (item: string, checked: boolean) => void; }) => (
+    const CheckboxList = ({ title, items, selectedItems, onCheckedChange, onSelectAll }: { title: string; items: string[]; selectedItems: string[]; onCheckedChange: (item: string, checked: boolean) => void; onSelectAll: (checked: boolean) => void; }) => (
         <div className="space-y-2">
             <h3 className="font-semibold text-sm">{title} ({selectedItems.length || 'All'})</h3>
             <ScrollArea className="h-40 rounded-md border p-4">
+                 <div className="flex items-center space-x-2 mb-2">
+                    <Checkbox
+                        id={`select-all-${title}`}
+                        checked={items.length > 0 && selectedItems.length === items.length}
+                        onCheckedChange={(checked) => onSelectAll(!!checked)}
+                    />
+                    <Label htmlFor={`select-all-${title}`} className="font-bold cursor-pointer">
+                        Select All
+                    </Label>
+                </div>
+                <Separator className="my-2" />
                 {items.map(item => (
                     <div key={item} className="flex items-center space-x-2 mb-2">
                         <Checkbox
@@ -184,12 +204,14 @@ export default function CustomerExportForm() {
                         items={productCategories} 
                         selectedItems={selectedCategories}
                         onCheckedChange={handleCategoryChange} 
+                        onSelectAll={handleSelectAllCategories}
                     />
                     <CheckboxList 
                         title="Filter by State (Wilaya)" 
                         items={states} 
                         selectedItems={selectedStates}
                         onCheckedChange={handleStateChange}
+                        onSelectAll={handleSelectAllStates}
                     />
                 </div>
                 
