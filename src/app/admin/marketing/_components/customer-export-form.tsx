@@ -14,8 +14,9 @@ import type { Order, Product } from "@/types";
 import { getOrders } from "@/services/order-service";
 import { getProducts } from "@/services/product-service";
 import { dzStates } from "@/lib/dz-states";
-import { Download } from "lucide-react";
+import { Download, Search } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
 
 type ExportType = 'email' | 'phone' | 'both';
 
@@ -28,6 +29,9 @@ export default function CustomerExportForm() {
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [selectedStates, setSelectedStates] = useState<string[]>([]);
     const [exportType, setExportType] = useState<ExportType>('email');
+
+    const [categorySearch, setCategorySearch] = useState("");
+    const [stateSearch, setStateSearch] = useState("");
 
     useEffect(() => {
         async function loadData() {
@@ -51,6 +55,14 @@ export default function CustomerExportForm() {
     const states = useMemo(() => {
         return dzStates.map(s => s.name).sort();
     }, []);
+
+    const filteredCategories = useMemo(() => {
+        return productCategories.filter(c => c.toLowerCase().includes(categorySearch.toLowerCase()));
+    }, [productCategories, categorySearch]);
+
+    const filteredStates = useMemo(() => {
+        return states.filter(s => s.toLowerCase().includes(stateSearch.toLowerCase()));
+    }, [states, stateSearch]);
     
     const handleCategoryChange = (category: string, checked: boolean) => {
         setSelectedCategories(prev => 
@@ -162,14 +174,23 @@ export default function CustomerExportForm() {
         });
     };
 
-    const CheckboxList = ({ title, items, selectedItems, onCheckedChange, onSelectAll }: { title: string; items: string[]; selectedItems: string[]; onCheckedChange: (item: string, checked: boolean) => void; onSelectAll: (checked: boolean) => void; }) => (
+    const CheckboxList = ({ title, items, allItems, selectedItems, onCheckedChange, onSelectAll, searchTerm, onSearchChange }: { title: string; items: string[]; allItems: string[]; selectedItems: string[]; onCheckedChange: (item: string, checked: boolean) => void; onSelectAll: (checked: boolean) => void; searchTerm: string; onSearchChange: (value: string) => void; }) => (
         <div className="space-y-2">
             <h3 className="font-semibold text-sm">{title} ({selectedItems.length || 'All'})</h3>
+            <div className="relative">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => onSearchChange(e.target.value)}
+                    className="pl-8 mb-2"
+                />
+            </div>
             <ScrollArea className="h-40 rounded-md border p-4">
                  <div className="flex items-center space-x-2 mb-2">
                     <Checkbox
                         id={`select-all-${title}`}
-                        checked={items.length > 0 && selectedItems.length === items.length}
+                        checked={allItems.length > 0 && selectedItems.length === allItems.length}
                         onCheckedChange={(checked) => onSelectAll(!!checked)}
                     />
                     <Label htmlFor={`select-all-${title}`} className="font-bold cursor-pointer">
@@ -189,6 +210,7 @@ export default function CustomerExportForm() {
                         </Label>
                     </div>
                 ))}
+                 {items.length === 0 && <p className="text-center text-sm text-muted-foreground">No matches found.</p>}
             </ScrollArea>
         </div>
     );
@@ -225,17 +247,23 @@ export default function CustomerExportForm() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <CheckboxList 
                         title="Filter by Product Category" 
-                        items={productCategories} 
+                        items={filteredCategories}
+                        allItems={productCategories}
                         selectedItems={selectedCategories}
                         onCheckedChange={handleCategoryChange} 
                         onSelectAll={handleSelectAllCategories}
+                        searchTerm={categorySearch}
+                        onSearchChange={setCategorySearch}
                     />
                     <CheckboxList 
                         title="Filter by State (Wilaya)" 
-                        items={states} 
+                        items={filteredStates}
+                        allItems={states}
                         selectedItems={selectedStates}
                         onCheckedChange={handleStateChange}
                         onSelectAll={handleSelectAllStates}
+                        searchTerm={stateSearch}
+                        onSearchChange={setStateSearch}
                     />
                 </div>
                 
