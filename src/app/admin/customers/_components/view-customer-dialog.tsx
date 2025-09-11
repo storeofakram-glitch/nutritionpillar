@@ -36,6 +36,8 @@ export default function ViewCustomerDialog({ isOpen, onOpenChange, customer, ord
             default: return 'secondary';
         }
     }
+    
+    const phone = orders.length > 0 ? orders[0].shippingAddress.phone : "Not available";
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -53,6 +55,7 @@ export default function ViewCustomerDialog({ isOpen, onOpenChange, customer, ord
                         <h3 className="font-semibold text-base">Contact Information</h3>
                         <p>{customer.name}</p>
                         <p className="text-muted-foreground">{customer.email}</p>
+                        <p className="text-muted-foreground">Phone: {phone}</p>
                     </div>
                      <div>
                         <h3 className="font-semibold text-base">Order History</h3>
