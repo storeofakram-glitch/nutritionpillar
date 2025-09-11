@@ -91,16 +91,47 @@ export default function AdminCustomersPage() {
     }
     
     const handleDownloadCSV = () => {
+        // Build a detailed customer profile
+        const customerProfiles = new Map<string, { name: string; email: string; phone: string; categories: Set<string> }>();
+
+        orders.forEach(order => {
+            const email = order.customer.email;
+            if (!customerProfiles.has(email)) {
+                customerProfiles.set(email, {
+                    name: order.customer.name,
+                    email: email,
+                    phone: order.shippingAddress.phone,
+                    categories: new Set<string>(),
+                });
+            }
+
+            const profile = customerProfiles.get(email)!;
+            // Update to the latest phone number found
+            profile.phone = order.shippingAddress.phone;
+            
+            order.items.forEach(item => {
+                if (item.product.category) {
+                    profile.categories.add(item.product.category);
+                }
+            });
+        });
+
         const csvRows = [
-            "Name,Email", // CSV header
-            ...allUniqueCustomers.map(c => `"${c.name.replace(/"/g, '""')}","${c.email}"`)
+            "Name,Email,Phone,Purchased Categories", // CSV header
+            ...Array.from(customerProfiles.values()).map(c => {
+                const name = `"${c.name.replace(/"/g, '""')}"`;
+                const email = `"${c.email}"`;
+                const phone = `"${c.phone}"`;
+                const categories = `"${Array.from(c.categories).join(", ")}"`;
+                return [name, email, phone, categories].join(",");
+            })
         ];
         
         const csvContent = "data:text/csv;charset=utf-8," + csvRows.join("\n");
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "customers.csv");
+        link.setAttribute("download", "customer_list_with_categories.csv");
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
