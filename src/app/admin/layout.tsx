@@ -18,7 +18,7 @@ import {
   SidebarFooter,
   SidebarInset
 } from "@/components/ui/sidebar"
-import { Home, Package, ShoppingCart, Truck, Users, ArrowLeft, DollarSign, Brush, ShieldCheck } from "lucide-react"
+import { Home, Package, ShoppingCart, Truck, Users, ArrowLeft, DollarSign, Brush, ShieldCheck, Megaphone } from "lucide-react"
 
 export default function AdminLayout({
   children,
@@ -36,6 +36,7 @@ export default function AdminLayout({
     { href: "/admin/finance", label: "Finance", icon: DollarSign },
     { href: "/admin/membership", label: "Membership", icon: ShieldCheck },
     { href: "/admin/appearance", label: "Appearance", icon: Brush },
+    { href: "/admin/marketing", label: "Marketing", icon: Megaphone },
   ]
   
   return (
