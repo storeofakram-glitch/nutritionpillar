@@ -153,6 +153,8 @@ export type AboutPageSettings = {
     subtitle: string;
     imageUrl: string;
     imageAlt: string;
+    videoUrl?: string;
+    backgroundVideoUrl?: string;
     storyTitle: string;
     storyContent1: string;
     storyContent2: string;

@@ -32,14 +32,36 @@ export default async function AboutPage() {
       </div>
 
       <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
-        <div className="relative w-full aspect-square rounded-lg overflow-hidden shadow-lg">
-            <Image 
-                src={about.imageUrl}
-                alt={about.imageAlt}
-                data-ai-hint="team photo"
-                fill
-                className="object-cover"
-            />
+        <div className="relative w-full aspect-square rounded-lg overflow-hidden shadow-lg bg-black">
+            {about.backgroundVideoUrl ? (
+                 <video
+                    src={about.backgroundVideoUrl}
+                    className="absolute top-0 left-0 w-full h-full object-cover"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                >
+                    Your browser does not support the video tag.
+                </video>
+            ) : about.videoUrl ? (
+                <iframe
+                    src={about.videoUrl}
+                    title={about.storyTitle}
+                    className="absolute top-0 left-0 w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                ></iframe>
+            ) : (
+                 <Image 
+                    src={about.imageUrl}
+                    alt={about.imageAlt}
+                    data-ai-hint="team photo"
+                    fill
+                    className="object-cover"
+                />
+            )}
         </div>
         <div>
             <h2 className="text-3xl font-bold font-headline mb-4">{about.storyTitle}</h2>

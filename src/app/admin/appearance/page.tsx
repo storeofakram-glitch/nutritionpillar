@@ -66,6 +66,8 @@ const aboutPageSettingsSchema = z.object({
     subtitle: z.string().min(1, "Subtitle is required."),
     imageUrl: z.string().url({ message: "Please enter a valid URL." }).or(z.literal('')),
     imageAlt: z.string().min(1, "Image alt text is required."),
+    videoUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
+    backgroundVideoUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
     storyTitle: z.string().min(1, "Story title is required."),
     storyContent1: z.string().min(1, "Story content is required."),
     storyContent2: z.string().min(1, "Story content is required."),
@@ -113,7 +115,7 @@ const emptyValues: SiteSettings = {
     marquee: { messages: [{ text: "", logoUrl: "", logoAlt: "" }] },
     partnershipLogos: [{ src: "", alt: "", hint: "" }],
     adBanner: { imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", title: "", description: "", buttonText: "", buttonLink: "", counter1Value: 0, counter1Label: '', counter2Value: 0, counter2Label: '', flashTitle: false },
-    aboutPage: { title: "", subtitle: "", imageUrl: "", imageAlt: "", storyTitle: "", storyContent1: "", storyContent2: "", missionTitle: "", missionContent: "", visionTitle: "", visionContent: "", valuesTitle: "", valuesContent: "" },
+    aboutPage: { title: "", subtitle: "", imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", storyTitle: "", storyContent1: "", storyContent2: "", missionTitle: "", missionContent: "", visionTitle: "", visionContent: "", valuesTitle: "", valuesContent: "" },
     faqPage: { title: "", subtitle: "", faqs: [{ question: "", answer: "" }] },
     socialLinks: { facebook: "", instagram: "", youtube: "", linkedin: "", twitter: "" },
 };
@@ -535,8 +537,24 @@ export default function AdminAppearancePage() {
                          <FormField control={form.control} name="aboutPage.subtitle" render={({ field }) => (
                             <FormItem><FormLabel>Subtitle</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
+                         <FormField control={form.control} name="aboutPage.backgroundVideoUrl" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Background Video URL (Autoplay)</FormLabel>
+                                <FormControl><Input {...field} value={field.value ?? ''} placeholder="https://example.com/video.mp4" /></FormControl>
+                                <FormDescription>Optional. Autoplays silently. Overrides embed video and image.</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                         <FormField control={form.control} name="aboutPage.videoUrl" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Video URL (Embed)</FormLabel>
+                                <FormControl><Input {...field} value={field.value ?? ''} placeholder="https://www.youtube.com/embed/..." /></FormControl>
+                                <FormDescription>Optional. Use embed URL. Shown if no background video.</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
                         <FormField control={form.control} name="aboutPage.imageUrl" render={({ field }) => (
-                            <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input {...field} /></FormControl><FormDescription>Recommended aspect ratio: 1:1 (e.g., 600x600).</FormDescription><FormMessage /></FormItem>
+                            <FormItem><FormLabel>Fallback Image URL</FormLabel><FormControl><Input {...field} /></FormControl><FormDescription>Required. Shown if no video. Recommended aspect ratio: 1:1.</FormDescription><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name="aboutPage.imageAlt" render={({ field }) => (
                             <FormItem><FormLabel>Image Alt Text</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
