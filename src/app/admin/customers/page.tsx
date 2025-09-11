@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { MoreHorizontal, RefreshCw } from "lucide-react"
+import { MoreHorizontal, RefreshCw, Download } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState, useTransition, useMemo } from "react";
@@ -45,6 +45,17 @@ export default function AdminCustomersPage() {
     useEffect(() => {
         fetchAndProcessData();
     }, []);
+    
+    const allUniqueCustomers = useMemo(() => {
+        const customerMap = new Map<string, Customer>();
+        orders.forEach(order => {
+            if (!customerMap.has(order.customer.email)) {
+                customerMap.set(order.customer.email, order.customer);
+            }
+        });
+        return Array.from(customerMap.values());
+    }, [orders]);
+
 
     const { deliveredCustomers, canceledCustomers } = useMemo(() => {
         const delivered = new Map<string, Customer>();
@@ -78,6 +89,22 @@ export default function AdminCustomersPage() {
         setCustomerOrders(orders);
         setIsViewCustomerOpen(true);
     }
+    
+    const handleDownloadCSV = () => {
+        const csvRows = [
+            "Name,Email", // CSV header
+            ...allUniqueCustomers.map(c => `"${c.name.replace(/"/g, '""')}","${c.email}"`)
+        ];
+        
+        const csvContent = "data:text/csv;charset=utf-8," + csvRows.join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "customers.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
     
     const CustomerTable = ({ customers }: { customers: Customer[] }) => (
          <Table>
@@ -130,10 +157,16 @@ export default function AdminCustomersPage() {
                     <h1 className="text-2xl font-bold font-headline tracking-tight">Customers</h1>
                     <p className="text-muted-foreground">View and manage your customers, segmented by order status.</p>
                 </div>
-                <Button variant="outline" size="icon" onClick={fetchAndProcessData} disabled={isPending}>
-                    <RefreshCw className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
-                    <span className="sr-only">Refresh</span>
-                </Button>
+                <div className="flex items-center gap-2">
+                    <Button variant="outline" size="icon" onClick={fetchAndProcessData} disabled={isPending}>
+                        <RefreshCw className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
+                        <span className="sr-only">Refresh</span>
+                    </Button>
+                     <Button variant="outline" size="icon" onClick={handleDownloadCSV} disabled={allUniqueCustomers.length === 0}>
+                        <Download className="h-4 w-4" />
+                        <span className="sr-only">Download CSV</span>
+                    </Button>
+                </div>
             </div>
 
             <Card>
