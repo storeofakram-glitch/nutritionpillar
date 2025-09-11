@@ -90,6 +90,11 @@ const faqPageSettingsSchema = z.object({
   faqs: z.array(faqItemSchema),
 });
 
+const termsPageSettingsSchema = z.object({
+  title: z.string().min(1, "Title is required."),
+  content: z.string().min(10, "Content is required."),
+});
+
 const socialLinksSchema = z.object({
     facebook: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
     instagram: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
@@ -107,6 +112,7 @@ const siteSettingsSchema = z.object({
   adBanner: adBannerSchema,
   aboutPage: aboutPageSettingsSchema,
   faqPage: faqPageSettingsSchema,
+  termsPage: termsPageSettingsSchema,
   socialLinks: socialLinksSchema,
 });
 
@@ -117,6 +123,7 @@ const emptyValues: SiteSettings = {
     adBanner: { imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", title: "", description: "", buttonText: "", buttonLink: "", counter1Value: 0, counter1Label: '', counter2Value: 0, counter2Label: '', flashTitle: false },
     aboutPage: { title: "", subtitle: "", imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", storyTitle: "", storyContent1: "", storyContent2: "", missionTitle: "", missionContent: "", visionTitle: "", visionContent: "", valuesTitle: "", valuesContent: "" },
     faqPage: { title: "", subtitle: "", faqs: [{ question: "", answer: "" }] },
+    termsPage: { title: "Terms of Service", content: "Please add your terms of service here." },
     socialLinks: { facebook: "", instagram: "", youtube: "", linkedin: "", twitter: "" },
 };
 
@@ -130,6 +137,7 @@ export default function AdminAppearancePage() {
   const [isBannerOpen, setIsBannerOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isFaqOpen, setIsFaqOpen] = useState(false);
+  const [isTermsOpen, setIsTermsOpen] = useState(false);
   const [isSocialOpen, setIsSocialOpen] = useState(false);
 
   const form = useForm<z.infer<typeof siteSettingsSchema>>({
@@ -158,6 +166,7 @@ export default function AdminAppearancePage() {
                 subtitle: settings.faqPage?.subtitle || emptyValues.faqPage.subtitle,
                 faqs: faqs.length > 0 ? faqs : emptyValues.faqPage.faqs,
              },
+             termsPage: { ...emptyValues.termsPage, ...settings.termsPage },
              socialLinks: { ...emptyValues.socialLinks, ...settings.socialLinks },
         });
       }
@@ -662,6 +671,38 @@ export default function AdminAppearancePage() {
                             </Button>
                         </div>
 
+                    </CardContent>
+                </CollapsibleContent>
+            </Card>
+        </Collapsible>
+
+        <Collapsible open={isTermsOpen} onOpenChange={setIsTermsOpen}>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>Terms of Service Page</CardTitle>
+                        <CardDescription>Manage the content of the Terms of Service page.</CardDescription>
+                    </div>
+                    <CollapsibleTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <ChevronDown className={cn("h-5 w-5 transition-transform", isTermsOpen && "rotate-180")} />
+                            <span className="sr-only">{isTermsOpen ? 'Collapse' : 'Expand'}</span>
+                        </Button>
+                    </CollapsibleTrigger>
+                </CardHeader>
+                <CollapsibleContent>
+                    <CardContent className="space-y-4 pt-4">
+                        <FormField control={form.control} name="termsPage.title" render={({ field }) => (
+                            <FormItem><FormLabel>Page Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={form.control} name="termsPage.content" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Content (Markdown supported)</FormLabel>
+                                <FormControl><Textarea {...field} rows={20} /></FormControl>
+                                <FormDescription>Use markdown for formatting (e.g., # Heading, * list item).</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
                     </CardContent>
                 </CollapsibleContent>
             </Card>

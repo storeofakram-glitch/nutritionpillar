@@ -177,6 +177,11 @@ export type FaqPageSettings = {
     faqs: FaqItem[];
 };
 
+export type TermsPageSettings = {
+    title: string;
+    content: string;
+};
+
 export type SocialLinks = {
     facebook?: string;
     instagram?: string;
@@ -194,6 +199,7 @@ export type SiteSettings = {
   adBanner: AdBanner;
   aboutPage: AboutPageSettings;
   faqPage: FaqPageSettings;
+  termsPage: TermsPageSettings;
   socialLinks: SocialLinks;
 };
 
