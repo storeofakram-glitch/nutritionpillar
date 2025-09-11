@@ -38,7 +38,7 @@ export default function RegionalDemandChart({ data, isLoading }: RegionalDemandC
                     <Skeleton className="h-4 w-1/2" />
                 </CardHeader>
                 <CardContent>
-                    <Skeleton className="w-full h-[250px]" />
+                    <Skeleton className="w-full h-[400px]" />
                 </CardContent>
             </Card>
         )
@@ -52,7 +52,7 @@ export default function RegionalDemandChart({ data, isLoading }: RegionalDemandC
             </CardHeader>
             <CardContent>
                 {data.length > 0 ? (
-                    <ChartContainer config={chartConfig} className="min-h-[250px] w-full">
+                    <ChartContainer config={chartConfig} className="min-h-[400px] w-full">
                         <BarChart
                             accessibilityLayer
                             data={data}

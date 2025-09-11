@@ -69,15 +69,18 @@ export default function AdminMarketingPage() {
             <p className="text-muted-foreground">Tools and strategies to grow your business.</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+             <div className="space-y-6">
                 <CustomerExportForm />
                 <MembershipExportCard />
             </div>
-            <div className="lg:col-span-1 space-y-6">
+            <div className="space-y-6">
                 <BestSellingProductsCard products={bestSellingProducts} isLoading={loading} />
-                <RegionalDemandChart data={regionalDemand} isLoading={loading} />
             </div>
+        </div>
+        
+        <div>
+            <RegionalDemandChart data={regionalDemand} isLoading={loading} />
         </div>
 
     </div>
