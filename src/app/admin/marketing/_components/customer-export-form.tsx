@@ -20,6 +20,48 @@ import { Input } from "@/components/ui/input";
 
 type ExportType = 'email' | 'phone' | 'both';
 
+const CheckboxList = ({ title, items, allItems, selectedItems, onCheckedChange, onSelectAll, searchTerm, onSearchChange }: { title: string; items: string[]; allItems: string[]; selectedItems: string[]; onCheckedChange: (item: string, checked: boolean) => void; onSelectAll: (checked: boolean) => void; searchTerm: string; onSearchChange: (value: string) => void; }) => (
+    <div className="space-y-2">
+        <h3 className="font-semibold text-sm">{title} ({selectedItems.length || 'All'})</h3>
+        <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => onSearchChange(e.target.value)}
+                className="pl-8 mb-2"
+            />
+        </div>
+        <ScrollArea className="h-40 rounded-md border p-4">
+             <div className="flex items-center space-x-2 mb-2">
+                <Checkbox
+                    id={`select-all-${title}`}
+                    checked={allItems.length > 0 && selectedItems.length === allItems.length}
+                    onCheckedChange={(checked) => onSelectAll(!!checked)}
+                />
+                <Label htmlFor={`select-all-${title}`} className="font-bold cursor-pointer">
+                    Select All
+                </Label>
+            </div>
+            <Separator className="my-2" />
+            {items.map(item => (
+                <div key={item} className="flex items-center space-x-2 mb-2">
+                    <Checkbox
+                        id={`${title}-${item}`}
+                        checked={selectedItems.includes(item)}
+                        onCheckedChange={(checked) => onCheckedChange(item, !!checked)}
+                    />
+                    <Label htmlFor={`${title}-${item}`} className="text-sm font-normal cursor-pointer">
+                        {item}
+                    </Label>
+                </div>
+            ))}
+             {items.length === 0 && <p className="text-center text-sm text-muted-foreground">No matches found.</p>}
+        </ScrollArea>
+    </div>
+);
+
+
 export default function CustomerExportForm() {
     const { toast } = useToast();
     const [orders, setOrders] = useState<Order[]>([]);
@@ -174,47 +216,6 @@ export default function CustomerExportForm() {
         });
     };
 
-    const CheckboxList = ({ title, items, allItems, selectedItems, onCheckedChange, onSelectAll, searchTerm, onSearchChange }: { title: string; items: string[]; allItems: string[]; selectedItems: string[]; onCheckedChange: (item: string, checked: boolean) => void; onSelectAll: (checked: boolean) => void; searchTerm: string; onSearchChange: (value: string) => void; }) => (
-        <div className="space-y-2">
-            <h3 className="font-semibold text-sm">{title} ({selectedItems.length || 'All'})</h3>
-            <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                    placeholder="Search..."
-                    value={searchTerm}
-                    onChange={(e) => onSearchChange(e.target.value)}
-                    className="pl-8 mb-2"
-                />
-            </div>
-            <ScrollArea className="h-40 rounded-md border p-4">
-                 <div className="flex items-center space-x-2 mb-2">
-                    <Checkbox
-                        id={`select-all-${title}`}
-                        checked={allItems.length > 0 && selectedItems.length === allItems.length}
-                        onCheckedChange={(checked) => onSelectAll(!!checked)}
-                    />
-                    <Label htmlFor={`select-all-${title}`} className="font-bold cursor-pointer">
-                        Select All
-                    </Label>
-                </div>
-                <Separator className="my-2" />
-                {items.map(item => (
-                    <div key={item} className="flex items-center space-x-2 mb-2">
-                        <Checkbox
-                            id={`${title}-${item}`}
-                            checked={selectedItems.includes(item)}
-                            onCheckedChange={(checked) => onCheckedChange(item, !!checked)}
-                        />
-                        <Label htmlFor={`${title}-${item}`} className="text-sm font-normal cursor-pointer">
-                            {item}
-                        </Label>
-                    </div>
-                ))}
-                 {items.length === 0 && <p className="text-center text-sm text-muted-foreground">No matches found.</p>}
-            </ScrollArea>
-        </div>
-    );
-    
     if (loading) {
         return (
             <Card>
