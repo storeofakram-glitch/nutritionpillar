@@ -175,6 +175,14 @@ export type FaqPageSettings = {
     faqs: FaqItem[];
 };
 
+export type SocialLinks = {
+    facebook?: string;
+    instagram?: string;
+    youtube?: string;
+    linkedin?: string;
+    twitter?: string;
+};
+
 export type SiteSettings = {
   hero: HeroSettings;
   marquee: {
@@ -184,6 +192,7 @@ export type SiteSettings = {
   adBanner: AdBanner;
   aboutPage: AboutPageSettings;
   faqPage: FaqPageSettings;
+  socialLinks: SocialLinks;
 };
 
 export type RecommendedProduct = {
@@ -218,4 +227,3 @@ export type ContactSubmission = {
     createdAt: string; // ISO 8601 string
     status: 'new' | 'read' | 'archived';
 };
-

@@ -88,6 +88,13 @@ const faqPageSettingsSchema = z.object({
   faqs: z.array(faqItemSchema),
 });
 
+const socialLinksSchema = z.object({
+    facebook: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
+    instagram: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
+    youtube: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
+    linkedin: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
+    twitter: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
+});
 
 const siteSettingsSchema = z.object({
   hero: heroSettingsSchema,
@@ -98,6 +105,7 @@ const siteSettingsSchema = z.object({
   adBanner: adBannerSchema,
   aboutPage: aboutPageSettingsSchema,
   faqPage: faqPageSettingsSchema,
+  socialLinks: socialLinksSchema,
 });
 
 const emptyValues: SiteSettings = {
@@ -107,6 +115,7 @@ const emptyValues: SiteSettings = {
     adBanner: { imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", title: "", description: "", buttonText: "", buttonLink: "", counter1Value: 0, counter1Label: '', counter2Value: 0, counter2Label: '', flashTitle: false },
     aboutPage: { title: "", subtitle: "", imageUrl: "", imageAlt: "", storyTitle: "", storyContent1: "", storyContent2: "", missionTitle: "", missionContent: "", visionTitle: "", visionContent: "", valuesTitle: "", valuesContent: "" },
     faqPage: { title: "", subtitle: "", faqs: [{ question: "", answer: "" }] },
+    socialLinks: { facebook: "", instagram: "", youtube: "", linkedin: "", twitter: "" },
 };
 
 
@@ -119,6 +128,7 @@ export default function AdminAppearancePage() {
   const [isBannerOpen, setIsBannerOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isFaqOpen, setIsFaqOpen] = useState(false);
+  const [isSocialOpen, setIsSocialOpen] = useState(false);
 
   const form = useForm<z.infer<typeof siteSettingsSchema>>({
     resolver: zodResolver(siteSettingsSchema),
@@ -145,7 +155,8 @@ export default function AdminAppearancePage() {
                 title: settings.faqPage?.title || emptyValues.faqPage.title,
                 subtitle: settings.faqPage?.subtitle || emptyValues.faqPage.subtitle,
                 faqs: faqs.length > 0 ? faqs : emptyValues.faqPage.faqs,
-             }
+             },
+             socialLinks: { ...emptyValues.socialLinks, ...settings.socialLinks },
         });
       }
       setLoading(false);
@@ -633,6 +644,42 @@ export default function AdminAppearancePage() {
                             </Button>
                         </div>
 
+                    </CardContent>
+                </CollapsibleContent>
+            </Card>
+        </Collapsible>
+
+        <Collapsible open={isSocialOpen} onOpenChange={setIsSocialOpen}>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>Social Links</CardTitle>
+                        <CardDescription>Manage the social media links in the site footer.</CardDescription>
+                    </div>
+                    <CollapsibleTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <ChevronDown className={cn("h-5 w-5 transition-transform", isSocialOpen && "rotate-180")} />
+                            <span className="sr-only">{isSocialOpen ? 'Collapse' : 'Expand'}</span>
+                        </Button>
+                    </CollapsibleTrigger>
+                </CardHeader>
+                <CollapsibleContent>
+                    <CardContent className="space-y-4 pt-4">
+                        <FormField control={form.control} name="socialLinks.facebook" render={({ field }) => (
+                            <FormItem><FormLabel>Facebook URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://facebook.com/your-page" /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={form.control} name="socialLinks.instagram" render={({ field }) => (
+                            <FormItem><FormLabel>Instagram URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://instagram.com/your-profile" /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={form.control} name="socialLinks.youtube" render={({ field }) => (
+                            <FormItem><FormLabel>YouTube URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://youtube.com/your-channel" /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={form.control} name="socialLinks.linkedin" render={({ field }) => (
+                            <FormItem><FormLabel>LinkedIn URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://linkedin.com/in/your-profile" /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={form.control} name="socialLinks.twitter" render={({ field }) => (
+                            <FormItem><FormLabel>Twitter (X) URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://twitter.com/your-handle" /></FormControl><FormMessage /></FormItem>
+                        )} />
                     </CardContent>
                 </CollapsibleContent>
             </Card>
