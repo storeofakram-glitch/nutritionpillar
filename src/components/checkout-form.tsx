@@ -229,9 +229,7 @@ export default function CheckoutForm() {
                 <Checkbox id="terms" checked={agreedToTerms} onCheckedChange={(checked) => setAgreedToTerms(!!checked)} className="mt-0.5" />
                 <Label htmlFor="terms" className="text-sm font-normal text-muted-foreground">
                     I agree to the terms and conditions.
-                    <Button asChild variant="link" className="p-0 h-auto ml-1 text-sm">
-                        <Link href="/terms-of-service" target="_blank">Read Terms</Link>
-                    </Button>
+                    <Link href="/terms-of-service" target="_blank" className="p-0 h-auto ml-1 text-sm text-primary underline-offset-4 hover:underline">Read Terms</Link>
                 </Label>
             </div>
 
@@ -244,3 +242,5 @@ export default function CheckoutForm() {
     </Card>
   );
 }
+
+    
