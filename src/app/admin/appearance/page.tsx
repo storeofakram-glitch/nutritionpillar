@@ -113,7 +113,7 @@ const emptyValues: SiteSettings = {
 export default function AdminAppearancePage() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
-  const [isHeroOpen, setIsHeroOpen] = useState(true);
+  const [isHeroOpen, setIsHeroOpen] = useState(false);
   const [isMarqueeOpen, setIsMarqueeOpen] = useState(false);
   const [isLogosOpen, setIsLogosOpen] = useState(false);
   const [isBannerOpen, setIsBannerOpen] = useState(false);
