@@ -17,7 +17,7 @@ import { dzStates } from "@/lib/dz-states";
 import { Download } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type ExportType = 'email' | 'phone';
+type ExportType = 'email' | 'phone' | 'both';
 
 export default function CustomerExportForm() {
     const { toast } = useToast();
@@ -99,42 +99,66 @@ export default function CustomerExportForm() {
             return;
         }
 
-        const contactSet = new Set<string>();
-        filteredOrders.forEach(order => {
-            if (exportType === 'email') {
-                if (order.customer.email) {
-                    contactSet.add(order.customer.email);
+        if (exportType === 'both') {
+            const customerMap = new Map<string, {name: string, email: string, phone: string}>();
+            filteredOrders.forEach(order => {
+                if (!customerMap.has(order.customer.email)) {
+                    customerMap.set(order.customer.email, {
+                        name: order.customer.name,
+                        email: order.customer.email,
+                        phone: order.shippingAddress.phone,
+                    });
                 }
-            } else { // phone
-                if (order.shippingAddress.phone) {
-                    contactSet.add(order.shippingAddress.phone);
-                }
-            }
-        });
-        
-        const contactList = Array.from(contactSet);
-
-        if (contactList.length === 0) {
-             toast({
-                variant: 'destructive',
-                title: "No Contacts Found",
-                description: `No customers had a valid ${exportType} for the selected criteria.`,
             });
-            return;
-        }
+            const customerList = Array.from(customerMap.values());
+            const csvHeader = "Name,Email,Phone";
+            const csvRows = customerList.map(c => `"${c.name}","${c.email}","${c.phone}"`);
+            const csvContent = "data:text/csv;charset=utf-8," + [csvHeader, ...csvRows].join("\n");
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `customer_list_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } else {
+            const contactSet = new Set<string>();
+            filteredOrders.forEach(order => {
+                if (exportType === 'email') {
+                    if (order.customer.email) {
+                        contactSet.add(order.customer.email);
+                    }
+                } else { // phone
+                    if (order.shippingAddress.phone) {
+                        contactSet.add(order.shippingAddress.phone);
+                    }
+                }
+            });
+            
+            const contactList = Array.from(contactSet);
 
-        const csvContent = "data:text/csv;charset=utf-8," + [exportType, ...contactList].join("\n");
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `customer_list_${new Date().toISOString().split('T')[0]}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+            if (contactList.length === 0) {
+                toast({
+                    variant: 'destructive',
+                    title: "No Contacts Found",
+                    description: `No customers had a valid ${exportType} for the selected criteria.`,
+                });
+                return;
+            }
+
+            const csvContent = "data:text/csv;charset=utf-8," + [exportType, ...contactList].join("\n");
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `customer_list_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
         
         toast({
             title: "Download Started",
-            description: `Your list of ${contactList.length} customer ${exportType}s is downloading.`
+            description: `Your customer list is downloading.`
         });
     };
 
@@ -227,6 +251,10 @@ export default function CustomerExportForm() {
                         <div className="flex items-center space-x-2">
                             <RadioGroupItem value="phone" id="phone" />
                             <Label htmlFor="phone" className="cursor-pointer">Phone Numbers</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="both" id="both" />
+                            <Label htmlFor="both" className="cursor-pointer">Both</Label>
                         </div>
                     </RadioGroup>
                 </div>
