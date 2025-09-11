@@ -149,6 +149,7 @@ export async function deleteMembership(id: string) {
 /**
  * Checks all delivered orders and creates loyalty memberships for eligible customers.
  * Customers with 5 or more delivered orders who do not already have a membership will get one.
+ * This function uses the PHONE NUMBER as the unique identifier for a customer.
  * @returns A summary of the operation.
  */
 export async function generateLoyaltyMemberships(): Promise<{ success: boolean; newMemberships: number; error?: string }> {
@@ -165,9 +166,11 @@ export async function generateLoyaltyMemberships(): Promise<{ success: boolean; 
             const phone = order.shippingAddress.phone;
             if (!phone) return acc; // Skip orders without a phone number
 
-            acc[phone] = (acc[phone] || { count: 0, name: order.customer.name, email: order.customer.email });
+            if (!acc[phone]) {
+                acc[phone] = { count: 0, name: order.customer.name, email: order.customer.email };
+            }
             acc[phone].count += 1;
-            // Update name and email to the latest one, in case it changes
+            // Update name and email to the latest one found, in case it changes
             acc[phone].name = order.customer.name;
             acc[phone].email = order.customer.email;
             return acc;
@@ -177,14 +180,15 @@ export async function generateLoyaltyMemberships(): Promise<{ success: boolean; 
         let newMembershipsCount = 0;
 
         for (const phone in orderCounts) {
-            const customer = orderCounts[phone];
-            if (customer.count >= 5 && !existingMemberPhones.has(phone)) {
-                // This customer is eligible and doesn't have a membership yet
+            const customerData = orderCounts[phone];
+            // Check if customer has 5 or more orders and does NOT already have a membership
+            if (customerData.count >= 5 && !existingMemberPhones.has(phone)) {
+                
                 const newMembership: Omit<Membership, 'id'> = {
                     type: 'Fitness Pillar',
                     code: generateMembershipCode(),
-                    customerName: customer.name,
-                    customerEmail: customer.email,
+                    customerName: customerData.name,
+                    customerEmail: customerData.email,
                     customerPhone: phone,
                     recommendedProducts: [],
                     createdAt: new Date().toISOString(),
