@@ -56,20 +56,26 @@ export default function RegionalDemandChart({ data, isLoading }: RegionalDemandC
                         <BarChart
                             accessibilityLayer
                             data={data}
-                            layout="vertical"
-                            margin={{ left: 10, right: 10 }}
+                            margin={{
+                                top: 20,
+                                right: 20,
+                                bottom: 60,
+                                left: 20,
+                            }}
                         >
-                            <CartesianGrid horizontal={false} />
-                            <YAxis
+                            <CartesianGrid vertical={false} />
+                            <XAxis
                                 dataKey="name"
-                                type="category"
                                 tickLine={false}
                                 tickMargin={10}
                                 axisLine={false}
-                                tickFormatter={(value) => value.slice(0, 15)}
-                                reversed
+                                angle={-45}
+                                textAnchor="end"
+                                interval={0}
+                                height={80}
+                                tick={{ fontSize: 12 }}
                             />
-                            <XAxis dataKey="total" type="number" hide />
+                            <YAxis />
                             <ChartTooltip
                                 cursor={false}
                                 content={<ChartTooltipContent 
@@ -77,7 +83,7 @@ export default function RegionalDemandChart({ data, isLoading }: RegionalDemandC
                                     nameKey="name"
                                 />}
                             />
-                            <Bar dataKey="total" fill="var(--color-total)" radius={5} />
+                            <Bar dataKey="total" fill="var(--color-total)" radius={4} />
                         </BarChart>
                     </ChartContainer>
                 ) : (
