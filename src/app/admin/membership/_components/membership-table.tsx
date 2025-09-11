@@ -16,9 +16,11 @@ import { MoreHorizontal, Copy } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import type { Membership } from "@/types";
+import type { Membership, Customer, Order } from "@/types";
 import EditMembershipDialog from "./edit-membership-dialog";
 import DeleteMembershipDialog from "./delete-membership-dialog";
+import ViewCustomerDialog from "../../customers/_components/view-customer-dialog";
+import { getCustomerOrders } from "@/services/admin-service";
 
 interface MembershipTableProps {
   memberships: Membership[];
@@ -30,7 +32,12 @@ export default function MembershipTable({ memberships, isLoading, onDataChange }
   const { toast } = useToast();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isViewCustomerDialogOpen, setIsViewCustomerDialogOpen] = useState(false);
+  
   const [selectedMembership, setSelectedMembership] = useState<Membership | null>(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [customerOrders, setCustomerOrders] = useState<Order[]>([]);
+
 
   const handleEdit = (membership: Membership) => {
     setSelectedMembership(membership);
@@ -42,10 +49,35 @@ export default function MembershipTable({ memberships, isLoading, onDataChange }
     setIsDeleteDialogOpen(true);
   };
   
+  const handleViewCustomer = async (membership: Membership) => {
+      if (!membership.customerEmail) {
+          toast({ variant: 'destructive', title: 'Error', description: 'Customer email is not available for this member.' });
+          return;
+      }
+      const customer: Customer = {
+          name: membership.customerName,
+          email: membership.customerEmail,
+      };
+      
+      const orders = await getCustomerOrders(customer.email);
+
+      // Add phone number to the customer object for the dialog
+      if (membership.customerPhone) {
+          (customer as any).phone = membership.customerPhone;
+      }
+
+      setSelectedCustomer(customer);
+      setCustomerOrders(orders);
+      setIsViewCustomerDialogOpen(true);
+  }
+
   const onDialogClose = () => {
     setIsEditDialogOpen(false);
     setIsDeleteDialogOpen(false);
+    setIsViewCustomerDialogOpen(false);
     setSelectedMembership(null);
+    setSelectedCustomer(null);
+    setCustomerOrders([]);
     onDataChange();
   };
 
@@ -106,6 +138,11 @@ export default function MembershipTable({ memberships, isLoading, onDataChange }
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem onSelect={() => handleEdit(membership)}>Edit Supplement Guide</DropdownMenuItem>
+                       {membership.type === 'Fitness Pillar' && (
+                         <DropdownMenuItem onSelect={() => handleViewCustomer(membership)}>
+                           View Customer Details
+                         </DropdownMenuItem>
+                      )}
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onSelect={() => handleDelete(membership)} className="text-red-500">
                         Delete Membership
@@ -141,6 +178,15 @@ export default function MembershipTable({ memberships, isLoading, onDataChange }
             onDialogClose={onDialogClose}
           />
         </>
+      )}
+
+      {selectedCustomer && (
+        <ViewCustomerDialog
+          isOpen={isViewCustomerDialogOpen}
+          onOpenChange={setIsViewCustomerDialogOpen}
+          customer={selectedCustomer}
+          orders={customerOrders}
+        />
       )}
     </>
   );

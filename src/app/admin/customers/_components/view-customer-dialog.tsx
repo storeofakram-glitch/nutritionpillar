@@ -12,13 +12,13 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import type { Order } from "@/types"
+import type { Order, Customer } from "@/types"
 import { format } from "date-fns"
 
 interface ViewCustomerDialogProps {
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
-    customer: { name: string; email: string };
+    customer: Customer & { phone?: string };
     orders: Order[];
 }
 
@@ -37,7 +37,8 @@ export default function ViewCustomerDialog({ isOpen, onOpenChange, customer, ord
         }
     }
     
-    const phone = orders.length > 0 ? orders[0].shippingAddress.phone : "Not available";
+    // Use the phone number passed in the customer prop if available, otherwise get it from the latest order.
+    const phone = customer.phone || (orders.length > 0 ? orders[0].shippingAddress.phone : "Not available");
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
