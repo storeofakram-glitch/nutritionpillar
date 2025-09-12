@@ -194,6 +194,7 @@ export type SocialLinks = {
     youtube?: string;
     linkedin?: string;
     twitter?: string;
+    mapLocationUrl?: string;
 };
 
 export type SiteSettings = {

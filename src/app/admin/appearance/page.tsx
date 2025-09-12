@@ -108,6 +108,7 @@ const socialLinksSchema = z.object({
     youtube: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
     linkedin: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
     twitter: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
+    mapLocationUrl: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
 });
 
 const siteSettingsSchema = z.object({
@@ -133,7 +134,7 @@ const emptyValues: SiteSettings = {
     faqPage: { title: "", subtitle: "", faqs: [{ question: "", answer: "" }] },
     termsPage: { title: "Terms of Service", content: "Please add your terms of service here." },
     privacyPage: { title: "Privacy Policy", content: "Please add your privacy policy here." },
-    socialLinks: { facebook: "", instagram: "", youtube: "", linkedin: "", twitter: "" },
+    socialLinks: { facebook: "", instagram: "", youtube: "", linkedin: "", twitter: "", mapLocationUrl: "" },
 };
 
 
@@ -823,8 +824,8 @@ export default function AdminAppearancePage() {
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
-                        <CardTitle>Social Links</CardTitle>
-                        <CardDescription>Manage the social media links in the site footer.</CardDescription>
+                        <CardTitle>Social Links & Location</CardTitle>
+                        <CardDescription>Manage social media links and the map location on the homepage.</CardDescription>
                     </div>
                     <CollapsibleTrigger asChild>
                         <Button variant="ghost" size="icon">
@@ -849,6 +850,14 @@ export default function AdminAppearancePage() {
                         )} />
                         <FormField control={form.control} name="socialLinks.twitter" render={({ field }) => (
                             <FormItem><FormLabel>Twitter (X) URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://twitter.com/your-handle" /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={form.control} name="socialLinks.mapLocationUrl" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Map Location URL</FormLabel>
+                                <FormControl><Input {...field} value={field.value ?? ''} placeholder="https://www.google.com/maps/embed?..." /></FormControl>
+                                <FormDescription>Paste the "Embed a map" URL from Google Maps.</FormDescription>
+                                <FormMessage />
+                            </FormItem>
                         )} />
                     </CardContent>
                 </CollapsibleContent>

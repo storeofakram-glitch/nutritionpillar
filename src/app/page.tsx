@@ -85,8 +85,9 @@ export default function Home() {
       )
   }
 
-  const { hero, marquee, adBanner, partnershipLogos } = siteSettings;
+  const { hero, marquee, adBanner, partnershipLogos, socialLinks } = siteSettings;
   const isAdBannerLinkExternal = adBanner.buttonLink?.startsWith('http');
+  const mapUrl = socialLinks?.mapLocationUrl || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3198.405783303357!2d3.05896!3d36.71277!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x128fafb4a22c5e5b%3A0x4c2c5f6cac23b8a1!2sAlgiers!5e0!3m2!1sen!2sdz!4v1620056238383!5m2!1sen!2sdz";
 
   return (
     <div className="flex flex-col">
@@ -258,7 +259,7 @@ export default function Home() {
             <div className="max-w-4xl mx-auto">
                 <div className="w-full h-[400px] rounded-lg overflow-hidden shadow-lg border">
                     <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3198.405783303357!2d3.05896!3d36.71277!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x128fafb4a22c5e5b%3A0x4c2c5f6cac23b8a1!2sAlgiers!5e0!3m2!1sen!2sdz!4v1620056238383!5m2!1sen!2sdz"
+                        src={mapUrl}
                         width="100%" 
                         height="100%"
                         style={{ border: 0 }}
