@@ -96,6 +96,11 @@ const termsPageSettingsSchema = z.object({
   content: z.string().min(10, "Content is required."),
 });
 
+const privacyPageSettingsSchema = z.object({
+  title: z.string().min(1, "Title is required."),
+  content: z.string().min(10, "Content is required."),
+});
+
 const socialLinksSchema = z.object({
     facebook: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
     instagram: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
@@ -114,6 +119,7 @@ const siteSettingsSchema = z.object({
   aboutPage: aboutPageSettingsSchema,
   faqPage: faqPageSettingsSchema,
   termsPage: termsPageSettingsSchema,
+  privacyPage: privacyPageSettingsSchema,
   socialLinks: socialLinksSchema,
 });
 
@@ -125,6 +131,7 @@ const emptyValues: SiteSettings = {
     aboutPage: { title: "", subtitle: "", imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", storyTitle: "", storyContent1: "", storyContent2: "", missionTitle: "", missionContent: "", visionTitle: "", visionContent: "", valuesTitle: "", valuesContent: "" },
     faqPage: { title: "", subtitle: "", faqs: [{ question: "", answer: "" }] },
     termsPage: { title: "Terms of Service", content: "Please add your terms of service here." },
+    privacyPage: { title: "Privacy Policy", content: "Please add your privacy policy here." },
     socialLinks: { facebook: "", instagram: "", youtube: "", linkedin: "", twitter: "" },
 };
 
@@ -139,6 +146,7 @@ export default function AdminAppearancePage() {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isFaqOpen, setIsFaqOpen] = useState(false);
   const [isTermsOpen, setIsTermsOpen] = useState(false);
+  const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
   const [isSocialOpen, setIsSocialOpen] = useState(false);
 
   const form = useForm<z.infer<typeof siteSettingsSchema>>({
@@ -168,6 +176,7 @@ export default function AdminAppearancePage() {
                 faqs: faqs.length > 0 ? faqs : emptyValues.faqPage.faqs,
              },
              termsPage: { ...emptyValues.termsPage, ...settings.termsPage },
+             privacyPage: { ...emptyValues.privacyPage, ...settings.privacyPage },
              socialLinks: { ...emptyValues.socialLinks, ...settings.socialLinks },
         });
       }
@@ -697,6 +706,65 @@ export default function AdminAppearancePage() {
                             <FormItem><FormLabel>Page Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name="termsPage.content" render={({ field }) => (
+                            <FormItem>
+                                <div className="flex items-center gap-2">
+                                    <FormLabel>Content (Markdown supported)</FormLabel>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button variant="outline" size="sm" className="text-xs gap-1.5">
+                                                <Info className="h-3 w-3" />
+                                                Formatting Help
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-80">
+                                            <div className="grid gap-4">
+                                                <div className="space-y-2">
+                                                    <h4 className="font-medium leading-none">Markdown Tips</h4>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        Use markdown to format your text.
+                                                    </p>
+                                                </div>
+                                                <div className="text-sm">
+                                                    <p><code className="font-mono bg-muted p-1 rounded"># Heading 1</code></p>
+                                                    <p><code className="font-mono bg-muted p-1 rounded">## Heading 2</code></p>
+                                                    <p><code className="font-mono bg-muted p-1 rounded">**Bold Text**</code></p>
+                                                    <p><code className="font-mono bg-muted p-1 rounded">*Italic Text*</code></p>
+                                                    <p><code className="font-mono bg-muted p-1 rounded">- List Item</code></p>
+                                                </div>
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                </div>
+                                <FormControl><Textarea {...field} rows={20} /></FormControl>
+                                <FormDescription>Use markdown for formatting (e.g., # Heading, * list item).</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                    </CardContent>
+                </CollapsibleContent>
+            </Card>
+        </Collapsible>
+        
+        <Collapsible open={isPrivacyOpen} onOpenChange={setIsPrivacyOpen}>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>Privacy Policy Page</CardTitle>
+                        <CardDescription>Manage the content of the Privacy Policy page.</CardDescription>
+                    </div>
+                    <CollapsibleTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <ChevronDown className={cn("h-5 w-5 transition-transform", isPrivacyOpen && "rotate-180")} />
+                            <span className="sr-only">{isPrivacyOpen ? 'Collapse' : 'Expand'}</span>
+                        </Button>
+                    </CollapsibleTrigger>
+                </CardHeader>
+                <CollapsibleContent>
+                    <CardContent className="space-y-4 pt-4">
+                        <FormField control={form.control} name="privacyPage.title" render={({ field }) => (
+                            <FormItem><FormLabel>Page Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={form.control} name="privacyPage.content" render={({ field }) => (
                             <FormItem>
                                 <div className="flex items-center gap-2">
                                     <FormLabel>Content (Markdown supported)</FormLabel>

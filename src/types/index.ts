@@ -182,6 +182,11 @@ export type TermsPageSettings = {
     content: string;
 };
 
+export type PrivacyPageSettings = {
+    title: string;
+    content: string;
+};
+
 export type SocialLinks = {
     facebook?: string;
     instagram?: string;
@@ -200,6 +205,7 @@ export type SiteSettings = {
   aboutPage: AboutPageSettings;
   faqPage: FaqPageSettings;
   termsPage: TermsPageSettings;
+  privacyPage: PrivacyPageSettings;
   socialLinks: SocialLinks;
 };
 
