@@ -52,7 +52,7 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
     defaultValues: {
       name: '',
       email: '',
-      countryCode: '+213',
+      countryCode: 'DZ', // Default to Algeria's country code
       phone: '',
       age: undefined,
       weight: undefined,
@@ -64,7 +64,11 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
   });
 
   const onSubmit = async (data: ApplicationFormValues) => {
-    const fullPhoneNumber = `${data.countryCode}${data.phone}`;
+    const selectedCountry = countryCodes.find(c => c.code === data.countryCode);
+    const dialCode = selectedCountry ? selectedCountry.dial_code : '';
+
+    const fullPhoneNumber = `${dialCode}${data.phone}`;
+    
     const result = await addApplication({
       coachId: coachId,
       coachName: coachName,
@@ -73,7 +77,7 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
         name: data.name,
         email: data.email,
         phone: fullPhoneNumber,
-        countryCode: data.countryCode,
+        countryCode: dialCode,
         age: data.age,
         weight: data.weight,
         height: data.height,
@@ -132,7 +136,7 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
                                 </FormControl>
                                 <SelectContent>
                                     {countryCodes.map(country => (
-                                        <SelectItem key={`${country.name}-${country.dial_code}`} value={country.dial_code}>
+                                        <SelectItem key={country.code} value={country.code}>
                                             {country.dial_code} ({country.code})
                                         </SelectItem>
                                     ))}
