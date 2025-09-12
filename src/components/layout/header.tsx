@@ -51,12 +51,12 @@ export default function Header() {
         <div className="mr-4 flex items-center gap-4 md:hidden">
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                 <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" className="mr-2">
                         <Menu className="h-5 w-5" />
                         <span className="sr-only">Toggle Menu</span>
                     </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-full max-w-xs sm:max-w-sm bg-black text-white">
+                <SheetContent side="left" className="w-full max-w-xs sm:max-w-sm bg-background text-foreground">
                     <SheetHeader>
                         <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                         <Link href="/" className="flex items-center space-x-2">
