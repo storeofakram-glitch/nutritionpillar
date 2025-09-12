@@ -52,7 +52,7 @@ export type OrderItem = {
     selectedFlavor?: string;
 }
 
-export type PaymentMethod = 'Pay on Delivery' | 'CIB Card' | 'EDAHABIA Card';
+export type PaymentMethod = 'Pay on Delivery' | 'Credit / Debit Card';
 
 export type Order = {
   id: string;
@@ -242,3 +242,5 @@ export type ContactSubmission = {
     createdAt: string; // ISO 8601 string
     status: 'new' | 'read' | 'archived';
 };
+
+    
