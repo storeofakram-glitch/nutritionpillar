@@ -257,7 +257,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold font-headline text-center mb-10">Find Us</h2>
             <div className="max-w-4xl mx-auto">
-                <div className="w-full h-[400px] rounded-lg overflow-hidden shadow-lg border">
+                <div className="w-full h-[400px] rounded-lg overflow-hidden shadow-lg border shadow-primary/20">
                     <iframe 
                         src={mapUrl}
                         width="100%" 
