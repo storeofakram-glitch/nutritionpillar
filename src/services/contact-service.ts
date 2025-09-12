@@ -1,7 +1,7 @@
 
 'use server';
 
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy, Timestamp } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy, Timestamp, where,getCountFromServer } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { ContactSubmission } from '@/types';
 import { revalidatePath } from 'next/cache';
@@ -38,6 +38,22 @@ export async function getSubmissions(): Promise<ContactSubmission[]> {
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ContactSubmission));
 }
+
+/**
+ * Gets the count of unread ('new') contact submissions.
+ * @returns A promise that resolves to the number of unread submissions.
+ */
+export async function getUnreadSubmissionsCount(): Promise<number> {
+    try {
+        const q = query(contactSubmissionsCollection, where('status', '==', 'new'));
+        const snapshot = await getCountFromServer(q);
+        return snapshot.data().count;
+    } catch (error) {
+        console.error("Error getting unread submissions count: ", error);
+        return 0;
+    }
+}
+
 
 /**
  * Updates the status of a specific contact submission.

@@ -6,6 +6,7 @@ import { db } from '@/lib/firebase';
 import type { Order, Customer } from '@/types';
 import { getOrders, getTotalCostOfGoodsSold, getTotalRevenue } from './order-service';
 import { getTotalExpenses } from './expense-service';
+import { getUnreadSubmissionsCount } from './contact-service';
 
 const ordersCollection = collection(db, 'orders');
 
@@ -51,12 +52,14 @@ export async function getDashboardStats() {
         totalRevenue,
         totalCOGS,
         totalExpenses,
-        allOrders
+        allOrders,
+        unreadMessages
     ] = await Promise.all([
         getTotalRevenue(),
         getTotalCostOfGoodsSold(),
         getTotalExpenses(),
-        getOrders()
+        getOrders(),
+        getUnreadSubmissionsCount()
     ]);
 
     const totalSales = allOrders.length;
@@ -81,6 +84,7 @@ export async function getDashboardStats() {
         totalSales,
         netProfit,
         newCustomersThisMonth,
-        recentOrders
+        recentOrders,
+        unreadMessages
     };
 }
