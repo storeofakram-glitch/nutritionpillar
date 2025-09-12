@@ -13,6 +13,14 @@ import { addSubmission } from '@/services/contact-service';
 import type { Plan } from '@/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
+const fitnessGoals = [
+    "Weight Loss",
+    "Muscle Gain",
+    "Performance",
+    "General Health",
+    "Body Recomposition",
+];
+
 const applicationFormSchema = z.object({
   name: z.string().min(2, "Name is required."),
   email: z.string().email("Please enter a valid email."),
@@ -20,7 +28,7 @@ const applicationFormSchema = z.object({
   age: z.coerce.number().int().positive("Age must be a positive number."),
   weight: z.coerce.number().positive("Weight must be a positive number."),
   height: z.coerce.number().int().positive("Height must be a positive number."),
-  goal: z.string().min(10, "Goal must be at least 10 characters."),
+  goal: z.string({ required_error: "Please select your primary fitness goal." }),
   duration: z.enum(['1 month', '3 months', '6 months', '1 year'], { required_error: "Please select a duration." }),
   message: z.string().optional(),
 });
@@ -54,9 +62,7 @@ export function ApplicationForm({ plan, coachName, onSuccess }: ApplicationFormP
       - Weight: ${data.weight} kg
       - Height: ${data.height} cm
       - Duration: ${data.duration}
-      
-      Goal:
-      ${data.goal}
+      - Goal: ${data.goal}
 
       Additional Message:
       ${data.message || "None"}
@@ -149,11 +155,28 @@ export function ApplicationForm({ plan, coachName, onSuccess }: ApplicationFormP
             )}
         />
         <FormField
-          control={form.control}
-          name="goal"
-          render={({ field }) => (
-            <FormItem><FormLabel>Your Fitness Goal</FormLabel><FormControl><Textarea placeholder="Briefly describe what you want to achieve (e.g., lose fat, gain muscle, improve performance)." {...field} rows={3} /></FormControl><FormMessage /></FormItem>
-          )}
+            control={form.control}
+            name="goal"
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Your Fitness Goal</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select your primary goal" />
+                            </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                            {fitnessGoals.map(goal => (
+                                <SelectItem key={goal} value={goal}>
+                                    {goal}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <FormMessage />
+                </FormItem>
+            )}
         />
         <FormField
           control={form.control}
