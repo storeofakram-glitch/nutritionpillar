@@ -35,9 +35,14 @@ export async function addApplication(data: Omit<CoachingApplication, 'id' | 'cre
  * @returns A promise that resolves to an array of applications.
  */
 export async function getApplicationsByCoach(coachId: string): Promise<CoachingApplication[]> {
-    const q = query(applicationsCollection, where('coachId', '==', coachId), orderBy('createdAt', 'desc'));
+    const q = query(applicationsCollection, where('coachId', '==', coachId));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CoachingApplication));
+    const applications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CoachingApplication));
+    
+    // Sort applications by date in descending order (newest first)
+    applications.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    return applications;
 }
 
 /**
