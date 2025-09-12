@@ -132,7 +132,7 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
                                 </FormControl>
                                 <SelectContent>
                                     {countryCodes.map(country => (
-                                        <SelectItem key={`${country.code}-${country.dial_code}`} value={country.dial_code}>
+                                        <SelectItem key={`${country.name}-${country.dial_code}`} value={country.dial_code}>
                                             {country.dial_code} ({country.code})
                                         </SelectItem>
                                     ))}
@@ -221,7 +221,7 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
           control={form.control}
           name="message"
           render={({ field }) => (
-            <FormItem><FormLabel>Additional Message (Optional)</FormLabel><FormControl><Textarea placeholder="Any questions or extra information..." {...field} rows={3} /></FormControl><FormMessage /></FormItem>
+            <FormItem><FormLabel>Additional Message (Optional)</FormLabel><FormControl><Textarea placeholder="Any questions or extra information..." rows={3} {...field} /></FormControl><FormMessage /></FormItem>
           )}
         />
         <Button type="submit" disabled={form.formState.isSubmitting} className="w-full">
