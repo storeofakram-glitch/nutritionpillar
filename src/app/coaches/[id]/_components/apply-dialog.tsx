@@ -16,10 +16,11 @@ import type { Plan } from "@/types";
 
 interface ApplyDialogProps {
   plan: Plan;
+  coachId: string;
   coachName: string;
 }
 
-export default function ApplyDialog({ plan, coachName }: ApplyDialogProps) {
+export default function ApplyDialog({ plan, coachId, coachName }: ApplyDialogProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -36,6 +37,7 @@ export default function ApplyDialog({ plan, coachName }: ApplyDialogProps) {
         </DialogHeader>
         <ApplicationForm 
             plan={plan} 
+            coachId={coachId}
             coachName={coachName} 
             onSuccess={() => setOpen(false)} 
         />

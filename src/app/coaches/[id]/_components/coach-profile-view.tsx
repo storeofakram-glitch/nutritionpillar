@@ -29,7 +29,7 @@ const PlanIcon = ({ iconName }: { iconName: string }) => {
     }
 }
 
-const PlanCard = ({ plan, coachName }: { plan: Plan; coachName: string }) => (
+const PlanCard = ({ plan, coachId, coachName }: { plan: Plan; coachId: string; coachName: string }) => (
     <Card className="flex flex-col text-center">
         <CardHeader>
             <div className="mx-auto bg-primary/10 p-4 rounded-full">
@@ -44,7 +44,7 @@ const PlanCard = ({ plan, coachName }: { plan: Plan; coachName: string }) => (
              <p className="text-2xl font-bold font-headline text-primary">
                 DZD {plan.price.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">/{plan.pricePeriod}</span>
             </p>
-            <ApplyDialog plan={plan} coachName={coachName} />
+            <ApplyDialog plan={plan} coachId={coachId} coachName={coachName} />
         </CardFooter>
     </Card>
 );
@@ -105,7 +105,7 @@ export default function CoachProfileView({ coach }: { coach: Coach }) {
                              <h2 className="text-2xl font-bold font-headline mb-4 text-center">Coaching Plans</h2>
                              <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-6">
                                 {coach.plans.map((plan, index) => (
-                                    <PlanCard key={index} plan={plan} coachName={coach.name} />
+                                    <PlanCard key={index} plan={plan} coachId={coach.id} coachName={coach.name} />
                                 ))}
                              </div>
                         </div>

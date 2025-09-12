@@ -19,12 +19,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { Coach } from "@/types";
 import EditCoachDialog from "./edit-coach-dialog";
 import DeleteCoachDialog from "./delete-coach-dialog";
-
-interface CoachTableProps {
-  data: Coach[];
-  isLoading: boolean;
-  onDataChange: () => void;
-}
+import ApplicationList from "./application-list";
+import { getNewApplicationsCountByCoach } from "@/services/application-service";
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center">
@@ -79,6 +75,7 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
               <TableHead>Name</TableHead>
               <TableHead>Specialty</TableHead>
               <TableHead>Rating</TableHead>
+              <TableHead>Applications</TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
               </TableHead>
@@ -96,6 +93,9 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
                 </TableCell>
                 <TableCell>
                     <StarRating rating={coach.rating} />
+                </TableCell>
+                <TableCell>
+                    <ApplicationList coachId={coach.id} />
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
@@ -119,7 +119,7 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
             ))}
             {!isLoading && data.length === 0 && (
                 <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                    <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                         No one found in this category.
                     </TableCell>
                 </TableRow>
@@ -146,4 +146,10 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
       )}
     </>
   );
+}
+
+interface CoachTableProps {
+  data: Coach[];
+  isLoading: boolean;
+  onDataChange: () => void;
 }

@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { addSubmission } from '@/services/contact-service';
+import { addApplication } from '@/services/application-service';
 import type { Plan } from '@/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -38,11 +38,12 @@ type ApplicationFormValues = z.infer<typeof applicationFormSchema>;
 
 interface ApplicationFormProps {
   plan: Plan;
+  coachId: string;
   coachName: string;
   onSuccess: () => void;
 }
 
-export function ApplicationForm({ plan, coachName, onSuccess }: ApplicationFormProps) {
+export function ApplicationForm({ plan, coachId, coachName, onSuccess }: ApplicationFormProps) {
   const { toast } = useToast();
   const form = useForm<ApplicationFormValues>({
     resolver: zodResolver(applicationFormSchema),
@@ -50,9 +51,9 @@ export function ApplicationForm({ plan, coachName, onSuccess }: ApplicationFormP
       name: '',
       email: '',
       phone: '',
-      age: 0,
-      weight: 0,
-      height: 0,
+      age: undefined,
+      weight: undefined,
+      height: undefined,
       goal: '',
       duration: undefined,
       message: '',
@@ -60,25 +61,22 @@ export function ApplicationForm({ plan, coachName, onSuccess }: ApplicationFormP
   });
 
   const onSubmit = async (data: ApplicationFormValues) => {
-    const subject = `Coaching Application: ${plan.title} - ${coachName}`;
-    const messageBody = `
-      A new application has been submitted for the "${plan.title}" plan with ${coachName}.
-
-      Applicant Details:
-      - Name: ${data.name}
-      - Email: ${data.email}
-      - Phone: ${data.phone}
-      - Age: ${data.age}
-      - Weight: ${data.weight} kg
-      - Height: ${data.height} cm
-      - Duration: ${data.duration}
-      - Goal: ${data.goal}
-
-      Additional Message:
-      ${data.message || "None"}
-    `;
-
-    const result = await addSubmission({ name: data.name, email: data.email, subject, message: messageBody });
+    const result = await addApplication({
+      coachId: coachId,
+      coachName: coachName,
+      planTitle: plan.title,
+      applicant: {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        age: data.age,
+        weight: data.weight,
+        height: data.height,
+        goal: data.goal,
+        duration: data.duration,
+        message: data.message,
+      }
+    });
 
     if (result.success) {
       toast({
@@ -127,21 +125,21 @@ export function ApplicationForm({ plan, coachName, onSuccess }: ApplicationFormP
             control={form.control}
             name="age"
             render={({ field }) => (
-                <FormItem><FormLabel>Age</FormLabel><FormControl><Input type="number" placeholder="e.g., 25" {...field} value={field.value || ''} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Age</FormLabel><FormControl><Input type="number" placeholder="e.g., 25" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
             )}
             />
              <FormField
             control={form.control}
             name="weight"
             render={({ field }) => (
-                <FormItem><FormLabel>Weight (kg)</FormLabel><FormControl><Input type="number" placeholder="e.g., 80" {...field} value={field.value || ''} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Weight (kg)</FormLabel><FormControl><Input type="number" placeholder="e.g., 80" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
             )}
             />
              <FormField
             control={form.control}
             name="height"
             render={({ field }) => (
-                <FormItem><FormLabel>Height (cm)</FormLabel><FormControl><Input type="number" placeholder="e.g., 180" {...field} value={field.value || ''} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Height (cm)</FormLabel><FormControl><Input type="number" placeholder="e.g., 180" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
             )}
             />
         </div>

@@ -1,6 +1,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -264,5 +265,25 @@ export type Coach = {
   certifications?: string[];
   plans?: Plan[];
   createdAt: string; // ISO 8601 string
+};
+
+export type CoachingApplication = {
+  id: string;
+  coachId: string;
+  coachName: string;
+  planTitle: string;
+  applicant: {
+    name: string;
+    email: string;
+    phone: string;
+    age: number;
+    weight: number;
+    height: number;
+    goal: string;
+    duration: string;
+    message?: string;
+  };
+  createdAt: string; // ISO 8601 string
+  status: 'new' | 'read' | 'contacted' | 'rejected';
 };
     
