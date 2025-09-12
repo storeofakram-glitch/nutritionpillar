@@ -3,6 +3,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -207,6 +208,7 @@ export type SiteSettings = {
   };
   partnershipLogos: PartnershipLogo[];
   adBanner: AdBanner;
+  aboutPage: AboutPageSettings;
   faqPage: FaqPageSettings;
   termsPage: TermsPageSettings;
   privacyPage: PrivacyPageSettings;
@@ -287,6 +289,4 @@ export type CoachingApplication = {
   createdAt: string; // ISO 8601 string
   status: 'new' | 'read' | 'contacted' | 'rejected';
 };
-    
-
     

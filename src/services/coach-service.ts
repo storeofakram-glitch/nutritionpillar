@@ -5,6 +5,7 @@ import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy,
 import { db } from '@/lib/firebase';
 import type { Coach } from '@/types';
 import { revalidatePath } from 'next/cache';
+import { addMembership } from './membership-service';
 
 const coachesCollection = collection(db, 'coaches');
 
@@ -39,7 +40,7 @@ export async function getCoachById(id: string): Promise<Coach | null> {
 
 
 /**
- * Adds a new coach or expert document to the database.
+ * Adds a new coach or expert document to the database and creates a corresponding membership.
  * @param coach The coach/expert data to add.
  * @returns An object indicating success or failure.
  */
@@ -50,6 +51,14 @@ export async function addCoach(coach: Omit<Coach, 'id' | 'createdAt'>) {
             createdAt: new Date().toISOString(),
         };
         const docRef = await addDoc(coachesCollection, newCoach);
+
+        // After successfully adding the coach, create a membership for them.
+        await addMembership({
+            customerName: coach.name,
+            coachingPlan: coach.specialty, // Use specialty as the plan name
+            type: 'Coaching',
+        });
+        
         revalidatePath('/admin/coaches');
         revalidatePath('/');
         return { success: true, id: docRef.id };
