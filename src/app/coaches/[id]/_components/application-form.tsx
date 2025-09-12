@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { addApplication } from '@/services/application-service';
 import type { Plan } from '@/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { countryCodes } from '@/lib/country-codes';
 
 const fitnessGoals = [
     "Weight Loss",
@@ -24,7 +25,8 @@ const fitnessGoals = [
 const applicationFormSchema = z.object({
   name: z.string().min(2, "Name is required."),
   email: z.string().email("Please enter a valid email."),
-  phone: z.string().min(10, "Please enter a valid phone number."),
+  countryCode: z.string().min(1, "Country code is required."),
+  phone: z.string().min(5, "Please enter a valid phone number."),
   age: z.coerce.number().int().positive("Age must be a positive number."),
   weight: z.coerce.number().positive("Weight must be a positive number."),
   height: z.coerce.number().int().positive("Height must be a positive number."),
@@ -50,6 +52,7 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
     defaultValues: {
       name: '',
       email: '',
+      countryCode: '+213',
       phone: '',
       age: undefined,
       weight: undefined,
@@ -61,6 +64,7 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
   });
 
   const onSubmit = async (data: ApplicationFormValues) => {
+    const fullPhoneNumber = `${data.countryCode}${data.phone}`;
     const result = await addApplication({
       coachId: coachId,
       coachName: coachName,
@@ -68,7 +72,8 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
       applicant: {
         name: data.name,
         email: data.email,
-        phone: data.phone,
+        phone: fullPhoneNumber,
+        countryCode: data.countryCode,
         age: data.age,
         weight: data.weight,
         height: data.height,
@@ -112,13 +117,39 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
                 <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" placeholder="Your Email" {...field} /></FormControl><FormMessage /></FormItem>
             )}
             />
-            <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-                <FormItem><FormLabel>Phone Number</FormLabel><FormControl><Input type="tel" placeholder="Your Phone Number" {...field} /></FormControl><FormMessage /></FormItem>
-            )}
-            />
+            <FormItem>
+                <FormLabel>Phone Number</FormLabel>
+                <div className="flex gap-2">
+                     <FormField
+                        control={form.control}
+                        name="countryCode"
+                        render={({ field }) => (
+                           <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                    <SelectTrigger className="w-28">
+                                        <SelectValue placeholder="Code" />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {countryCodes.map(country => (
+                                        <SelectItem key={country.code} value={country.dial_code}>
+                                            {country.dial_code} ({country.code})
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="phone"
+                        render={({ field }) => (
+                           <FormControl><Input type="tel" placeholder="Your Phone Number" {...field} /></FormControl>
+                        )}
+                    />
+                </div>
+                <FormMessage />
+            </FormItem>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
            <FormField

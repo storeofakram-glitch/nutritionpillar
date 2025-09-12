@@ -6,6 +6,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -281,6 +282,7 @@ export type CoachingApplication = {
     name: string;
     email: string;
     phone: string;
+    countryCode: string;
     age: number;
     weight: number;
     height: number;
