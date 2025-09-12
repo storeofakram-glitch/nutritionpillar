@@ -188,7 +188,6 @@ export type SocialLinks = {
     youtube?: string;
     linkedin?: string;
     twitter?: string;
-    tiktok?: string;
 };
 
 export type SiteSettings = {

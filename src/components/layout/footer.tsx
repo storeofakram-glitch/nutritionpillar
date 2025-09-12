@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Facebook, Instagram, Youtube, Linkedin, Twitter, Music } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Linkedin, Twitter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getSiteSettings } from '@/services/site-settings-service';
 import type { SocialLinks } from '@/types';
@@ -45,9 +45,6 @@ export default function Footer() {
             </Button>
              <Button variant="ghost" size="icon" asChild>
                 <Link href={socialLinks.twitter || '#'} aria-label="Twitter"><Twitter className="h-5 w-5" /></Link>
-            </Button>
-            <Button variant="ghost" size="icon" asChild>
-                <Link href={socialLinks.tiktok || '#'} aria-label="TikTok"><Music className="h-5 w-5" /></Link>
             </Button>
         </div>
 
