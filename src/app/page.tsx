@@ -28,7 +28,7 @@ const LogoItem = ({ logo }: { logo: PartnershipLogo }) => {
                 alt={logo.alt || `Partnership logo`}
                 data-ai-hint={logo.hint}
                 fill
-                className="object-contain grayscale transition-all duration-300 hover:grayscale-0"
+                className="object-contain transition-all duration-300 md:grayscale md:hover:grayscale-0"
             />
         </div>
     );
