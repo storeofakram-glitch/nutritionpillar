@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useForm } from "react-hook-form"
+import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
@@ -21,6 +21,7 @@ import { addCoach, updateCoach } from "@/services/coach-service"
 import type { Coach } from "@/types"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { PlusCircle, Trash2 } from "lucide-react"
 
 const coachSchema = z.object({
   name: z.string().min(2, "Name is required."),
@@ -29,6 +30,7 @@ const coachSchema = z.object({
   imageUrl: z.string().url("Must be a valid URL."),
   rating: z.coerce.number().int().min(1).max(5),
   bio: z.string().optional(),
+  certifications: z.array(z.object({ value: z.string().min(1, "Certification cannot be empty.") })).optional(),
 })
 
 type CoachFormValues = z.infer<typeof coachSchema>
@@ -54,13 +56,24 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
       imageUrl: coach?.imageUrl || "",
       rating: coach?.rating || 5,
       bio: coach?.bio || "",
+      certifications: coach?.certifications?.map(c => ({ value: c })) || [{ value: "" }],
     },
   })
 
+  const { fields: certFields, append: appendCert, remove: removeCert } = useFieldArray({
+    control: form.control,
+    name: "certifications"
+  });
+
   async function onSubmit(data: CoachFormValues) {
+    const coachData = {
+        ...data,
+        certifications: data.certifications?.map(c => c.value).filter(Boolean),
+    };
+    
     const result = isEditMode
-        ? await updateCoach(coach.id, data)
-        : await addCoach(data);
+        ? await updateCoach(coach.id, coachData)
+        : await addCoach(coachData);
 
     if (result.success) {
       toast({
@@ -68,7 +81,9 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
         description: `"${data.name}" has been successfully ${isEditMode ? 'updated' : 'added'}.`,
       })
       onFormSubmit();
-      form.reset();
+      if (!isEditMode) {
+        form.reset();
+      }
     } else {
       toast({
         variant: "destructive",
@@ -141,9 +156,42 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
           control={form.control}
           name="bio"
           render={({ field }) => (
-            <FormItem><FormLabel>Bio (Optional)</FormLabel><FormControl><Textarea placeholder="A short bio about the person" {...field} /></FormControl><FormMessage /></FormItem>
+            <FormItem><FormLabel>Bio</FormLabel><FormControl><Textarea placeholder="A short bio about the person" {...field} /></FormControl><FormMessage /></FormItem>
           )}
         />
+        
+        <div className="space-y-3">
+          <FormLabel>Certifications (Optional)</FormLabel>
+          {certFields.map((field, index) => (
+            <FormField
+              key={field.id}
+              control={form.control}
+              name={`certifications.${index}.value`}
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center gap-2">
+                    <FormControl>
+                      <Input placeholder={`Certification ${index + 1}`} {...field} />
+                    </FormControl>
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeCert(index)} disabled={certFields.length <= 1 && !certFields[0].value}>
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => appendCert({ value: "" })}
+          >
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Add Certification
+          </Button>
+        </div>
         
         <Button type="submit" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? (isEditMode ? "Saving..." : "Adding...") : (isEditMode ? "Save Changes" : "Add Person")}

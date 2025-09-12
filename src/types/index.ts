@@ -252,6 +252,7 @@ export type Coach = {
   imageUrl: string;
   rating: number; // 1 to 5
   bio?: string;
+  certifications?: string[];
   createdAt: string; // ISO 8601 string
 };
     

@@ -1,7 +1,7 @@
 
 'use server';
 
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Coach } from '@/types';
 import { revalidatePath } from 'next/cache';
@@ -17,6 +17,26 @@ export async function getCoaches(): Promise<Coach[]> {
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Coach));
 }
+
+/**
+ * Fetches a single coach or expert by their ID.
+ * @param id The ID of the coach/expert to fetch.
+ * @returns A promise that resolves to the coach object or null if not found.
+ */
+export async function getCoachById(id: string): Promise<Coach | null> {
+    try {
+        const docRef = doc(db, 'coaches', id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            return { id: docSnap.id, ...docSnap.data() } as Coach;
+        }
+        return null;
+    } catch (error) {
+        console.error("Error getting coach by ID: ", error);
+        return null;
+    }
+}
+
 
 /**
  * Adds a new coach or expert document to the database.
@@ -51,6 +71,7 @@ export async function updateCoach(id: string, data: Partial<Omit<Coach, 'id' | '
         await updateDoc(docRef, data);
         revalidatePath('/admin/coaches');
         revalidatePath('/');
+        revalidatePath(`/coaches/${id}`);
         return { success: true };
     } catch (error) {
         console.error("Error updating coach: ", error);
