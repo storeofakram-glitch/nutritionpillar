@@ -12,7 +12,8 @@ import {
   SheetContent,
   SheetHeader,
   SheetTrigger,
-  SheetClose
+  SheetClose,
+  SheetTitle,
 } from "@/components/ui/sheet"
 import * as React from 'react';
 import { SearchDialog } from '../search-dialog';
@@ -57,6 +58,7 @@ export default function Header() {
                 </SheetTrigger>
                 <SheetContent side="left" className="w-full max-w-xs sm:max-w-sm">
                     <SheetHeader>
+                        <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                         <Link href="/" className="flex items-center space-x-2">
                           <Image
                             src="https://github.com/akramFit/Nutrition-Pillar-Assets/blob/main/logo%20nutrition%20pillar.png?raw=true"
