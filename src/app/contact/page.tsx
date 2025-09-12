@@ -67,7 +67,7 @@ export default function ContactPage() {
                                 <FormField control={form.control} name="name" render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Full Name</FormLabel>
-                                        <FormControl><Input placeholder="John Doe" {...field} /></FormControl>
+                                        <FormControl><Input placeholder="Your full name" {...field} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )} />

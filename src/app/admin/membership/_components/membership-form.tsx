@@ -171,7 +171,7 @@ export function MembershipForm({ onFormSubmit, membership }: MembershipFormProps
                 render={({ field }) => (
                     <FormItem>
                     <FormLabel>Client Name</FormLabel>
-                    <FormControl><Input placeholder="John Doe" {...field} /></FormControl>
+                    <FormControl><Input placeholder="Enter client name" {...field} /></FormControl>
                     <FormMessage />
                     </FormItem>
                 )}

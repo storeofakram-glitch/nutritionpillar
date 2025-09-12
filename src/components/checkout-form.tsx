@@ -139,7 +139,7 @@ export default function CheckoutForm() {
             <h3 className="font-semibold">Your Information</h3>
             <div>
               <Label htmlFor="fullName">Full Name</Label>
-              <Input id="fullName" value={clientInfo.fullName} onChange={handleInputChange} placeholder="John Doe" required />
+              <Input id="fullName" value={clientInfo.fullName} onChange={handleInputChange} placeholder="Enter your full name" required />
             </div>
             <div>
               <Label htmlFor="email">Email</Label>
@@ -210,7 +210,7 @@ export default function CheckoutForm() {
                 </div>
                  <div className="space-y-2">
                     <Label htmlFor="card-name">Name on Card</Label>
-                    <Input id="name" value={cardInfo.name} onChange={handleCardInputChange} placeholder="John Doe" required />
+                    <Input id="name" value={cardInfo.name} onChange={handleCardInputChange} placeholder="Name on card" required />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                      <div className="space-y-2">
