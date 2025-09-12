@@ -18,7 +18,7 @@ interface ApplicationListProps {
   coachId: string;
 }
 
-const applicationStatuses: CoachingApplication['status'][] = ['new', 'read', 'contacted', 'rejected'];
+const applicationStatuses: CoachingApplication['status'][] = ['new', 'read', 'contacted', 'rejected', 'active'];
 
 export default function ApplicationList({ coachId }: ApplicationListProps) {
     const [applications, setApplications] = useState<CoachingApplication[]>([]);

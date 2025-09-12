@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -98,6 +98,13 @@ export default function MembershipPage() {
         }
     }
 
+    const { pendingApplications, activeClients } = useMemo(() => {
+        return {
+            pendingApplications: applications.filter(app => app.status === 'new' || app.status === 'read'),
+            activeClients: applications.filter(app => app.status === 'active'),
+        };
+    }, [applications]);
+
     const SupplementGuideTable = ({ recommendations }: { recommendations: (RecommendedProduct & { product: any })[] }) => (
         <div className="w-full overflow-hidden rounded-lg border">
             <Table>
@@ -151,6 +158,7 @@ export default function MembershipPage() {
                 case 'read': return 'secondary';
                 case 'contacted': return 'default';
                 case 'rejected': return 'destructive';
+                case 'active': return 'default';
                 default: return 'secondary';
             }
         }
@@ -178,11 +186,18 @@ export default function MembershipPage() {
                         <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
                             <div className="flex items-center gap-2">
                                 <Users className="h-4 w-4 text-muted-foreground" />
-                                <span className="font-medium">Client Applications:</span>
+                                <span className="font-medium">Pending Applications:</span>
                             </div>
-                            <span className="font-bold">{applications.length}</span>
+                            <span className="font-bold">{pendingApplications.length}</span>
                         </div>
-                         <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary col-span-1 lg:col-span-3">
+                         <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
+                            <div className="flex items-center gap-2">
+                                <CheckCircle className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Active Clients:</span>
+                            </div>
+                            <span className="font-bold">{activeClients.length}</span>
+                        </div>
+                         <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary col-span-1 sm:col-span-2 lg:col-span-3">
                             <div className="flex items-center gap-2">
                                 <Star className="h-4 w-4 text-muted-foreground" />
                                 <span className="font-medium">Your Rating:</span>
@@ -194,8 +209,8 @@ export default function MembershipPage() {
                     <Separator />
 
                     <div>
-                        <h3 className="font-semibold text-lg mb-4">Client Applications</h3>
-                        {applications.length > 0 ? (
+                        <h3 className="font-semibold text-lg mb-4">Pending Client Applications</h3>
+                        {pendingApplications.length > 0 ? (
                             <div className="w-full overflow-hidden rounded-lg border">
                                 <Table>
                                     <TableHeader>
@@ -208,7 +223,7 @@ export default function MembershipPage() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {applications.map(app => (
+                                        {pendingApplications.map(app => (
                                             <TableRow key={app.id}>
                                                 <TableCell className="font-medium">{app.applicant.name}</TableCell>
                                                 <TableCell>{app.applicant.goal}</TableCell>
@@ -230,7 +245,35 @@ export default function MembershipPage() {
                                 </Table>
                             </div>
                         ) : (
-                            <p className="text-center text-muted-foreground py-4">You have no client applications at the moment.</p>
+                            <p className="text-center text-muted-foreground py-4">You have no new client applications at the moment.</p>
+                        )}
+                    </div>
+                    
+                    <div>
+                        <h3 className="font-semibold text-lg mb-4">Your Active Clients</h3>
+                        {activeClients.length > 0 ? (
+                            <div className="w-full overflow-hidden rounded-lg border">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Client Name</TableHead>
+                                            <TableHead>Goal</TableHead>
+                                            <TableHead>Duration</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {activeClients.map(app => (
+                                            <TableRow key={app.id}>
+                                                <TableCell className="font-medium">{app.applicant.name}</TableCell>
+                                                <TableCell>{app.applicant.goal}</TableCell>
+                                                <TableCell>{app.applicant.duration}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        ) : (
+                            <p className="text-center text-muted-foreground py-4">You have no active clients yet.</p>
                         )}
                     </div>
 
