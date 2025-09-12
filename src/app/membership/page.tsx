@@ -373,7 +373,7 @@ export default function MembershipPage() {
             <div className="max-w-4xl mx-auto">
                 <Card className="mb-8 shadow-lg shadow-primary/20">
                     <CardHeader className="text-center">
-                        <CardTitle className="text-3xl md:text-4xl font-bold font-headline">Membership Status</CardTitle>
+                        <CardTitle className="text-3xl md:text-4xl font-bold font-headline">Membership</CardTitle>
                         <CardDescription className="text-lg">
                             Select your role and enter your unique code to access your personalized dashboard.
                         </CardDescription>
@@ -447,4 +447,3 @@ export default function MembershipPage() {
         </div>
     );
 }
-
