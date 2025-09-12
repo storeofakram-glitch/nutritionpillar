@@ -1,14 +1,14 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { findMembershipByCode } from '@/services/membership-service';
-import type { RecommendedProduct, MembershipWithProducts, Coach } from '@/types';
+import type { RecommendedProduct, MembershipWithProducts, Coach, CoachingApplication } from '@/types';
 import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -16,7 +16,8 @@ import { Separator } from '@/components/ui/separator';
 import { differenceInDays } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getCoachByName } from '@/services/coach-service';
-import { getApplicationsCountByCoach } from '@/services/application-service';
+import { getApplicationsByCoach, updateApplicationStatus } from '@/services/application-service';
+import { Badge } from '@/components/ui/badge';
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center gap-1">
@@ -40,8 +41,13 @@ export default function MembershipPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [result, setResult] = useState<MembershipWithProducts | 'invalid' | null>(null);
     const [coachDetails, setCoachDetails] = useState<Coach | null>(null);
-    const [applicationCount, setApplicationCount] = useState(0);
+    const [applications, setApplications] = useState<CoachingApplication[]>([]);
     const { toast } = useToast();
+
+    const fetchCoachData = async (coach: Coach) => {
+        const coachApps = await getApplicationsByCoach(coach.id);
+        setApplications(coachApps);
+    }
 
     const handleCheckMembership = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -56,7 +62,7 @@ export default function MembershipPage() {
         setIsLoading(true);
         setResult(null);
         setCoachDetails(null);
-        setApplicationCount(0);
+        setApplications([]);
 
         try {
             const foundMembership = await findMembershipByCode(membershipCode);
@@ -67,8 +73,7 @@ export default function MembershipPage() {
                     const coach = await getCoachByName(foundMembership.customerName);
                     if (coach) {
                         setCoachDetails(coach);
-                        const count = await getApplicationsCountByCoach(coach.id);
-                        setApplicationCount(count);
+                        await fetchCoachData(coach);
                     }
                 }
             } else {
@@ -82,6 +87,17 @@ export default function MembershipPage() {
         }
     };
     
+    const handleStatusUpdate = async (appId: string, status: 'contacted' | 'rejected') => {
+        const result = await updateApplicationStatus(appId, status);
+        if (result.success && coachDetails) {
+            toast({ title: "Status Updated", description: `Application status changed to "${status}".` });
+            // Refresh the applications list for the coach
+            fetchCoachData(coachDetails);
+        } else {
+            toast({ variant: 'destructive', title: 'Error', description: 'Failed to update application status.'});
+        }
+    }
+
     const SupplementGuideTable = ({ recommendations }: { recommendations: (RecommendedProduct & { product: any })[] }) => (
         <div className="w-full overflow-hidden rounded-lg border">
             <Table>
@@ -129,6 +145,16 @@ export default function MembershipPage() {
     const renderCoachView = () => {
         if (!result || result === 'invalid' || !coachDetails) return null;
 
+        const getStatusVariant = (status: CoachingApplication['status']) => {
+            switch (status) {
+                case 'new': return 'default';
+                case 'read': return 'secondary';
+                case 'contacted': return 'default';
+                case 'rejected': return 'destructive';
+                default: return 'secondary';
+            }
+        }
+
         return (
             <Card>
                 <CardHeader>
@@ -154,7 +180,7 @@ export default function MembershipPage() {
                                 <Users className="h-4 w-4 text-muted-foreground" />
                                 <span className="font-medium">Client Applications:</span>
                             </div>
-                            <span className="font-bold">{applicationCount}</span>
+                            <span className="font-bold">{applications.length}</span>
                         </div>
                          <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary col-span-1 lg:col-span-3">
                             <div className="flex items-center gap-2">
@@ -164,6 +190,50 @@ export default function MembershipPage() {
                             <StarRating rating={coachDetails.rating} />
                         </div>
                     </div>
+
+                    <Separator />
+
+                    <div>
+                        <h3 className="font-semibold text-lg mb-4">Client Applications</h3>
+                        {applications.length > 0 ? (
+                            <div className="w-full overflow-hidden rounded-lg border">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Applicant</TableHead>
+                                            <TableHead>Goal</TableHead>
+                                            <TableHead>Duration</TableHead>
+                                            <TableHead>Status</TableHead>
+                                            <TableHead className="text-right">Actions</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {applications.map(app => (
+                                            <TableRow key={app.id}>
+                                                <TableCell className="font-medium">{app.applicant.name}</TableCell>
+                                                <TableCell>{app.applicant.goal}</TableCell>
+                                                <TableCell>{app.applicant.duration}</TableCell>
+                                                <TableCell>
+                                                    <Badge variant={getStatusVariant(app.status)}>{app.status}</Badge>
+                                                </TableCell>
+                                                <TableCell className="text-right space-x-2">
+                                                    {(app.status === 'new' || app.status === 'read') && (
+                                                        <>
+                                                            <Button size="sm" variant="outline" onClick={() => handleStatusUpdate(app.id, 'contacted')}>Accept</Button>
+                                                            <Button size="sm" variant="destructive" onClick={() => handleStatusUpdate(app.id, 'rejected')}>Reject</Button>
+                                                        </>
+                                                    )}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        ) : (
+                            <p className="text-center text-muted-foreground py-4">You have no client applications at the moment.</p>
+                        )}
+                    </div>
+
                 </CardContent>
             </Card>
         );
@@ -236,7 +306,7 @@ export default function MembershipPage() {
 
     return (
         <div className="container mx-auto px-4 py-12 md:py-16">
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-4xl mx-auto">
                 <Card className="mb-8 shadow-lg shadow-primary/20">
                     <CardHeader className="text-center">
                         <CardTitle className="text-3xl md:text-4xl font-bold font-headline">Membership Status</CardTitle>
@@ -290,5 +360,3 @@ export default function MembershipPage() {
         </div>
     );
 }
-
-    

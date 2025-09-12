@@ -89,6 +89,7 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
         const docRef = doc(db, 'coachingApplications', id);
         await updateDoc(docRef, { status });
         revalidatePath('/admin/coaches');
+        revalidatePath('/membership');
         return { success: true };
     } catch (error) {
         console.error("Error updating application status: ", error);
