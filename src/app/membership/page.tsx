@@ -375,7 +375,7 @@ export default function MembershipPage() {
                     <CardHeader className="text-center">
                         <CardTitle className="text-3xl md:text-4xl font-bold font-headline">Membership Status</CardTitle>
                         <CardDescription className="text-lg">
-                            Enter your membership code to verify your status and view recommendations.
+                            Select your role and enter your unique code to access your personalized dashboard.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -447,3 +447,5 @@ export default function MembershipPage() {
         </div>
     );
 }
+
+    
