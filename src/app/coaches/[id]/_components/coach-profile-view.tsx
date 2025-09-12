@@ -6,15 +6,22 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Star, Award, Dumbbell, Zap, HeartPulse, Rocket } from 'lucide-react';
+import { Star, Award, Dumbbell, Zap, HeartPulse, Rocket, StarHalf } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import ApplyDialog from './apply-dialog';
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center gap-1">
-        {[...Array(5)].map((_, i) => (
-            <Star key={i} className={`h-5 w-5 ${i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/30'}`} />
-        ))}
+        {[...Array(5)].map((_, i) => {
+            const ratingValue = i + 1;
+            if (ratingValue <= rating) {
+                return <Star key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />;
+            } else if (ratingValue - 0.5 <= rating) {
+                return <StarHalf key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />;
+            } else {
+                return <Star key={i} className="h-5 w-5 text-muted-foreground/30" />;
+            }
+        })}
          <span className="text-muted-foreground ml-1 text-sm">({rating.toFixed(1)})</span>
     </div>
 );
@@ -115,3 +122,5 @@ export default function CoachProfileView({ coach }: { coach: Coach }) {
         </div>
     );
 }
+
+    

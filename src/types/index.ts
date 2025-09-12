@@ -2,6 +2,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -260,7 +261,7 @@ export type Coach = {
   specialty: string;
   type: 'Coach' | 'Expert';
   imageUrl: string;
-  rating: number; // 1 to 5
+  rating: number; // Can be a decimal
   bio?: string;
   certifications?: string[];
   plans?: Plan[];
@@ -286,4 +287,6 @@ export type CoachingApplication = {
   createdAt: string; // ISO 8601 string
   status: 'new' | 'read' | 'contacted' | 'rejected';
 };
+    
+
     

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MoreHorizontal, Star, User } from "lucide-react";
+import { MoreHorizontal, Star, StarHalf, User } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Coach } from "@/types";
@@ -24,9 +24,16 @@ import { getNewApplicationsCountByCoach } from "@/services/application-service";
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center">
-        {[...Array(5)].map((_, i) => (
-            <Star key={i} className={`h-4 w-4 ${i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'}`} />
-        ))}
+        {[...Array(5)].map((_, i) => {
+            const ratingValue = i + 1;
+            if (ratingValue <= rating) {
+                return <Star key={i} className="h-4 w-4 text-yellow-400 fill-yellow-400" />;
+            } else if (ratingValue - 0.5 <= rating) {
+                return <StarHalf key={i} className="h-4 w-4 text-yellow-400 fill-yellow-400" />;
+            } else {
+                return <Star key={i} className="h-4 w-4 text-muted-foreground" />;
+            }
+        })}
     </div>
 );
 
@@ -153,3 +160,5 @@ interface CoachTableProps {
   isLoading: boolean;
   onDataChange: () => void;
 }
+
+    

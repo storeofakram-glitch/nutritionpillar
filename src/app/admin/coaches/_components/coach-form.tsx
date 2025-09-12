@@ -37,7 +37,7 @@ const coachSchema = z.object({
   type: z.enum(['Coach', 'Expert'], { required_error: "Please select a type." }),
   specialty: z.string().min(2, "Specialty is required."),
   imageUrl: z.string().url("Must be a valid URL."),
-  rating: z.coerce.number().int().min(1).max(5),
+  rating: z.coerce.number().min(1, "Rating must be between 1 and 5.").max(5, "Rating must be between 1 and 5."),
   bio: z.string().optional(),
   certifications: z.array(z.object({ value: z.string().min(1, "Certification cannot be empty.") })).optional(),
   plans: z.array(planSchema).optional(),
@@ -51,7 +51,6 @@ interface CoachFormProps {
 }
 
 const specialties = ["Fitness", "Nutrition", "Wellness", "Bodybuilding", "Powerlifting", "Yoga", "CrossFit"];
-const ratings = [1, 2, 3, 4, 5];
 const planIcons = [
     { name: "Personal Training", icon: Dumbbell },
     { name: "Online Coaching", icon: Zap },
@@ -159,11 +158,10 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
                 name="rating"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Rating</FormLabel>
-                     <Select onValueChange={(val) => field.onChange(Number(val))} defaultValue={String(field.value)}>
-                        <FormControl><SelectTrigger><SelectValue placeholder="Select rating" /></SelectTrigger></FormControl>
-                        <SelectContent>{ratings.map(r => <SelectItem key={r} value={String(r)}>{r} star{r>1 && 's'}</SelectItem>)}</SelectContent>
-                    </Select>
+                    <FormLabel>Rating (1-5)</FormLabel>
+                     <FormControl>
+                        <Input type="number" step="0.1" min="1" max="5" placeholder="e.g., 4.5" {...field} />
+                     </FormControl>
                     <FormMessage />
                     </FormItem>
                 )}
@@ -286,3 +284,5 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
     </Form>
   )
 }
+
+    

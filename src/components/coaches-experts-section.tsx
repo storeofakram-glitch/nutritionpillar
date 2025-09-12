@@ -16,14 +16,21 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { useEffect, useState, useMemo } from "react";
-import { Star } from "lucide-react";
+import { Star, StarHalf } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center gap-0.5">
-        {[...Array(5)].map((_, i) => (
-            <Star key={i} className={`h-4 w-4 ${i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/50'}`} />
-        ))}
+        {[...Array(5)].map((_, i) => {
+            const ratingValue = i + 1;
+            if (ratingValue <= rating) {
+                return <Star key={i} className="h-4 w-4 text-yellow-400 fill-yellow-400" />;
+            } else if (ratingValue - 0.5 <= rating) {
+                return <StarHalf key={i} className="h-4 w-4 text-yellow-400 fill-yellow-400" />;
+            } else {
+                return <Star key={i} className="h-4 w-4 text-muted-foreground/50" />;
+            }
+        })}
     </div>
 );
 
@@ -142,3 +149,5 @@ export default function CoachesExpertsSection() {
     </section>
   );
 }
+
+    
