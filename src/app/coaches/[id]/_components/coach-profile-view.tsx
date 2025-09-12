@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Star, Award, Dumbbell, Zap, HeartPulse, Rocket } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import ApplyDialog from './apply-dialog';
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center gap-1">
@@ -28,7 +29,7 @@ const PlanIcon = ({ iconName }: { iconName: string }) => {
     }
 }
 
-const PlanCard = ({ plan }: { plan: Plan }) => (
+const PlanCard = ({ plan, coachName }: { plan: Plan; coachName: string }) => (
     <Card className="flex flex-col text-center">
         <CardHeader>
             <div className="mx-auto bg-primary/10 p-4 rounded-full">
@@ -43,9 +44,7 @@ const PlanCard = ({ plan }: { plan: Plan }) => (
              <p className="text-2xl font-bold font-headline text-primary">
                 DZD {plan.price.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">/{plan.pricePeriod}</span>
             </p>
-            <Button className="w-full" asChild>
-                <Link href={plan.applyLink} target="_blank" rel="noopener noreferrer">Apply Now</Link>
-            </Button>
+            <ApplyDialog plan={plan} coachName={coachName} />
         </CardFooter>
     </Card>
 );
@@ -106,7 +105,7 @@ export default function CoachProfileView({ coach }: { coach: Coach }) {
                              <h2 className="text-2xl font-bold font-headline mb-4 text-center">Coaching Plans</h2>
                              <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-6">
                                 {coach.plans.map((plan, index) => (
-                                    <PlanCard key={index} plan={plan} />
+                                    <PlanCard key={index} plan={plan} coachName={coach.name} />
                                 ))}
                              </div>
                         </div>
