@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import {
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/dialog"
 import { MembershipForm } from "./membership-form"
 import type { Membership } from "@/types"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface EditMembershipDialogProps {
     isOpen: boolean;
@@ -36,7 +38,9 @@ export default function EditMembershipDialog({ isOpen, onOpenChange, membership,
             Manage product recommendations and usage for {membership.customerName}.
           </DialogDescription>
         </DialogHeader>
-        <MembershipForm membership={membership} onFormSubmit={onDialogClose} />
+        <ScrollArea className="max-h-[60vh] pr-4">
+            <MembershipForm membership={membership} onFormSubmit={onDialogClose} />
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   )
