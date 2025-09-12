@@ -251,6 +251,24 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <section className="py-12 md:py-16">
+        <div className="container mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-bold font-headline text-center mb-10">Find Us</h2>
+            <div className="w-full h-[400px] md:h-[500px] rounded-lg overflow-hidden shadow-lg border">
+                 <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3198.405783303357!2d3.05896!3d36.71277!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x128fafb4a22c5e5b%3A0x4c2c5f6cac23b8a1!2sAlgiers!5e0!3m2!1sen!2sdz!4v1620056238383!5m2!1sen!2sdz"
+                    width="100%" 
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen={true}
+                    loading="lazy" 
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Our Location"
+                ></iframe>
+            </div>
+        </div>
+      </section>
     </div>
   );
 }
