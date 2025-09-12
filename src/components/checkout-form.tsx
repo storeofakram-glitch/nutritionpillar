@@ -188,10 +188,18 @@ export default function CheckoutForm() {
                     <RadioGroupItem value="Pay on Delivery" id="pay-on-delivery" />
                     <span>Pay on Delivery</span>
                 </Label>
-                 <Label htmlFor="credit-card" className="flex items-center justify-between gap-3 rounded-md border p-4 cursor-not-allowed opacity-50">
+                 <Label htmlFor="cib-card" className="flex items-center justify-between gap-3 rounded-md border p-4 cursor-not-allowed opacity-50">
                     <div className="flex items-center gap-3">
-                        <RadioGroupItem value="Credit / Debit Card" id="credit-card" disabled />
+                        <RadioGroupItem value="CIB / EDAHABIA Card" id="cib-card" disabled />
                         <span>(CIB / EDAHABIA) Card</span>
+                    </div>
+                    <span className="text-xs font-semibold text-primary">Coming Soon</span>
+                </Label>
+                <Label htmlFor="visa-mastercard" className="flex items-center justify-between gap-3 rounded-md border p-4 cursor-not-allowed opacity-50">
+                    <div className="flex items-center gap-3">
+                        <RadioGroupItem value="Visa / Mastercard" id="visa-mastercard" disabled />
+                        <CreditCard className="h-5 w-5 mr-2" />
+                        <span>Visa / Mastercard</span>
                     </div>
                     <span className="text-xs font-semibold text-primary">Coming Soon</span>
                 </Label>

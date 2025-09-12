@@ -52,7 +52,7 @@ export type OrderItem = {
     selectedFlavor?: string;
 }
 
-export type PaymentMethod = 'Pay on Delivery' | 'Credit / Debit Card';
+export type PaymentMethod = 'Pay on Delivery' | 'Credit / Debit Card' | 'CIB / EDAHABIA Card' | 'Visa / Mastercard';
 
 export type Order = {
   id: string;
