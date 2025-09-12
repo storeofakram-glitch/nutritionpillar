@@ -14,7 +14,8 @@ export const metadata: Metadata = {
   description: 'High-quality supplements to fuel your fitness journey.',
   icons: {
     icon: 'https://github.com/akramFit/Nutrition-Pillar-Assets/blob/main/logo%20nutrition%20pillar.png?raw=true',
-  }
+  },
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
@@ -25,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="dark">
       <head>
+        <meta name="theme-color" content="#193382" />
       </head>
       <body className={cn('font-body antialiased', 'min-h-screen bg-background font-sans', ptSans.variable, spaceGrotesk.variable)}>
         <FirebaseProvider>
