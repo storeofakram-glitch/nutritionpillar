@@ -18,6 +18,12 @@ export default function BottomNav() {
     { href: '/contact', label: 'Contact', icon: Mail },
   ];
 
+  const handleNavClick = () => {
+    if (typeof window !== 'undefined' && window.navigator && 'vibrate' in window.navigator) {
+      window.navigator.vibrate(10); // Vibrate for 10ms for a gentle tap effect
+    }
+  };
+
   return (
     <nav className="fixed bottom-0 left-0 z-50 w-full border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:hidden">
       <div className="flex h-16 items-center justify-around">
@@ -25,6 +31,7 @@ export default function BottomNav() {
           <Link
             key={link.href}
             href={link.href}
+            onClick={handleNavClick}
             className={cn(
               'flex flex-col items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-primary',
               (pathname === link.href) && 'text-primary'
