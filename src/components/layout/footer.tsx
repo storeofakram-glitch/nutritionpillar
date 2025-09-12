@@ -11,16 +11,18 @@ import { useState, useEffect } from 'react';
 // Custom TikTok icon SVG as a React component
 const TikTokIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        {...props}
     >
-        <path d="M21 7.5a4.5 4.5 0 0 1-4.5 4.5H12v6a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 4.5-4.5v-3a6 6 0 1 0 6-6V3" />
+        <path d="M21 7.5v1.5a2.5 2.5 0 0 1-2.5 2.5h-1a2.5 2.5 0 0 1-2.5-2.5V3" />
+        <path d="M7 16.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Z" />
+        <path d="M14.5 3h-2.5a2 2 0 0 0-2 2v10.5" />
     </svg>
 );
 
