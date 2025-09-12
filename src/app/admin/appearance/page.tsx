@@ -268,14 +268,14 @@ export default function AdminAppearancePage() {
                         <FormField control={form.control} name="hero.title" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Title</FormLabel>
-                                <FormControl><Input {...field} placeholder="Welcome to..." /></FormControl>
+                                <FormControl><Input {...field} placeholder="Enter a catchy title" /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
                         <FormField control={form.control} name="hero.description" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Description</FormLabel>
-                                <FormControl><Textarea {...field} placeholder="Your one-stop shop for..." /></FormControl>
+                                <FormControl><Textarea {...field} placeholder="Enter a short description" /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
@@ -337,7 +337,7 @@ export default function AdminAppearancePage() {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Logo URL (Optional)</FormLabel>
-                                        <FormControl><Input {...field} placeholder="https://..." /></FormControl>
+                                        <FormControl><Input {...field} placeholder="https://example.com/logo.png" /></FormControl>
                                         <FormDescription>Recommended size: 40x40 pixels.</FormDescription>
                                         <FormMessage />
                                     </FormItem>
@@ -398,7 +398,7 @@ export default function AdminAppearancePage() {
                                     render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Logo Image URL</FormLabel>
-                                        <FormControl><Input {...field} value={field.value ?? ''} placeholder="https://..." /></FormControl>
+                                        <FormControl><Input {...field} value={field.value ?? ''} placeholder="https://example.com/logo.png" /></FormControl>
                                         <FormDescription>Recommended size: 150x75 pixels.</FormDescription>
                                         <FormMessage />
                                     </FormItem>
@@ -494,7 +494,7 @@ export default function AdminAppearancePage() {
                         )} />
 
                         <FormField control={form.control} name="adBanner.title" render={({ field }) => (
-                            <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} placeholder="Limited Time Offer!" /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} placeholder="Enter a catchy title" /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField
                             control={form.control}
@@ -517,7 +517,7 @@ export default function AdminAppearancePage() {
                             )}
                         />
                         <FormField control={form.control} name="adBanner.description" render={({ field }) => (
-                            <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} placeholder="Get 20% off..." /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} placeholder="Enter a short description" /></FormControl><FormMessage /></FormItem>
                         )} />
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -837,19 +837,19 @@ export default function AdminAppearancePage() {
                 <CollapsibleContent>
                     <CardContent className="space-y-4 pt-4">
                         <FormField control={form.control} name="socialLinks.facebook" render={({ field }) => (
-                            <FormItem><FormLabel>Facebook URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://facebook.com/your-page" /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>Facebook URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://facebook.com" /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name="socialLinks.instagram" render={({ field }) => (
-                            <FormItem><FormLabel>Instagram URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://instagram.com/your-profile" /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>Instagram URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://instagram.com" /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name="socialLinks.youtube" render={({ field }) => (
-                            <FormItem><FormLabel>YouTube URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://youtube.com/your-channel" /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>YouTube URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://youtube.com" /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name="socialLinks.linkedin" render={({ field }) => (
-                            <FormItem><FormLabel>LinkedIn URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://linkedin.com/in/your-profile" /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>LinkedIn URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://linkedin.com" /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name="socialLinks.twitter" render={({ field }) => (
-                            <FormItem><FormLabel>Twitter (X) URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://twitter.com/your-handle" /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>Twitter (X) URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://twitter.com" /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name="socialLinks.mapLocationUrl" render={({ field }) => (
                             <FormItem>

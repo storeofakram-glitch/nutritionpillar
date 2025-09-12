@@ -123,7 +123,7 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
             <FormItem>
               <FormLabel>Product Name</FormLabel>
               <FormControl>
-                <Input placeholder="e.g. Whey Protein" {...field} />
+                <Input placeholder="Enter product name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -136,7 +136,7 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea placeholder="High-quality protein powder..." {...field} />
+                <Textarea placeholder="Enter product description" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -150,7 +150,7 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
                 <FormItem>
                 <FormLabel>Selling Price</FormLabel>
                 <FormControl>
-                    <Input type="number" placeholder="49.99" {...field} />
+                    <Input type="number" placeholder="0.00" {...field} />
                 </FormControl>
                 <FormMessage />
                 </FormItem>
@@ -163,7 +163,7 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
                 <FormItem>
                 <FormLabel>Buying Price</FormLabel>
                 <FormControl>
-                    <Input type="number" placeholder="25.00" {...field} value={field.value ?? ''}/>
+                    <Input type="number" placeholder="0.00" {...field} value={field.value ?? ''}/>
                 </FormControl>
                 <FormMessage />
                 </FormItem>
@@ -178,7 +178,7 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
                 <FormItem>
                 <FormLabel>Quantity</FormLabel>
                 <FormControl>
-                    <Input type="number" placeholder="100" {...field} />
+                    <Input type="number" placeholder="0" {...field} />
                 </FormControl>
                 <FormMessage />
                 </FormItem>
@@ -221,7 +221,7 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
                         <FormItem>
                             <div className="flex items-center gap-2">
                                 <FormControl>
-                                    <Input placeholder="https://..." {...field} />
+                                    <Input placeholder="https://example.com/image.png" {...field} />
                                 </FormControl>
                                 <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= 1}>
                                     <Trash2 className="h-4 w-4 text-red-500" />
@@ -297,7 +297,7 @@ export function ProductForm({ onFormSubmit, product }: ProductFormProps) {
                     <FormItem>
                     <FormLabel>Discount (%)</FormLabel>
                     <FormControl>
-                        <Input type="number" placeholder="e.g. 15" {...field} value={field.value ?? ''} />
+                        <Input type="number" placeholder="0" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                     </FormItem>

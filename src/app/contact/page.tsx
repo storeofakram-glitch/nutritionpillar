@@ -67,14 +67,14 @@ export default function ContactPage() {
                                 <FormField control={form.control} name="name" render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Full Name</FormLabel>
-                                        <FormControl><Input placeholder="Your full name" {...field} /></FormControl>
+                                        <FormControl><Input placeholder="Enter your full name" {...field} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )} />
                                 <FormField control={form.control} name="email" render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Email Address</FormLabel>
-                                        <FormControl><Input type="email" placeholder="you@example.com" {...field} /></FormControl>
+                                        <FormControl><Input type="email" placeholder="Enter your email" {...field} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )} />

@@ -143,11 +143,11 @@ export default function CheckoutForm() {
             </div>
             <div>
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" value={clientInfo.email} onChange={handleInputChange} placeholder="you@example.com" required />
+              <Input id="email" type="email" value={clientInfo.email} onChange={handleInputChange} placeholder="Enter your email" required />
             </div>
             <div>
               <Label htmlFor="phone">Phone Number</Label>
-              <Input id="phone" type="tel" value={clientInfo.phone} onChange={handleInputChange} placeholder="0555 123 456" required />
+              <Input id="phone" type="tel" value={clientInfo.phone} onChange={handleInputChange} placeholder="Enter your phone number" required />
             </div>
           </div>
           
@@ -155,7 +155,7 @@ export default function CheckoutForm() {
             <h3 className="font-semibold">Shipping</h3>
             <div>
               <Label htmlFor="address">Address</Label>
-              <Input id="address" value={clientInfo.address} onChange={handleInputChange} placeholder="123 Main St, Apt 4B" required />
+              <Input id="address" value={clientInfo.address} onChange={handleInputChange} placeholder="Your street address" required />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -219,7 +219,7 @@ export default function CheckoutForm() {
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="cvv">CVV2</Label>
-                        <Input id="cvv" value={cardInfo.cvv} onChange={handleCardInputChange} placeholder="123" required />
+                        <Input id="cvv" value={cardInfo.cvv} onChange={handleCardInputChange} placeholder="CVV" required />
                     </div>
                 </div>
             </div>

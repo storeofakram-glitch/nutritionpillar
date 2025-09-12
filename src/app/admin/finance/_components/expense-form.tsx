@@ -72,7 +72,7 @@ export function ExpenseForm({ onFormSubmit }: ExpenseFormProps) {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Input placeholder="e.g. Office Supplies" {...field} />
+                <Input placeholder="Expense description" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -85,7 +85,7 @@ export function ExpenseForm({ onFormSubmit }: ExpenseFormProps) {
             <FormItem>
               <FormLabel>Amount</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="5000.00" {...field} />
+                <Input type="number" placeholder="0.00" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
