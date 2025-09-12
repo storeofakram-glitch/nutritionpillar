@@ -2,30 +2,11 @@
 'use client';
 
 import Link from 'next/link';
-import { Facebook, Instagram, Youtube, Linkedin, Twitter } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Linkedin, Twitter, Music } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getSiteSettings } from '@/services/site-settings-service';
 import type { SocialLinks } from '@/types';
 import { useState, useEffect } from 'react';
-
-// Custom TikTok icon SVG as a React component
-const TikTokIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        {...props}
-    >
-        <path d="M21 7.5v1.5a2.5 2.5 0 0 1-2.5 2.5h-1a2.5 2.5 0 0 1-2.5-2.5V3" />
-        <path d="M7 16.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Z" />
-        <path d="M14.5 3h-2.5a2 2 0 0 0-2 2v10.5" />
-    </svg>
-);
-
 
 export default function Footer() {
   const [socialLinks, setSocialLinks] = useState<SocialLinks>({});
@@ -66,7 +47,7 @@ export default function Footer() {
                 <Link href={socialLinks.twitter || '#'} aria-label="Twitter"><Twitter className="h-5 w-5" /></Link>
             </Button>
             <Button variant="ghost" size="icon" asChild>
-                <Link href={socialLinks.tiktok || '#'} aria-label="TikTok"><TikTokIcon className="h-5 w-5" /></Link>
+                <Link href={socialLinks.tiktok || '#'} aria-label="TikTok"><Music className="h-5 w-5" /></Link>
             </Button>
         </div>
 
