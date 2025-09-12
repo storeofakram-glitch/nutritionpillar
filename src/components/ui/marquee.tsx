@@ -2,6 +2,7 @@
 "use client"
 
 import { cn } from "@/lib/utils";
+import React from "react";
 
 interface MarqueeProps {
     className?: string;
@@ -20,6 +21,16 @@ export default function Marquee({
     vertical = false,
     ...props
 }: MarqueeProps) {
+    const [isPaused, setIsPaused] = React.useState(false);
+
+    const handlePause = (paused: boolean) => {
+        setIsPaused(paused);
+    };
+
+    const marqueeStyle: React.CSSProperties = {
+        animationPlayState: isPaused ? 'paused' : 'running',
+    };
+
     return (
         <div
             {...props}
@@ -31,8 +42,14 @@ export default function Marquee({
                 },
                 className
             )}
+            onMouseDown={() => handlePause(true)}
+            onMouseUp={() => handlePause(false)}
+            onMouseLeave={() => handlePause(false)} // Resume when mouse leaves
+            onTouchStart={() => handlePause(true)}
+            onTouchEnd={() => handlePause(false)}
         >
             <div
+                style={marqueeStyle}
                 className={cn("flex min-w-full shrink-0 [gap:var(--gap)] animate-marquee items-center justify-around", {
                     "group-hover:[animation-play-state:paused]": pauseOnHover,
                     "[animation-direction:reverse]": reverse,
@@ -43,6 +60,7 @@ export default function Marquee({
                 {children}
             </div>
             <div
+                style={marqueeStyle}
                 className={cn("flex min-w-full shrink-0 [gap:var(--gap)] animate-marquee items-center justify-around", {
                     "group-hover:[animation-play-state:paused]": pauseOnHover,
                     "[animation-direction:reverse]": reverse,
