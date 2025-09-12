@@ -190,7 +190,7 @@ export default function CheckoutForm() {
                 </Label>
                 <Label htmlFor="credit-card" className="flex items-center gap-3 rounded-md border p-4 cursor-pointer hover:bg-accent has-[[data-state=checked]]:border-primary">
                     <RadioGroupItem value="Credit / Debit Card" id="credit-card" />
-                    <span>Credit / Debit Card (CIB / EDAHABIA)</span>
+                    <span>(CIB / EDAHABIA) Card</span>
                 </Label>
              </RadioGroup>
           </div>
