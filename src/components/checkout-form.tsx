@@ -188,14 +188,17 @@ export default function CheckoutForm() {
                     <RadioGroupItem value="Pay on Delivery" id="pay-on-delivery" />
                     <span>Pay on Delivery</span>
                 </Label>
-                <Label htmlFor="credit-card" className="flex items-center gap-3 rounded-md border p-4 cursor-pointer hover:bg-accent has-[[data-state=checked]]:border-primary">
-                    <RadioGroupItem value="Credit / Debit Card" id="credit-card" />
-                    <span>(CIB / EDAHABIA) Card</span>
+                 <Label htmlFor="credit-card" className="flex items-center justify-between gap-3 rounded-md border p-4 cursor-not-allowed opacity-50">
+                    <div className="flex items-center gap-3">
+                        <RadioGroupItem value="Credit / Debit Card" id="credit-card" disabled />
+                        <span>(CIB / EDAHABIA) Card</span>
+                    </div>
+                    <span className="text-xs font-semibold text-primary">Coming Soon</span>
                 </Label>
              </RadioGroup>
           </div>
 
-          {paymentMethod !== 'Pay on Delivery' && (
+          {paymentMethod === 'Credit / Debit Card' && (
             <div className="space-y-4 rounded-md border p-4">
                 <div className="flex items-center justify-between">
                     <h3 className="font-semibold">Payment Details</h3>
@@ -269,5 +272,3 @@ export default function CheckoutForm() {
     </Card>
   );
 }
-
-    
