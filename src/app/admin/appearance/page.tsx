@@ -102,6 +102,7 @@ const socialLinksSchema = z.object({
     youtube: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
     linkedin: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
     twitter: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
+    tiktok: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
 });
 
 const siteSettingsSchema = z.object({
@@ -125,7 +126,7 @@ const emptyValues: SiteSettings = {
     aboutPage: { title: "", subtitle: "", imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", storyTitle: "", storyContent1: "", storyContent2: "", missionTitle: "", missionContent: "", visionTitle: "", visionContent: "", valuesTitle: "", valuesContent: "" },
     faqPage: { title: "", subtitle: "", faqs: [{ question: "", answer: "" }] },
     termsPage: { title: "Terms of Service", content: "Please add your terms of service here." },
-    socialLinks: { facebook: "", instagram: "", youtube: "", linkedin: "", twitter: "" },
+    socialLinks: { facebook: "", instagram: "", youtube: "", linkedin: "", twitter: "", tiktok: "" },
 };
 
 
@@ -766,6 +767,9 @@ export default function AdminAppearancePage() {
                         )} />
                         <FormField control={form.control} name="socialLinks.twitter" render={({ field }) => (
                             <FormItem><FormLabel>Twitter (X) URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://twitter.com/your-handle" /></FormControl><FormMessage /></FormItem>
+                        )} />
+                         <FormField control={form.control} name="socialLinks.tiktok" render={({ field }) => (
+                            <FormItem><FormLabel>TikTok URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://tiktok.com/@your-username" /></FormControl><FormMessage /></FormItem>
                         )} />
                     </CardContent>
                 </CollapsibleContent>

@@ -8,6 +8,23 @@ import { getSiteSettings } from '@/services/site-settings-service';
 import type { SocialLinks } from '@/types';
 import { useState, useEffect } from 'react';
 
+// Custom TikTok icon SVG as a React component
+const TikTokIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+        <path d="M21 7.5a4.5 4.5 0 0 1-4.5 4.5H12v6a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 4.5-4.5v-3a6 6 0 1 0 6-6V3" />
+    </svg>
+);
+
+
 export default function Footer() {
   const [socialLinks, setSocialLinks] = useState<SocialLinks>({});
 
@@ -45,6 +62,9 @@ export default function Footer() {
             </Button>
              <Button variant="ghost" size="icon" asChild>
                 <Link href={socialLinks.twitter || '#'} aria-label="Twitter"><Twitter className="h-5 w-5" /></Link>
+            </Button>
+            <Button variant="ghost" size="icon" asChild>
+                <Link href={socialLinks.tiktok || '#'} aria-label="TikTok"><TikTokIcon className="h-5 w-5" /></Link>
             </Button>
         </div>
 
