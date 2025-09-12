@@ -18,6 +18,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { getCoachByName } from '@/services/coach-service';
 import { getApplicationsByCoach, updateApplicationStatus } from '@/services/application-service';
 import { Badge } from '@/components/ui/badge';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center gap-1">
@@ -38,6 +39,7 @@ const StarRating = ({ rating }: { rating: number }) => (
 
 export default function MembershipPage() {
     const [membershipCode, setMembershipCode] = useState('');
+    const [userType, setUserType] = useState('athlete');
     const [isLoading, setIsLoading] = useState(false);
     const [result, setResult] = useState<MembershipWithProducts | 'invalid' | null>(null);
     const [coachDetails, setCoachDetails] = useState<Coach | null>(null);
@@ -378,6 +380,29 @@ export default function MembershipPage() {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleCheckMembership} className="space-y-6">
+                             <div className="space-y-3">
+                                <RadioGroup defaultValue="athlete" onValueChange={setUserType} className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <RadioGroupItem value="athlete" id="athlete" className="peer sr-only" />
+                                        <Label
+                                            htmlFor="athlete"
+                                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                                        >
+                                            I am an Athlete
+                                        </Label>
+                                    </div>
+                                    <div>
+                                        <RadioGroupItem value="coach" id="coach" className="peer sr-only" />
+                                        <Label
+                                            htmlFor="coach"
+                                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                                        >
+                                            I am a Coach/Expert
+                                        </Label>
+                                    </div>
+                                </RadioGroup>
+                            </div>
+
                             <div className="space-y-2">
                                 <Label htmlFor="membership-code">Membership Code</Label>
                                 <Input 
