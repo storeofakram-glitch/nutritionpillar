@@ -56,7 +56,7 @@ export async function addCoach(coach: Omit<Coach, 'id' | 'createdAt'>) {
         await addMembership({
             customerName: coach.name,
             coachingPlan: coach.specialty, // Use specialty as the plan name
-            type: 'Coaching',
+            type: 'Coach/Expert',
         });
         
         revalidatePath('/admin/coaches');

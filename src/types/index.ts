@@ -4,6 +4,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -222,7 +223,7 @@ export type RecommendedProduct = {
 
 export type Membership = {
   id: string;
-  type: 'Coaching' | 'Fitness Pillar';
+  type: 'Coaching' | 'Fitness Pillar' | 'Coach/Expert';
   code: string;
   customerName: string;
   customerEmail?: string;

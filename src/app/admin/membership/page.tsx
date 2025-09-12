@@ -53,6 +53,7 @@ export default function AdminMembershipPage() {
 
     const coachingMemberships = memberships.filter(m => m.type === 'Coaching');
     const loyaltyMemberships = memberships.filter(m => m.type === 'Fitness Pillar');
+    const coachExpertMemberships = memberships.filter(m => m.type === 'Coach/Expert');
 
     return (
         <div className="space-y-6">
@@ -74,13 +75,23 @@ export default function AdminMembershipPage() {
                 <CardHeader>
                     <div className="flex items-center justify-between">
                          <div>
-                            <CardTitle>Coaching Memberships</CardTitle>
+                            <CardTitle>Coaching Memberships (Clients)</CardTitle>
                             <CardDescription>Manually added members from your coaching program.</CardDescription>
                          </div>
                     </div>
                 </CardHeader>
                 <CardContent>
                     <MembershipTable memberships={coachingMemberships} isLoading={loading} onDataChange={fetchMemberships} />
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Coaches & Experts Memberships</CardTitle>
+                    <CardDescription>Memberships automatically created for your team.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <MembershipTable memberships={coachExpertMemberships} isLoading={loading} onDataChange={fetchMemberships} />
                 </CardContent>
             </Card>
 
