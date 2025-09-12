@@ -46,7 +46,7 @@ export default function AdminLayout({
         <Sidebar>
           <SidebarHeader>
             <div className="flex items-center gap-2">
-                <span className="text-lg font-headline font-semibold">Nutrition Pillar</span>
+                <span className="text-base md:text-lg font-headline font-semibold">Nutrition Pillar</span>
             </div>
           </SidebarHeader>
           <SidebarContent className="pt-8">
