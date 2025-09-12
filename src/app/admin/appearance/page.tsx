@@ -43,6 +43,7 @@ const logoSchema = z.object({
   src: z.string().url({ message: "Please enter a valid URL." }).or(z.literal('')),
   alt: z.string().min(1, { message: "Alt text is required." }),
   hint: z.string().optional(),
+  url: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
 });
 
 const adBannerSchema = z.object({
@@ -126,7 +127,7 @@ const siteSettingsSchema = z.object({
 const emptyValues: SiteSettings = {
     hero: { imageUrl: "", videoUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "" },
     marquee: { messages: [{ text: "", logoUrl: "", logoAlt: "" }] },
-    partnershipLogos: [{ src: "", alt: "", hint: "" }],
+    partnershipLogos: [{ src: "", alt: "", hint: "", url: "" }],
     adBanner: { imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", title: "", description: "", buttonText: "", buttonLink: "", counter1Value: 0, counter1Label: '', counter2Value: 0, counter2Label: '', flashTitle: false },
     aboutPage: { title: "", subtitle: "", imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", storyTitle: "", storyContent1: "", storyContent2: "", missionTitle: "", missionContent: "", visionTitle: "", visionContent: "", valuesTitle: "", valuesContent: "" },
     faqPage: { title: "", subtitle: "", faqs: [{ question: "", answer: "" }] },
@@ -161,7 +162,7 @@ export default function AdminAppearancePage() {
       if (settings) {
         // Ensure nested arrays have default values to avoid uncontrolled component errors
         const messages = settings.marquee?.messages?.map(m => ({ text: m.text, logoUrl: m.logoUrl || '', logoAlt: m.logoAlt || '' })) || [];
-        const partnershipLogos = settings.partnershipLogos?.map(l => ({ ...l, src: l.src || '', alt: l.alt || '' })) || [];
+        const partnershipLogos = settings.partnershipLogos?.map(l => ({ ...l, src: l.src || '', alt: l.alt || '', url: l.url || '' })) || [];
         const faqs = settings.faqPage?.faqs?.map(f => ({ question: f.question || '', answer: f.answer || '' })) || [];
         
         form.reset({
@@ -388,30 +389,44 @@ export default function AdminAppearancePage() {
                 {logoFields.map((field, index) => (
                 <div key={field.id} className="p-4 border rounded-lg space-y-4 relative">
                     <div className="flex items-start gap-4">
-                        <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <FormField
-                            control={form.control}
-                            name={`partnershipLogos.${index}.src`}
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Logo Image URL</FormLabel>
-                                <FormControl><Input {...field} placeholder="https://..." /></FormControl>
-                                <FormDescription>Recommended size: 150x75 pixels.</FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name={`partnershipLogos.${index}.alt`}
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Alt Text</FormLabel>
-                                <FormControl><Input {...field} placeholder="Brand Name" /></FormControl>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
+                        <div className="flex-grow space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name={`partnershipLogos.${index}.src`}
+                                    render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Logo Image URL</FormLabel>
+                                        <FormControl><Input {...field} value={field.value ?? ''} placeholder="https://..." /></FormControl>
+                                        <FormDescription>Recommended size: 150x75 pixels.</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name={`partnershipLogos.${index}.alt`}
+                                    render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Alt Text</FormLabel>
+                                        <FormControl><Input {...field} value={field.value ?? ''} placeholder="Brand Name" /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                    )}
+                                />
+                            </div>
+                            <FormField
+                                control={form.control}
+                                name={`partnershipLogos.${index}.url`}
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Logo URL (Optional)</FormLabel>
+                                    <FormControl><Input {...field} value={field.value ?? ''} placeholder="https://company.com" /></FormControl>
+                                    <FormDescription>Where the logo links to.</FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
                         </div>
                         <Button type="button" variant="ghost" size="icon" onClick={() => removeLogo(index)}>
                             <Trash2 className="h-4 w-4 text-red-500" />
@@ -419,7 +434,7 @@ export default function AdminAppearancePage() {
                     </div>
                 </div>
                 ))}
-                <Button type="button" variant="outline" size="sm" onClick={() => appendLogo({ src: "", alt: "", hint: "brand logo" })}>
+                <Button type="button" variant="outline" size="sm" onClick={() => appendLogo({ src: "", alt: "", hint: "brand logo", url: "" })}>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Add Logo
                 </Button>

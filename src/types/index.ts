@@ -130,6 +130,7 @@ export type PartnershipLogo = {
   src: string;
   alt: string;
   hint?: string;
+  url?: string;
 };
 
 export type AdBanner = {

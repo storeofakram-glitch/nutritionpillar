@@ -10,7 +10,7 @@ import { getProducts } from '@/services/product-service';
 import Marquee from '@/components/ui/marquee';
 import { ArrowRight, BrainCircuit } from 'lucide-react';
 import { getSiteSettings } from '@/services/site-settings-service';
-import type { SiteSettings, Product } from '@/types';
+import type { SiteSettings, Product, PartnershipLogo } from '@/types';
 import NewArrivalsCarousel from '@/components/new-arrivals-carousel';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { useEffect, useState } from 'react';
@@ -19,6 +19,30 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
+
+const LogoItem = ({ logo }: { logo: PartnershipLogo }) => {
+    const content = (
+        <div className="relative h-16">
+            <Image
+                src={logo.src}
+                alt={logo.alt || `Partnership logo`}
+                data-ai-hint={logo.hint}
+                fill
+                className="object-contain grayscale transition-all duration-300 hover:grayscale-0"
+            />
+        </div>
+    );
+
+    if (logo.url) {
+        return (
+            <Link href={logo.url} target="_blank" rel="noopener noreferrer" aria-label={logo.alt}>
+                {content}
+            </Link>
+        );
+    }
+
+    return content;
+};
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -212,15 +236,7 @@ export default function Home() {
               <CarouselContent>
                 {partnershipLogos.map((logo, index) => (
                   <CarouselItem key={index} className="basis-1/3 md:basis-1/4 lg:basis-1/5">
-                    <div className="relative h-16">
-                      <Image
-                        src={logo.src}
-                        alt={logo.alt || `Partnership logo ${index + 1}`}
-                        data-ai-hint={logo.hint}
-                        fill
-                        className="object-contain grayscale transition-all duration-300 hover:grayscale-0"
-                      />
-                    </div>
+                    <LogoItem logo={logo} />
                   </CarouselItem>
                 ))}
               </CarouselContent>
