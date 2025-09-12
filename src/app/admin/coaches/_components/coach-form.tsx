@@ -134,7 +134,7 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
           control={form.control}
           name="imageUrl"
           render={({ field }) => (
-            <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input placeholder="https://example.com/image.png" {...field} /></FormControl><FormDescription>Use a square (1:1) image for best results.</FormDescription><FormMessage /></FormItem>
+            <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input placeholder="https://example.com/image.png" {...field} /></FormControl><FormDescription>Use a square (1:1) image. Recommended size: 400x400 pixels.</FormDescription><FormMessage /></FormItem>
           )}
         />
         <FormField
