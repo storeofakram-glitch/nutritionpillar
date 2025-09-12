@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { findMembershipByCode } from '@/services/membership-service';
 import type { RecommendedProduct, MembershipWithProducts, Coach, CoachingApplication } from '@/types';
-import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users, Mail, MessageSquare } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
@@ -252,25 +252,44 @@ export default function MembershipPage() {
                     <div>
                         <h3 className="font-semibold text-lg mb-4">Your Active Clients</h3>
                         {activeClients.length > 0 ? (
-                            <div className="w-full overflow-hidden rounded-lg border">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Client Name</TableHead>
-                                            <TableHead>Goal</TableHead>
-                                            <TableHead>Duration</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {activeClients.map(app => (
-                                            <TableRow key={app.id}>
-                                                <TableCell className="font-medium">{app.applicant.name}</TableCell>
-                                                <TableCell>{app.applicant.goal}</TableCell>
-                                                <TableCell>{app.applicant.duration}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
+                            <div className="space-y-4">
+                                {activeClients.map(app => (
+                                    <Card key={app.id} className="bg-muted/50">
+                                        <CardContent className="p-4">
+                                            <div className="flex justify-between items-start">
+                                                <h4 className="font-semibold">{app.applicant.name}</h4>
+                                                <div className="flex items-center gap-2">
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+                                                        <a href={`mailto:${app.applicant.email}`}>
+                                                            <Mail className="h-4 w-4" />
+                                                            <span className="sr-only">Email</span>
+                                                        </a>
+                                                    </Button>
+                                                     <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+                                                        <a href={`https://wa.me/${app.applicant.phone}`} target="_blank" rel="noopener noreferrer">
+                                                            <MessageSquare className="h-4 w-4" />
+                                                            <span className="sr-only">WhatsApp</span>
+                                                        </a>
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-3 text-muted-foreground">
+                                                <p><span className="font-medium text-foreground">Goal:</span> {app.applicant.goal}</p>
+                                                <p><span className="font-medium text-foreground">Duration:</span> {app.applicant.duration}</p>
+                                                <p><span className="font-medium text-foreground">Age:</span> {app.applicant.age}</p>
+                                                <p><span className="font-medium text-foreground">Phone:</span> {app.applicant.phone}</p>
+                                                <p><span className="font-medium text-foreground">Weight:</span> {app.applicant.weight}kg</p>
+                                                <p><span className="font-medium text-foreground">Height:</span> {app.applicant.height}cm</p>
+                                            </div>
+                                            {app.applicant.message && (
+                                                <div className="mt-3">
+                                                    <p className="font-medium text-sm text-foreground">Message:</p>
+                                                    <p className="text-sm text-muted-foreground italic">"{app.applicant.message}"</p>
+                                                </div>
+                                            )}
+                                        </CardContent>
+                                    </Card>
+                                ))}
                             </div>
                         ) : (
                             <p className="text-center text-muted-foreground py-4">You have no active clients yet.</p>
