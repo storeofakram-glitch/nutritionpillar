@@ -18,7 +18,7 @@ import {
   SidebarFooter,
   SidebarInset
 } from "@/components/ui/sidebar"
-import { Home, Package, ShoppingCart, Truck, Users, ArrowLeft, DollarSign, Brush, ShieldCheck, Megaphone, Mail } from "lucide-react"
+import { Home, Package, ShoppingCart, Truck, Users, ArrowLeft, DollarSign, Brush, ShieldCheck, Megaphone, Mail, UserCheck } from "lucide-react"
 
 export default function AdminLayout({
   children,
@@ -33,6 +33,7 @@ export default function AdminLayout({
     { href: "/admin/products", label: "Products", icon: Package },
     { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
     { href: "/admin/customers", label: "Customers", icon: Users },
+    { href: "/admin/coaches", label: "Coaches", icon: UserCheck },
     { href: "/admin/shipping", label: "Shipping", icon: Truck },
     { href: "/admin/finance", label: "Finance", icon: DollarSign },
     { href: "/admin/membership", label: "Membership", icon: ShieldCheck },
@@ -83,7 +84,7 @@ export default function AdminLayout({
             <header className="flex h-14 items-center gap-4 border-b bg-background px-6">
                 <SidebarTrigger className="md:hidden" />
                 <div className="flex-1">
-                    <h1 className="text-lg font-semibold font-headline">
+                    <h1 className="text-base md:text-lg font-semibold font-headline">
                         {navItems.find(item => pathname.startsWith(item.href) && (item.href === '/admin' ? pathname === item.href : true))?.label || 'Admin'}
                     </h1>
                 </div>

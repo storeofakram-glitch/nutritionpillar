@@ -19,6 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
+import CoachesExpertsSection from '@/components/coaches-experts-section';
 
 const LogoItem = ({ logo }: { logo: PartnershipLogo }) => {
     const content = (
@@ -225,6 +226,8 @@ export default function Home() {
             <ProductGrid products={products} />
         </div>
       </section>
+
+      <CoachesExpertsSection />
       
       <section className="py-12 md:py-16 bg-background">
         <div className="container mx-auto px-4">

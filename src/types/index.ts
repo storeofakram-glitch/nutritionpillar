@@ -244,4 +244,14 @@ export type ContactSubmission = {
     status: 'new' | 'read' | 'archived';
 };
 
+export type Coach = {
+  id: string;
+  name: string;
+  specialty: string;
+  type: 'Coach' | 'Expert';
+  imageUrl: string;
+  rating: number; // 1 to 5
+  bio?: string;
+  createdAt: string; // ISO 8601 string
+};
     
