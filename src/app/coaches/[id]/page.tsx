@@ -7,7 +7,8 @@ import Link from 'next/link';
 
 // This is a Server Component
 export default async function CoachProfilePage({ params }: { params: { id: string } }) {
-  const coach = await getCoachById(params.id);
+  const { id } = params;
+  const coach = await getCoachById(id);
 
   if (!coach) {
     notFound();
@@ -28,4 +29,3 @@ export function NotFound() {
     </div>
   )
 }
-
