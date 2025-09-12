@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu, ShoppingBag, ShieldCheck } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Linkedin, Twitter, Music, Menu, ShoppingBag, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/cart-context';
 import { usePathname } from 'next/navigation';
@@ -18,6 +18,8 @@ import {
 import * as React from 'react';
 import { SearchDialog } from '../search-dialog';
 import Image from 'next/image';
+import type { SocialLinks } from '@/types';
+import { getSiteSettings } from '@/services/site-settings-service';
 
 const navLinks = [
     { href: '/', label: 'Home' },
@@ -31,6 +33,17 @@ export default function Header() {
   const { cartCount } = useCart();
   const pathname = usePathname();
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
+  const [socialLinks, setSocialLinks] = React.useState<SocialLinks>({});
+
+  React.useEffect(() => {
+    async function fetchSettings() {
+      const settings = await getSiteSettings();
+      if (settings?.socialLinks) {
+        setSocialLinks(settings.socialLinks);
+      }
+    }
+    fetchSettings();
+  }, []);
   
   const NavLink = ({ href, children }: { href: string, children: React.ReactNode }) => (
     <Link
@@ -56,7 +69,7 @@ export default function Header() {
                         <span className="sr-only">Toggle Menu</span>
                     </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-full max-w-xs sm:max-w-sm bg-background text-foreground">
+                <SheetContent side="left" className="w-full max-w-xs sm:max-w-sm bg-background text-foreground flex flex-col">
                     <SheetHeader>
                         <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                         <Link href="/" className="flex items-center space-x-2">
@@ -78,6 +91,23 @@ export default function Header() {
                           </SheetClose>
                         ))}
                    </nav>
+                   <div className="mt-auto flex items-center justify-center gap-2 border-t pt-6">
+                        <Button variant="ghost" size="icon" asChild>
+                            <Link href={socialLinks.facebook || '#'} aria-label="Facebook"><Facebook className="h-5 w-5" /></Link>
+                        </Button>
+                        <Button variant="ghost" size="icon" asChild>
+                            <Link href={socialLinks.instagram || '#'} aria-label="Instagram"><Instagram className="h-5 w-5" /></Link>
+                        </Button>
+                        <Button variant="ghost" size="icon" asChild>
+                            <Link href={socialLinks.youtube || '#'} aria-label="YouTube"><Youtube className="h-5 w-5" /></Link>
+                        </Button>
+                        <Button variant="ghost" size="icon" asChild>
+                            <Link href={socialLinks.linkedin || '#'} aria-label="LinkedIn"><Linkedin className="h-5 w-5" /></Link>
+                        </Button>
+                        <Button variant="ghost" size="icon" asChild>
+                            <Link href={socialLinks.twitter || '#'} aria-label="Twitter"><Twitter className="h-5 w-5" /></Link>
+                        </Button>
+                    </div>
                 </SheetContent>
             </Sheet>
         </div>
