@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog"
 import { CoachForm } from "./coach-form"
 import type { Coach } from "@/types"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface EditCoachDialogProps {
     isOpen: boolean;
@@ -29,7 +30,7 @@ export default function EditCoachDialog({ isOpen, onOpenChange, coach, onDialogC
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Edit Details</DialogTitle>
           <DialogDescription>

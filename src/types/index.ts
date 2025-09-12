@@ -1,5 +1,6 @@
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -204,7 +205,6 @@ export type SiteSettings = {
   };
   partnershipLogos: PartnershipLogo[];
   adBanner: AdBanner;
-  aboutPage: AboutPageSettings;
   faqPage: FaqPageSettings;
   termsPage: TermsPageSettings;
   privacyPage: PrivacyPageSettings;
@@ -244,6 +244,15 @@ export type ContactSubmission = {
     status: 'new' | 'read' | 'archived';
 };
 
+export type Plan = {
+  icon: string;
+  title: string;
+  description: string;
+  price: number;
+  pricePeriod: 'month' | 'program';
+  applyLink: string;
+};
+
 export type Coach = {
   id: string;
   name: string;
@@ -253,6 +262,7 @@ export type Coach = {
   rating: number; // 1 to 5
   bio?: string;
   certifications?: string[];
+  plans?: Plan[];
   createdAt: string; // ISO 8601 string
 };
     

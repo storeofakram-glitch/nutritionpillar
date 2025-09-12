@@ -21,7 +21,16 @@ import { addCoach, updateCoach } from "@/services/coach-service"
 import type { Coach } from "@/types"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { PlusCircle, Trash2 } from "lucide-react"
+import { Dumbbell, PlusCircle, Trash2, Zap, HeartPulse, User, Rocket } from "lucide-react"
+
+const planSchema = z.object({
+    icon: z.string().min(1, "Icon is required."),
+    title: z.string().min(2, "Plan title is required."),
+    description: z.string().min(10, "Description is required."),
+    price: z.coerce.number().min(0, "Price must be a non-negative number."),
+    pricePeriod: z.enum(['month', 'program']),
+    applyLink: z.string().url("Must be a valid URL."),
+});
 
 const coachSchema = z.object({
   name: z.string().min(2, "Name is required."),
@@ -31,6 +40,7 @@ const coachSchema = z.object({
   rating: z.coerce.number().int().min(1).max(5),
   bio: z.string().optional(),
   certifications: z.array(z.object({ value: z.string().min(1, "Certification cannot be empty.") })).optional(),
+  plans: z.array(planSchema).optional(),
 })
 
 type CoachFormValues = z.infer<typeof coachSchema>
@@ -42,6 +52,13 @@ interface CoachFormProps {
 
 const specialties = ["Fitness", "Nutrition", "Wellness", "Bodybuilding", "Powerlifting", "Yoga", "CrossFit"];
 const ratings = [1, 2, 3, 4, 5];
+const planIcons = [
+    { name: "Personal Training", icon: Dumbbell },
+    { name: "Online Coaching", icon: Zap },
+    { name: "Nutrition Plan", icon: HeartPulse },
+    { name: "VIP Program", icon: Rocket },
+];
+
 
 export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
   const { toast } = useToast()
@@ -57,6 +74,7 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
       rating: coach?.rating || 5,
       bio: coach?.bio || "",
       certifications: coach?.certifications?.map(c => ({ value: c })) || [{ value: "" }],
+      plans: coach?.plans || [],
     },
   })
 
@@ -65,10 +83,16 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
     name: "certifications"
   });
 
+  const { fields: planFields, append: appendPlan, remove: removePlan } = useFieldArray({
+    control: form.control,
+    name: "plans"
+  });
+
   async function onSubmit(data: CoachFormValues) {
     const coachData = {
         ...data,
         certifications: data.certifications?.map(c => c.value).filter(Boolean),
+        plans: data.plans,
     };
     
     const result = isEditMode
@@ -95,7 +119,7 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-h-[80vh] overflow-y-auto p-1 pr-4">
         <FormField
           control={form.control}
           name="name"
@@ -160,7 +184,7 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
           )}
         />
         
-        <div className="space-y-3">
+        <div className="space-y-3 p-4 border rounded-lg">
           <FormLabel>Certifications (Optional)</FormLabel>
           {certFields.map((field, index) => (
             <FormField
@@ -173,7 +197,7 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
                     <FormControl>
                       <Input placeholder={`Certification ${index + 1}`} {...field} />
                     </FormControl>
-                    <Button type="button" variant="ghost" size="icon" onClick={() => removeCert(index)} disabled={certFields.length <= 1 && !certFields[0].value}>
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeCert(index)} disabled={certFields.length === 1 && !certFields[0].value}>
                       <Trash2 className="h-4 w-4 text-red-500" />
                     </Button>
                   </div>
@@ -191,6 +215,68 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
             <PlusCircle className="mr-2 h-4 w-4" />
             Add Certification
           </Button>
+        </div>
+
+        <div className="space-y-3 p-4 border rounded-lg">
+            <FormLabel>Coaching Plans (Optional)</FormLabel>
+            {planFields.map((field, index) => (
+                <div key={field.id} className="p-4 border rounded-md space-y-4 relative">
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removePlan(index)} className="absolute top-2 right-2">
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                    <FormField
+                        control={form.control}
+                        name={`plans.${index}.icon`}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Plan Icon</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl><SelectTrigger><SelectValue placeholder="Select an icon" /></SelectTrigger></FormControl>
+                                    <SelectContent>{planIcons.map(icon => <SelectItem key={icon.name} value={icon.name}>{icon.name}</SelectItem>)}</SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                     <FormField
+                        control={form.control} name={`plans.${index}.title`}
+                        render={({ field }) => ( <FormItem><FormLabel>Plan Title</FormLabel><FormControl><Input {...field} placeholder="e.g., Personal Training" /></FormControl><FormMessage /></FormItem> )}
+                     />
+                    <FormField
+                        control={form.control} name={`plans.${index}.description`}
+                        render={({ field }) => ( <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} placeholder="Briefly describe this plan" rows={3} /></FormControl><FormMessage /></FormItem> )}
+                     />
+                     <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                            control={form.control} name={`plans.${index}.price`}
+                            render={({ field }) => ( <FormItem><FormLabel>Price</FormLabel><FormControl><Input type="number" {...field} placeholder="e.g., 5000" /></FormControl><FormMessage /></FormItem> )}
+                        />
+                        <FormField
+                            control={form.control} name={`plans.${index}.pricePeriod`}
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Per</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl><SelectTrigger><SelectValue placeholder="Select period" /></SelectTrigger></FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="month">Month</SelectItem>
+                                        <SelectItem value="program">Program</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                     </div>
+                     <FormField
+                        control={form.control} name={`plans.${index}.applyLink`}
+                        render={({ field }) => ( <FormItem><FormLabel>Apply Link</FormLabel><FormControl><Input {...field} placeholder="https://example.com/apply" /></FormControl><FormMessage /></FormItem> )}
+                     />
+                </div>
+            ))}
+            <Button type="button" variant="outline" size="sm" onClick={() => appendPlan({ icon: "Dumbbell", title: "", description: "", price: 0, pricePeriod: "month", applyLink: "" })}>
+                <PlusCircle className="mr-2 h-4 w-4" /> Add Plan
+            </Button>
         </div>
         
         <Button type="submit" disabled={form.formState.isSubmitting}>
