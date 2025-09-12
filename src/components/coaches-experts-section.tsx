@@ -49,7 +49,7 @@ const CoachCard = ({ person }: { person: Coach }) => {
             </div>
         </CardContent>
         <CardFooter className="p-4 pt-0">
-            <Button variant="outline" className="w-full" asChild>
+            <Button variant="outline" className="w-full hover:bg-primary hover:text-primary-foreground" asChild>
                 <Link href="#">View Details</Link>
             </Button>
         </CardFooter>
@@ -68,7 +68,7 @@ const CarouselSection = ({ title, items }: { title: string, items: Coach[] }) =>
                 opts={{ align: "start", loop: items.length > 5 }}
                 className="w-full"
             >
-                <CarouselContent className="-ml-4">
+                <CarouselContent className="-ml-4 py-4">
                     {items.map((person) => (
                         <CarouselItem key={person.id} className="basis-1/2 md:basis-1/3 lg:basis-1/5 pl-4">
                             <CoachCard person={person} />
