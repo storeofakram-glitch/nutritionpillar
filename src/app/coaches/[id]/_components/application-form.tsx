@@ -46,7 +46,17 @@ export function ApplicationForm({ plan, coachName, onSuccess }: ApplicationFormP
   const { toast } = useToast();
   const form = useForm<ApplicationFormValues>({
     resolver: zodResolver(applicationFormSchema),
-    defaultValues: { name: '', email: '', phone: '' },
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      age: 0,
+      weight: 0,
+      height: 0,
+      goal: '',
+      duration: undefined,
+      message: '',
+    },
   });
 
   const onSubmit = async (data: ApplicationFormValues) => {
@@ -117,21 +127,21 @@ export function ApplicationForm({ plan, coachName, onSuccess }: ApplicationFormP
             control={form.control}
             name="age"
             render={({ field }) => (
-                <FormItem><FormLabel>Age</FormLabel><FormControl><Input type="number" placeholder="e.g., 25" {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Age</FormLabel><FormControl><Input type="number" placeholder="e.g., 25" {...field} value={field.value || ''} /></FormControl><FormMessage /></FormItem>
             )}
             />
              <FormField
             control={form.control}
             name="weight"
             render={({ field }) => (
-                <FormItem><FormLabel>Weight (kg)</FormLabel><FormControl><Input type="number" placeholder="e.g., 80" {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Weight (kg)</FormLabel><FormControl><Input type="number" placeholder="e.g., 80" {...field} value={field.value || ''} /></FormControl><FormMessage /></FormItem>
             )}
             />
              <FormField
             control={form.control}
             name="height"
             render={({ field }) => (
-                <FormItem><FormLabel>Height (cm)</FormLabel><FormControl><Input type="number" placeholder="e.g., 180" {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Height (cm)</FormLabel><FormControl><Input type="number" placeholder="e.g., 180" {...field} value={field.value || ''} /></FormControl><FormMessage /></FormItem>
             )}
             />
         </div>
