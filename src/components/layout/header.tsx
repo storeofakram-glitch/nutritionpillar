@@ -11,7 +11,6 @@ import {
   Sheet,
   SheetContent,
   SheetHeader,
-  SheetTitle,
   SheetTrigger,
   SheetClose
 } from "@/components/ui/sheet"
@@ -57,8 +56,18 @@ export default function Header() {
                     </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-full max-w-xs sm:max-w-sm">
-                    <SheetHeader className="text-left">
-                        <SheetTitle>Navigation Menu</SheetTitle>
+                    <SheetHeader>
+                        <Link href="/" className="flex items-center space-x-2">
+                          <Image
+                            src="https://github.com/akramFit/Nutrition-Pillar-Assets/blob/main/logo%20nutrition%20pillar.png?raw=true"
+                            alt="Nutrition Pillar Logo"
+                            width={32}
+                            height={32}
+                            className="h-8 w-8 rounded-full"
+                            data-ai-hint="logo"
+                          />
+                          <span className="font-bold font-headline text-lg">Nutrition Pillar</span>
+                        </Link>
                     </SheetHeader>
                    <nav className="flex flex-col gap-6 text-lg font-medium mt-8">
                        {navLinks.map(link => (
