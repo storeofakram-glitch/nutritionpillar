@@ -46,6 +46,23 @@ export async function getApplicationsByCoach(coachId: string): Promise<CoachingA
 }
 
 /**
+ * Gets the count of applications for a specific coach.
+ * @param coachId The ID of the coach.
+ * @returns A promise that resolves to the number of applications.
+ */
+export async function getApplicationsCountByCoach(coachId: string): Promise<number> {
+     try {
+        const q = query(applicationsCollection, where('coachId', '==', coachId));
+        const snapshot = await getCountFromServer(q);
+        return snapshot.data().count;
+    } catch (error) {
+        console.error("Error getting applications count: ", error);
+        return 0;
+    }
+}
+
+
+/**
  * Gets the count of new applications for a specific coach.
  * @param coachId The ID of the coach.
  * @returns A promise that resolves to the number of new applications.

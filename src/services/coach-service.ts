@@ -1,7 +1,7 @@
 
 'use server';
 
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy, getDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy, getDoc, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Coach } from '@/types';
 import { revalidatePath } from 'next/cache';
@@ -34,6 +34,26 @@ export async function getCoachById(id: string): Promise<Coach | null> {
         return null;
     } catch (error) {
         console.error("Error getting coach by ID: ", error);
+        return null;
+    }
+}
+
+/**
+ * Fetches a single coach or expert by their name.
+ * @param name The name of the coach/expert to fetch.
+ * @returns A promise that resolves to the coach object or null if not found.
+ */
+export async function getCoachByName(name: string): Promise<Coach | null> {
+    try {
+        const q = query(coachesCollection, where('name', '==', name));
+        const snapshot = await getDocs(q);
+        if (!snapshot.empty) {
+            const docSnap = snapshot.docs[0];
+            return { id: docSnap.id, ...docSnap.data() } as Coach;
+        }
+        return null;
+    } catch (error) {
+        console.error("Error getting coach by name: ", error);
         return null;
     }
 }

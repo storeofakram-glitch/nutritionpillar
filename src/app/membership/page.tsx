@@ -8,18 +8,39 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { findMembershipByCode } from '@/services/membership-service';
-import type { RecommendedProduct, MembershipWithProducts } from '@/types';
-import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info } from 'lucide-react';
+import type { RecommendedProduct, MembershipWithProducts, Coach } from '@/types';
+import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { differenceInDays } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { getCoachByName } from '@/services/coach-service';
+import { getApplicationsCountByCoach } from '@/services/application-service';
+
+const StarRating = ({ rating }: { rating: number }) => (
+    <div className="flex items-center gap-1">
+        {[...Array(5)].map((_, i) => {
+            const ratingValue = i + 1;
+            if (ratingValue <= rating) {
+                return <Star key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />;
+            } else if (ratingValue - 0.5 <= rating) {
+                return <StarHalf key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />;
+            } else {
+                return <Star key={i} className="h-5 w-5 text-muted-foreground/30" />;
+            }
+        })}
+         <span className="text-muted-foreground ml-1 text-sm">({rating.toFixed(1)})</span>
+    </div>
+);
+
 
 export default function MembershipPage() {
     const [membershipCode, setMembershipCode] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [result, setResult] = useState<MembershipWithProducts | 'invalid' | null>(null);
+    const [coachDetails, setCoachDetails] = useState<Coach | null>(null);
+    const [applicationCount, setApplicationCount] = useState(0);
     const { toast } = useToast();
 
     const handleCheckMembership = async (e: React.FormEvent) => {
@@ -34,10 +55,22 @@ export default function MembershipPage() {
         }
         setIsLoading(true);
         setResult(null);
+        setCoachDetails(null);
+        setApplicationCount(0);
+
         try {
             const foundMembership = await findMembershipByCode(membershipCode);
             if (foundMembership) {
                 setResult(foundMembership);
+                // If the member is a coach, fetch their specific details
+                if (foundMembership.type === 'Coach/Expert') {
+                    const coach = await getCoachByName(foundMembership.customerName);
+                    if (coach) {
+                        setCoachDetails(coach);
+                        const count = await getApplicationsCountByCoach(coach.id);
+                        setApplicationCount(count);
+                    }
+                }
             } else {
                 setResult('invalid');
             }
@@ -93,6 +126,117 @@ export default function MembershipPage() {
         return Math.max(0, days);
     }
 
+    const renderCoachView = () => {
+        if (!result || result === 'invalid' || !coachDetails) return null;
+
+        return (
+            <Card>
+                <CardHeader>
+                    <div className="flex items-center gap-3 text-green-700 dark:text-green-400">
+                        <CheckCircle className="h-8 w-8" />
+                        <CardTitle className="text-2xl">Membership Active!</CardTitle>
+                    </div>
+                    <CardDescription>
+                        Welcome, {result.customerName}! Here are your professional stats.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                         <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
+                            <div className="flex items-center gap-2">
+                                <Award className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Specialty:</span>
+                            </div>
+                            <span className="font-bold">{coachDetails.specialty}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
+                            <div className="flex items-center gap-2">
+                                <Users className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Client Applications:</span>
+                            </div>
+                            <span className="font-bold">{applicationCount}</span>
+                        </div>
+                         <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary col-span-1 lg:col-span-3">
+                            <div className="flex items-center gap-2">
+                                <Star className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Your Rating:</span>
+                            </div>
+                            <StarRating rating={coachDetails.rating} />
+                        </div>
+                    </div>
+                    <Button asChild className="w-full">
+                        <Link href="/admin/coaches">Go to Admin Dashboard</Link>
+                    </Button>
+                </CardContent>
+            </Card>
+        );
+    };
+
+    const renderClientView = () => {
+         if (!result || result === 'invalid') return null;
+
+         return (
+             <Card>
+                <CardHeader>
+                    <div className="flex items-center gap-3 text-green-700 dark:text-green-400">
+                        <CheckCircle className="h-8 w-8" />
+                        <CardTitle className="text-2xl">Membership Active!</CardTitle>
+                    </div>
+                    <CardDescription>
+                        Welcome, {result.customerName}! Here is your personalized supplement guide.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
+                            <div className="flex items-center gap-2">
+                                <Award className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Membership Type:</span>
+                            </div>
+                            <span className="font-bold">{result.type}</span>
+                        </div>
+                            {result.coachingPlan && (
+                            <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
+                                <div className="flex items-center gap-2">
+                                    <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+                                    <span className="font-medium">Coaching Plan:</span>
+                                </div>
+                                <span className="font-bold">{result.coachingPlan}</span>
+                            </div>
+                            )}
+                            {result.goal && (
+                            <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
+                                <div className="flex items-center gap-2">
+                                    <Info className="h-4 w-4 text-muted-foreground" />
+                                    <span className="font-medium">Primary Goal:</span>
+                                </div>
+                                <span className="font-bold">{result.goal}</span>
+                            </div>
+                            )}
+                            {result.expiresAt && getDaysLeft(result.expiresAt) !== null && (
+                                <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
+                                <div className="flex items-center gap-2">
+                                    <CalendarClock className="h-4 w-4 text-muted-foreground" />
+                                    <span className="font-medium">Days Left:</span>
+                                </div>
+                                <span className="font-bold">{getDaysLeft(result.expiresAt)} days</span>
+                            </div>
+                            )}
+                    </div>
+                    <Separator />
+                    <div>
+                        <h3 className="font-semibold text-lg mb-4">Your Supplement Guide</h3>
+                        {result.recommendedProducts.length > 0 ? (
+                            <SupplementGuideTable recommendations={result.recommendedProducts} />
+                        ) : (
+                            <p className="text-center text-muted-foreground py-4">No specific recommendations have been added for you yet. Check back soon!</p>
+                        )}
+                    </div>
+                </CardContent>
+            </Card>
+         );
+    };
+
     return (
         <div className="container mx-auto px-4 py-12 md:py-16">
             <div className="max-w-2xl mx-auto">
@@ -141,64 +285,7 @@ export default function MembershipPage() {
                                 </CardContent>
                             </Card>
                         ) : (
-                            <Card>
-                                <CardHeader>
-                                    <div className="flex items-center gap-3 text-green-700 dark:text-green-400">
-                                        <CheckCircle className="h-8 w-8" />
-                                        <CardTitle className="text-2xl">Membership Active!</CardTitle>
-                                    </div>
-                                    <CardDescription>
-                                        Welcome, {result.customerName}! Here is your personalized supplement guide.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-6">
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
-                                            <div className="flex items-center gap-2">
-                                                <Award className="h-4 w-4 text-muted-foreground" />
-                                                <span className="font-medium">Membership Type:</span>
-                                            </div>
-                                            <span className="font-bold">{result.type}</span>
-                                        </div>
-                                         {result.coachingPlan && (
-                                            <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
-                                                <div className="flex items-center gap-2">
-                                                    <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-                                                    <span className="font-medium">Coaching Plan:</span>
-                                                </div>
-                                                <span className="font-bold">{result.coachingPlan}</span>
-                                            </div>
-                                         )}
-                                         {result.goal && (
-                                            <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
-                                                <div className="flex items-center gap-2">
-                                                    <Info className="h-4 w-4 text-muted-foreground" />
-                                                    <span className="font-medium">Primary Goal:</span>
-                                                </div>
-                                                <span className="font-bold">{result.goal}</span>
-                                            </div>
-                                         )}
-                                         {result.expiresAt && getDaysLeft(result.expiresAt) !== null && (
-                                             <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
-                                                <div className="flex items-center gap-2">
-                                                    <CalendarClock className="h-4 w-4 text-muted-foreground" />
-                                                    <span className="font-medium">Days Left:</span>
-                                                </div>
-                                                <span className="font-bold">{getDaysLeft(result.expiresAt)} days</span>
-                                            </div>
-                                         )}
-                                    </div>
-                                    <Separator />
-                                    <div>
-                                        <h3 className="font-semibold text-lg mb-4">Your Supplement Guide</h3>
-                                        {result.recommendedProducts.length > 0 ? (
-                                           <SupplementGuideTable recommendations={result.recommendedProducts} />
-                                        ) : (
-                                            <p className="text-center text-muted-foreground py-4">No specific recommendations have been added for you yet. Check back soon!</p>
-                                        )}
-                                    </div>
-                                </CardContent>
-                            </Card>
+                             result.type === 'Coach/Expert' ? renderCoachView() : renderClientView()
                         )}
                      </div>
                 )}
