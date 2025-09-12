@@ -151,7 +151,7 @@ export default function AdminFinancePage() {
                                 DZD {grossProfit.toFixed(2)}
                             </div>
                         )}
-                        <p className="text-xs text-muted-foreground">Revenue - COGS</p>
+                        <p className="text-xs text-muted-foreground">Revenue - Cost of Goods</p>
                     </CardContent>
                 </Card>
                 <Card>
