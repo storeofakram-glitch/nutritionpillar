@@ -420,7 +420,7 @@ export default function MembershipPage() {
                                         Checking...
                                     </>
                                 ) : (
-                                    "Check Status"
+                                    "Check"
                                 )}
                             </Button>
                         </form>
@@ -447,3 +447,4 @@ export default function MembershipPage() {
         </div>
     );
 }
+
