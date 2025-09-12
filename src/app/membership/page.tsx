@@ -164,9 +164,6 @@ export default function MembershipPage() {
                             <StarRating rating={coachDetails.rating} />
                         </div>
                     </div>
-                    <Button asChild className="w-full">
-                        <Link href="/admin/coaches">Go to Admin Dashboard</Link>
-                    </Button>
                 </CardContent>
             </Card>
         );
@@ -293,3 +290,5 @@ export default function MembershipPage() {
         </div>
     );
 }
+
+    
