@@ -86,6 +86,7 @@ export default function Home() {
   }
 
   const { hero, marquee, adBanner, partnershipLogos } = siteSettings;
+  const isAdBannerLinkExternal = adBanner.buttonLink?.startsWith('http');
 
   return (
     <div className="flex flex-col">
@@ -201,7 +202,11 @@ export default function Home() {
                 </div>
 
                 <Button asChild size="lg" className="font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
-                    <Link href={adBanner.buttonLink}>
+                    <Link 
+                        href={adBanner.buttonLink}
+                        target={isAdBannerLinkExternal ? '_blank' : undefined}
+                        rel={isAdBannerLinkExternal ? 'noopener noreferrer' : undefined}
+                    >
                         {adBanner.buttonText}
                         <ArrowRight className="ml-2 h-5 w-5" />
                     </Link>
