@@ -75,27 +75,6 @@ export async function findMembershipByCode(code: string): Promise<MembershipWith
     };
 }
 
-
-/**
- * Finds a coaching membership by the coach's name.
- * @param coachName The name of the coach.
- * @returns A promise that resolves to the membership object or null if not found.
- */
-export async function getMembershipByCoachName(coachName: string): Promise<Membership | null> {
-    const q = query(membershipsCollection, where('type', '==', 'Coaching'), where('customerName', '==', coachName));
-    const snapshot = await getDocs(q);
-
-    if (snapshot.empty) {
-        console.warn(`No coaching membership found for coach: ${coachName}`);
-        return null;
-    }
-    
-    // Assuming one coach has one coaching membership
-    const doc = snapshot.docs[0];
-    return { id: doc.id, ...doc.data() } as Membership;
-}
-
-
 /**
  * Adds a new membership document to the database.
  * @param membership The membership data to add.

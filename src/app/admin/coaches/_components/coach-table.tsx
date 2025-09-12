@@ -21,10 +21,6 @@ import type { Coach, Membership } from "@/types";
 import EditCoachDialog from "./edit-coach-dialog";
 import DeleteCoachDialog from "./delete-coach-dialog";
 import ApplicationList from "./application-list";
-import { getNewApplicationsCountByCoach } from "@/services/application-service";
-import { getMembershipByCoachName } from "@/services/membership-service";
-import EditMembershipDialog from "../../membership/_components/edit-membership-dialog";
-import { useToast } from "@/hooks/use-toast";
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center">
@@ -45,11 +41,8 @@ const StarRating = ({ rating }: { rating: number }) => (
 export default function CoachTable({ data, isLoading, onDataChange }: CoachTableProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isEditMembershipOpen, setIsEditMembershipOpen] = useState(false);
   
   const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
-  const [selectedMembership, setSelectedMembership] = useState<Membership | null>(null);
-  const { toast } = useToast();
 
   const handleEdit = (coach: Coach) => {
     setSelectedCoach(coach);
@@ -61,26 +54,10 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
     setIsDeleteDialogOpen(true);
   };
 
-  const handleEditMembership = async (coach: Coach) => {
-    const membership = await getMembershipByCoachName(coach.name);
-    if (membership) {
-        setSelectedMembership(membership);
-        setIsEditMembershipOpen(true);
-    } else {
-        toast({
-            variant: "destructive",
-            title: "Membership Not Found",
-            description: `Could not find a coaching membership for ${coach.name}.`,
-        });
-    }
-  };
-
   const onDialogClose = () => {
     setIsEditDialogOpen(false);
     setIsDeleteDialogOpen(false);
-    setIsEditMembershipOpen(false);
     setSelectedCoach(null);
-    setSelectedMembership(null);
     onDataChange();
   };
 
@@ -139,7 +116,6 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem onSelect={() => handleEdit(coach)}>Edit Details</DropdownMenuItem>
-                      <DropdownMenuItem onSelect={() => handleEditMembership(coach)}>Edit Supplement Guide</DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onSelect={() => handleDelete(coach)} className="text-red-500">
                         Delete
@@ -175,15 +151,6 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
             onDialogClose={onDialogClose}
           />
         </>
-      )}
-
-      {selectedMembership && (
-        <EditMembershipDialog
-            isOpen={isEditMembershipOpen}
-            onOpenChange={setIsEditMembershipOpen}
-            membership={selectedMembership}
-            onDialogClose={onDialogClose}
-        />
       )}
     </>
   );
