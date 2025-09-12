@@ -173,7 +173,7 @@ export default function MembershipPage() {
                         <CardTitle className="text-2xl">Membership Active!</CardTitle>
                     </div>
                     <CardDescription>
-                        Welcome, {result.customerName}! Here are your professional stats.
+                        Welcome, {result.customerName}! Here is your professional stats.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -447,5 +447,3 @@ export default function MembershipPage() {
         </div>
     );
 }
-
-    
