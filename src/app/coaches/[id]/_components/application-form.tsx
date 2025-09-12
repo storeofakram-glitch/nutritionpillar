@@ -11,13 +11,20 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useToast } from '@/hooks/use-toast';
 import { addSubmission } from '@/services/contact-service';
 import type { Plan } from '@/types';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const applicationFormSchema = z.object({
   name: z.string().min(2, "Name is required."),
   email: z.string().email("Please enter a valid email."),
   phone: z.string().min(10, "Please enter a valid phone number."),
+  age: z.coerce.number().int().positive("Age must be a positive number."),
+  weight: z.coerce.number().positive("Weight must be a positive number."),
+  height: z.coerce.number().int().positive("Height must be a positive number."),
+  goal: z.string().min(10, "Goal must be at least 10 characters."),
+  duration: z.enum(['1 month', '3 months', '6 months', '1 year'], { required_error: "Please select a duration." }),
   message: z.string().optional(),
 });
+
 
 type ApplicationFormValues = z.infer<typeof applicationFormSchema>;
 
@@ -31,12 +38,31 @@ export function ApplicationForm({ plan, coachName, onSuccess }: ApplicationFormP
   const { toast } = useToast();
   const form = useForm<ApplicationFormValues>({
     resolver: zodResolver(applicationFormSchema),
-    defaultValues: { name: '', email: '', phone: '', message: '' },
+    defaultValues: { name: '', email: '', phone: '' },
   });
 
   const onSubmit = async (data: ApplicationFormValues) => {
     const subject = `Coaching Application: ${plan.title} - ${coachName}`;
-    const result = await addSubmission({ ...data, subject });
+    const messageBody = `
+      A new application has been submitted for the "${plan.title}" plan with ${coachName}.
+
+      Applicant Details:
+      - Name: ${data.name}
+      - Email: ${data.email}
+      - Phone: ${data.phone}
+      - Age: ${data.age}
+      - Weight: ${data.weight} kg
+      - Height: ${data.height} cm
+      - Duration: ${data.duration}
+      
+      Goal:
+      ${data.goal}
+
+      Additional Message:
+      ${data.message || "None"}
+    `;
+
+    const result = await addSubmission({ name: data.name, email: data.email, subject, message: messageBody });
 
     if (result.success) {
       toast({
@@ -80,11 +106,60 @@ export function ApplicationForm({ plan, coachName, onSuccess }: ApplicationFormP
             )}
             />
         </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+           <FormField
+            control={form.control}
+            name="age"
+            render={({ field }) => (
+                <FormItem><FormLabel>Age</FormLabel><FormControl><Input type="number" placeholder="e.g., 25" {...field} /></FormControl><FormMessage /></FormItem>
+            )}
+            />
+             <FormField
+            control={form.control}
+            name="weight"
+            render={({ field }) => (
+                <FormItem><FormLabel>Weight (kg)</FormLabel><FormControl><Input type="number" placeholder="e.g., 80" {...field} /></FormControl><FormMessage /></FormItem>
+            )}
+            />
+             <FormField
+            control={form.control}
+            name="height"
+            render={({ field }) => (
+                <FormItem><FormLabel>Height (cm)</FormLabel><FormControl><Input type="number" placeholder="e.g., 180" {...field} /></FormControl><FormMessage /></FormItem>
+            )}
+            />
+        </div>
+        <FormField
+            control={form.control}
+            name="duration"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>Coaching Duration</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl><SelectTrigger><SelectValue placeholder="Select a duration" /></SelectTrigger></FormControl>
+                    <SelectContent>
+                        <SelectItem value="1 month">1 Month</SelectItem>
+                        <SelectItem value="3 months">3 Months</SelectItem>
+                        <SelectItem value="6 months">6 Months</SelectItem>
+                        <SelectItem value="1 year">1 Year</SelectItem>
+                    </SelectContent>
+                </Select>
+                <FormMessage />
+                </FormItem>
+            )}
+        />
+        <FormField
+          control={form.control}
+          name="goal"
+          render={({ field }) => (
+            <FormItem><FormLabel>Your Fitness Goal</FormLabel><FormControl><Textarea placeholder="Briefly describe what you want to achieve (e.g., lose fat, gain muscle, improve performance)." {...field} rows={3} /></FormControl><FormMessage /></FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="message"
           render={({ field }) => (
-            <FormItem><FormLabel>Message (Optional)</FormLabel><FormControl><Textarea placeholder="Any questions or additional information..." {...field} rows={4} /></FormControl><FormMessage /></FormItem>
+            <FormItem><FormLabel>Additional Message (Optional)</FormLabel><FormControl><Textarea placeholder="Any questions or extra information..." {...field} rows={3} /></FormControl><FormMessage /></FormItem>
           )}
         />
         <Button type="submit" disabled={form.formState.isSubmitting} className="w-full">
