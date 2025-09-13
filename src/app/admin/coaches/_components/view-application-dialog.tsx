@@ -12,9 +12,10 @@ import {
 import { Button } from "@/components/ui/button"
 import type { CoachingApplication } from "@/types"
 import { format } from "date-fns"
-import { Mail } from "lucide-react"
+import { Mail, MessageSquare } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Link from "next/link";
 
 interface ViewApplicationDialogProps {
     isOpen: boolean;
@@ -62,6 +63,12 @@ export default function ViewApplicationDialog({ isOpen, onOpenChange, applicatio
               <Mail className="mr-2 h-4 w-4" />
               Reply via Email
             </a>
+          </Button>
+           <Button asChild variant="secondary">
+            <Link href={`https://wa.me/${applicant.phone.replace(/\\D/g, '')}`} target="_blank" rel="noopener noreferrer">
+              <MessageSquare className="mr-2 h-4 w-4" />
+              Contact via WhatsApp
+            </Link>
           </Button>
         </DialogFooter>
       </DialogContent>
