@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import type { Coach, Plan } from '@/types';
@@ -37,7 +38,12 @@ const PlanIcon = ({ iconName }: { iconName: string }) => {
 }
 
 const PlanCard = ({ plan, coachId, coachName }: { plan: Plan; coachId: string; coachName: string }) => (
-    <Card className="flex flex-col text-center">
+    <Card className="relative flex flex-col text-center overflow-hidden">
+         {plan.icon === 'Online Coaching' && (
+            <Badge className="absolute top-0 right-[-35px] rotate-45 w-40 justify-center py-1 bg-primary text-primary-foreground font-bold">
+                Most Popular
+            </Badge>
+        )}
         <CardHeader>
             <div className="mx-auto bg-primary/10 p-4 rounded-full">
                 <PlanIcon iconName={plan.icon} />
