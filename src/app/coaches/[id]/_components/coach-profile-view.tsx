@@ -90,7 +90,7 @@ export default function CoachProfileView({ coach }: { coach: Coach }) {
         <div className="container mx-auto px-4 py-12 md:py-16">
             <div className="grid md:grid-cols-3 gap-8 md:gap-12">
                 <div className="md:col-span-1">
-                     <Card className="p-4 sticky top-24">
+                     <Card className="p-4 sticky top-24 shadow-lg shadow-primary/20">
                         <div className="flex flex-col items-center text-center">
                             <div className="relative h-48 w-48 mb-4 rounded-full overflow-hidden shadow-lg">
                                 <Image
