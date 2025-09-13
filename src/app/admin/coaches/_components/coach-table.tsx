@@ -34,7 +34,7 @@ const StarRating = ({ rating }: { rating: number }) => (
             } else if (ratingValue - 0.5 <= rating) {
                 return <StarHalf key={i} className="h-4 w-4 text-yellow-400 fill-yellow-400" />;
             } else {
-                return <Star key={i} className="h-4 w-4 text-muted-foreground" />;
+                return <Star key={i} className="h-4 w-4 text-muted-foreground/30" />;
             }
         })}
     </div>
