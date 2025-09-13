@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Star, Award, Dumbbell, Zap, HeartPulse, Rocket, StarHalf } from 'lucide-react';
+import { Star, Award, Dumbbell, Zap, HeartPulse, Rocket, StarHalf, Check } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import ApplyDialog from './apply-dialog';
 
@@ -45,7 +45,14 @@ const PlanCard = ({ plan, coachId, coachName }: { plan: Plan; coachId: string; c
             <CardTitle className="font-headline pt-4">{plan.title}</CardTitle>
         </CardHeader>
         <CardContent className="flex-grow">
-            <CardDescription>{plan.description}</CardDescription>
+            <ul className="space-y-2 text-sm text-muted-foreground text-left">
+                {plan.description.split('\n').map((line, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 text-primary flex-shrink-0" />
+                        <span>{line}</span>
+                    </li>
+                ))}
+            </ul>
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
              <p className="text-2xl font-bold font-headline text-primary">
@@ -122,5 +129,3 @@ export default function CoachProfileView({ coach }: { coach: Coach }) {
         </div>
     );
 }
-
-    
