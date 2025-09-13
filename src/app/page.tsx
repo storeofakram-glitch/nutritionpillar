@@ -121,10 +121,10 @@ export default function Home() {
             {hero.description}
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button asChild size="lg" variant="outline" className="font-bold border-2 bg-transparent text-white hover:bg-white hover:text-primary">
+            <Button asChild size="lg" className="font-bold bg-primary/20 border-2 border-primary/50 text-white hover:bg-primary/40">
               <Link href={hero.buttonLink}>{hero.buttonText}</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="font-bold border-2 bg-transparent text-white hover:bg-white hover:text-primary">
+            <Button asChild size="lg" className="font-bold bg-primary/20 border-2 border-primary/50 text-white hover:bg-primary/40">
                 <Link href="#coaches">Find Your Coach</Link>
             </Button>
           </div>
