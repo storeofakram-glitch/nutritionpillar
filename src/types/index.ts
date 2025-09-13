@@ -11,6 +11,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -289,6 +290,11 @@ export type Coach = {
   personalInfo?: PersonalInfo;
   createdAt: string; // ISO 8601 string
 };
+
+export type CoachWithMembership = Coach & {
+    membershipCode?: string;
+};
+
 
 export type CoachingApplication = {
   id: string;

@@ -14,15 +14,16 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MoreHorizontal, Star, StarHalf, User } from "lucide-react";
+import { MoreHorizontal, Star, StarHalf, User, Copy } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { Coach, Membership } from "@/types";
+import type { CoachWithMembership } from "@/types";
 import EditCoachDialog from "./edit-coach-dialog";
 import DeleteCoachDialog from "./delete-coach-dialog";
 import ApplicationList from "./application-list";
 import ViewPersonalInfoDialog from "./view-personal-info-dialog";
 import AthleteList from "./athlete-list";
+import { useToast } from "@/hooks/use-toast";
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center">
@@ -41,23 +42,24 @@ const StarRating = ({ rating }: { rating: number }) => (
 
 
 export default function CoachTable({ data, isLoading, onDataChange }: CoachTableProps) {
+  const { toast } = useToast();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isPersonalInfoOpen, setIsPersonalInfoOpen] = useState(false);
   
-  const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
+  const [selectedCoach, setSelectedCoach] = useState<CoachWithMembership | null>(null);
 
-  const handleEdit = (coach: Coach) => {
+  const handleEdit = (coach: CoachWithMembership) => {
     setSelectedCoach(coach);
     setIsEditDialogOpen(true);
   };
   
-  const handleDelete = (coach: Coach) => {
+  const handleDelete = (coach: CoachWithMembership) => {
     setSelectedCoach(coach);
     setIsDeleteDialogOpen(true);
   };
   
-  const handleViewPersonalInfo = (coach: Coach) => {
+  const handleViewPersonalInfo = (coach: CoachWithMembership) => {
     setSelectedCoach(coach);
     setIsPersonalInfoOpen(true);
   };
@@ -69,6 +71,11 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
     setSelectedCoach(null);
     onDataChange();
   };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast({ title: "Copied!", description: "Membership code copied to clipboard." });
+  }
 
   const renderSkeleton = () => (
     Array.from({ length: 3 }).map((_, i) => (
@@ -91,6 +98,7 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
               <TableHead className="w-[80px]">Image</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Specialty</TableHead>
+              <TableHead>Code</TableHead>
               <TableHead>Rating</TableHead>
               <TableHead>Apps</TableHead>
               <TableHead>Athletes</TableHead>
@@ -108,6 +116,18 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
                 <TableCell className="font-medium">{coach.name}</TableCell>
                 <TableCell>
                     <Badge variant="outline">{coach.specialty}</Badge>
+                </TableCell>
+                <TableCell>
+                    {coach.membershipCode ? (
+                        <div className="flex items-center gap-2">
+                            <Badge variant="secondary">{coach.membershipCode}</Badge>
+                             <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(coach.membershipCode!)}>
+                                <Copy className="h-3.5 w-3.5" />
+                             </Button>
+                        </div>
+                    ) : (
+                        <Badge variant="destructive">N/A</Badge>
+                    )}
                 </TableCell>
                 <TableCell>
                     <StarRating rating={coach.rating} />
@@ -141,7 +161,7 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
             ))}
             {!isLoading && data.length === 0 && (
                 <TableRow>
-                    <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                    <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
                         No one found in this category.
                     </TableCell>
                 </TableRow>
@@ -176,7 +196,7 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
 }
 
 interface CoachTableProps {
-  data: Coach[];
+  data: CoachWithMembership[];
   isLoading: boolean;
   onDataChange: () => void;
 }

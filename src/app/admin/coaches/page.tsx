@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw, UserPlus, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getCoaches } from "@/services/coach-service";
-import type { Coach } from "@/types";
+import { getMemberships } from "@/services/membership-service";
+import type { Coach, Membership } from "@/types";
 import CoachTable from "./_components/coach-table";
 import AddCoachDialog from "./_components/add-coach-dialog";
 import { Input } from "@/components/ui/input";
@@ -16,20 +17,25 @@ import { Badge } from "@/components/ui/badge";
 
 export default function AdminCoachesPage() {
     const [coaches, setCoaches] = useState<Coach[]>([]);
+    const [memberships, setMemberships] = useState<Membership[]>([]);
     const [loading, setLoading] = useState(true);
     const [isPending, startTransition] = useTransition();
     const [searchTerm, setSearchTerm] = useState("");
     const { toast } = useToast();
 
-    const fetchCoaches = () => {
+    const fetchData = () => {
         setLoading(true);
         startTransition(async () => {
             try {
-                const fetchedCoaches = await getCoaches();
+                const [fetchedCoaches, fetchedMemberships] = await Promise.all([
+                    getCoaches(),
+                    getMemberships(),
+                ]);
                 setCoaches(fetchedCoaches);
+                setMemberships(fetchedMemberships);
             } catch (error) {
-                console.error("Failed to fetch coaches:", error);
-                toast({ variant: "destructive", title: "Error", description: "Could not fetch coaches." });
+                console.error("Failed to fetch data:", error);
+                toast({ variant: "destructive", title: "Error", description: "Could not fetch coaches or memberships." });
             } finally {
                 setLoading(false);
             }
@@ -37,11 +43,21 @@ export default function AdminCoachesPage() {
     };
     
     useEffect(() => {
-        fetchCoaches();
+        fetchData();
     }, []);
 
     const { coachList, expertList } = useMemo(() => {
-        const filtered = coaches.filter(c =>
+        const coachMemberships = new Map(memberships
+            .filter(m => m.type === 'Coach/Expert')
+            .map(m => [m.customerName, m.code])
+        );
+
+        const allPeople = coaches.map(coach => ({
+            ...coach,
+            membershipCode: coachMemberships.get(coach.name)
+        }));
+
+        const filtered = allPeople.filter(c =>
             c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             c.specialty.toLowerCase().includes(searchTerm.toLowerCase())
         );
@@ -49,7 +65,7 @@ export default function AdminCoachesPage() {
             coachList: filtered.filter(c => c.type === 'Coach'),
             expertList: filtered.filter(c => c.type === 'Expert')
         };
-    }, [coaches, searchTerm]);
+    }, [coaches, memberships, searchTerm]);
 
     return (
         <div className="space-y-6">
@@ -69,11 +85,11 @@ export default function AdminCoachesPage() {
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <Button variant="outline" size="icon" onClick={fetchCoaches} disabled={isPending}>
+                    <Button variant="outline" size="icon" onClick={fetchData} disabled={isPending}>
                         <RefreshCw className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
                         <span className="sr-only">Refresh</span>
                     </Button>
-                    <AddCoachDialog onCoachAdded={fetchCoaches} />
+                    <AddCoachDialog onCoachAdded={fetchData} />
                 </div>
             </div>
 
@@ -87,7 +103,7 @@ export default function AdminCoachesPage() {
                 </CardHeader>
                 <CardContent>
                     <ScrollArea className="h-[460px]">
-                        <CoachTable data={coachList} isLoading={loading} onDataChange={fetchCoaches} />
+                        <CoachTable data={coachList} isLoading={loading} onDataChange={fetchData} />
                     </ScrollArea>
                 </CardContent>
             </Card>
@@ -102,7 +118,7 @@ export default function AdminCoachesPage() {
                 </CardHeader>
                 <CardContent>
                      <ScrollArea className="h-[460px]">
-                        <CoachTable data={expertList} isLoading={loading} onDataChange={fetchCoaches} />
+                        <CoachTable data={expertList} isLoading={loading} onDataChange={fetchData} />
                     </ScrollArea>
                 </CardContent>
             </Card>
