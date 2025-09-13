@@ -15,11 +15,11 @@ const StarRating = ({ rating }: { rating: number }) => (
         {[...Array(5)].map((_, i) => {
             const ratingValue = i + 1;
             if (ratingValue <= rating) {
-                return <Star key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />;
+                return <Star key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400 stroke-white stroke-[0.5]" />;
             } else if (ratingValue - 0.5 <= rating) {
-                return <StarHalf key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400" />;
+                return <StarHalf key={i} className="h-5 w-5 text-yellow-400 fill-yellow-400 stroke-white stroke-[0.5]" />;
             } else {
-                return <Star key={i} className="h-5 w-5 text-muted-foreground/30" />;
+                return <Star key={i} className="h-5 w-5 text-muted-foreground/30 fill-muted-foreground/20 stroke-white stroke-[0.5]" />;
             }
         })}
          <span className="text-muted-foreground ml-1 text-sm">({rating.toFixed(1)})</span>
