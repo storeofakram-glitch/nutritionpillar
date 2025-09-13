@@ -342,12 +342,11 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
                                 <FormItem><FormLabel>City</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="City" /></FormControl><FormMessage /></FormItem>
                             )} />
                              <FormField control={form.control} name="personalInfo.state" render={({ field }) => (
-                                <FormItem><FormLabel>State (Wilaya)</FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value ?? ''}>
-                                    <FormControl><SelectTrigger><SelectValue placeholder="Select a state" /></SelectTrigger></FormControl>
-                                    <SelectContent>{dzStates.map(s => <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>)}</SelectContent>
-                                </Select>
-                                <FormMessage /></FormItem>
+                                <FormItem>
+                                    <FormLabel>State (Wilaya)</FormLabel>
+                                    <FormControl><Input {...field} value={field.value ?? ''} placeholder="State (Wilaya)" /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
                             )} />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
