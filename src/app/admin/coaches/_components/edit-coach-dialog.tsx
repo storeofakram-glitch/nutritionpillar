@@ -37,7 +37,9 @@ export default function EditCoachDialog({ isOpen, onOpenChange, coach, onDialogC
             Update the details for "{coach.name}".
           </DialogDescription>
         </DialogHeader>
-        <CoachForm coach={coach} onFormSubmit={onDialogClose} />
+         <ScrollArea className="max-h-[80vh]">
+            <CoachForm coach={coach} onFormSubmit={onDialogClose} />
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   )

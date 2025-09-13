@@ -21,7 +21,10 @@ import { addCoach, updateCoach } from "@/services/coach-service"
 import type { Coach } from "@/types"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dumbbell, PlusCircle, Trash2, Zap, HeartPulse, Rocket } from "lucide-react"
+import { Dumbbell, PlusCircle, Trash2, Zap, HeartPulse, Rocket, ChevronDown } from "lucide-react"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { cn } from "@/lib/utils"
+import { useState } from "react"
 
 const planSchema = z.object({
     icon: z.string().min(1, "Icon is required."),
@@ -62,6 +65,7 @@ const planIcons = [
 export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
   const { toast } = useToast()
   const isEditMode = !!coach;
+  const [openStates, setOpenStates] = useState<boolean[]>([]);
 
   const form = useForm<CoachFormValues>({
     resolver: zodResolver(coachSchema),
@@ -86,6 +90,14 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
     control: form.control,
     name: "plans"
   });
+
+  const handleOpenChange = (index: number, isOpen: boolean) => {
+    setOpenStates(currentStates => {
+      const newStates = [...currentStates];
+      newStates[index] = isOpen;
+      return newStates;
+    });
+  };
 
   async function onSubmit(data: CoachFormValues) {
     const coachData = {
@@ -218,61 +230,73 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
         <div className="space-y-3 p-4 border-2 border-primary/50 rounded-lg shadow-sm">
             <FormLabel>Coaching Plans (Optional)</FormLabel>
             {planFields.map((field, index) => (
-                <div key={field.id} className="p-4 border rounded-md space-y-4 relative bg-background">
-                    <Button type="button" variant="ghost" size="icon" onClick={() => removePlan(index)} className="absolute top-2 right-2">
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                    <FormField
-                        control={form.control}
-                        name={`plans.${index}.icon`}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Plan Icon</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl><SelectTrigger><SelectValue placeholder="Select an icon" /></SelectTrigger></FormControl>
-                                    <SelectContent>{planIcons.map(icon => <SelectItem key={icon.name} value={icon.name}>{icon.name}</SelectItem>)}</SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                     <FormField
-                        control={form.control} name={`plans.${index}.title`}
-                        render={({ field }) => ( <FormItem><FormLabel>Plan Title</FormLabel><FormControl><Input {...field} placeholder="e.g., Personal Training" /></FormControl><FormMessage /></FormItem> )}
-                     />
-                    <FormField
-                        control={form.control} name={`plans.${index}.description`}
-                        render={({ field }) => ( <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} placeholder="Briefly describe this plan" rows={3} /></FormControl><FormMessage /></FormItem> )}
-                     />
-                     <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                            control={form.control} name={`plans.${index}.price`}
-                            render={({ field }) => ( <FormItem><FormLabel>Price</FormLabel><FormControl><Input type="number" {...field} placeholder="e.g., 5000" /></FormControl><FormMessage /></FormItem> )}
-                        />
-                        <FormField
-                            control={form.control} name={`plans.${index}.pricePeriod`}
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Per</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl><SelectTrigger><SelectValue placeholder="Select period" /></SelectTrigger></FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="month">Month</SelectItem>
-                                        <SelectItem value="program">Program</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                     </div>
-                     <FormField
-                        control={form.control} name={`plans.${index}.applyLink`}
-                        render={({ field }) => ( <FormItem><FormLabel>Apply Link (Optional)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://example.com/apply" /></FormControl><FormMessage /></FormItem> )}
-                     />
-                </div>
+                <Collapsible key={field.id} open={openStates[index] || false} onOpenChange={(isOpen) => handleOpenChange(index, isOpen)}>
+                    <div className="border rounded-md bg-background">
+                         <div className="p-4 flex items-center justify-between">
+                            <CollapsibleTrigger className="flex items-center gap-2 text-left w-full">
+                                <span className="font-semibold">{form.getValues(`plans.${index}.title`) || `Plan ${index + 1}`}</span>
+                                <ChevronDown className={cn("h-5 w-5 transition-transform", openStates[index] && "rotate-180")} />
+                            </CollapsibleTrigger>
+                            <Button type="button" variant="ghost" size="icon" onClick={() => removePlan(index)}>
+                                <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                        </div>
+                        <CollapsibleContent>
+                            <div className="p-4 border-t space-y-4">
+                                <FormField
+                                    control={form.control}
+                                    name={`plans.${index}.icon`}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Plan Icon</FormLabel>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl><SelectTrigger><SelectValue placeholder="Select an icon" /></SelectTrigger></FormControl>
+                                                <SelectContent>{planIcons.map(icon => <SelectItem key={icon.name} value={icon.name}>{icon.name}</SelectItem>)}</SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control} name={`plans.${index}.title`}
+                                    render={({ field }) => ( <FormItem><FormLabel>Plan Title</FormLabel><FormControl><Input {...field} placeholder="e.g., Personal Training" /></FormControl><FormMessage /></FormItem> )}
+                                />
+                                <FormField
+                                    control={form.control} name={`plans.${index}.description`}
+                                    render={({ field }) => ( <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} placeholder="Briefly describe this plan" rows={3} /></FormControl><FormMessage /></FormItem> )}
+                                />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <FormField
+                                        control={form.control} name={`plans.${index}.price`}
+                                        render={({ field }) => ( <FormItem><FormLabel>Price</FormLabel><FormControl><Input type="number" {...field} placeholder="e.g., 5000" /></FormControl><FormMessage /></FormItem> )}
+                                    />
+                                    <FormField
+                                        control={form.control} name={`plans.${index}.pricePeriod`}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                            <FormLabel>Per</FormLabel>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl><SelectTrigger><SelectValue placeholder="Select period" /></SelectTrigger></FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="month">Month</SelectItem>
+                                                    <SelectItem value="program">Program</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <FormField
+                                    control={form.control} name={`plans.${index}.applyLink`}
+                                    render={({ field }) => ( <FormItem><FormLabel>Apply Link (Optional)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://example.com/apply" /></FormControl><FormMessage /></FormItem> )}
+                                />
+                            </div>
+                        </CollapsibleContent>
+                    </div>
+                </Collapsible>
             ))}
-            <Button type="button" variant="outline" size="sm" onClick={() => appendPlan({ icon: "Dumbbell", title: "", description: "", price: 0, pricePeriod: "month", applyLink: "" })}>
+            <Button type="button" variant="outline" size="sm" onClick={() => appendPlan({ icon: "Personal Training", title: "", description: "", price: 0, pricePeriod: "month", applyLink: "" })}>
                 <PlusCircle className="mr-2 h-4 w-4" /> Add Plan
             </Button>
         </div>
@@ -284,7 +308,3 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
     </Form>
   )
 }
-
-    
-
-    

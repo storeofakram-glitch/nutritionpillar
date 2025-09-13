@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { UserPlus } from "lucide-react"
 import { CoachForm } from "./coach-form"
 import { useState } from "react"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface AddCoachDialogProps {
   onCoachAdded: () => void;
@@ -34,14 +35,16 @@ export default function AddCoachDialog({ onCoachAdded }: AddCoachDialogProps) {
           Add Person
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Add New Coach or Expert</DialogTitle>
           <DialogDescription>
             Fill in the details to add a new person to your site.
           </DialogDescription>
         </DialogHeader>
-        <CoachForm onFormSubmit={handleFormSubmit} />
+        <ScrollArea className="max-h-[80vh]">
+            <CoachForm onFormSubmit={handleFormSubmit} />
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   )
