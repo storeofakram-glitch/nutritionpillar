@@ -57,7 +57,7 @@ const CoachCard = ({ person }: { person: Coach }) => {
             </div>
         </CardContent>
         <CardFooter className="p-4 pt-0">
-            <Button variant="outline" className="w-full hover:bg-primary hover:text-primary-foreground" asChild>
+            <Button variant="outline" className="w-full hover:bg-primary hover:text-primary-foreground border-primary/50" asChild>
                 <Link href={`/coaches/${person.id}`}>View Details</Link>
             </Button>
         </CardFooter>
