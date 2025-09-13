@@ -116,6 +116,22 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
                 const existingMembership = await findMembershipByApplicationId(id);
 
                 if (!existingMembership) {
+                    let durationInDays = 0;
+                    switch (application.applicant.duration) {
+                        case '1 month':
+                            durationInDays = 30;
+                            break;
+                        case '3 months':
+                            durationInDays = 90;
+                            break;
+                        case '6 months':
+                            durationInDays = 180;
+                            break;
+                        case '1 year':
+                            durationInDays = 365;
+                            break;
+                    }
+
                     await addMembership({
                         applicationId: id,
                         customerName: application.applicant.name,
@@ -125,6 +141,7 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
                         coachName: application.coachName,
                         goal: application.applicant.goal,
                         type: 'Coaching',
+                        membershipDurationDays: durationInDays
                     });
                 }
             }
