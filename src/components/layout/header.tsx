@@ -71,8 +71,8 @@ export default function Header() {
                 </SheetTrigger>
                 <SheetContent side="left" className="w-full max-w-xs sm:max-w-sm bg-background text-foreground flex flex-col">
                     <SheetHeader>
-                        <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                        <Link href="/" className="flex items-center space-x-2">
+                        <SheetTitle>Menu</SheetTitle>
+                        <Link href="/" className="flex items-center space-x-2 pt-4">
                           <Image
                             src="https://github.com/akramFit/Nutrition-Pillar-Assets/blob/main/logo%20nutrition%20pillar.png?raw=true"
                             alt="Nutrition Pillar Logo"
