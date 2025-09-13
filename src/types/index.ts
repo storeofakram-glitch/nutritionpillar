@@ -10,6 +10,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -235,6 +236,7 @@ export type Membership = {
   customerEmail?: string;
   customerPhone?: string; // Added field for loyalty members
   coachingPlan?: string;
+  coachName?: string;
   goal?: string;
   recommendedProducts: RecommendedProduct[];
   createdAt: string; // ISO 8601 string
@@ -308,4 +310,6 @@ export type CoachingApplication = {
   createdAt: string; // ISO 8601 string
   status: 'new' | 'read' | 'contacted' | 'rejected' | 'active';
 };
+    
+
     

@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { findMembershipByCode } from '@/services/membership-service';
 import type { RecommendedProduct, MembershipWithProducts, Coach, CoachingApplication } from '@/types';
-import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users, Mail, MessageSquare } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users, Mail, MessageSquare, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
@@ -327,33 +327,42 @@ export default function MembershipPage() {
                             </div>
                             <span className="font-bold">{result.type}</span>
                         </div>
-                            {result.coachingPlan && (
+                        {result.coachName && (
                             <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
                                 <div className="flex items-center gap-2">
-                                    <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-                                    <span className="font-medium">Coaching Plan:</span>
+                                    <User className="h-4 w-4 text-muted-foreground" />
+                                    <span className="font-medium">Your Coach:</span>
                                 </div>
-                                <span className="font-bold">{result.coachingPlan}</span>
+                                <span className="font-bold">{result.coachName}</span>
                             </div>
-                            )}
-                            {result.goal && (
+                        )}
+                        {result.coachingPlan && (
+                        <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
+                            <div className="flex items-center gap-2">
+                                <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Coaching Plan:</span>
+                            </div>
+                            <span className="font-bold">{result.coachingPlan}</span>
+                        </div>
+                        )}
+                        {result.goal && (
+                        <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
+                            <div className="flex items-center gap-2">
+                                <Info className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Primary Goal:</span>
+                            </div>
+                            <span className="font-bold">{result.goal}</span>
+                        </div>
+                        )}
+                        {result.expiresAt && getDaysLeft(result.expiresAt) !== null && (
                             <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
-                                <div className="flex items-center gap-2">
-                                    <Info className="h-4 w-4 text-muted-foreground" />
-                                    <span className="font-medium">Primary Goal:</span>
-                                </div>
-                                <span className="font-bold">{result.goal}</span>
+                            <div className="flex items-center gap-2">
+                                <CalendarClock className="h-4 w-4 text-muted-foreground" />
+                                <span className="font-medium">Days Left:</span>
                             </div>
-                            )}
-                            {result.expiresAt && getDaysLeft(result.expiresAt) !== null && (
-                                <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
-                                <div className="flex items-center gap-2">
-                                    <CalendarClock className="h-4 w-4 text-muted-foreground" />
-                                    <span className="font-medium">Days Left:</span>
-                                </div>
-                                <span className="font-bold">{getDaysLeft(result.expiresAt)} days</span>
-                            </div>
-                            )}
+                            <span className="font-bold">{getDaysLeft(result.expiresAt)} days</span>
+                        </div>
+                        )}
                     </div>
                     <Separator />
                     <div>
@@ -448,3 +457,5 @@ export default function MembershipPage() {
         </div>
     );
 }
+
+    

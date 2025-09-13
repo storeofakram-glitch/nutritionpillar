@@ -1,7 +1,8 @@
 
+
 'use server';
 
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, where, orderBy, getCountFromServer } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, where, orderBy, getCountFromServer, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { CoachingApplication } from '@/types';
 import { revalidatePath } from 'next/cache';
@@ -107,9 +108,9 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
 
         // If the status is 'active', create a membership for the client
         if (status === 'active') {
-            const appDoc = await getDocs(query(applicationsCollection, where('__name__', '==', id)));
-            if (!appDoc.empty) {
-                const application = appDoc.docs[0].data() as CoachingApplication;
+            const appDoc = await getDoc(docRef);
+            if (appDoc.exists()) {
+                const application = appDoc.data() as CoachingApplication;
                 
                 // Check if a membership already exists for this application
                 const existingMembership = await findMembershipByApplicationId(id);
@@ -121,6 +122,7 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
                         customerEmail: application.applicant.email,
                         customerPhone: application.applicant.phone,
                         coachingPlan: application.planTitle,
+                        coachName: application.coachName,
                         goal: application.applicant.goal,
                         type: 'Coaching',
                     });
@@ -153,3 +155,5 @@ export async function deleteApplication(id: string) {
         return { success: false, error: (error as Error).message };
     }
 }
+
+    
