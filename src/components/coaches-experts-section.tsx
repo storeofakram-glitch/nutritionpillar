@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { getCoaches } from "@/services/coach-service";
@@ -129,7 +130,7 @@ export default function CoachesExpertsSection() {
   
   if (loading) {
     return (
-        <section className="py-12 md:py-16 bg-background">
+        <section id="coaches" className="py-12 md:py-16 bg-background">
             <div className="container mx-auto px-4">
                  <div className="text-center mb-10">
                     <Skeleton className="h-6 w-48 mx-auto" />
@@ -152,7 +153,7 @@ export default function CoachesExpertsSection() {
   }
 
   return (
-    <section className="py-12 md:py-16 bg-background">
+    <section id="coaches" className="py-12 md:py-16 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
             <p className="text-sm font-bold text-muted-foreground tracking-widest uppercase">Our Team</p>

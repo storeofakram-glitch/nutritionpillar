@@ -120,9 +120,12 @@ export default function Home() {
           <p className="text-lg md:text-xl max-w-2xl mb-8">
             {hero.description}
           </p>
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <Button asChild size="lg" className="font-bold">
               <Link href={hero.buttonLink}>{hero.buttonText}</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="font-bold border-2 bg-transparent text-white hover:bg-white hover:text-primary">
+                <Link href="#coaches">Find Your Coach</Link>
             </Button>
           </div>
         </div>
