@@ -12,6 +12,7 @@ import CoachTable from "./_components/coach-table";
 import AddCoachDialog from "./_components/add-coach-dialog";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 
 export default function AdminCoachesPage() {
     const [coaches, setCoaches] = useState<Coach[]>([]);
@@ -78,7 +79,10 @@ export default function AdminCoachesPage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Coaches</CardTitle>
+                    <div className="flex items-center gap-2">
+                        <CardTitle>Coaches</CardTitle>
+                        <Badge variant="secondary">{coachList.length}</Badge>
+                    </div>
                     <CardDescription>Manage the coaches displayed on the homepage.</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -90,7 +94,10 @@ export default function AdminCoachesPage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Experts</CardTitle>
+                    <div className="flex items-center gap-2">
+                        <CardTitle>Experts</CardTitle>
+                        <Badge variant="secondary">{expertList.length}</Badge>
+                    </div>
                     <CardDescription>Manage the experts displayed on the homepage.</CardDescription>
                 </CardHeader>
                 <CardContent>
