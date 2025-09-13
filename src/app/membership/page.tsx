@@ -306,15 +306,20 @@ export default function MembershipPage() {
     const renderClientView = () => {
          if (!result || result === 'invalid') return null;
 
+         const daysLeft = getDaysLeft(result.expiresAt);
+         const isActive = daysLeft === null || daysLeft > 0;
+
          return (
              <Card>
                 <CardHeader>
                     <CardTitle className="text-2xl font-headline text-primary">
                         Welcome, {result.customerName}!
                     </CardTitle>
-                    <CardDescription className="flex items-center gap-2 pt-1">
-                        <CheckCircle className="h-5 w-5 text-green-500" />
-                        Membership Active! Here is your personalized guide.
+                    <CardDescription className="flex items-center gap-3 pt-1">
+                        <span>Membership Details:</span>
+                        <Badge variant={isActive ? "default" : "destructive"}>
+                           {isActive ? "Active" : "Inactive"}
+                        </Badge>
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -353,13 +358,13 @@ export default function MembershipPage() {
                             <span className="font-bold">{result.goal}</span>
                         </div>
                         )}
-                        {result.expiresAt && getDaysLeft(result.expiresAt) !== null && (
+                        {daysLeft !== null && (
                             <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
                             <div className="flex items-center gap-2">
                                 <CalendarClock className="h-4 w-4 text-muted-foreground" />
                                 <span className="font-medium">Days Left:</span>
                             </div>
-                            <span className="font-bold">{getDaysLeft(result.expiresAt)} days</span>
+                            <span className="font-bold">{daysLeft} days</span>
                         </div>
                         )}
                     </div>
