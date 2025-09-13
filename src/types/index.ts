@@ -8,6 +8,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -261,6 +262,16 @@ export type Plan = {
   applyLink?: string;
 };
 
+export type PersonalInfo = {
+    email?: string;
+    phone?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    nationality?: string;
+};
+
 export type Coach = {
   id: string;
   name: string;
@@ -271,6 +282,7 @@ export type Coach = {
   bio?: string;
   certifications?: string[];
   plans?: Plan[];
+  personalInfo?: PersonalInfo;
   createdAt: string; // ISO 8601 string
 };
 

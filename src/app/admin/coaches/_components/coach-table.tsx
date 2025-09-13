@@ -21,6 +21,7 @@ import type { Coach, Membership } from "@/types";
 import EditCoachDialog from "./edit-coach-dialog";
 import DeleteCoachDialog from "./delete-coach-dialog";
 import ApplicationList from "./application-list";
+import ViewPersonalInfoDialog from "./view-personal-info-dialog";
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center">
@@ -41,6 +42,7 @@ const StarRating = ({ rating }: { rating: number }) => (
 export default function CoachTable({ data, isLoading, onDataChange }: CoachTableProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isPersonalInfoOpen, setIsPersonalInfoOpen] = useState(false);
   
   const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
 
@@ -53,10 +55,16 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
     setSelectedCoach(coach);
     setIsDeleteDialogOpen(true);
   };
+  
+  const handleViewPersonalInfo = (coach: Coach) => {
+    setSelectedCoach(coach);
+    setIsPersonalInfoOpen(true);
+  };
 
   const onDialogClose = () => {
     setIsEditDialogOpen(false);
     setIsDeleteDialogOpen(false);
+    setIsPersonalInfoOpen(false);
     setSelectedCoach(null);
     onDataChange();
   };
@@ -116,6 +124,7 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem onSelect={() => handleEdit(coach)}>Edit Details</DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => handleViewPersonalInfo(coach)}>View Personal Info</DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onSelect={() => handleDelete(coach)} className="text-red-500">
                         Delete
@@ -149,6 +158,11 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
             onOpenChange={setIsDeleteDialogOpen}
             coach={selectedCoach}
             onDialogClose={onDialogClose}
+          />
+          <ViewPersonalInfoDialog
+            isOpen={isPersonalInfoOpen}
+            onOpenChange={setIsPersonalInfoOpen}
+            coach={selectedCoach}
           />
         </>
       )}

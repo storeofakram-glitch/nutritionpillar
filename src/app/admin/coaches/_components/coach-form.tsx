@@ -21,10 +21,12 @@ import { addCoach, updateCoach } from "@/services/coach-service"
 import type { Coach } from "@/types"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dumbbell, PlusCircle, Trash2, Zap, HeartPulse, Rocket, ChevronDown } from "lucide-react"
+import { Dumbbell, PlusCircle, Trash2, Zap, HeartPulse, Rocket, ChevronDown, Info } from "lucide-react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
+import { countryCodes } from "@/lib/country-codes"
+import { dzStates } from "@/lib/dz-states"
 
 const planSchema = z.object({
     icon: z.string().min(1, "Icon is required."),
@@ -33,6 +35,16 @@ const planSchema = z.object({
     price: z.coerce.number().min(0, "Price must be a non-negative number."),
     pricePeriod: z.enum(['month', 'program']),
     applyLink: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
+});
+
+const personalInfoSchema = z.object({
+    email: z.string().email("Invalid email address.").optional().or(z.literal('')),
+    phone: z.string().optional(),
+    address: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    country: z.string().optional(),
+    nationality: z.string().optional(),
 });
 
 const coachSchema = z.object({
@@ -44,6 +56,7 @@ const coachSchema = z.object({
   bio: z.string().optional(),
   certifications: z.array(z.object({ value: z.string().min(1, "Certification cannot be empty.") })).optional(),
   plans: z.array(planSchema).optional(),
+  personalInfo: personalInfoSchema.optional(),
 })
 
 type CoachFormValues = z.infer<typeof coachSchema>
@@ -66,6 +79,7 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
   const { toast } = useToast()
   const isEditMode = !!coach;
   const [openStates, setOpenStates] = useState<boolean[]>([]);
+  const [isPersonalInfoOpen, setIsPersonalInfoOpen] = useState(false);
 
   const form = useForm<CoachFormValues>({
     resolver: zodResolver(coachSchema),
@@ -78,6 +92,7 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
       bio: coach?.bio || "",
       certifications: coach?.certifications?.map(c => ({ value: c })) || [{ value: "" }],
       plans: coach?.plans?.map(p => ({ ...p, applyLink: p.applyLink || '' })) || [],
+      personalInfo: coach?.personalInfo || {},
     },
   })
 
@@ -104,6 +119,7 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
         ...data,
         certifications: data.certifications?.map(c => c.value).filter(Boolean),
         plans: data.plans,
+        personalInfo: data.personalInfo,
     };
     
     const result = isEditMode
@@ -300,6 +316,62 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
                 <PlusCircle className="mr-2 h-4 w-4" /> Add Plan
             </Button>
         </div>
+
+        <Collapsible open={isPersonalInfoOpen} onOpenChange={setIsPersonalInfoOpen}>
+            <div className="border rounded-lg">
+                <div className="p-4 flex items-center justify-between">
+                    <CollapsibleTrigger className="flex items-center gap-2 text-left w-full">
+                        <Info className="h-5 w-5 text-muted-foreground" />
+                        <span className="font-semibold">Personal Information (Private)</span>
+                        <ChevronDown className={cn("h-5 w-5 transition-transform", isPersonalInfoOpen && "rotate-180")} />
+                    </CollapsibleTrigger>
+                </div>
+                <CollapsibleContent>
+                    <div className="p-4 border-t space-y-4">
+                        <FormField control={form.control} name="personalInfo.email" render={({ field }) => (
+                            <FormItem><FormLabel>Email</FormLabel><FormControl><Input type="email" {...field} value={field.value ?? ''} placeholder="Private contact email" /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={form.control} name="personalInfo.phone" render={({ field }) => (
+                            <FormItem><FormLabel>Phone</FormLabel><FormControl><Input type="tel" {...field} value={field.value ?? ''} placeholder="Private phone number" /></FormControl><FormMessage /></FormItem>
+                        )} />
+                         <FormField control={form.control} name="personalInfo.address" render={({ field }) => (
+                            <FormItem><FormLabel>Address</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="Street Address" /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField control={form.control} name="personalInfo.city" render={({ field }) => (
+                                <FormItem><FormLabel>City</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="City" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                             <FormField control={form.control} name="personalInfo.state" render={({ field }) => (
+                                <FormItem><FormLabel>State (Wilaya)</FormLabel>
+                                <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                                    <FormControl><SelectTrigger><SelectValue placeholder="Select a state" /></SelectTrigger></FormControl>
+                                    <SelectContent>{dzStates.map(s => <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>)}</SelectContent>
+                                </Select>
+                                <FormMessage /></FormItem>
+                            )} />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField control={form.control} name="personalInfo.country" render={({ field }) => (
+                                <FormItem><FormLabel>Country</FormLabel>
+                                <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                                    <FormControl><SelectTrigger><SelectValue placeholder="Select Country" /></SelectTrigger></FormControl>
+                                    <SelectContent>{countryCodes.map(c => <SelectItem key={c.code} value={c.name}>{c.name}</SelectItem>)}</SelectContent>
+                                </Select>
+                                <FormMessage /></FormItem>
+                            )} />
+                            <FormField control={form.control} name="personalInfo.nationality" render={({ field }) => (
+                                <FormItem><FormLabel>Nationality</FormLabel>
+                                <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                                    <FormControl><SelectTrigger><SelectValue placeholder="Select Nationality" /></SelectTrigger></FormControl>
+                                    <SelectContent>{countryCodes.map(c => <SelectItem key={c.code} value={c.name}>{c.name}</SelectItem>)}</SelectContent>
+                                </Select>
+                                <FormMessage /></FormItem>
+                            )} />
+                        </div>
+                    </div>
+                </CollapsibleContent>
+            </div>
+        </Collapsible>
         
         <Button type="submit" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? (isEditMode ? "Saving..." : "Adding...") : (isEditMode ? "Save Changes" : "Add Person")}
