@@ -309,12 +309,12 @@ export default function MembershipPage() {
          return (
              <Card>
                 <CardHeader>
-                    <div className="flex items-center gap-3 text-green-700 dark:text-green-400">
-                        <CheckCircle className="h-8 w-8" />
-                        <CardTitle className="text-2xl">Membership Active!</CardTitle>
-                    </div>
-                    <CardDescription>
-                        Welcome, <strong className="font-bold text-lg text-foreground">{result.customerName}</strong>! Here is your personalized supplement guide.
+                    <CardTitle className="text-2xl font-headline text-primary">
+                        Welcome, {result.customerName}!
+                    </CardTitle>
+                    <CardDescription className="flex items-center gap-2 pt-1">
+                        <CheckCircle className="h-5 w-5 text-green-500" />
+                        Membership Active! Here is your personalized guide.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -456,3 +456,5 @@ export default function MembershipPage() {
         </div>
     );
 }
+
+    
