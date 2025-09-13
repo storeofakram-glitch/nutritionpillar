@@ -53,9 +53,9 @@ const PlanCard = ({ plan, coachId, coachName }: { plan: Plan; coachId: string; c
     };
 
     return (
-        <Card className="relative flex flex-col text-center overflow-hidden">
+        <Card className="relative flex flex-col text-center pt-6">
              {plan.icon === 'Online Coaching' && (
-                <Badge className="absolute top-0 right-[-35px] rotate-45 w-40 justify-center py-1 bg-primary text-primary-foreground font-bold">
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground font-bold">
                     Most Popular
                 </Badge>
             )}
