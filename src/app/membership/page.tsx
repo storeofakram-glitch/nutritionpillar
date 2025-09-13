@@ -314,7 +314,7 @@ export default function MembershipPage() {
                         <CardTitle className="text-2xl">Membership Active!</CardTitle>
                     </div>
                     <CardDescription>
-                        Welcome, {result.customerName}! Here is your personalized supplement guide.
+                        Welcome, <strong className="font-bold text-lg text-foreground">{result.customerName}</strong>! Here is your personalized supplement guide.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
