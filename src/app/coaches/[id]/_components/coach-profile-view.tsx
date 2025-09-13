@@ -53,7 +53,7 @@ const PlanCard = ({ plan, coachId, coachName }: { plan: Plan; coachId: string; c
     };
 
     return (
-        <Card className="relative flex flex-col text-center pt-6">
+        <Card className="relative flex flex-col text-center pt-6 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
              {plan.icon === 'Online Coaching' && (
                 <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground font-bold">
                     Most Popular
@@ -111,7 +111,7 @@ export default function CoachProfileView({ coach }: { coach: Coach }) {
                     </Card>
                 </div>
                 <div className="md:col-span-2 space-y-8">
-                     <Card>
+                     <Card className="shadow-lg shadow-primary/20">
                         <CardContent className="p-6">
                              <h2 className="text-2xl font-bold font-headline mb-4">About {coach.name}</h2>
                              <p className="text-muted-foreground leading-relaxed">
@@ -121,7 +121,7 @@ export default function CoachProfileView({ coach }: { coach: Coach }) {
                     </Card>
                     
                     {coach.certifications && coach.certifications.length > 0 && (
-                        <Card>
+                        <Card className="shadow-lg shadow-primary/20">
                             <CardContent className="p-6">
                                 <h2 className="text-2xl font-bold font-headline mb-4">Certifications</h2>
                                 <ul className="flex flex-wrap gap-3">
