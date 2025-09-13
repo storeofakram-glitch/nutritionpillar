@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
@@ -449,7 +448,7 @@ export default function MembershipPage() {
                                 </CardContent>
                             </Card>
                         ) : (
-                             result.type === 'Coach/Expert' ? renderCoachView() : renderClientView()
+                             userType === 'coach' && result.type === 'Coach/Expert' ? renderCoachView() : renderClientView()
                         )}
                      </div>
                 )}
@@ -457,5 +456,7 @@ export default function MembershipPage() {
         </div>
     );
 }
+
+    
 
     
