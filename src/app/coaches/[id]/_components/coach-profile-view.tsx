@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import type { Coach, Plan } from '@/types';
@@ -37,37 +36,54 @@ const PlanIcon = ({ iconName }: { iconName: string }) => {
     }
 }
 
-const PlanCard = ({ plan, coachId, coachName }: { plan: Plan; coachId: string; coachName: string }) => (
-    <Card className="relative flex flex-col text-center overflow-hidden">
-         {plan.icon === 'Online Coaching' && (
-            <Badge className="absolute top-0 right-[-35px] rotate-45 w-40 justify-center py-1 bg-primary text-primary-foreground font-bold">
-                Most Popular
-            </Badge>
-        )}
-        <CardHeader>
-            <div className="mx-auto bg-primary/10 p-4 rounded-full">
-                <PlanIcon iconName={plan.icon} />
-            </div>
-            <CardTitle className="font-headline pt-4">{plan.title}</CardTitle>
-        </CardHeader>
-        <CardContent className="flex-grow">
-            <ul className="space-y-2 text-sm text-muted-foreground text-left">
-                {plan.description.split('\n').map((line, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                        <Check className="h-4 w-4 mt-0.5 text-primary flex-shrink-0" />
-                        <span>{line}</span>
-                    </li>
-                ))}
-            </ul>
-        </CardContent>
-        <CardFooter className="flex flex-col gap-4">
-             <p className="text-2xl font-bold font-headline text-primary">
-                DZD {plan.price.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">/{plan.pricePeriod}</span>
-            </p>
-            <ApplyDialog plan={plan} coachId={coachId} coachName={coachName} />
-        </CardFooter>
-    </Card>
-);
+const PlanCard = ({ plan, coachId, coachName }: { plan: Plan; coachId: string; coachName: string }) => {
+    const isExternalLink = plan.applyLink && (plan.applyLink.startsWith('http://') || plan.applyLink.startsWith('https://'));
+
+    const ApplyButton = () => {
+        if (plan.applyLink) {
+            return (
+                <Button className="w-full" asChild>
+                    <Link href={plan.applyLink} target={isExternalLink ? "_blank" : "_self"} rel={isExternalLink ? "noopener noreferrer" : ""}>
+                        Apply Now
+                    </Link>
+                </Button>
+            );
+        }
+        return <ApplyDialog plan={plan} coachId={coachId} coachName={coachName} />;
+    };
+
+    return (
+        <Card className="relative flex flex-col text-center overflow-hidden">
+             {plan.icon === 'Online Coaching' && (
+                <Badge className="absolute top-0 right-[-35px] rotate-45 w-40 justify-center py-1 bg-primary text-primary-foreground font-bold">
+                    Most Popular
+                </Badge>
+            )}
+            <CardHeader>
+                <div className="mx-auto bg-primary/10 p-4 rounded-full">
+                    <PlanIcon iconName={plan.icon} />
+                </div>
+                <CardTitle className="font-headline pt-4">{plan.title}</CardTitle>
+            </CardHeader>
+            <CardContent className="flex-grow">
+                <ul className="space-y-2 text-sm text-muted-foreground text-left">
+                    {plan.description.split('\n').map((line, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                            <Check className="h-4 w-4 mt-0.5 text-primary flex-shrink-0" />
+                            <span>{line}</span>
+                        </li>
+                    ))}
+                </ul>
+            </CardContent>
+            <CardFooter className="flex flex-col gap-4">
+                 <p className="text-2xl font-bold font-headline text-primary">
+                    DZD {plan.price.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">/{plan.pricePeriod}</span>
+                </p>
+                <ApplyButton />
+            </CardFooter>
+        </Card>
+    );
+};
 
 export default function CoachProfileView({ coach }: { coach: Coach }) {
     return (

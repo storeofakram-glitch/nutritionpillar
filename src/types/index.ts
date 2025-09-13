@@ -7,6 +7,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -257,7 +258,7 @@ export type Plan = {
   description: string;
   price: number;
   pricePeriod: 'month' | 'program';
-  applyLink: string;
+  applyLink?: string;
 };
 
 export type Coach = {

@@ -21,7 +21,7 @@ import { addCoach, updateCoach } from "@/services/coach-service"
 import type { Coach } from "@/types"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dumbbell, PlusCircle, Trash2, Zap, HeartPulse, User, Rocket } from "lucide-react"
+import { Dumbbell, PlusCircle, Trash2, Zap, HeartPulse, Rocket } from "lucide-react"
 
 const planSchema = z.object({
     icon: z.string().min(1, "Icon is required."),
@@ -29,7 +29,7 @@ const planSchema = z.object({
     description: z.string().min(10, "Description is required."),
     price: z.coerce.number().min(0, "Price must be a non-negative number."),
     pricePeriod: z.enum(['month', 'program']),
-    applyLink: z.string().url("Must be a valid URL."),
+    applyLink: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
 });
 
 const coachSchema = z.object({
@@ -73,7 +73,7 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
       rating: coach?.rating || 5,
       bio: coach?.bio || "",
       certifications: coach?.certifications?.map(c => ({ value: c })) || [{ value: "" }],
-      plans: coach?.plans || [],
+      plans: coach?.plans?.map(p => ({ ...p, applyLink: p.applyLink || '' })) || [],
     },
   })
 
@@ -268,7 +268,7 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
                      </div>
                      <FormField
                         control={form.control} name={`plans.${index}.applyLink`}
-                        render={({ field }) => ( <FormItem><FormLabel>Apply Link</FormLabel><FormControl><Input {...field} placeholder="https://example.com/apply" /></FormControl><FormMessage /></FormItem> )}
+                        render={({ field }) => ( <FormItem><FormLabel>Apply Link (Optional)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://example.com/apply" /></FormControl><FormMessage /></FormItem> )}
                      />
                 </div>
             ))}
