@@ -126,7 +126,7 @@ export default function CoachProfileView({ coach }: { coach: Coach }) {
                                 <h2 className="text-2xl font-bold font-headline mb-4">Certifications</h2>
                                 <ul className="flex flex-wrap gap-3">
                                     {coach.certifications.map((cert, index) => (
-                                        <li key={index} className="flex items-center gap-2 bg-muted hover:bg-primary/20 text-muted-foreground hover:text-foreground transition-colors duration-300 px-3 py-1.5 rounded-full">
+                                        <li key={index} className="flex items-center gap-2 border border-primary/30 text-muted-foreground hover:bg-primary/10 hover:text-foreground transition-colors duration-300 px-3 py-1.5 rounded-full">
                                             <Award className="h-5 w-5 text-primary" />
                                             <span className="font-medium text-sm">{cert}</span>
                                         </li>
