@@ -72,7 +72,7 @@ export default function MembershipPage() {
             if (foundMembership) {
                 setResult(foundMembership);
                 // If the member is a coach, fetch their specific details
-                if (foundMembership.type === 'Coach/Expert') {
+                if (foundMembership.type === 'Coach/Expert' && userType === 'coach') {
                     const coach = await getCoachByName(foundMembership.customerName);
                     if (coach) {
                         setCoachDetails(coach);
@@ -103,7 +103,7 @@ export default function MembershipPage() {
 
     const { pendingApplications, activeClients } = useMemo(() => {
         return {
-            pendingApplications: applications.filter(app => ['new', 'read', 'contacted'].includes(app.status)),
+            pendingApplications: applications.filter(app => ['new', 'read'].includes(app.status)),
             activeClients: applications.filter(app => app.status === 'active'),
         };
     }, [applications]);
@@ -390,7 +390,10 @@ export default function MembershipPage() {
                     <CardHeader className="text-center">
                         <CardTitle className="text-3xl md:text-4xl font-bold font-headline">Membership</CardTitle>
                         <CardDescription className="text-lg">
-                            Select your role and enter your unique code to access your personalized dashboard.
+                            {userType === 'athlete'
+                                ? "Enter your unique membership code to access your personalized supplement guide and plan details."
+                                : "Enter your unique access code to manage client applications and view your athlete dashboard."
+                            }
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -462,7 +465,5 @@ export default function MembershipPage() {
         </div>
     );
 }
-
-    
 
     
