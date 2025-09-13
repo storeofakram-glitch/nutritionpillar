@@ -103,7 +103,7 @@ export default function MembershipPage() {
 
     const { pendingApplications, activeClients } = useMemo(() => {
         return {
-            pendingApplications: applications.filter(app => app.status === 'new' || app.status === 'read'),
+            pendingApplications: applications.filter(app => ['new', 'read', 'contacted'].includes(app.status)),
             activeClients: applications.filter(app => app.status === 'active'),
         };
     }, [applications]);
@@ -317,7 +317,7 @@ export default function MembershipPage() {
                         Welcome, {result.customerName}!
                     </CardTitle>
                     <CardDescription className="flex items-center gap-3 pt-1">
-                        <span>Membership Details:</span>
+                        <span className="font-bold">Membership Details:</span>
                         <Badge variant={isActive ? "default" : "destructive"} className={cn(isActive && 'bg-green-600 hover:bg-green-700 text-white')}>
                            {isActive ? "Active" : "Inactive"}
                         </Badge>
@@ -462,5 +462,7 @@ export default function MembershipPage() {
         </div>
     );
 }
+
+    
 
     
