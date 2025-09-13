@@ -46,6 +46,21 @@ export async function getApplicationsByCoach(coachId: string): Promise<CoachingA
     return applications;
 }
 
+
+/**
+ * Fetches all active applications for a specific coach.
+ * @param coachId The ID of the coach.
+ * @returns A promise that resolves to an array of active applications.
+ */
+export async function getActiveApplicationsByCoach(coachId: string): Promise<CoachingApplication[]> {
+    const q = query(applicationsCollection, where('coachId', '==', coachId), where('status', '==', 'active'));
+    const snapshot = await getDocs(q);
+    const applications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CoachingApplication));
+    applications.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    return applications;
+}
+
+
 /**
  * Gets the count of applications for a specific coach.
  * @param coachId The ID of the coach.
