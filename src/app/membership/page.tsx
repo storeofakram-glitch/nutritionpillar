@@ -19,6 +19,7 @@ import { getCoachByName } from '@/services/coach-service';
 import { getApplicationsByCoach, updateApplicationStatus } from '@/services/application-service';
 import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { cn } from '@/lib/utils';
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center gap-1">
@@ -317,7 +318,7 @@ export default function MembershipPage() {
                     </CardTitle>
                     <CardDescription className="flex items-center gap-3 pt-1">
                         <span>Membership Details:</span>
-                        <Badge variant={isActive ? "default" : "destructive"}>
+                        <Badge variant={isActive ? "default" : "destructive"} className={cn(isActive && 'bg-green-600 hover:bg-green-700 text-white')}>
                            {isActive ? "Active" : "Inactive"}
                         </Badge>
                     </CardDescription>
