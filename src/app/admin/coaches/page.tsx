@@ -11,6 +11,7 @@ import type { Coach } from "@/types";
 import CoachTable from "./_components/coach-table";
 import AddCoachDialog from "./_components/add-coach-dialog";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function AdminCoachesPage() {
     const [coaches, setCoaches] = useState<Coach[]>([]);
@@ -81,7 +82,9 @@ export default function AdminCoachesPage() {
                     <CardDescription>Manage the coaches displayed on the homepage.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <CoachTable data={coachList} isLoading={loading} onDataChange={fetchCoaches} />
+                    <ScrollArea className="h-[460px]">
+                        <CoachTable data={coachList} isLoading={loading} onDataChange={fetchCoaches} />
+                    </ScrollArea>
                 </CardContent>
             </Card>
 
@@ -91,7 +94,9 @@ export default function AdminCoachesPage() {
                     <CardDescription>Manage the experts displayed on the homepage.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <CoachTable data={expertList} isLoading={loading} onDataChange={fetchCoaches} />
+                     <ScrollArea className="h-[460px]">
+                        <CoachTable data={expertList} isLoading={loading} onDataChange={fetchCoaches} />
+                    </ScrollArea>
                 </CardContent>
             </Card>
         </div>
