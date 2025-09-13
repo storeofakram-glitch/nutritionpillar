@@ -16,8 +16,9 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { useEffect, useState, useMemo } from "react";
-import { Star, StarHalf } from "lucide-react";
+import { Star, StarHalf, Search } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
+import { Input } from "./ui/input";
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center gap-0.5">
@@ -65,8 +66,18 @@ const CoachCard = ({ person }: { person: Coach }) => {
 };
 
 
-const CarouselSection = ({ title, items }: { title: string, items: Coach[] }) => {
-    if (items.length === 0) return null;
+const CarouselSection = ({ title, items, searchTerm }: { title: string, items: Coach[], searchTerm: string }) => {
+    if (items.length === 0) {
+      if (searchTerm) {
+        return (
+          <div>
+            <h3 className="text-2xl md:text-3xl font-bold font-headline mb-6">{title}</h3>
+            <p className="text-muted-foreground text-center">No {title.toLowerCase()} found for "{searchTerm}".</p>
+          </div>
+        );
+      }
+      return null;
+    }
 
     return (
         <div>
@@ -90,25 +101,31 @@ const CarouselSection = ({ title, items }: { title: string, items: Coach[] }) =>
 };
 
 export default function CoachesExpertsSection() {
-  const [coaches, setCoaches] = useState<Coach[]>([]);
+  const [allCoaches, setAllCoaches] = useState<Coach[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-      const allCoaches = await getCoaches();
-      setCoaches(allCoaches);
+      const coachesData = await getCoaches();
+      setAllCoaches(coachesData);
       setLoading(false);
     }
     fetchData();
   }, []);
 
   const { coachList, expertList } = useMemo(() => {
+    const filteredCoaches = allCoaches.filter(c => 
+        c.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        c.specialty.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    
     return {
-        coachList: coaches.filter(c => c.type === 'Coach'),
-        expertList: coaches.filter(c => c.type === 'Expert')
+        coachList: filteredCoaches.filter(c => c.type === 'Coach'),
+        expertList: filteredCoaches.filter(c => c.type === 'Expert')
     };
-  }, [coaches]);
+  }, [allCoaches, searchTerm]);
   
   if (loading) {
     return (
@@ -130,7 +147,7 @@ export default function CoachesExpertsSection() {
     )
   }
   
-  if (coaches.length === 0) {
+  if (allCoaches.length === 0) {
     return null; // Don't render the section if there are no coaches or experts
   }
 
@@ -141,13 +158,22 @@ export default function CoachesExpertsSection() {
             <p className="text-sm font-bold text-muted-foreground tracking-widest uppercase">Our Team</p>
             <h2 className="text-3xl md:text-4xl font-bold font-headline mt-2">Trusted Coaches & Experts</h2>
         </div>
+
+        <div className="relative max-w-lg mx-auto mb-12">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Input 
+                placeholder="Search by name or specialty..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 h-12 text-base"
+            />
+        </div>
+
         <div className="space-y-12">
-            <CarouselSection title="Our Coaches" items={coachList} />
-            <CarouselSection title="Our Experts" items={expertList} />
+            <CarouselSection title="Our Coaches" items={coachList} searchTerm={searchTerm} />
+            <CarouselSection title="Our Experts" items={expertList} searchTerm={searchTerm} />
         </div>
       </div>
     </section>
   );
 }
-
-    
