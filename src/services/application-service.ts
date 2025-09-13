@@ -5,6 +5,7 @@ import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, where, o
 import { db } from '@/lib/firebase';
 import type { CoachingApplication } from '@/types';
 import { revalidatePath } from 'next/cache';
+import { addMembership, findMembershipByApplicationId } from './membership-service';
 
 const applicationsCollection = collection(db, 'coachingApplications');
 
@@ -79,7 +80,7 @@ export async function getNewApplicationsCountByCoach(coachId: string): Promise<n
 }
 
 /**
- * Updates the status of a specific application.
+ * Updates the status of a specific application and creates a membership if status is 'active'.
  * @param id The ID of the application to update.
  * @param status The new status.
  * @returns An object indicating success or failure.
@@ -88,6 +89,30 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
     try {
         const docRef = doc(db, 'coachingApplications', id);
         await updateDoc(docRef, { status });
+
+        // If the status is 'active', create a membership for the client
+        if (status === 'active') {
+            const appDoc = await getDocs(query(applicationsCollection, where('__name__', '==', id)));
+            if (!appDoc.empty) {
+                const application = appDoc.docs[0].data() as CoachingApplication;
+                
+                // Check if a membership already exists for this application
+                const existingMembership = await findMembershipByApplicationId(id);
+
+                if (!existingMembership) {
+                    await addMembership({
+                        applicationId: id,
+                        customerName: application.applicant.name,
+                        customerEmail: application.applicant.email,
+                        customerPhone: application.applicant.phone,
+                        coachingPlan: application.planTitle,
+                        goal: application.applicant.goal,
+                        type: 'Coaching',
+                    });
+                }
+            }
+        }
+
         revalidatePath('/admin/coaches');
         revalidatePath('/membership');
         return { success: true };

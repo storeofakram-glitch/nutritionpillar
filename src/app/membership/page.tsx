@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
@@ -89,7 +90,7 @@ export default function MembershipPage() {
         }
     };
     
-    const handleStatusUpdate = async (appId: string, status: 'contacted' | 'rejected') => {
+    const handleStatusUpdate = async (appId: string, status: 'contacted' | 'rejected' | 'active') => {
         const result = await updateApplicationStatus(appId, status);
         if (result.success && coachDetails) {
             toast({ title: "Status Updated", description: `Application status changed to "${status}".` });
@@ -236,7 +237,7 @@ export default function MembershipPage() {
                                                 <TableCell className="text-right space-x-2">
                                                     {(app.status === 'new' || app.status === 'read') && (
                                                         <>
-                                                            <Button size="sm" variant="outline" onClick={() => handleStatusUpdate(app.id, 'contacted')}>Accept</Button>
+                                                            <Button size="sm" variant="outline" onClick={() => handleStatusUpdate(app.id, 'active')}>Accept</Button>
                                                             <Button size="sm" variant="destructive" onClick={() => handleStatusUpdate(app.id, 'rejected')}>Reject</Button>
                                                         </>
                                                     )}
@@ -268,7 +269,7 @@ export default function MembershipPage() {
                                                         </a>
                                                     </Button>
                                                      <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
-                                                        <a href={`https://wa.me/${app.applicant.phone}`} target="_blank" rel="noopener noreferrer">
+                                                        <a href={`https://wa.me/${app.applicant.phone.replace(/\\D/g, '')}`} target="_blank" rel="noopener noreferrer">
                                                             <MessageSquare className="h-4 w-4" />
                                                             <span className="sr-only">WhatsApp</span>
                                                         </a>

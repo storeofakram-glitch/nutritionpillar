@@ -76,6 +76,24 @@ export async function findMembershipByCode(code: string): Promise<MembershipWith
 }
 
 /**
+ * Finds a membership by its linked application ID.
+ * @param applicationId The ID of the coaching application.
+ * @returns A promise that resolves to the membership or null if not found.
+ */
+export async function findMembershipByApplicationId(applicationId: string): Promise<Membership | null> {
+    const q = query(membershipsCollection, where('applicationId', '==', applicationId));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+        return null;
+    }
+
+    const membershipDoc = snapshot.docs[0];
+    return { id: membershipDoc.id, ...membershipDoc.data() } as Membership;
+}
+
+
+/**
  * Adds a new membership document to the database.
  * @param membership The membership data to add.
  * @returns An object indicating success or failure.
