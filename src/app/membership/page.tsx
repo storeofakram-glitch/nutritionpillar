@@ -237,7 +237,7 @@ export default function MembershipPage() {
                                                 <TableCell className="text-right space-x-2">
                                                     {(app.status === 'new' || app.status === 'read') && (
                                                         <>
-                                                            <Button size="sm" variant="outline" onClick={() => handleStatusUpdate(app.id, 'active')}>Accept</Button>
+                                                            <Button size="sm" variant="outline" onClick={() => handleStatusUpdate(app.id, 'contacted')}>Accept</Button>
                                                             <Button size="sm" variant="destructive" onClick={() => handleStatusUpdate(app.id, 'rejected')}>Reject</Button>
                                                         </>
                                                     )}
