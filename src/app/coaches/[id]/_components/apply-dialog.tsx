@@ -28,7 +28,7 @@ export default function ApplyDialog({ plan, coachId, coachName }: ApplyDialogPro
       <DialogTrigger asChild>
         <Button className="w-full">Apply Now</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Apply for: {plan.title}</DialogTitle>
           <DialogDescription>
