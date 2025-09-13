@@ -215,10 +215,10 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
           </Button>
         </div>
 
-        <div className="space-y-3 p-4 border rounded-lg">
+        <div className="space-y-3 p-4 border-2 border-primary/20 rounded-lg shadow-sm">
             <FormLabel>Coaching Plans (Optional)</FormLabel>
             {planFields.map((field, index) => (
-                <div key={field.id} className="p-4 border rounded-md space-y-4 relative">
+                <div key={field.id} className="p-4 border rounded-md space-y-4 relative bg-background">
                     <Button type="button" variant="ghost" size="icon" onClick={() => removePlan(index)} className="absolute top-2 right-2">
                       <Trash2 className="h-4 w-4 text-red-500" />
                     </Button>
