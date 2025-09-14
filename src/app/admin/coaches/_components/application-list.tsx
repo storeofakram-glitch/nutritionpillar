@@ -9,11 +9,12 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Search } from "lucide-react";
 import ViewApplicationDialog from "./view-application-dialog";
 import DeleteApplicationDialog from "./delete-application-dialog";
 import { updateApplicationStatus } from "@/services/application-service";
 import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
 interface ApplicationListProps {
   coachId: string;
@@ -25,6 +26,7 @@ export default function ApplicationList({ coachId }: ApplicationListProps) {
     const [applications, setApplications] = useState<CoachingApplication[]>([]);
     const [newCount, setNewCount] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
 
     const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -82,6 +84,9 @@ export default function ApplicationList({ coachId }: ApplicationListProps) {
         }
     }
 
+    const filteredApplications = applications.filter(app =>
+        app.applicant.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     if (loading) {
         return <Badge variant="outline">Loading...</Badge>;
@@ -108,8 +113,20 @@ export default function ApplicationList({ coachId }: ApplicationListProps) {
                             Review applications for this coach.
                         </SheetDescription>
                     </SheetHeader>
-                    <div className="mt-4 space-y-4">
-                        {applications.length > 0 ? applications.map(app => (
+                    <div className="py-4">
+                        <div className="relative">
+                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input
+                                type="search"
+                                placeholder="Search by name..."
+                                className="pl-8 w-full"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className="space-y-4">
+                        {filteredApplications.length > 0 ? filteredApplications.map(app => (
                             <div key={app.id} className="border p-4 rounded-lg flex justify-between items-start">
                                 <div>
                                     <p className="font-semibold">{app.applicant.name}</p>
@@ -150,7 +167,7 @@ export default function ApplicationList({ coachId }: ApplicationListProps) {
                                 </div>
                             </div>
                         )) : (
-                            <p className="text-center text-muted-foreground py-8">No applications found for this coach.</p>
+                            <p className="text-center text-muted-foreground py-8">No applications found.</p>
                         )}
                     </div>
                 </SheetContent>
