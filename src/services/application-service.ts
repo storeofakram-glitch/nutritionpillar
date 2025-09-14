@@ -114,6 +114,7 @@ export async function getNewApplicationsCount(): Promise<number> {
 
 /**
  * Updates the status of a specific application and creates a membership if status is 'active'.
+ * If the status is 'rejected', the application is deleted.
  * @param id The ID of the application to update.
  * @param status The new status.
  * @returns An object indicating success or failure.
@@ -121,45 +122,50 @@ export async function getNewApplicationsCount(): Promise<number> {
 export async function updateApplicationStatus(id: string, status: CoachingApplication['status']) {
     try {
         const docRef = doc(db, 'coachingApplications', id);
-        await updateDoc(docRef, { status });
 
-        // If the status is 'active', create a membership for the client
-        if (status === 'active') {
-            const appDoc = await getDoc(docRef);
-            if (appDoc.exists()) {
-                const application = appDoc.data() as CoachingApplication;
-                
-                // Check if a membership already exists for this application
-                const existingMembership = await findMembershipByApplicationId(id);
+        if (status === 'rejected') {
+            await deleteDoc(docRef);
+        } else {
+            await updateDoc(docRef, { status });
 
-                if (!existingMembership) {
-                    let durationInDays = 0;
-                    switch (application.applicant.duration) {
-                        case '1 month':
-                            durationInDays = 30;
-                            break;
-                        case '3 months':
-                            durationInDays = 90;
-                            break;
-                        case '6 months':
-                            durationInDays = 180;
-                            break;
-                        case '1 year':
-                            durationInDays = 365;
-                            break;
+            // If the status is 'active', create a membership for the client
+            if (status === 'active') {
+                const appDoc = await getDoc(docRef);
+                if (appDoc.exists()) {
+                    const application = appDoc.data() as CoachingApplication;
+                    
+                    // Check if a membership already exists for this application
+                    const existingMembership = await findMembershipByApplicationId(id);
+
+                    if (!existingMembership) {
+                        let durationInDays = 0;
+                        switch (application.applicant.duration) {
+                            case '1 month':
+                                durationInDays = 30;
+                                break;
+                            case '3 months':
+                                durationInDays = 90;
+                                break;
+                            case '6 months':
+                                durationInDays = 180;
+                                break;
+                            case '1 year':
+                                durationInDays = 365;
+                                break;
+                        }
+
+                        await addMembership({
+                            applicationId: id,
+                            customerName: application.applicant.name,
+                            customerEmail: application.applicant.email,
+                            customerPhone: application.applicant.phone,
+                            coachingPlan: application.planTitle,
+                            coachName: application.coachName,
+                            goal: application.applicant.goal,
+                            type: 'Coaching',
+                            membershipDurationDays: durationInDays
+                        });
                     }
-
-                    await addMembership({
-                        applicationId: id,
-                        customerName: application.applicant.name,
-                        customerEmail: application.applicant.email,
-                        customerPhone: application.applicant.phone,
-                        coachingPlan: application.planTitle,
-                        coachName: application.coachName,
-                        goal: application.applicant.goal,
-                        type: 'Coaching',
-                        membershipDurationDays: durationInDays
-                    });
                 }
             }
         }

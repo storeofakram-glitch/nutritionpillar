@@ -17,7 +17,7 @@ import { Separator } from '@/components/ui/separator';
 import { differenceInDays } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getCoachByName } from '@/services/coach-service';
-import { getApplicationsByCoach, updateApplicationStatus } from '@/services/application-service';
+import { getApplicationsByCoach, updateApplicationStatus, deleteApplication } from '@/services/application-service';
 import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
@@ -102,7 +102,7 @@ export default function MembershipPage() {
         }
     };
     
-    const handleStatusUpdate = async (appId: string, status: 'contacted' | 'rejected' | 'active') => {
+    const handleStatusUpdate = async (appId: string, status: 'contacted' | 'active') => {
         const result = await updateApplicationStatus(appId, status);
         if (result.success && coachDetails) {
             toast({ title: "Status Updated", description: `Application status changed to "${status}".` });
@@ -112,6 +112,26 @@ export default function MembershipPage() {
             toast({ variant: 'destructive', title: 'Error', description: 'Failed to update application status.'});
         }
     }
+
+    const handleRejectApplication = async (appId: string) => {
+        const result = await deleteApplication(appId);
+        if (result.success && coachDetails) {
+             toast({ title: "Application Rejected", description: "The application has been permanently deleted." });
+             fetchCoachData(coachDetails);
+        } else {
+            toast({ variant: 'destructive', title: 'Error', description: 'Failed to reject application.'});
+        }
+    };
+
+     const handleRevokeAccess = async (appId: string) => {
+        const result = await updateApplicationStatus(appId, 'rejected');
+        if (result.success && coachDetails) {
+             toast({ title: "Access Revoked", description: "The client's access has been revoked." });
+             fetchCoachData(coachDetails);
+        } else {
+            toast({ variant: 'destructive', title: 'Error', description: 'Failed to revoke access.'});
+        }
+    };
 
     const { pendingApplications, activeClients } = useMemo(() => {
         return {
@@ -249,8 +269,8 @@ export default function MembershipPage() {
                                                 <TableCell className="text-right space-x-2">
                                                     {(app.status === 'new' || app.status === 'read') && (
                                                         <>
-                                                            <Button size="sm" variant="outline" onClick={() => handleStatusUpdate(app.id, 'contacted')}>Accept</Button>
-                                                            <Button size="sm" variant="destructive" onClick={() => handleStatusUpdate(app.id, 'rejected')}>Reject</Button>
+                                                            <Button size="sm" variant="outline" onClick={() => handleStatusUpdate(app.id, 'active')}>Accept</Button>
+                                                            <Button size="sm" variant="destructive" onClick={() => handleRejectApplication(app.id)}>Reject</Button>
                                                         </>
                                                     )}
                                                 </TableCell>
@@ -302,7 +322,7 @@ export default function MembershipPage() {
                                                             <span className="sr-only">WhatsApp</span>
                                                         </a>
                                                     </Button>
-                                                     <Button variant="destructive" size="icon" className="h-8 w-8" onClick={() => handleStatusUpdate(app.id, 'rejected')}>
+                                                     <Button variant="destructive" size="icon" className="h-8 w-8" onClick={() => handleRevokeAccess(app.id)}>
                                                         <UserX className="h-4 w-4" />
                                                         <span className="sr-only">Revoke Access</span>
                                                     </Button>
@@ -496,6 +516,3 @@ export default function MembershipPage() {
 }
 
     
-
-
-
