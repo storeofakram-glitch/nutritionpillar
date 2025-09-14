@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { findMembershipByCode } from '@/services/membership-service';
 import type { RecommendedProduct, MembershipWithProducts, Coach, CoachingApplication, Membership } from '@/types';
-import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users, Mail, MessageSquare, User } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users, Mail, MessageSquare, User, UserX } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
@@ -302,6 +302,10 @@ export default function MembershipPage() {
                                                             <span className="sr-only">WhatsApp</span>
                                                         </a>
                                                     </Button>
+                                                     <Button variant="destructive" size="icon" className="h-8 w-8" onClick={() => handleStatusUpdate(app.id, 'rejected')}>
+                                                        <UserX className="h-4 w-4" />
+                                                        <span className="sr-only">Revoke Access</span>
+                                                    </Button>
                                                 </div>
                                             </div>
                                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-3 text-muted-foreground">
@@ -492,5 +496,6 @@ export default function MembershipPage() {
 }
 
     
+
 
 
