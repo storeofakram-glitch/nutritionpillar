@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { findMembershipByCode } from '@/services/membership-service';
-import type { RecommendedProduct, MembershipWithProducts, Coach, CoachingApplication } from '@/types';
+import type { RecommendedProduct, MembershipWithProducts, Coach, CoachingApplication, Membership } from '@/types';
 import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users, Mail, MessageSquare, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -21,6 +21,7 @@ import { getApplicationsByCoach, updateApplicationStatus } from '@/services/appl
 import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
+import { findMembershipByApplicationId } from '@/services/membership-service';
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center gap-1">
@@ -38,6 +39,10 @@ const StarRating = ({ rating }: { rating: number }) => (
     </div>
 );
 
+type EnrichedApplication = CoachingApplication & {
+    membership?: Membership;
+};
+
 
 export default function MembershipPage() {
     const [membershipCode, setMembershipCode] = useState('');
@@ -45,12 +50,18 @@ export default function MembershipPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [result, setResult] = useState<MembershipWithProducts | 'invalid' | null>(null);
     const [coachDetails, setCoachDetails] = useState<Coach | null>(null);
-    const [applications, setApplications] = useState<CoachingApplication[]>([]);
+    const [applications, setApplications] = useState<EnrichedApplication[]>([]);
     const { toast } = useToast();
 
     const fetchCoachData = async (coach: Coach) => {
         const coachApps = await getApplicationsByCoach(coach.id);
-        setApplications(coachApps);
+        const enrichedApps = await Promise.all(
+            coachApps.map(async (app) => {
+                const membership = await findMembershipByApplicationId(app.id);
+                return { ...app, membership: membership || undefined };
+            })
+        );
+        setApplications(enrichedApps);
     }
 
     const handleCheckMembership = async (e: React.FormEvent) => {
@@ -257,11 +268,27 @@ export default function MembershipPage() {
                         <h3 className="font-semibold text-lg mb-4">Your Active Clients</h3>
                         {activeClients.length > 0 ? (
                             <div className="space-y-4">
-                                {activeClients.map(app => (
+                                {activeClients.map(app => {
+                                    const daysLeft = getDaysLeft(app.membership?.expiresAt);
+                                    const isActive = daysLeft === null || daysLeft > 0;
+                                    return (
                                     <Card key={app.id} className="bg-muted/50">
                                         <CardContent className="p-4">
                                             <div className="flex justify-between items-start">
-                                                <h4 className="font-semibold">{app.applicant.name}</h4>
+                                                <div>
+                                                    <h4 className="font-semibold">{app.applicant.name}</h4>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <Badge variant={isActive ? "default" : "destructive"} className={cn("text-xs", isActive && "bg-green-600 hover:bg-green-700")}>
+                                                            {isActive ? "Active" : "Inactive"}
+                                                        </Badge>
+                                                        {daysLeft !== null && (
+                                                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                                                <CalendarClock className="h-3 w-3" />
+                                                                <span>{daysLeft} days left</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
                                                 <div className="flex items-center gap-2">
                                                     <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
                                                         <a href={`mailto:${app.applicant.email}`}>
@@ -293,7 +320,7 @@ export default function MembershipPage() {
                                             )}
                                         </CardContent>
                                     </Card>
-                                ))}
+                                )})}
                             </div>
                         ) : (
                             <p className="text-center text-muted-foreground py-4">You have no active clients yet.</p>
@@ -468,3 +495,4 @@ export default function MembershipPage() {
 }
 
     
+
