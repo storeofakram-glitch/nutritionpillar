@@ -9,14 +9,19 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Mail, MessageSquare, Copy } from "lucide-react";
+import { Mail, MessageSquare, Copy, CalendarClock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { differenceInDays } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface AthleteListProps {
   coachId: string;
 }
 
-type Athlete = CoachingApplication & { membershipCode?: string };
+type Athlete = CoachingApplication & { 
+    membershipCode?: string;
+    membershipExpiresAt?: string;
+};
 
 export default function AthleteList({ coachId }: AthleteListProps) {
     const [athletes, setAthletes] = useState<Athlete[]>([]);
@@ -27,14 +32,18 @@ export default function AthleteList({ coachId }: AthleteListProps) {
         setLoading(true);
         const activeApps = await getActiveApplicationsByCoach(coachId);
         
-        const athletesWithCodes = await Promise.all(
+        const athletesWithData = await Promise.all(
             activeApps.map(async (app) => {
                 const membership = await findMembershipByApplicationId(app.id);
-                return { ...app, membershipCode: membership?.code };
+                return { 
+                    ...app, 
+                    membershipCode: membership?.code,
+                    membershipExpiresAt: membership?.expiresAt
+                };
             })
         );
         
-        setAthletes(athletesWithCodes);
+        setAthletes(athletesWithData);
         setLoading(false);
     };
 
@@ -42,6 +51,13 @@ export default function AthleteList({ coachId }: AthleteListProps) {
         navigator.clipboard.writeText(text);
         toast({ title: "Copied!", description: "Membership code copied to clipboard." });
     }
+
+    const getDaysLeft = (expiresAt?: string): number | null => {
+        if (!expiresAt) return null;
+        const days = differenceInDays(new Date(expiresAt), new Date());
+        return Math.max(0, days);
+    }
+
 
     // Use effect to fetch data when the sheet is triggered to open
     // A simple way to do this is to call it when the component mounts and
@@ -66,11 +82,27 @@ export default function AthleteList({ coachId }: AthleteListProps) {
                         </SheetDescription>
                     </SheetHeader>
                     <div className="mt-4 space-y-4">
-                        {athletes.length > 0 ? athletes.map(athlete => (
+                        {athletes.length > 0 ? athletes.map(athlete => {
+                            const daysLeft = getDaysLeft(athlete.membershipExpiresAt);
+                            const isActive = daysLeft === null || daysLeft > 0;
+                            return (
                             <Card key={athlete.id} className="bg-muted/50">
                                 <CardContent className="p-4">
                                     <div className="flex justify-between items-start">
-                                        <h4 className="font-semibold">{athlete.applicant.name}</h4>
+                                        <div>
+                                            <h4 className="font-semibold">{athlete.applicant.name}</h4>
+                                             <div className="flex items-center gap-2 mt-1">
+                                                <Badge variant={isActive ? "default" : "destructive"} className={cn("text-xs", isActive && "bg-green-600 hover:bg-green-700")}>
+                                                    {isActive ? "Active" : "Inactive"}
+                                                </Badge>
+                                                {daysLeft !== null && (
+                                                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                                        <CalendarClock className="h-3 w-3" />
+                                                        <span>{daysLeft} days left</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
                                         <div className="flex items-center gap-2">
                                             <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
                                                 <a href={`mailto:${athlete.applicant.email}`}>
@@ -103,7 +135,8 @@ export default function AthleteList({ coachId }: AthleteListProps) {
                                     </div>
                                 </CardContent>
                             </Card>
-                        )) : (
+                            )
+                        }) : (
                             <p className="text-center text-muted-foreground py-8">No active athletes found for this coach.</p>
                         )}
                     </div>
@@ -112,4 +145,3 @@ export default function AthleteList({ coachId }: AthleteListProps) {
         </>
     );
 }
-
