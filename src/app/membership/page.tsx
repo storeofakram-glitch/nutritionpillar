@@ -126,13 +126,13 @@ export default function MembershipPage() {
         }
     };
 
-     const handleRevokeAccess = async (appId: string) => {
-        const result = await updateApplicationStatus(appId, 'rejected');
+     const handleDeleteAthlete = async (appId: string) => {
+        const result = await deleteApplication(appId);
         if (result.success && coachDetails) {
-             toast({ title: "Access Revoked", description: "The client's access has been revoked." });
+             toast({ title: "Athlete Deleted", description: "The client's application has been permanently deleted." });
              fetchCoachData(coachDetails);
         } else {
-            toast({ variant: 'destructive', title: 'Error', description: 'Failed to revoke access.'});
+            toast({ variant: 'destructive', title: 'Error', description: 'Failed to delete athlete.'});
         }
     };
 
@@ -332,8 +332,8 @@ export default function MembershipPage() {
                                                     </Button>
                                                      <Button variant="destructive" size="icon" className="h-8 w-8" onClick={() => handleOpenRevokeDialog(app)}>
                                                         <UserX className="h-4 w-4" />
-                                                        <span className="sr-only">Revoke Access</span>
-                                                    </Button>
+                                                        <span className="sr-only">Delete Athlete</span>
+                                                     </Button>
                                                 </div>
                                             </div>
                                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-3 text-muted-foreground">
@@ -525,7 +525,7 @@ export default function MembershipPage() {
                     isOpen={isRevokeDialogOpen}
                     onOpenChange={setIsRevokeDialogOpen}
                     athleteName={selectedAppForRevoke.applicant.name}
-                    onConfirm={() => handleRevokeAccess(selectedAppForRevoke.id)}
+                    onConfirm={() => handleDeleteAthlete(selectedAppForRevoke.id)}
                 />
             )}
         </div>

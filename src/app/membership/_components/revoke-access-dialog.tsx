@@ -22,12 +22,12 @@ interface RevokeAccessDialogProps {
 }
 
 export default function RevokeAccessDialog({ isOpen, onOpenChange, athleteName, onConfirm }: RevokeAccessDialogProps) {
-    const [isRevoking, setIsRevoking] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const handleConfirm = async () => {
-        setIsRevoking(true);
+        setIsDeleting(true);
         await onConfirm();
-        setIsRevoking(false);
+        setIsDeleting(false);
         onOpenChange(false);
     };
 
@@ -35,9 +35,9 @@ export default function RevokeAccessDialog({ isOpen, onOpenChange, athleteName, 
         <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure you want to revoke access?</AlertDialogTitle>
+                    <AlertDialogTitle>Are you sure you want to delete this athlete?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        This will deactivate the membership for "{athleteName}". Their status will be changed to 'rejected' and they will lose access to their supplement guide. This can be undone later by reactivating them from the admin panel.
+                        This will permanently delete the application for "{athleteName}". This action cannot be undone. The client will lose access to their supplement guide.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -46,9 +46,9 @@ export default function RevokeAccessDialog({ isOpen, onOpenChange, athleteName, 
                         <Button
                             variant="destructive"
                             onClick={handleConfirm}
-                            disabled={isRevoking}
+                            disabled={isDeleting}
                         >
-                            {isRevoking ? "Revoking..." : "Revoke Access"}
+                            {isDeleting ? "Deleting..." : "Delete Athlete"}
                         </Button>
                     </AlertDialogAction>
                 </AlertDialogFooter>
