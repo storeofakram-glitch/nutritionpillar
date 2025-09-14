@@ -7,6 +7,7 @@ import type { Order, Customer } from '@/types';
 import { getOrders, getTotalCostOfGoodsSold, getTotalRevenue } from './order-service';
 import { getTotalExpenses } from './expense-service';
 import { getUnreadSubmissionsCount } from './contact-service';
+import { getNewApplicationsCount } from './application-service';
 
 const ordersCollection = collection(db, 'orders');
 
@@ -53,13 +54,15 @@ export async function getDashboardStats() {
         totalCOGS,
         totalExpenses,
         allOrders,
-        unreadMessages
+        unreadMessages,
+        newApplications,
     ] = await Promise.all([
         getTotalRevenue(),
         getTotalCostOfGoodsSold(),
         getTotalExpenses(),
         getOrders(),
-        getUnreadSubmissionsCount()
+        getUnreadSubmissionsCount(),
+        getNewApplicationsCount(),
     ]);
 
     const totalSales = allOrders.length;
@@ -85,6 +88,7 @@ export async function getDashboardStats() {
         netProfit,
         newCustomersThisMonth,
         recentOrders,
-        unreadMessages
+        unreadMessages,
+        newApplications,
     };
 }

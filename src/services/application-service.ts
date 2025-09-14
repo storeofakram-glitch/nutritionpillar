@@ -95,6 +95,23 @@ export async function getNewApplicationsCountByCoach(coachId: string): Promise<n
     }
 }
 
+
+/**
+ * Gets the count of all new coaching applications.
+ * @returns A promise that resolves to the number of new applications.
+ */
+export async function getNewApplicationsCount(): Promise<number> {
+     try {
+        const q = query(applicationsCollection, where('status', '==', 'new'));
+        const snapshot = await getCountFromServer(q);
+        return snapshot.data().count;
+    } catch (error) {
+        console.error("Error getting new applications count: ", error);
+        return 0;
+    }
+}
+
+
 /**
  * Updates the status of a specific application and creates a membership if status is 'active'.
  * @param id The ID of the application to update.
