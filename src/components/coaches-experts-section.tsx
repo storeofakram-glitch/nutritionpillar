@@ -38,7 +38,7 @@ const StarRating = ({ rating }: { rating: number }) => (
 
 const CoachCard = ({ person }: { person: Coach }) => {
   return (
-    <Card className="h-full flex flex-col text-center transition-all duration-300 border shadow-md hover:shadow-xl hover:-translate-y-1 hover:border-primary">
+    <Card className="h-full flex flex-col text-center transition-all duration-300 border shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-1 hover:border-primary">
         <CardHeader className="p-0">
             <div className="relative w-full aspect-square">
                 <Image
