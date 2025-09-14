@@ -37,7 +37,7 @@ export default function RevokeAccessDialog({ isOpen, onOpenChange, athleteName, 
                 <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure you want to delete this athlete?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        This will permanently delete the application for "{athleteName}". This action cannot be undone. The client will lose access to their supplement guide.
+                        This will permanently delete the application for "{athleteName}". This action cannot be undone.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
