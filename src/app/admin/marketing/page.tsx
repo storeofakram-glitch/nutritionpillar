@@ -8,6 +8,7 @@ import { getOrders } from "@/services/order-service";
 import type { Order } from "@/types";
 import BestSellingProductsCard from "./_components/best-selling-products-card";
 import RegionalDemandChart from "./_components/regional-demand-chart";
+import CoachExportForm from "./_components/coach-export-form";
 
 export default function AdminMarketingPage() {
     const [orders, setOrders] = useState<Order[]>([]);
@@ -72,6 +73,7 @@ export default function AdminMarketingPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
              <div className="space-y-6">
                 <CustomerExportForm />
+                <CoachExportForm />
                 <MembershipExportCard />
             </div>
             <div className="space-y-6">
