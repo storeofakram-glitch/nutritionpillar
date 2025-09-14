@@ -187,14 +187,14 @@ export default function MembershipPage() {
     const renderCoachView = () => {
         if (!result || result === 'invalid' || !coachDetails) return null;
 
-        const getStatusVariant = (status: CoachingApplication['status']) => {
+        const getStatusStyles = (status: CoachingApplication['status']): string => {
             switch (status) {
-                case 'new': return 'default';
-                case 'read': return 'secondary';
-                case 'contacted': return 'default';
-                case 'rejected': return 'destructive';
-                case 'active': return 'default';
-                default: return 'secondary';
+                case 'new': return 'bg-primary hover:bg-primary/80';
+                case 'active': return 'bg-green-600 hover:bg-green-700 text-white';
+                case 'read':
+                case 'contacted':
+                    return 'bg-yellow-400 hover:bg-yellow-500 text-yellow-900';
+                default: return ''; // uses default from Badge variant
             }
         }
 
@@ -264,7 +264,7 @@ export default function MembershipPage() {
                                                 <TableCell>{app.applicant.goal}</TableCell>
                                                 <TableCell>{app.applicant.duration}</TableCell>
                                                 <TableCell>
-                                                    <Badge variant={getStatusVariant(app.status)}>{app.status}</Badge>
+                                                    <Badge variant={app.status === 'rejected' ? 'destructive' : 'default'} className={cn(getStatusStyles(app.status))}>{app.status}</Badge>
                                                 </TableCell>
                                                 <TableCell className="text-right space-x-2">
                                                     {(app.status === 'new' || app.status === 'read') && (

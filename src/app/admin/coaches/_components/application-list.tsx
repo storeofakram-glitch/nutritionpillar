@@ -13,6 +13,7 @@ import { MoreHorizontal } from "lucide-react";
 import ViewApplicationDialog from "./view-application-dialog";
 import DeleteApplicationDialog from "./delete-application-dialog";
 import { updateApplicationStatus } from "@/services/application-service";
+import { cn } from "@/lib/utils";
 
 interface ApplicationListProps {
   coachId: string;
@@ -70,6 +71,18 @@ export default function ApplicationList({ coachId }: ApplicationListProps) {
         fetchData();
     };
 
+    const getStatusStyles = (status: CoachingApplication['status']): string => {
+        switch (status) {
+            case 'new': return 'bg-primary hover:bg-primary/80';
+            case 'active': return 'bg-green-600 hover:bg-green-700 text-white';
+            case 'read':
+            case 'contacted':
+                return 'bg-yellow-400 hover:bg-yellow-500 text-yellow-900';
+            default: return ''; // uses default from Badge variant
+        }
+    }
+
+
     if (loading) {
         return <Badge variant="outline">Loading...</Badge>;
     }
@@ -106,7 +119,7 @@ export default function ApplicationList({ coachId }: ApplicationListProps) {
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                     <Badge variant={app.status === 'new' ? 'default' : 'secondary'}>{app.status}</Badge>
+                                     <Badge variant={app.status === 'rejected' ? 'destructive' : 'default'} className={cn(getStatusStyles(app.status))}>{app.status}</Badge>
                                       <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <Button size="icon" variant="ghost">
