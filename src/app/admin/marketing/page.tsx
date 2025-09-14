@@ -78,13 +78,11 @@ export default function AdminMarketingPage() {
             </div>
             <div className="space-y-6">
                 <BestSellingProductsCard products={bestSellingProducts} isLoading={loading} />
+                <RegionalDemandChart data={regionalDemand} isLoading={loading} />
             </div>
-        </div>
-        
-        <div>
-            <RegionalDemandChart data={regionalDemand} isLoading={loading} />
         </div>
 
     </div>
   );
 }
+

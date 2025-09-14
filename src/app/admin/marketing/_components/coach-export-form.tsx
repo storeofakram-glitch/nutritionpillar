@@ -63,10 +63,8 @@ export default function CoachExportForm() {
     const [loading, setLoading] = useState(true);
 
     const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
-    const [selectedStates, setSelectedStates] = useState<string[]>([]);
 
     const [specialtySearch, setSpecialtySearch] = useState("");
-    const [stateSearch, setStateSearch] = useState("");
 
     useEffect(() => {
         async function loadData() {
@@ -78,22 +76,16 @@ export default function CoachExportForm() {
         loadData();
     }, []);
 
-    const { specialties, states } = useMemo(() => {
+    const { specialties } = useMemo(() => {
         const specialtySet = new Set(coaches.map(c => c.specialty));
-        const stateSet = new Set(coaches.map(c => c.personalInfo?.state).filter(Boolean) as string[]);
         return {
             specialties: Array.from(specialtySet).sort(),
-            states: Array.from(stateSet).sort(),
         };
     }, [coaches]);
     
     const filteredSpecialties = useMemo(() => {
         return specialties.filter(s => s.toLowerCase().includes(specialtySearch.toLowerCase()));
     }, [specialties, specialtySearch]);
-
-    const filteredStates = useMemo(() => {
-        return states.filter(s => s.toLowerCase().includes(stateSearch.toLowerCase()));
-    }, [states, stateSearch]);
 
     const handleSpecialtyChange = (specialty: string, checked: boolean) => {
         setSelectedSpecialties(prev => 
@@ -105,17 +97,6 @@ export default function CoachExportForm() {
         setSelectedSpecialties(checked ? specialties : []);
     };
 
-    const handleStateChange = (state: string, checked: boolean) => {
-        setSelectedStates(prev => 
-            checked ? [...prev, state] : prev.filter(s => s !== state)
-        );
-    };
-
-    const handleSelectAllStates = (checked: boolean) => {
-        setSelectedStates(checked ? states : []);
-    };
-
-
     const handleDownload = () => {
         if (loading) return;
 
@@ -123,10 +104,6 @@ export default function CoachExportForm() {
 
         if (selectedSpecialties.length > 0) {
             filteredCoaches = filteredCoaches.filter(c => selectedSpecialties.includes(c.specialty));
-        }
-        
-        if (selectedStates.length > 0) {
-            filteredCoaches = filteredCoaches.filter(c => c.personalInfo?.state && selectedStates.includes(c.personalInfo.state));
         }
         
         if (filteredCoaches.length === 0) {
@@ -138,14 +115,13 @@ export default function CoachExportForm() {
             return;
         }
 
-        const csvHeader = "Name,Email,Phone,Specialty,State";
+        const csvHeader = "Name,Email,Phone,Specialty";
         const csvRows = filteredCoaches.map(c => {
              const name = `"${c.name.replace(/"/g, '""')}"`;
              const email = `"${c.personalInfo?.email || ''}"`;
              const phone = `"${c.personalInfo?.phone || ''}"`;
              const specialty = `"${c.specialty}"`;
-             const state = `"${c.personalInfo?.state || ''}"`;
-             return [name, email, phone, specialty, state].join(",");
+             return [name, email, phone, specialty].join(",");
         });
 
         const csvContent = "data:text/csv;charset=utf-8," + [csvHeader, ...csvRows].join("\n");
@@ -186,32 +162,20 @@ export default function CoachExportForm() {
             <CardHeader>
                 <CardTitle>Coach & Expert Exporter</CardTitle>
                 <CardDescription>
-                    Create targeted lists of your team by filtering based on their specialty and location.
+                    Create targeted lists of your team by filtering based on their specialty.
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <CheckboxList 
-                        title="Filter by Specialty" 
-                        items={filteredSpecialties}
-                        allItems={specialties}
-                        selectedItems={selectedSpecialties}
-                        onCheckedChange={handleSpecialtyChange} 
-                        onSelectAll={handleSelectAllSpecialties}
-                        searchTerm={specialtySearch}
-                        onSearchChange={setSpecialtySearch}
-                    />
-                    <CheckboxList 
-                        title="Filter by State (Wilaya)" 
-                        items={filteredStates}
-                        allItems={states}
-                        selectedItems={selectedStates}
-                        onCheckedChange={handleStateChange}
-                        onSelectAll={handleSelectAllStates}
-                        searchTerm={stateSearch}
-                        onSearchChange={setStateSearch}
-                    />
-                </div>
+                <CheckboxList 
+                    title="Filter by Specialty" 
+                    items={filteredSpecialties}
+                    allItems={specialties}
+                    selectedItems={selectedSpecialties}
+                    onCheckedChange={handleSpecialtyChange} 
+                    onSelectAll={handleSelectAllSpecialties}
+                    searchTerm={specialtySearch}
+                    onSearchChange={setSpecialtySearch}
+                />
                 
                 <Button onClick={handleDownload} disabled={loading}>
                     <Download className="mr-2 h-4 w-4" />
