@@ -71,7 +71,7 @@ export default function AdminMembershipPage() {
                 </div>
             </div>
 
-            <Card>
+            <Card className="shadow-md">
                 <CardHeader>
                     <div className="flex items-center justify-between">
                          <div>
@@ -85,7 +85,7 @@ export default function AdminMembershipPage() {
                 </CardContent>
             </Card>
 
-            <Card>
+            <Card className="shadow-md">
                 <CardHeader>
                     <CardTitle>Coaches & Experts Memberships</CardTitle>
                     <CardDescription>Memberships automatically created for your team.</CardDescription>
@@ -95,7 +95,7 @@ export default function AdminMembershipPage() {
                 </CardContent>
             </Card>
 
-             <Card>
+             <Card className="shadow-md">
                 <CardHeader>
                      <div className="flex items-center justify-between">
                          <div>
