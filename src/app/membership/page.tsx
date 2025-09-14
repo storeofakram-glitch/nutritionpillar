@@ -22,6 +22,7 @@ import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
 import { findMembershipByApplicationId } from '@/services/membership-service';
+import RevokeAccessDialog from './_components/revoke-access-dialog';
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center gap-1">
@@ -51,6 +52,8 @@ export default function MembershipPage() {
     const [result, setResult] = useState<MembershipWithProducts | 'invalid' | null>(null);
     const [coachDetails, setCoachDetails] = useState<Coach | null>(null);
     const [applications, setApplications] = useState<EnrichedApplication[]>([]);
+    const [isRevokeDialogOpen, setIsRevokeDialogOpen] = useState(false);
+    const [selectedAppForRevoke, setSelectedAppForRevoke] = useState<CoachingApplication | null>(null);
     const { toast } = useToast();
 
     const fetchCoachData = async (coach: Coach) => {
@@ -132,6 +135,11 @@ export default function MembershipPage() {
             toast({ variant: 'destructive', title: 'Error', description: 'Failed to revoke access.'});
         }
     };
+
+    const handleOpenRevokeDialog = (app: CoachingApplication) => {
+        setSelectedAppForRevoke(app);
+        setIsRevokeDialogOpen(true);
+    }
 
     const { pendingApplications, activeClients } = useMemo(() => {
         return {
@@ -322,7 +330,7 @@ export default function MembershipPage() {
                                                             <span className="sr-only">WhatsApp</span>
                                                         </a>
                                                     </Button>
-                                                     <Button variant="destructive" size="icon" className="h-8 w-8" onClick={() => handleRevokeAccess(app.id)}>
+                                                     <Button variant="destructive" size="icon" className="h-8 w-8" onClick={() => handleOpenRevokeDialog(app)}>
                                                         <UserX className="h-4 w-4" />
                                                         <span className="sr-only">Revoke Access</span>
                                                     </Button>
@@ -511,8 +519,15 @@ export default function MembershipPage() {
                      </div>
                 )}
             </div>
+
+            {selectedAppForRevoke && (
+                <RevokeAccessDialog
+                    isOpen={isRevokeDialogOpen}
+                    onOpenChange={setIsRevokeDialogOpen}
+                    athleteName={selectedAppForRevoke.applicant.name}
+                    onConfirm={() => handleRevokeAccess(selectedAppForRevoke.id)}
+                />
+            )}
         </div>
     );
 }
-
-    
