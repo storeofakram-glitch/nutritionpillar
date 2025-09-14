@@ -349,6 +349,12 @@ export default function MembershipPage() {
                         <Badge variant={isActive ? "default" : "destructive"} className={cn(isActive && 'bg-green-600 hover:bg-green-700 text-white')}>
                            {isActive ? "Active" : "Inactive"}
                         </Badge>
+                         {daysLeft !== null && (
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <CalendarClock className="h-3 w-3" />
+                                <span>{daysLeft} days left</span>
+                            </div>
+                        )}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -385,15 +391,6 @@ export default function MembershipPage() {
                                 <span className="font-medium">Primary Goal:</span>
                             </div>
                             <span className="font-bold">{result.goal}</span>
-                        </div>
-                        )}
-                        {daysLeft !== null && (
-                            <div className="flex items-center justify-between text-sm p-3 rounded-md bg-secondary">
-                            <div className="flex items-center gap-2">
-                                <CalendarClock className="h-4 w-4 text-muted-foreground" />
-                                <span className="font-medium">Days Left:</span>
-                            </div>
-                            <span className="font-bold">{daysLeft} days</span>
                         </div>
                         )}
                     </div>
@@ -495,4 +492,5 @@ export default function MembershipPage() {
 }
 
     
+
 
