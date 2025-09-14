@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import * as React from "react"
@@ -19,6 +20,7 @@ import {
   SidebarInset
 } from "@/components/ui/sidebar"
 import { Home, Package, ShoppingCart, Truck, Users, ArrowLeft, DollarSign, Brush, ShieldCheck, Megaphone, Mail, UserCheck } from "lucide-react"
+import Header from "@/components/layout/header"
 
 export default function AdminLayout({
   children,

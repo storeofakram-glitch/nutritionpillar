@@ -1,21 +1,16 @@
-import type { Metadata } from 'next';
+
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/contexts/cart-context';
-import Header from '@/components/layout/header';
-import Footer from '@/components/layout/footer';
 import { cn } from '@/lib/utils';
 import FirebaseProvider from '@/components/firebase-provider';
-import BottomNav from '@/components/layout/bottom-nav';
 import { ptSans, spaceGrotesk } from './fonts';
+import type { Metadata, Viewport } from 'next';
+import LayoutContent from './layout-content';
 
 export const metadata: Metadata = {
   title: 'Nutrition Pillar - Your Supplement Marketplace',
   description: 'High-quality supplements to fuel your fitness journey.',
-  icons: {
-    icon: 'https://github.com/akramFit/Nutrition-Pillar-Assets/blob/main/logo%20nutrition%20pillar.png?raw=true',
-  },
-  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
@@ -27,16 +22,13 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className="dark">
       <head>
         <meta name="theme-color" content="#193382" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href="https://github.com/akramFit/Nutrition-Pillar-Assets/blob/main/logo%20nutrition%20pillar.png?raw=true" />
       </head>
       <body className={cn('font-body antialiased', 'min-h-screen bg-background font-sans', ptSans.variable, spaceGrotesk.variable)}>
         <FirebaseProvider>
           <CartProvider>
-            <div className="relative flex min-h-dvh flex-col bg-background">
-              <Header />
-              <main className="flex-1 pb-24 md:pb-0">{children}</main>
-              <Footer />
-              <BottomNav />
-            </div>
+            <LayoutContent>{children}</LayoutContent>
             <Toaster />
           </CartProvider>
         </FirebaseProvider>
