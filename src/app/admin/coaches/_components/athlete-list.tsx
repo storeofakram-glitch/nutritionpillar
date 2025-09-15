@@ -103,7 +103,7 @@ export default function AthleteList({ coachId }: AthleteListProps) {
                                                     {isActive ? "Active" : "Inactive"}
                                                 </Badge>
                                                 {daysLeft !== null && (
-                                                    <div className={cn("flex items-center gap-1 text-xs", getDaysLeftColor(daysLeft))}>
+                                                    <div className={cn("flex items-center gap-1 text-sm", getDaysLeftColor(daysLeft))}>
                                                         <CalendarClock className="h-3 w-3" />
                                                         <span>{daysLeft} days left</span>
                                                     </div>

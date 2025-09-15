@@ -89,10 +89,10 @@ export default function MembershipPage() {
             if (foundMembership) {
                 // Check for user type mismatch
                 if (userType === 'coach' && foundMembership.type !== 'Coach/Expert') {
-                    toast({ variant: 'destructive', title: 'Invalid User Type', description: 'This code belongs to an athlete. Please select "I am an Athlete".' });
+                    toast({ variant: 'destructive', title: 'Invalid User Type', description: 'This code belongs to an athlete. Please select "I am a Coach/Expert".' });
                     setResult('invalid');
                 } else if (userType === 'athlete' && foundMembership.type === 'Coach/Expert') {
-                    toast({ variant: 'destructive', title: 'Invalid User Type', description: 'This code belongs to a coach. Please select "I am a Coach/Expert".' });
+                    toast({ variant: 'destructive', title: 'Invalid User Type', description: 'This code belongs to a coach. Please select "I am an Athlete".' });
                     setResult('invalid');
                 } else {
                     setResult(foundMembership);
@@ -334,7 +334,7 @@ export default function MembershipPage() {
                                                             {isActive ? "Active" : "Inactive"}
                                                         </Badge>
                                                         {daysLeft !== null && (
-                                                            <div className={cn("flex items-center gap-1 text-xs", getDaysLeftColor(daysLeft))}>
+                                                            <div className={cn("flex items-center gap-1 text-sm", getDaysLeftColor(daysLeft))}>
                                                                 <CalendarClock className="h-3 w-3" />
                                                                 <span>{daysLeft} days left</span>
                                                             </div>
@@ -415,7 +415,7 @@ export default function MembershipPage() {
                            {isActive ? "Active" : "Inactive"}
                         </Badge>
                          {daysLeft !== null && (
-                            <div className={cn("flex items-center gap-1 text-xs", getDaysLeftColor(daysLeft))}>
+                            <div className={cn("flex items-center gap-1 text-sm", getDaysLeftColor(daysLeft))}>
                                 <CalendarClock className="h-3 w-3" />
                                 <span>{daysLeft} days left</span>
                             </div>
