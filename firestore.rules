@@ -1,0 +1,65 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if a user is an authenticated admin
+    function isAdmin() {
+      return request.auth != null && request.auth.token.admin == true;
+    }
+    
+    // --- Publicly Readable Collections ---
+    // Anyone can read, only admins can write.
+    
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /coaches/{coachId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /shippingOptions/{optionId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // --- Open Create, Admin Read/Write Collections ---
+
+    match /orders/{orderId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+    
+    match /coachingApplications/{applicationId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+    
+    // --- Admin-Only Collections ---
+    // These collections are readable and writable only by administrators.
+    // Server-side code will have administrative privileges to query these.
+
+    match /memberships/{membershipId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /contactSubmissions/{submissionId} {
+      allow read, write: if isAdmin();
+    }
+    
+    match /expenses/{expenseId} {
+        allow read, write: if isAdmin();
+    }
+    
+    match /counters/{counterId} {
+      allow read, write: if isAdmin();
+    }
+  }
+}
