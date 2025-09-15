@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/auth-context";
 import { useRouter } from "next/navigation";
 import { LogIn } from "lucide-react";
+import { useEffect } from "react";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -33,6 +34,12 @@ export default function AdminLoginPage() {
     },
   });
 
+  useEffect(() => {
+    if (user) {
+      router.push("/admin");
+    }
+  }, [user, router]);
+
   const onSubmit = async (data: LoginFormValues) => {
     try {
       await signIn(data.email, data.password);
@@ -47,13 +54,8 @@ export default function AdminLoginPage() {
     }
   };
   
-  if (loading) {
-    return null; // Don't render anything while checking auth state
-  }
-
-  if (user) {
-    router.push('/admin');
-    return null; // Render nothing while redirecting
+  if (loading || user) {
+    return null; // Don't render anything while checking auth state or redirecting
   }
 
   return (
