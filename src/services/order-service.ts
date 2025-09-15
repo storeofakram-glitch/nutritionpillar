@@ -87,8 +87,8 @@ export async function addOrder(orderInput: OrderInput) {
             // Calculate shipping
             const shippingOptions = await getShippingOptions();
             const stateData = shippingOptions.find(s => s.state === orderInput.shippingAddress.state);
-            const cityData = stateData?.cities.find(c => c.name === orderInput.shippingAddress.city);
-            const shippingPrice = cityData?.price || 0;
+            const cityPrice = stateData?.cities?.find(c => c.name === orderInput.shippingAddress.city)?.price;
+            const shippingPrice = cityPrice ?? stateData?.defaultPrice ?? 0;
 
             // Calculate final amount on the server
             const finalAmount = calculatedSubtotal + shippingPrice;
@@ -181,3 +181,5 @@ export async function deleteOrder(id: string) {
         return { success: false, error: (error as Error).message };
     }
 }
+
+    

@@ -22,6 +22,7 @@ import Link from 'next/link';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import ReactMarkdown from 'react-markdown';
 import { ScrollArea } from './ui/scroll-area';
+import { dzStates } from '@/lib/dz-states';
 
 export default function CheckoutForm() {
   const { cartTotal, cartItems, clearCart } = useCart();
@@ -68,15 +69,17 @@ export default function CheckoutForm() {
     return shippingOptions.find(s => s.state === selectedState);
   }, [selectedState, shippingOptions]);
 
-  const availableCities: City[] = useMemo(() => {
-    return selectedStateData?.cities || [];
-  }, [selectedStateData]);
+  const availableCities = useMemo(() => {
+    const state = dzStates.find(s => s.name === selectedState);
+    return state ? state.cities : [];
+  }, [selectedState]);
+
 
   const shippingPrice = useMemo(() => {
-    const cityPrice = availableCities.find(c => c.name === selectedCity)?.price;
+    const cityOverride = selectedStateData?.cities.find(c => c.name === selectedCity)?.price;
     // If a specific city price is found, use it. Otherwise, use the state's default price.
-    return cityPrice ?? selectedStateData?.defaultPrice ?? 0;
-  }, [selectedCity, availableCities, selectedStateData]);
+    return cityOverride ?? selectedStateData?.defaultPrice ?? 0;
+  }, [selectedCity, selectedStateData]);
 
 
   const subtotal = cartTotal;
@@ -179,7 +182,7 @@ export default function CheckoutForm() {
                 <Select onValueChange={setSelectedCity} value={selectedCity} disabled={!selectedState}>
                   <SelectTrigger id="city"><SelectValue placeholder="Select City" /></SelectTrigger>
                   <SelectContent>
-                    {availableCities.map(c => <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>)}
+                    {availableCities.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -287,3 +290,5 @@ export default function CheckoutForm() {
     </Card>
   );
 }
+
+    
