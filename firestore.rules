@@ -2,52 +2,33 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper function to check for an 'admin' custom claim on the user's token.
+  
+    // Helper function to check for admin custom claim
     function isAdmin() {
       return request.auth != null && request.auth.token.admin == true;
     }
 
     // --- Admin-Only Collections ---
-    // Grants full list, read, and write access to admins for these collections.
-    // 'list' is crucial for dashboard queries.
-    match /(admins|counters|expenses)/{docId} {
+    // Grant full list, read, and write access to admins for collections
+    // that should not be public at all.
+    match /(admins|contactSubmissions|counters|expenses|memberships|orders)/{docId=**} {
       allow list, read, write: if isAdmin();
     }
-    
+
     // --- Publicly Readable Collections ---
-    // Allows anyone to read, but only admins to write.
-    match /(products|coaches|settings|shippingOptions)/{docId} {
+    // Allow public read access for collections needed by website visitors.
+    // Admins can still write to these.
+    match /(products|coaches|settings|shippingOptions)/{docId=**} {
       allow read: if true;
       allow write: if isAdmin();
-      // Admins need list access for management pages.
-      allow list: if isAdmin();
-    }
-
-    // --- Collections with Mixed Access ---
-
-    // Orders can be created by anyone, but only managed by admins.
-    match /orders/{orderId} {
-      allow create: if true;
-      allow list, read, update, delete: if isAdmin();
     }
     
-    // Contact submissions can be created by anyone, but only read/managed by admins.
-    match /contactSubmissions/{submissionId} {
-        allow create: if true;
-        allow list, read, update, delete: if isAdmin();
-    }
-
-    // Coaching applications can be created by anyone, but only managed by admins.
+    // --- Publicly Writable Collections ---
+    // Allow anyone to create documents in these collections for things like
+    // guest checkouts and contact forms. Admins can manage them.
     match /coachingApplications/{applicationId} {
       allow create: if true;
-      allow list, read, update, delete: if isAdmin();
-    }
-    
-    // Memberships are managed by admins, but publicly readable for the membership page.
-    match /memberships/{membershipId} {
-      allow read: if true;
-      allow list, write: if isAdmin();
+      allow read, update, delete: if isAdmin();
     }
   }
 }
