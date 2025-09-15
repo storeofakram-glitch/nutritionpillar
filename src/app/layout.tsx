@@ -7,6 +7,7 @@ import FirebaseProvider from '@/components/firebase-provider';
 import { ptSans, spaceGrotesk } from './fonts';
 import type { Metadata, Viewport } from 'next';
 import LayoutContent from './layout-content';
+import { AuthProvider } from '@/contexts/auth-context';
 
 export const metadata: Metadata = {
   title: 'Nutrition Pillar - Your Supplement Marketplace',
@@ -27,10 +28,12 @@ export default function RootLayout({
       </head>
       <body className={cn('font-body antialiased', 'min-h-screen bg-background font-sans', ptSans.variable, spaceGrotesk.variable)}>
         <FirebaseProvider>
-          <CartProvider>
-            <LayoutContent>{children}</LayoutContent>
-            <Toaster />
-          </CartProvider>
+          <AuthProvider>
+            <CartProvider>
+              <LayoutContent>{children}</LayoutContent>
+              <Toaster />
+            </CartProvider>
+          </AuthProvider>
         </FirebaseProvider>
       </body>
     </html>

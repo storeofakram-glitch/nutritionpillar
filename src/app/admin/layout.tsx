@@ -1,10 +1,9 @@
 
-
 "use client"
 
 import * as React from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 import { cn } from "@/lib/utils"
 import {
@@ -19,8 +18,10 @@ import {
   SidebarFooter,
   SidebarInset
 } from "@/components/ui/sidebar"
-import { Home, Package, ShoppingCart, Truck, Users, ArrowLeft, DollarSign, Brush, ShieldCheck, Megaphone, Mail, UserCheck } from "lucide-react"
+import { Home, Package, ShoppingCart, Truck, Users, ArrowLeft, DollarSign, Brush, ShieldCheck, Megaphone, Mail, UserCheck, LogOut } from "lucide-react"
 import Header from "@/components/layout/header"
+import { useAuth } from "@/contexts/auth-context"
+import { Button } from "@/components/ui/button"
 
 export default function AdminLayout({
   children,
@@ -28,6 +29,8 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const { user, isAdmin, loading, signOut } = useAuth();
+  const router = useRouter();
 
   const navItems = [
     { href: "/admin", label: "Dashboard", icon: Home },
@@ -42,6 +45,26 @@ export default function AdminLayout({
     { href: "/admin/appearance", label: "Appearance", icon: Brush },
     { href: "/admin/marketing", label: "Marketing", icon: Megaphone },
   ]
+  
+  React.useEffect(() => {
+    if (!loading && !isAdmin) {
+      router.push('/admin/login');
+    }
+  }, [user, isAdmin, loading, router]);
+  
+  if (loading || !isAdmin) {
+    // You can return a loading spinner or null here
+    return (
+        <div className="flex items-center justify-center h-screen">
+            <p>Loading...</p>
+        </div>
+    );
+  }
+  
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/admin/login');
+  };
   
   return (
     <SidebarProvider>
@@ -72,6 +95,12 @@ export default function AdminLayout({
           <SidebarFooter>
             <SidebarMenu>
                 <SidebarMenuItem>
+                    <SidebarMenuButton tooltip="Sign Out" onClick={handleSignOut}>
+                        <LogOut />
+                        <span>Sign Out</span>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
                     <Link href="/">
                         <SidebarMenuButton tooltip="Back to site">
                             <ArrowLeft />
@@ -90,6 +119,10 @@ export default function AdminLayout({
                         {navItems.find(item => pathname.startsWith(item.href) && (item.href === '/admin' ? pathname === item.href : true))?.label || 'Admin'}
                     </h1>
                 </div>
+                <Button variant="ghost" onClick={handleSignOut} className="gap-2">
+                    <LogOut className="h-4 w-4"/>
+                    <span className="hidden md:inline">Sign Out</span>
+                </Button>
             </header>
             <main className="p-6">
                 {children}

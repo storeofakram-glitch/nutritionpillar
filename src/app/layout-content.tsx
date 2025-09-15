@@ -9,6 +9,11 @@ import { usePathname } from 'next/navigation';
 export default function LayoutContent({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const isAdminPage = pathname.startsWith('/admin');
+    const isLoginPage = pathname === '/admin/login';
+
+    if (isLoginPage) {
+        return <>{children}</>;
+    }
 
     return (
         <div className="relative flex min-h-dvh flex-col bg-background">
