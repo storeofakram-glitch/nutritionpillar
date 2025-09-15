@@ -482,7 +482,12 @@ export default function MembershipPage() {
                     <CardContent>
                         <form onSubmit={handleCheckMembership} className="space-y-6">
                              <div className="space-y-3">
-                                <RadioGroup defaultValue="athlete" onValueChange={setUserType} className="grid grid-cols-2 gap-4">
+                                <RadioGroup 
+                                    defaultValue="athlete" 
+                                    onValueChange={setUserType} 
+                                    className="grid grid-cols-2 gap-4"
+                                    disabled={!!(result && result !== 'invalid')}
+                                >
                                     <div>
                                         <RadioGroupItem value="athlete" id="athlete" className="peer sr-only" />
                                         <Label
