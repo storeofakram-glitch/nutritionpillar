@@ -33,7 +33,7 @@ export default function CheckoutForm() {
   const [termsContent, setTermsContent] = useState<TermsPageSettings | null>(null);
   const [selectedState, setSelectedState] = useState<string>('');
   const [selectedCity, setSelectedCity] = useState<string>('');
-  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('Home Delivery');
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('Desk (Office) Delivery');
   
   const [clientInfo, setClientInfo] = useState({ fullName: '', phone: '', address: '', email: '' });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('Pay on Delivery');
