@@ -298,9 +298,9 @@ export default function MembershipPage() {
                                                     <Badge variant={'default'} className={cn(getStatusStyles(app.status))}>{app.status}</Badge>
                                                 </TableCell>
                                                 <TableCell className="text-right space-x-2">
-                                                    {(app.status === 'new' || app.status === 'contacted') && (
+                                                    {app.status === 'new' && (
                                                         <>
-                                                            <Button size="sm" variant="outline" onClick={() => handleStatusUpdate(app.id, 'active')}>Accept</Button>
+                                                            <Button size="sm" variant="outline" onClick={() => handleStatusUpdate(app.id, 'contacted')}>Accept</Button>
                                                             <Button size="sm" variant="destructive" onClick={() => handleRejectApplication(app.id)}>Reject</Button>
                                                         </>
                                                     )}
