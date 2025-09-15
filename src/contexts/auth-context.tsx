@@ -25,13 +25,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
-      
-      if (user) {
-        setIsAdmin(true);
-      } else {
-        setIsAdmin(false);
-      }
-      
+      // Any authenticated user is considered an admin
+      setIsAdmin(!!user);
       setLoading(false);
     });
 
