@@ -56,6 +56,7 @@ export async function findMembershipByCode(code: string): Promise<MembershipWith
     const recommendedProductsWithDetails: (RecommendedProduct & { product: Product })[] = [];
     if (membershipData.recommendedProducts && membershipData.recommendedProducts.length > 0) {
         const productPromises = membershipData.recommendedProducts.map(async (rec) => {
+            if (!rec || !rec.productId) return null; // Add a guard clause
             const product = await getProductById(rec.productId);
             if (product) {
                 return { ...rec, product };
