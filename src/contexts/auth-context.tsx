@@ -2,7 +2,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, type User } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, type User } from 'firebase/auth';
 import { firebaseApp } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -23,18 +23,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const auth = getAuth(firebaseApp);
 
   useEffect(() => {
-    // Set persistence on the client-side
-    setPersistence(auth, browserLocalPersistence).then(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setUser(user);
-            setIsAdmin(!!user);
-            setLoading(false);
-        });
-        return () => unsubscribe();
-    }).catch((error) => {
-        console.error("Error setting auth persistence:", error);
-        setLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setUser(user);
+      
+      if (user) {
+        // Any authenticated user is considered an admin
+        setIsAdmin(true);
+        const token = await user.getIdToken();
+        // Set a cookie for server-side auth
+        document.cookie = `firebaseIdToken=${token}; path=/; max-age=3600`;
+      } else {
+        setIsAdmin(false);
+        // Clear the cookie on logout
+        document.cookie = 'firebaseIdToken=; path=/; max-age=-1';
+      }
+      
+      setLoading(false);
     });
+    return () => unsubscribe();
   }, [auth]);
 
   const signIn = async (email: string, password: string) => {
@@ -45,7 +51,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signOut(auth);
   };
 
-  // While loading, show a blank page or a loader
   if (loading) {
     return (
         <div className="flex items-center justify-center h-screen">

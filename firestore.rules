@@ -1,57 +1,38 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper function to check for admin role via custom claims
-    function isAdmin() {
-      return request.auth.token.admin == true;
+  
+    // Function to check if a user is signed in
+    function isSignedIn() {
+      return request.auth != null;
     }
 
-    // Public collections - readable by anyone
+    // Products: Public can read, only authenticated can write
     match /products/{productId} {
       allow read: if true;
-      allow write: if isAdmin();
-    }
-    match /coaches/{coachId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-    match /settings/homepage {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-    match /shippingOptions/{optionId} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isSignedIn();
     }
 
-    // User-created data - can be created by anyone
+    // Orders: Only authenticated users can create. Read/Update/Delete for admins.
     match /orders/{orderId} {
-      allow create: if true; // Anyone can place an order
-      allow read, write, list: if isAdmin(); // Only admins can manage orders
+      allow create: if isSignedIn();
+      allow read, update, delete: if isSignedIn();
     }
-    match /coachingApplications/{appId} {
-      allow create: if true; // Anyone can apply for coaching
-      allow read, write, list: if isAdmin(); // Only admins can manage applications
-    }
-    match /contactSubmissions/{submissionId} {
-      allow create: if true;
-      allow read, write, list: if isAdmin();
+    
+    // Settings: Public can read, only authenticated can write
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isSignedIn();
     }
 
-    // Protected collections - only admins can access
-    match /counters/{counterId} {
-      allow read, write: if isAdmin();
-    }
-    match /expenses/{expenseId} {
-      allow read, write, list, delete: if isAdmin();
-    }
-    match /memberships/{membershipId} {
-      allow read: if request.auth != null; // Any signed-in user can check a membership
-      allow create, update, delete, list: if isAdmin(); // Only admins can manage memberships
-    }
-     match /admins/{adminId} {
-      allow read, create, update, delete: if isAdmin();
+    // All other collections are writable by authenticated users and readable by anyone.
+    // This covers: coaches, coachingApplications, memberships, shippingOptions, 
+    // contactSubmissions, expenses, and counters.
+    match /{collection}/{docId} {
+        allow read: if true;
+        allow list: if true;
+        allow write: if isSignedIn();
     }
   }
 }
