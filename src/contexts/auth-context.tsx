@@ -19,27 +19,21 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Start with loading as true
   const auth = getAuth(firebaseApp);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    // onAuthStateChanged returns an unsubscribe function
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      // This listener is called when the auth state is first checked and whenever it changes.
       setUser(user);
+      setIsAdmin(!!user); // Any logged-in user is an admin
       
-      if (user) {
-        // Any authenticated user is considered an admin
-        setIsAdmin(true);
-        const token = await user.getIdToken();
-        // Set a cookie for server-side auth
-        document.cookie = `firebaseIdToken=${token}; path=/; max-age=3600`;
-      } else {
-        setIsAdmin(false);
-        // Clear the cookie on logout
-        document.cookie = 'firebaseIdToken=; path=/; max-age=-1';
-      }
-      
+      // Once this has run once, we know the initial auth state has been determined.
       setLoading(false);
     });
+
+    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, [auth]);
 
