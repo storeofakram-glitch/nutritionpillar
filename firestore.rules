@@ -2,33 +2,79 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-  
-    // Helper function to check for admin custom claim
+
+    // =================================
+    // Helper Functions
+    // =================================
+
+    // Checks if the requesting user is an authenticated admin.
     function isAdmin() {
       return request.auth != null && request.auth.token.admin == true;
     }
 
-    // --- Admin-Only Collections ---
-    // Grant full list, read, and write access to admins for collections
-    // that should not be public at all.
-    match /(admins|contactSubmissions|counters|expenses|memberships|orders)/{docId=**} {
-      allow list, read, write: if isAdmin();
+    // Checks if the requesting user owns a specific membership document.
+    function isAthleteOwner(membershipId) {
+      return request.auth != null && request.auth.uid == get(/databases/$(database)/documents/memberships/$(membershipId)).data.uid;
     }
 
-    // --- Publicly Readable Collections ---
-    // Allow public read access for collections needed by website visitors.
-    // Admins can still write to these.
-    match /(products|coaches|settings|shippingOptions)/{docId=**} {
-      allow read: if true;
-      allow write: if isAdmin();
+    // Checks if the requesting user is the coach assigned to a specific application.
+    function isCoachForApplication(applicationId) {
+        let application = get(/databases/$(database)/documents/coachingApplications/$(applicationId)).data;
+        let coachMembership = get(/databases/$(database)/documents/memberships/$(request.auth.uid)).data;
+        return request.auth != null && application.coachName == coachMembership.customerName;
     }
     
-    // --- Publicly Writable Collections ---
-    // Allow anyone to create documents in these collections for things like
-    // guest checkouts and contact forms. Admins can manage them.
-    match /coachingApplications/{applicationId} {
+    // Checks if the requesting user is the coach for a specific client membership.
+    function isCoachForClient(membershipId) {
+        let clientMembership = get(/databases/$(database)/documents/memberships/$(membershipId)).data;
+        let coachMembership = get(/databases/$(database)/documents/memberships/$(request.auth.uid)).data;
+        return request.auth != null && clientMembership.coachName == coachMembership.customerName;
+    }
+
+
+    // =================================
+    // Admin Rules
+    // =================================
+    
+    // Admins have full access to all data for dashboard and management purposes.
+    match /{path=**} {
+      allow read, write: if isAdmin();
+    }
+
+
+    // =================================
+    // Public & Client Rules
+    // =================================
+
+    // Allow public read access to collections needed for the storefront.
+    match /(products|coaches|settings|shippingOptions)/{docId} {
+      allow read: if true;
+    }
+
+    // Allow anyone to create orders, contact submissions, and coaching applications.
+    match /orders/{orderId} {
       allow create: if true;
-      allow read, update, delete: if isAdmin();
+    }
+    match /contactSubmissions/{submissionId} {
+      allow create: if true;
+    }
+    match /coachingApplications/{applicationId} {
+        allow create: if true;
+    }
+
+
+    // =================================
+    // Coach & Athlete Rules
+    // =================================
+
+    // Memberships can be read by their owner (athlete) or the assigned coach.
+    match /memberships/{membershipId} {
+      allow read: if isAthleteOwner(membershipId) || isCoachForClient(membershipId);
+    }
+    
+    // Coaches can view their own applications and update their status.
+    match /coachingApplications/{applicationId} {
+        allow read, update: if isCoachForApplication(applicationId);
     }
   }
 }
