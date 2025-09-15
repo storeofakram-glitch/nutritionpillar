@@ -22,19 +22,22 @@ import { PlusCircle, Trash2 } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { dzStates } from "@/lib/dz-states"
 import { useEffect, useMemo, useRef } from "react"
+import { Separator } from "@/components/ui/separator"
 
 const citySchema = z.object({
     name: z.string().min(1, "City name is required."),
-    price: z.coerce.number().positive("Price must be a positive number.")
+    homeDeliveryPrice: z.coerce.number().positive("Price must be a positive number."),
+    officeDeliveryPrice: z.coerce.number().positive("Price must be a positive number."),
 })
 
 const shippingZoneSchema = z.object({
   state: z.string().min(1, "Please select a state."),
-  defaultPrice: z.coerce.number().min(0, "Default price must be non-negative.").optional(),
+  defaultHomeDeliveryPrice: z.coerce.number().min(0, "Default price must be non-negative.").optional(),
+  defaultOfficeDeliveryPrice: z.coerce.number().min(0, "Default price must be non-negative.").optional(),
   cities: z.array(citySchema).optional(),
-}).refine(data => data.defaultPrice || (data.cities && data.cities.length > 0), {
-    message: "You must provide a default price for the state or define at least one city-specific price.",
-    path: ["defaultPrice"],
+}).refine(data => data.defaultHomeDeliveryPrice || data.defaultOfficeDeliveryPrice || (data.cities && data.cities.length > 0), {
+    message: "You must provide at least one default price for the state or define at least one city-specific price.",
+    path: ["defaultHomeDeliveryPrice"],
 });
 
 
@@ -54,7 +57,8 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
     resolver: zodResolver(shippingZoneSchema),
     defaultValues: {
       state: shippingZone?.state || "",
-      defaultPrice: shippingZone?.defaultPrice || undefined,
+      defaultHomeDeliveryPrice: shippingZone?.defaultHomeDeliveryPrice || undefined,
+      defaultOfficeDeliveryPrice: shippingZone?.defaultOfficeDeliveryPrice || undefined,
       cities: shippingZone?.cities || [],
     },
   })
@@ -139,32 +143,50 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
           )}
         />
         
-        <FormField
-            control={form.control}
-            name="defaultPrice"
-            render={({ field }) => (
-                <FormItem>
-                    <FormLabel>Default State Price</FormLabel>
-                    <FormControl>
-                        <Input type="number" placeholder="e.g., 500" {...field} value={field.value ?? ''} />
-                    </FormControl>
-                    <FormDescription>This price applies to all cities in the state unless overridden below.</FormDescription>
-                    <FormMessage />
-                </FormItem>
-            )}
-        />
+        <div className="space-y-2 rounded-md border p-4">
+            <FormLabel>Default State Prices</FormLabel>
+            <FormDescription>These prices apply to all cities in the state unless overridden below.</FormDescription>
+             <div className="grid grid-cols-2 gap-4 pt-2">
+                <FormField
+                    control={form.control}
+                    name="defaultHomeDeliveryPrice"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Home Delivery</FormLabel>
+                            <FormControl><Input type="number" placeholder="e.g., 600" {...field} value={field.value ?? ''} /></FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={form.control}
+                    name="defaultOfficeDeliveryPrice"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Desk Delivery</FormLabel>
+                            <FormControl><Input type="number" placeholder="e.g., 400" {...field} value={field.value ?? ''} /></FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+             </div>
+        </div>
+
 
         <div>
             <FormLabel>City-Specific Prices (Overrides)</FormLabel>
             <div className="space-y-3 mt-2">
                 {fields.map((field, index) => (
-                    <div key={field.id} className="grid grid-cols-[1fr_100px_auto] gap-2 items-start">
+                    <div key={field.id} className="space-y-3 rounded-md border p-3 relative">
+                        <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} className="absolute top-1 right-1 h-6 w-6">
+                            <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
                         <FormField
                             control={form.control}
                             name={`cities.${index}.name`}
                             render={({ field: cityField }) => (
                                 <FormItem>
-                                    <FormLabel className="sr-only">City Name</FormLabel>
+                                    <FormLabel>City Name</FormLabel>
                                     <Select onValueChange={cityField.onChange} value={cityField.value} disabled={!watchedState}>
                                         <FormControl>
                                             <SelectTrigger>
@@ -183,22 +205,30 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name={`cities.${index}.price`}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="sr-only">Price</FormLabel>
-                                    <FormControl>
-                                        <Input type="number" placeholder="Price" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                         <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
+                        <div className="grid grid-cols-2 gap-4">
+                             <FormField
+                                control={form.control}
+                                name={`cities.${index}.homeDeliveryPrice`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Home Delivery Price</FormLabel>
+                                        <FormControl><Input type="number" placeholder="Price" {...field} /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                             <FormField
+                                control={form.control}
+                                name={`cities.${index}.officeDeliveryPrice`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Desk Delivery Price</FormLabel>
+                                        <FormControl><Input type="number" placeholder="Price" {...field} /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
                     </div>
                 ))}
                  <Button
@@ -206,7 +236,7 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
                     variant="outline"
                     size="sm"
                     className="mt-2 gap-1"
-                    onClick={() => append({ name: "", price: 0 })}
+                    onClick={() => append({ name: "", homeDeliveryPrice: 0, officeDeliveryPrice: 0 })}
                     disabled={!watchedState}
                     >
                     <PlusCircle className="h-3.5 w-3.5" />

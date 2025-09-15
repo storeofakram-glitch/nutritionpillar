@@ -3,7 +3,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useCart } from '@/contexts/cart-context';
-import type { City, ShippingState, OrderInput, PaymentMethod, SiteSettings, TermsPageSettings } from '@/types';
+import type { City, ShippingState, OrderInput, PaymentMethod, SiteSettings, TermsPageSettings, DeliveryMethod } from '@/types';
 import { getShippingOptions } from '@/services/shipping-service';
 import { getSiteSettings } from '@/services/site-settings-service';
 import { addOrder } from '@/services/order-service';
@@ -16,7 +16,7 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
-import { CreditCard } from 'lucide-react';
+import { CreditCard, Home, Briefcase } from 'lucide-react';
 import { Checkbox } from './ui/checkbox';
 import Link from 'next/link';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
@@ -33,6 +33,7 @@ export default function CheckoutForm() {
   const [termsContent, setTermsContent] = useState<TermsPageSettings | null>(null);
   const [selectedState, setSelectedState] = useState<string>('');
   const [selectedCity, setSelectedCity] = useState<string>('');
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('Home Delivery');
   
   const [clientInfo, setClientInfo] = useState({ fullName: '', phone: '', address: '', email: '' });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('Pay on Delivery');
@@ -76,10 +77,12 @@ export default function CheckoutForm() {
 
 
   const shippingPrice = useMemo(() => {
-    const cityOverride = selectedStateData?.cities.find(c => c.name === selectedCity)?.price;
-    // If a specific city price is found, use it. Otherwise, use the state's default price.
-    return cityOverride ?? selectedStateData?.defaultPrice ?? 0;
-  }, [selectedCity, selectedStateData]);
+    const cityOverride = selectedStateData?.cities.find(c => c.name === selectedCity);
+    if (cityOverride) {
+        return deliveryMethod === 'Home Delivery' ? cityOverride.homeDeliveryPrice : cityOverride.officeDeliveryPrice;
+    }
+    return deliveryMethod === 'Home Delivery' ? selectedStateData?.defaultHomeDeliveryPrice ?? 0 : selectedStateData?.defaultOfficeDeliveryPrice ?? 0;
+  }, [selectedCity, selectedStateData, deliveryMethod]);
 
 
   const subtotal = cartTotal;
@@ -122,6 +125,7 @@ export default function CheckoutForm() {
             selectedFlavor: item.selectedFlavor,
         })),
         paymentMethod: paymentMethod,
+        deliveryMethod: deliveryMethod,
     };
     
     const result = await addOrder(orderData);
@@ -190,7 +194,23 @@ export default function CheckoutForm() {
           </div>
           
           <Separator />
-          
+           
+          <div className="space-y-4">
+             <h3 className="font-semibold">Delivery Method</h3>
+             <RadioGroup value={deliveryMethod} onValueChange={(val) => setDeliveryMethod(val as DeliveryMethod)} className="grid grid-cols-1 gap-4">
+                <Label htmlFor="home-delivery" className="flex items-center gap-3 rounded-md border p-4 cursor-pointer hover:bg-accent has-[[data-state=checked]]:border-primary">
+                    <RadioGroupItem value="Home Delivery" id="home-delivery" />
+                    <Home className="h-5 w-5" />
+                    <span>Home Delivery</span>
+                </Label>
+                 <Label htmlFor="office-delivery" className="flex items-center gap-3 rounded-md border p-4 cursor-pointer hover:bg-accent has-[[data-state=checked]]:border-primary">
+                    <RadioGroupItem value="Desk (Office) Delivery" id="office-delivery" />
+                    <Briefcase className="h-5 w-5" />
+                    <span>Desk (Office) Delivery</span>
+                </Label>
+             </RadioGroup>
+          </div>
+
           <div className="space-y-4">
              <h3 className="font-semibold">Payment Method</h3>
              <RadioGroup value={paymentMethod} onValueChange={(val) => setPaymentMethod(val as PaymentMethod)} className="grid grid-cols-1 gap-4">

@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useEffect, useState, useTransition } from "react"
@@ -87,7 +88,8 @@ export default function ShippingZonesTable() {
       <TableHeader>
         <TableRow>
           <TableHead>State (Wilaya)</TableHead>
-          <TableHead>Cities</TableHead>
+          <TableHead>Default Prices (Home/Desk)</TableHead>
+          <TableHead>City Overrides</TableHead>
           <TableHead>
             <span className="sr-only">Actions</span>
           </TableHead>
@@ -97,6 +99,9 @@ export default function ShippingZonesTable() {
         {shippingOptions.map((option) => (
           <TableRow key={option.id}>
             <TableCell className="font-medium">{option.state}</TableCell>
+             <TableCell>
+              DZD {option.defaultHomeDeliveryPrice || 'N/A'} / DZD {option.defaultOfficeDeliveryPrice || 'N/A'}
+            </TableCell>
             <TableCell>
               {option.cities.length > 0 ? (
                 <DropdownMenu>
@@ -106,18 +111,18 @@ export default function ShippingZonesTable() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="max-h-60 overflow-y-auto">
-                    <DropdownMenuLabel>Cities & Prices</DropdownMenuLabel>
+                    <DropdownMenuLabel>City Prices (Home/Desk)</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {option.cities.map(city => (
                       <DropdownMenuItem key={city.name} className="flex justify-between gap-4 cursor-default">
                         <span>{city.name}</span>
-                        <span className="text-muted-foreground">DZD {city.price}</span>
+                        <span className="text-muted-foreground">DZD {city.homeDeliveryPrice} / DZD {city.officeDeliveryPrice}</span>
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <span className="text-sm text-muted-foreground">No cities defined</span>
+                <span className="text-sm text-muted-foreground">No overrides</span>
               )}
             </TableCell>
             <TableCell className="text-right">
@@ -138,6 +143,13 @@ export default function ShippingZonesTable() {
             </TableCell>
           </TableRow>
         ))}
+         {!loading && shippingOptions.length === 0 && (
+            <TableRow>
+                <TableCell colSpan={4} className="h-24 text-center">
+                    No shipping zones defined.
+                </TableCell>
+            </TableRow>
+        )}
       </TableBody>
     </Table>
     

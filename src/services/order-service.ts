@@ -87,8 +87,13 @@ export async function addOrder(orderInput: OrderInput) {
             // Calculate shipping
             const shippingOptions = await getShippingOptions();
             const stateData = shippingOptions.find(s => s.state === orderInput.shippingAddress.state);
-            const cityPrice = stateData?.cities?.find(c => c.name === orderInput.shippingAddress.city)?.price;
-            const shippingPrice = cityPrice ?? stateData?.defaultPrice ?? 0;
+            const cityOverride = stateData?.cities.find(c => c.name === orderInput.shippingAddress.city);
+            let shippingPrice = 0;
+            if (cityOverride) {
+                shippingPrice = orderInput.deliveryMethod === 'Home Delivery' ? cityOverride.homeDeliveryPrice : cityOverride.officeDeliveryPrice;
+            } else if (stateData) {
+                shippingPrice = orderInput.deliveryMethod === 'Home Delivery' ? stateData.defaultHomeDeliveryPrice ?? 0 : stateData.defaultOfficeDeliveryPrice ?? 0;
+            }
 
             // Calculate final amount on the server
             const finalAmount = calculatedSubtotal + shippingPrice;
@@ -102,6 +107,7 @@ export async function addOrder(orderInput: OrderInput) {
                 date: new Date().toISOString(),
                 status: 'pending',
                 paymentMethod: orderInput.paymentMethod || 'Pay on Delivery',
+                deliveryMethod: orderInput.deliveryMethod || 'Home Delivery',
             };
 
             const newOrderRef = doc(collection(db, 'orders'));

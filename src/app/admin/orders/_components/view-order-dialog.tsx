@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator"
 import type { Order } from "@/types"
 import { format } from "date-fns"
 import Image from "next/image"
-import { CreditCard, Truck } from "lucide-react"
+import { CreditCard, Truck, Home, Briefcase } from "lucide-react"
 
 interface ViewOrderDialogProps {
     isOpen: boolean;
@@ -71,6 +71,13 @@ export default function ViewOrderDialog({ isOpen, onOpenChange, order }: ViewOrd
                         <Badge className="text-xs" variant={getStatusVariant(order.status)}>
                             {order.status}
                         </Badge>
+                    </div>
+                     <div className="space-y-1">
+                        <h3 className="font-semibold">Delivery Method</h3>
+                        <div className="flex items-center gap-2 text-sm">
+                           {order.deliveryMethod === 'Home Delivery' ? <Home className="h-4 w-4 text-muted-foreground" /> : <Briefcase className="h-4 w-4 text-muted-foreground" />}
+                           <span>{order.deliveryMethod || 'Home Delivery'}</span>
+                        </div>
                     </div>
                     <div className="space-y-1">
                         <h3 className="font-semibold">Payment Method</h3>
