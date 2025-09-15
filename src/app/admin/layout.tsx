@@ -22,6 +22,7 @@ import { Home, Package, ShoppingCart, Truck, Users, ArrowLeft, DollarSign, Brush
 import Header from "@/components/layout/header"
 import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function AdminLayout({
   children,
@@ -53,10 +54,20 @@ export default function AdminLayout({
   }, [user, isAdmin, loading, router]);
   
   if (loading || !isAdmin) {
-    // You can return a loading spinner or null here
     return (
-        <div className="flex items-center justify-center h-screen">
-            <p>Loading...</p>
+        <div className="flex min-h-screen">
+            <div className="hidden md:block border-r p-2">
+                <div className="flex flex-col gap-2">
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-[calc(100vh-160px)] w-full" />
+                    <Skeleton className="h-20 w-full" />
+                </div>
+            </div>
+            <div className="flex-1 p-6 space-y-6">
+                <Skeleton className="h-14 w-full" />
+                <Skeleton className="h-32 w-full" />
+                <Skeleton className="h-64 w-full" />
+            </div>
         </div>
     );
   }
