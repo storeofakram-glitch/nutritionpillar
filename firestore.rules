@@ -3,45 +3,51 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper function to determine if the user is an admin
+    // Helper function to check for an 'admin' custom claim on the user's token.
     function isAdmin() {
       return request.auth != null && request.auth.token.admin == true;
     }
 
-    // --- Admin-Only Access ---
-    // Grants admins full read, write, and list permissions on these collections.
-    // The `list` permission is crucial for dashboard queries.
-    match /(admins|contactSubmissions|counters|expenses|memberships|orders|coachingApplications)/{docId} {
+    // --- Admin-Only Collections ---
+    // Grants full list, read, and write access to admins for these collections.
+    // 'list' is crucial for dashboard queries.
+    match /(admins|counters|expenses)/{docId} {
       allow list, read, write: if isAdmin();
     }
     
-    // --- Public Read, Admin Write Collections ---
+    // --- Publicly Readable Collections ---
     // Allows anyone to read, but only admins to write.
     match /(products|coaches|settings|shippingOptions)/{docId} {
       allow read: if true;
       allow write: if isAdmin();
-      // Admin list is inherited from the broader rule below for simplicity
+      // Admins need list access for management pages.
+      allow list: if isAdmin();
     }
 
-    // --- Admin List for Publicly Readable Collections ---
-    // Admins also need to be able to list these collections for dashboard/admin functionality.
-    match /(products|coaches|settings|shippingOptions)/{docId} {
-        allow list: if isAdmin();
-    }
+    // --- Collections with Mixed Access ---
 
-    // --- Public Create Rules ---
-    // Allows anyone to create documents in these specific collections for things
-    // like placing an order or submitting a contact form.
+    // Orders can be created by anyone, but only managed by admins.
     match /orders/{orderId} {
       allow create: if true;
+      allow list, read, update, delete: if isAdmin();
     }
     
-    match /coachingApplications/{applicationId} {
-      allow create: if true;
+    // Contact submissions can be created by anyone, but only read/managed by admins.
+    match /contactSubmissions/{submissionId} {
+        allow create: if true;
+        allow list, read, update, delete: if isAdmin();
     }
 
-    match /contactSubmissions/{submissionId} {
+    // Coaching applications can be created by anyone, but only managed by admins.
+    match /coachingApplications/{applicationId} {
       allow create: if true;
+      allow list, read, update, delete: if isAdmin();
+    }
+    
+    // Memberships are managed by admins, but publicly readable for the membership page.
+    match /memberships/{membershipId} {
+      allow read: if true;
+      allow list, write: if isAdmin();
     }
   }
 }
