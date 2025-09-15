@@ -13,6 +13,8 @@
 
 
 
+
+
 export type Product = {
   id: string;
   name: string;
@@ -49,6 +51,7 @@ export type City = {
 export type ShippingState = {
   id:string;
   state: string;
+  defaultPrice?: number;
   cities: City[];
 };
 
@@ -315,6 +318,6 @@ export type CoachingApplication = {
     message?: string;
   };
   createdAt: string; // ISO 8601 string
-  status: 'new' | 'read' | 'contacted' | 'active';
+  status: 'new' | 'read' | 'contacted' | 'active' | 'rejected' | 'archived';
 };
     

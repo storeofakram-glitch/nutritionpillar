@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useForm, useFieldArray } from "react-hook-form"
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -28,8 +30,13 @@ const citySchema = z.object({
 
 const shippingZoneSchema = z.object({
   state: z.string().min(1, "Please select a state."),
-  cities: z.array(citySchema).min(1, "At least one city is required.")
-})
+  defaultPrice: z.coerce.number().min(0, "Default price must be non-negative.").optional(),
+  cities: z.array(citySchema).optional(),
+}).refine(data => data.defaultPrice || (data.cities && data.cities.length > 0), {
+    message: "You must provide a default price for the state or define at least one city-specific price.",
+    path: ["defaultPrice"],
+});
+
 
 type ShippingZoneFormValues = z.infer<typeof shippingZoneSchema>
 
@@ -47,7 +54,8 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
     resolver: zodResolver(shippingZoneSchema),
     defaultValues: {
       state: shippingZone?.state || "",
-      cities: shippingZone?.cities || [{ name: "", price: 0 }],
+      defaultPrice: shippingZone?.defaultPrice || undefined,
+      cities: shippingZone?.cities || [],
     },
   })
   
@@ -69,22 +77,23 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
         return;
     }
     
-    // When state changes, reset the cities array, but not in edit mode
     if (!isEditMode) {
         replace([]);
-        append({ name: "", price: 0 });
     } else if (watchedState !== shippingZone?.state) {
-        // If in edit mode and the state is changed from original, then reset
         replace([]);
-        append({ name: "", price: 0 });
     }
-  }, [watchedState, replace, append, isEditMode, shippingZone?.state]);
+  }, [watchedState, replace, isEditMode, shippingZone?.state]);
 
 
   async function onSubmit(data: ShippingZoneFormValues) {
+    const finalData = {
+        ...data,
+        cities: data.cities || [],
+    };
+    
     const result = isEditMode
-        ? await updateShippingOption(shippingZone.id, data)
-        : await addShippingOption(data);
+        ? await updateShippingOption(shippingZone.id, finalData)
+        : await addShippingOption(finalData);
 
     if (result.success) {
       toast({
@@ -129,9 +138,24 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
             </FormItem>
           )}
         />
+        
+        <FormField
+            control={form.control}
+            name="defaultPrice"
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Default State Price</FormLabel>
+                    <FormControl>
+                        <Input type="number" placeholder="e.g., 500" {...field} value={field.value ?? ''} />
+                    </FormControl>
+                    <FormDescription>This price applies to all cities in the state unless overridden below.</FormDescription>
+                    <FormMessage />
+                </FormItem>
+            )}
+        />
 
         <div>
-            <FormLabel>Cities & Prices</FormLabel>
+            <FormLabel>City-Specific Prices (Overrides)</FormLabel>
             <div className="space-y-3 mt-2">
                 {fields.map((field, index) => (
                     <div key={field.id} className="grid grid-cols-[1fr_100px_auto] gap-2 items-start">
@@ -172,7 +196,7 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
                                 </FormItem>
                             )}
                         />
-                         <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= 1}>
+                         <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
                             <Trash2 className="h-4 w-4 text-red-500" />
                         </Button>
                     </div>
@@ -186,7 +210,7 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
                     disabled={!watchedState}
                     >
                     <PlusCircle className="h-3.5 w-3.5" />
-                    Add City
+                    Add City Override
                 </Button>
             </div>
         </div>

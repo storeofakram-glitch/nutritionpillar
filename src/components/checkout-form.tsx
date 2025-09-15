@@ -64,13 +64,20 @@ export default function CheckoutForm() {
     setCardInfo(prev => ({ ...prev, [id]: value }));
   };
 
-  const availableCities: City[] = useMemo(() => {
-    return shippingOptions.find(s => s.state === selectedState)?.cities || [];
+  const selectedStateData = useMemo(() => {
+    return shippingOptions.find(s => s.state === selectedState);
   }, [selectedState, shippingOptions]);
 
+  const availableCities: City[] = useMemo(() => {
+    return selectedStateData?.cities || [];
+  }, [selectedStateData]);
+
   const shippingPrice = useMemo(() => {
-    return availableCities.find(c => c.name === selectedCity)?.price || 0;
-  }, [selectedCity, availableCities]);
+    const cityPrice = availableCities.find(c => c.name === selectedCity)?.price;
+    // If a specific city price is found, use it. Otherwise, use the state's default price.
+    return cityPrice ?? selectedStateData?.defaultPrice ?? 0;
+  }, [selectedCity, availableCities, selectedStateData]);
+
 
   const subtotal = cartTotal;
   const total = subtotal + shippingPrice;
