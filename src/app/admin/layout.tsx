@@ -48,10 +48,14 @@ export default function AdminLayout({
   ]
   
   React.useEffect(() => {
-    if (!loading && !isAdmin) {
+    if (!loading && !isAdmin && pathname !== '/admin/login') {
       router.replace('/admin/login');
     }
-  }, [user, isAdmin, loading, router]);
+  }, [user, isAdmin, loading, router, pathname]);
+
+  if (pathname === '/admin/login') {
+    return <>{children}</>;
+  }
   
   if (loading || !isAdmin) {
     return (
