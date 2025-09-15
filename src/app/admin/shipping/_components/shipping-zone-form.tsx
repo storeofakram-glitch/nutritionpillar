@@ -18,11 +18,13 @@ import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { addShippingOption, updateShippingOption } from "@/services/shipping-service"
 import type { ShippingState } from "@/types"
-import { PlusCircle, Trash2 } from "lucide-react"
+import { PlusCircle, Trash2, ChevronDown } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { dzStates } from "@/lib/dz-states"
-import { useEffect, useMemo, useRef } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { Separator } from "@/components/ui/separator"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { cn } from "@/lib/utils"
 
 const citySchema = z.object({
     name: z.string().min(1, "City name is required."),
@@ -52,6 +54,7 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
   const { toast } = useToast()
   const isEditMode = !!shippingZone;
   const initialRender = useRef(true);
+  const [openStates, setOpenStates] = useState<boolean[]>([]);
 
   const form = useForm<ShippingZoneFormValues>({
     resolver: zodResolver(shippingZoneSchema),
@@ -87,6 +90,14 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
         replace([]);
     }
   }, [watchedState, replace, isEditMode, shippingZone?.state]);
+
+   const handleOpenChange = (index: number, isOpen: boolean) => {
+    setOpenStates(currentStates => {
+      const newStates = [...currentStates];
+      newStates[index] = isOpen;
+      return newStates;
+    });
+  };
 
 
   async function onSubmit(data: ShippingZoneFormValues) {
@@ -177,59 +188,71 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
             <FormLabel>City-Specific Prices (Overrides)</FormLabel>
             <div className="space-y-3 mt-2">
                 {fields.map((field, index) => (
-                    <div key={field.id} className="space-y-3 rounded-md border p-3 relative">
-                        <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} className="absolute top-1 right-1 h-6 w-6">
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
-                        <FormField
-                            control={form.control}
-                            name={`cities.${index}.name`}
-                            render={({ field: cityField }) => (
-                                <FormItem>
-                                    <FormLabel>City Name</FormLabel>
-                                    <Select onValueChange={cityField.onChange} value={cityField.value} disabled={!watchedState}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a city" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {availableCities.map((city) => (
-                                                <SelectItem key={city} value={city}>
-                                                    {city}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <div className="grid grid-cols-2 gap-4">
-                             <FormField
-                                control={form.control}
-                                name={`cities.${index}.homeDeliveryPrice`}
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Home Delivery Price</FormLabel>
-                                        <FormControl><Input type="number" placeholder="Price" {...field} /></FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                             <FormField
-                                control={form.control}
-                                name={`cities.${index}.officeDeliveryPrice`}
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Desk Delivery Price</FormLabel>
-                                        <FormControl><Input type="number" placeholder="Price" {...field} /></FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                    <Collapsible key={field.id} open={openStates[index] || false} onOpenChange={(isOpen) => handleOpenChange(index, isOpen)}>
+                        <div className="border rounded-md bg-background">
+                            <div className="p-3 flex items-center justify-between">
+                                <CollapsibleTrigger className="flex items-center gap-2 text-left w-full">
+                                    <span className="font-semibold">{form.getValues(`cities.${index}.name`) || `City ${index + 1}`}</span>
+                                    <ChevronDown className={cn("h-5 w-5 transition-transform", openStates[index] && "rotate-180")} />
+                                </CollapsibleTrigger>
+                                <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} className="h-7 w-7">
+                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                </Button>
+                            </div>
+                            <CollapsibleContent>
+                                <div className="p-3 border-t space-y-4">
+                                     <FormField
+                                        control={form.control}
+                                        name={`cities.${index}.name`}
+                                        render={({ field: cityField }) => (
+                                            <FormItem>
+                                                <FormLabel>City Name</FormLabel>
+                                                <Select onValueChange={cityField.onChange} value={cityField.value} disabled={!watchedState}>
+                                                    <FormControl>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Select a city" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        {availableCities.map((city) => (
+                                                            <SelectItem key={city} value={city}>
+                                                                {city}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <FormField
+                                            control={form.control}
+                                            name={`cities.${index}.homeDeliveryPrice`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Home Delivery Price</FormLabel>
+                                                    <FormControl><Input type="number" placeholder="Price" {...field} /></FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name={`cities.${index}.officeDeliveryPrice`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Desk Delivery Price</FormLabel>
+                                                    <FormControl><Input type="number" placeholder="Price" {...field} /></FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                </div>
+                            </CollapsibleContent>
                         </div>
-                    </div>
+                    </Collapsible>
                 ))}
                  <Button
                     type="button"
