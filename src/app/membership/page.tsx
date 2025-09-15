@@ -87,13 +87,22 @@ export default function MembershipPage() {
         try {
             const foundMembership = await findMembershipByCode(membershipCode);
             if (foundMembership) {
-                setResult(foundMembership);
-                // If the member is a coach, fetch their specific details
-                if (foundMembership.type === 'Coach/Expert' && userType === 'coach') {
-                    const coach = await getCoachByName(foundMembership.customerName);
-                    if (coach) {
-                        setCoachDetails(coach);
-                        await fetchCoachData(coach);
+                // Check for user type mismatch
+                if (userType === 'coach' && foundMembership.type !== 'Coach/Expert') {
+                    toast({ variant: 'destructive', title: 'Invalid User Type', description: 'This code belongs to an athlete. Please select "I am an Athlete".' });
+                    setResult('invalid');
+                } else if (userType === 'athlete' && foundMembership.type === 'Coach/Expert') {
+                    toast({ variant: 'destructive', title: 'Invalid User Type', description: 'This code belongs to a coach. Please select "I am a Coach/Expert".' });
+                    setResult('invalid');
+                } else {
+                    setResult(foundMembership);
+                    // If the member is a coach, fetch their specific details
+                    if (foundMembership.type === 'Coach/Expert' && userType === 'coach') {
+                        const coach = await getCoachByName(foundMembership.customerName);
+                        if (coach) {
+                            setCoachDetails(coach);
+                            await fetchCoachData(coach);
+                        }
                     }
                 }
             } else {
