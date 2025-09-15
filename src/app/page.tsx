@@ -87,7 +87,7 @@ export default function Home() {
   }
 
   const { hero, marquee, adBanner, partnershipLogos, socialLinks } = siteSettings;
-  const isAdBannerLinkExternal = adBanner.buttonLink?.startsWith('http');
+  const isAdBannerLinkExternal = adBanner.buttonLink?.startsWith('http://') || adBanner.buttonLink?.startsWith('https://');
   const mapUrl = socialLinks?.mapLocationUrl || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3198.405783303357!2d3.05896!3d36.71277!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x128fafb4a22c5e5b%3A0x4c2c5f6cac23b8a1!2sAlgiers!5e0!3m2!1sen!2sdz!4v1620056238383!5m2!1sen!2sdz";
 
   return (
@@ -209,8 +209,8 @@ export default function Home() {
                 <Button asChild size="lg" className="font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
                     <Link 
                         href={adBanner.buttonLink}
-                        target={isAdBannerLinkExternal ? '_blank' : undefined}
-                        rel={isAdBannerLinkExternal ? 'noopener noreferrer' : undefined}
+                        target={isAdBannerLinkExternal ? '_blank' : '_self'}
+                        rel={isAdBannerLinkExternal ? 'noopener noreferrer' : ''}
                     >
                         {adBanner.buttonText}
                         <ArrowRight className="ml-2 h-5 w-5" />
