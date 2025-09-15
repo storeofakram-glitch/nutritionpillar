@@ -16,6 +16,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -61,6 +62,7 @@ export type ShippingState = {
 export type Customer = {
   name: string;
   email: string;
+  uid?: string;
 }
 
 export type OrderItem = {
@@ -252,6 +254,7 @@ export type Membership = {
   recommendedProducts: RecommendedProduct[];
   createdAt: string; // ISO 8601 string
   expiresAt?: string; // ISO 8601 string
+  uid?: string;
 };
 
 export type MembershipWithProducts = Omit<Membership, 'recommendedProducts'> & {
@@ -285,6 +288,7 @@ export type PersonalInfo = {
     state?: string;
     country?: string;
     nationality?: string;
+    uid?: string;
 };
 
 export type Coach = {
@@ -322,8 +326,20 @@ export type CoachingApplication = {
     goal: string;
     duration: string;
     message?: string;
+    uid?: string;
   };
   createdAt: string; // ISO 8601 string
-  status: 'new' | 'contacted' | 'active' | 'rejected' | 'archived';
+  status: 'new' | 'read' | 'contacted' | 'active' | 'rejected' | 'archived';
+};
+
+export type Admin = {
+  id: string; // Firebase Auth UID
+  email: string;
+  displayName: string;
+  role: 'admin';
+  permissions: string[];
+  createdAt: string; // ISO 8601 string
+  updatedAt: string; // ISO 8601 string
+  isActive: boolean;
 };
     
