@@ -1,76 +1,51 @@
+
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // --- Helper Functions ---
-    function isAuth() {
+    // Helper function to check if a user is authenticated.
+    function isAuthenticated() {
       return request.auth != null;
     }
-    
-    function isAdmin() {
-      return isAuth() && request.auth.token.admin == true;
+
+    // Admins are any authenticated user. They can read and list everything,
+    // and write to all collections except 'orders' (which are created by anyone).
+    match /{document=**} {
+      allow read, list: if isAuthenticated();
     }
     
-    function isCoach(coachId) {
-      return isAuth() && request.auth.uid == coachId;
-    }
-    
-    function isAthlete(athleteUid) {
-      return isAuth() && request.auth.uid == athleteUid;
+    // All other collections not specified below can be written to by an admin.
+    match /{path=**}/{-not-in=['orders']}/{doc} {
+        allow write: if isAuthenticated();
     }
 
-    // --- Public Collections (Read-Only) ---
+    // Public read access for collections needed by non-logged-in users.
     match /products/{productId} {
       allow read: if true;
-      allow write: if isAdmin();
     }
     match /coaches/{coachId} {
       allow read: if true;
-      allow write: if isAdmin();
     }
     match /settings/{settingId} {
       allow read: if true;
-      allow write: if isAdmin();
     }
-    match /shippingOptions/{optionId} {
+     match /shippingOptions/{optionId} {
       allow read: if true;
-      allow write: if isAdmin();
     }
 
-    // --- Orders Collection ---
-    // Anyone can create an order (for guest checkout)
-    // Only admins can view, list, or modify orders
+    // Anyone can create orders (place an order).
     match /orders/{orderId} {
-      allow list, read, update, delete: if isAdmin();
       allow create: if true;
     }
-
-    // --- Coaching Applications ---
-    // Anyone can create an application
-    // Admins have full access
-    // Coaches can read and update applications assigned to them
+    
+    // Anyone can submit applications.
     match /coachingApplications/{applicationId} {
-      allow list, read, update, delete: if isAdmin();
-      allow create: if true;
-      allow read, update: if isAuth() && resource.data.coachId == request.auth.uid;
+        allow create: if true;
     }
-
-    // --- Memberships Collection ---
-    // Admins have full access
-    // Athletes can only read their own membership document
-    // Coaches can read their own membership and their clients' memberships
+    
+    // Anyone can check their membership status.
     match /memberships/{membershipId} {
-      allow list, write: if isAdmin();
-      allow read: if isAdmin() 
-                  || (isAthlete(resource.data.uid)) // Athlete's own membership
-                  || (isAuth() && resource.data.coachName == request.auth.token.name) // Coach viewing their client's membership
-                  || (isAuth() && resource.data.customerName == request.auth.token.name && resource.data.type == 'Coach/Expert'); // Coach viewing their own membership
-    }
-
-    // --- Admin-Only Collections ---
-    // These collections are only accessible by admins
-    match /(admins|contactSubmissions|counters|expenses)/{docId} {
-      allow list, read, write: if isAdmin();
+        allow read: if true;
     }
   }
 }
