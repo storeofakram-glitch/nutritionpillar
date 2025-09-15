@@ -2,38 +2,13 @@
 
 'use server';
 
-import { collection, doc, runTransaction, getDocs, query, where, orderBy, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, doc, runTransaction, getDocs, query, where, orderBy, updateDoc, deleteDoc, addDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Order, Product, OrderItem, OrderInput } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { getShippingOptions } from './shipping-service';
 
 const ordersCollection = collection(db, 'orders');
-const counterDocRef = doc(db, 'counters', 'orders');
-
-async function getNextOrderNumber(): Promise<number> {
-    try {
-        const orderNumber = await runTransaction(db, async (transaction) => {
-            const counterDoc = await transaction.get(counterDocRef);
-            
-            if (!counterDoc.exists()) {
-                // Initialize the counter if it doesn't exist.
-                transaction.set(counterDocRef, { currentNumber: 1 });
-                return 1;
-            }
-            
-            const newNumber = counterDoc.data().currentNumber + 1;
-            transaction.update(counterDocRef, { currentNumber: newNumber });
-            return newNumber;
-        });
-        return orderNumber;
-    } catch (e) {
-        console.error("Transaction failed to get next order number: ", e);
-        // Fallback or re-throw, for now re-throwing
-        throw new Error("Could not generate a new order number.");
-    }
-}
-
 
 export async function getOrders(): Promise<Order[]> {
     const q = query(ordersCollection, orderBy('date', 'desc'));
@@ -43,14 +18,15 @@ export async function getOrders(): Promise<Order[]> {
 }
 
 export async function addOrder(orderInput: OrderInput) {
-    const orderNumber = await getNextOrderNumber();
-    
+    // This function is now simplified to run with client-side authentication context.
+    // The complex transaction for order number generation has been removed.
     try {
+        const orderNumber = Math.floor(Math.random() * 1000000); // Temporary random order number
+
         await runTransaction(db, async (transaction) => {
             const finalOrderItems: OrderItem[] = [];
             let calculatedSubtotal = 0;
 
-            // Fetch all products required for the order in parallel
             const productRefs = orderInput.items.map(item => doc(db, 'products', item.productId));
             const productDocs = await Promise.all(productRefs.map(ref => transaction.get(ref)));
 
@@ -73,7 +49,6 @@ export async function addOrder(orderInput: OrderInput) {
                 
                 calculatedSubtotal += productData.price * item.quantity;
 
-                // Build the final order item, ensuring no undefined values are present.
                 const finalItem: OrderItem = {
                     product: productData,
                     quantity: item.quantity,
@@ -85,7 +60,6 @@ export async function addOrder(orderInput: OrderInput) {
                 finalOrderItems.push(finalItem);
             }
 
-            // Calculate shipping
             const shippingOptions = await getShippingOptions();
             const stateData = shippingOptions.find(s => s.state === orderInput.shippingAddress.state);
             const cityOverride = stateData?.cities.find(c => c.name === orderInput.shippingAddress.city);
@@ -96,7 +70,6 @@ export async function addOrder(orderInput: OrderInput) {
                 shippingPrice = orderInput.deliveryMethod === 'Home Delivery' ? stateData.defaultHomeDeliveryPrice ?? 0 : stateData.defaultOfficeDeliveryPrice ?? 0;
             }
 
-            // Calculate final amount on the server
             const finalAmount = calculatedSubtotal + shippingPrice;
 
             const newOrderData: Omit<Order, 'id'> = {
@@ -111,11 +84,12 @@ export async function addOrder(orderInput: OrderInput) {
                 deliveryMethod: orderInput.deliveryMethod || 'Home Delivery',
             };
 
+            // Use addDoc directly within the transaction context if supported,
+            // or create a new doc ref and set it.
             const newOrderRef = doc(collection(db, 'orders'));
             transaction.set(newOrderRef, newOrderData);
         });
         
-        // Revalidate paths after successful transaction
         revalidatePath('/');
         revalidatePath('/cart');
         revalidatePath('/admin/orders');
@@ -188,5 +162,3 @@ export async function deleteOrder(id: string) {
         return { success: false, error: (error as Error).message };
     }
 }
-
-    
