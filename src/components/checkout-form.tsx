@@ -194,22 +194,6 @@ export default function CheckoutForm() {
           </div>
           
           <Separator />
-           
-          <div className="space-y-4">
-             <h3 className="font-semibold">Delivery Method</h3>
-             <RadioGroup value={deliveryMethod} onValueChange={(val) => setDeliveryMethod(val as DeliveryMethod)} className="grid grid-cols-1 gap-4">
-                <Label htmlFor="home-delivery" className="flex items-center gap-3 rounded-md border p-4 cursor-pointer hover:bg-accent has-[[data-state=checked]]:border-primary">
-                    <RadioGroupItem value="Home Delivery" id="home-delivery" />
-                    <Home className="h-5 w-5" />
-                    <span>Home Delivery</span>
-                </Label>
-                 <Label htmlFor="office-delivery" className="flex items-center gap-3 rounded-md border p-4 cursor-pointer hover:bg-accent has-[[data-state=checked]]:border-primary">
-                    <RadioGroupItem value="Desk (Office) Delivery" id="office-delivery" />
-                    <Briefcase className="h-5 w-5" />
-                    <span>Desk (Office) Delivery</span>
-                </Label>
-             </RadioGroup>
-          </div>
 
           <div className="space-y-4">
              <h3 className="font-semibold">Payment Method</h3>
@@ -232,6 +216,22 @@ export default function CheckoutForm() {
                         <span>Visa / Mastercard</span>
                     </div>
                     <span className="text-xs font-semibold text-primary">Coming Soon</span>
+                </Label>
+             </RadioGroup>
+          </div>
+           
+          <div className="space-y-4">
+             <h3 className="font-semibold">Delivery Method</h3>
+             <RadioGroup value={deliveryMethod} onValueChange={(val) => setDeliveryMethod(val as DeliveryMethod)} className="grid grid-cols-2 gap-4">
+                <Label htmlFor="home-delivery" className="flex items-center gap-3 rounded-md border p-4 cursor-pointer hover:bg-accent has-[[data-state=checked]]:border-primary">
+                    <RadioGroupItem value="Home Delivery" id="home-delivery" />
+                    <Home className="h-5 w-5" />
+                    <span>Home Delivery</span>
+                </Label>
+                 <Label htmlFor="office-delivery" className="flex items-center gap-3 rounded-md border p-4 cursor-pointer hover:bg-accent has-[[data-state=checked]]:border-primary">
+                    <RadioGroupItem value="Desk (Office) Delivery" id="office-delivery" />
+                    <Briefcase className="h-5 w-5" />
+                    <span>Desk (Office) Delivery</span>
                 </Label>
              </RadioGroup>
           </div>
