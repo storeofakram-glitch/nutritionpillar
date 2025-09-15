@@ -57,6 +57,13 @@ export default function AthleteList({ coachId }: AthleteListProps) {
         const days = differenceInDays(new Date(expiresAt), new Date());
         return Math.max(0, days);
     }
+    
+    const getDaysLeftColor = (days: number | null): string => {
+        if (days === null) return "text-muted-foreground";
+        if (days < 10) return "text-red-500 font-semibold";
+        if (days <= 20) return "text-yellow-500 font-semibold";
+        return "text-green-600 font-semibold";
+    };
 
 
     // Use effect to fetch data when the sheet is triggered to open
@@ -96,7 +103,7 @@ export default function AthleteList({ coachId }: AthleteListProps) {
                                                     {isActive ? "Active" : "Inactive"}
                                                 </Badge>
                                                 {daysLeft !== null && (
-                                                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                                    <div className={cn("flex items-center gap-1 text-xs", getDaysLeftColor(daysLeft))}>
                                                         <CalendarClock className="h-3 w-3" />
                                                         <span>{daysLeft} days left</span>
                                                     </div>

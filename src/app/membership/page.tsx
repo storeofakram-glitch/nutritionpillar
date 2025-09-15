@@ -202,6 +202,13 @@ export default function MembershipPage() {
         const days = differenceInDays(new Date(expiresAt), new Date());
         return Math.max(0, days);
     }
+    
+    const getDaysLeftColor = (days: number | null): string => {
+        if (days === null) return "text-muted-foreground";
+        if (days < 10) return "text-red-500 font-semibold";
+        if (days <= 20) return "text-yellow-500 font-semibold";
+        return "text-green-600 font-semibold";
+    };
 
     const renderCoachView = () => {
         if (!result || result === 'invalid' || !coachDetails) return null;
@@ -327,7 +334,7 @@ export default function MembershipPage() {
                                                             {isActive ? "Active" : "Inactive"}
                                                         </Badge>
                                                         {daysLeft !== null && (
-                                                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                                            <div className={cn("flex items-center gap-1 text-xs", getDaysLeftColor(daysLeft))}>
                                                                 <CalendarClock className="h-3 w-3" />
                                                                 <span>{daysLeft} days left</span>
                                                             </div>
@@ -408,7 +415,7 @@ export default function MembershipPage() {
                            {isActive ? "Active" : "Inactive"}
                         </Badge>
                          {daysLeft !== null && (
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                            <div className={cn("flex items-center gap-1 text-xs", getDaysLeftColor(daysLeft))}>
                                 <CalendarClock className="h-3 w-3" />
                                 <span>{daysLeft} days left</span>
                             </div>
@@ -562,7 +569,3 @@ export default function MembershipPage() {
         </div>
     );
 }
-
-    
-
-    
