@@ -49,6 +49,8 @@ export default function AdminLayout({
   ]
   
   React.useEffect(() => {
+    // This effect runs on every render of the layout, including navigation
+    // It ensures that if the auth state changes for any reason, the user is redirected.
     if (!loading && !isAdmin) {
       router.replace('/login');
     }
