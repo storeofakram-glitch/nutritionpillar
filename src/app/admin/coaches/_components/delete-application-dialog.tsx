@@ -34,7 +34,7 @@ export default function DeleteApplicationDialog({ isOpen, onOpenChange, applicat
         if (result.success) {
             toast({
                 title: "Application Deleted",
-                description: `The application from "${application.applicant.name}" has been successfully deleted.`,
+                description: `The application from "${application.applicant.name}" has been permanently deleted.`,
             });
         } else {
             toast({
@@ -71,7 +71,7 @@ export default function DeleteApplicationDialog({ isOpen, onOpenChange, applicat
                         onClick={handleDelete}
                         disabled={isDeleting}
                     >
-                        {isDeleting ? "Deleting..." : "Delete"}
+                        {isDeleting ? "Deleting..." : "Delete Permanently"}
                     </Button>
                 </AlertDialogAction>
                 </AlertDialogFooter>

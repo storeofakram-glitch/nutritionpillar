@@ -107,7 +107,7 @@ export default function MembershipPage() {
         }
     };
     
-    const handleStatusUpdate = async (appId: string, status: 'contacted' | 'active' | 'archived') => {
+    const handleStatusUpdate = async (appId: string, status: CoachingApplication['status']) => {
         const result = await updateApplicationStatus(appId, status);
         if (result.success && coachDetails) {
             toast({ title: "Status Updated", description: `Application status changed to "${status}".` });
@@ -139,7 +139,7 @@ export default function MembershipPage() {
 
     const { pendingApplications, activeClients, archivedClients } = useMemo(() => {
         return {
-            pendingApplications: applications.filter(app => ['new', 'read'].includes(app.status)),
+            pendingApplications: applications.filter(app => ['new', 'read', 'contacted'].includes(app.status)),
             activeClients: applications.filter(app => app.status === 'active'),
             archivedClients: applications.filter(app => app.status === 'archived')
         };
@@ -199,6 +199,8 @@ export default function MembershipPage() {
                 case 'read':
                 case 'contacted':
                     return 'bg-yellow-400 hover:bg-yellow-500 text-yellow-900';
+                 case 'archived':
+                    return 'bg-red-600 hover:bg-red-700 text-white';
                 default: return ''; // uses default from Badge variant
             }
         }
@@ -272,10 +274,10 @@ export default function MembershipPage() {
                                                 <TableCell>{app.applicant.goal}</TableCell>
                                                 <TableCell>{app.applicant.duration}</TableCell>
                                                 <TableCell>
-                                                    <Badge variant={app.status === 'rejected' ? 'destructive' : 'default'} className={cn(getStatusStyles(app.status))}>{app.status}</Badge>
+                                                    <Badge variant={'default'} className={cn(getStatusStyles(app.status))}>{app.status}</Badge>
                                                 </TableCell>
                                                 <TableCell className="text-right space-x-2">
-                                                    {(app.status === 'new' || app.status === 'read') && (
+                                                    {(app.status === 'new' || app.status === 'read' || app.status === 'contacted') && (
                                                         <>
                                                             <Button size="sm" variant="outline" onClick={() => handleStatusUpdate(app.id, 'active')}>Accept</Button>
                                                             <Button size="sm" variant="destructive" onClick={() => handleRejectApplication(app.id)}>Reject</Button>

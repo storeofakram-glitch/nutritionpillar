@@ -20,7 +20,7 @@ interface ApplicationListProps {
   coachId: string;
 }
 
-const applicationStatuses: CoachingApplication['status'][] = ['new', 'read', 'contacted', 'active'];
+const applicationStatuses: CoachingApplication['status'][] = ['new', 'read', 'contacted', 'active', 'archived'];
 
 export default function ApplicationList({ coachId }: ApplicationListProps) {
     const [applications, setApplications] = useState<CoachingApplication[]>([]);
@@ -80,6 +80,8 @@ export default function ApplicationList({ coachId }: ApplicationListProps) {
             case 'read':
             case 'contacted':
                 return 'bg-yellow-400 hover:bg-yellow-500 text-yellow-900';
+            case 'archived':
+                return 'bg-red-600 hover:bg-red-700 text-white';
             default: return ''; // uses default from Badge variant
         }
     }
@@ -136,7 +138,7 @@ export default function ApplicationList({ coachId }: ApplicationListProps) {
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                     <Badge variant={app.status === 'rejected' ? 'destructive' : 'default'} className={cn(getStatusStyles(app.status))}>{app.status}</Badge>
+                                     <Badge variant={'default'} className={cn(getStatusStyles(app.status))}>{app.status}</Badge>
                                       <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <Button size="icon" variant="ghost">
@@ -161,7 +163,7 @@ export default function ApplicationList({ coachId }: ApplicationListProps) {
                                                 </DropdownMenuSubContent>
                                             </DropdownMenuSub>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem onSelect={() => handleDelete(app)} className="text-red-500">Delete</DropdownMenuItem>
+                                            <DropdownMenuItem onSelect={() => handleDelete(app)} className="text-red-500">Delete Permanently</DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </div>
