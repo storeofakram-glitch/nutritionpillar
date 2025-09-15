@@ -86,7 +86,7 @@ export default function CheckoutForm() {
 
 
   const subtotal = cartTotal;
-  const total = subtotal + shippingPrice;
+  const total = subtotal + (shippingPrice || 0);
 
   const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -267,7 +267,7 @@ export default function CheckoutForm() {
           {/* Order Totals Section */}
           <div className="space-y-2 text-sm">
             <div className="flex justify-between"><span>Subtotal</span><span>DZD {subtotal.toFixed(2)}</span></div>
-            <div className="flex justify-between"><span>Shipping</span><span>DZD {shippingPrice.toFixed(2)}</span></div>
+            <div className="flex justify-between"><span>Shipping</span><span>DZD {(shippingPrice || 0).toFixed(2)}</span></div>
             <Separator />
             <div className="flex justify-between font-bold text-lg"><span>Total</span><span>DZD {total.toFixed(2)}</span></div>
           </div>
@@ -310,5 +310,3 @@ export default function CheckoutForm() {
     </Card>
   );
 }
-
-    
