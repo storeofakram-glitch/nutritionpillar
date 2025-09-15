@@ -6,6 +6,8 @@ import { db } from '@/lib/firebase';
 import type { Order, Product, OrderItem, OrderInput } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { getShippingOptions } from './shipping-service';
+import { getAuth } from 'firebase/auth';
+import { firebaseApp } from '@/lib/firebase';
 
 const ordersCollection = collection(db, 'orders');
 const counterDocRef = doc(db, 'counters', 'orders');
@@ -99,7 +101,10 @@ export async function addOrder(orderInput: OrderInput) {
             const finalAmount = calculatedSubtotal + shippingPrice;
 
             const newOrderData: Omit<Order, 'id'> = {
-                customer: orderInput.customer,
+                customer: {
+                  ...orderInput.customer,
+                  uid: orderInput.customer.uid || '' // Ensure uid is part of the customer object
+                },
                 shippingAddress: orderInput.shippingAddress,
                 items: finalOrderItems,
                 amount: finalAmount,

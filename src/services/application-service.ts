@@ -19,6 +19,10 @@ export async function addApplication(data: Omit<CoachingApplication, 'id' | 'cre
     try {
         const newApplication: Omit<CoachingApplication, 'id'> = {
             ...data,
+            applicant: {
+              ...data.applicant,
+              uid: data.applicant.uid || ''
+            },
             createdAt: new Date().toISOString(),
             status: 'new',
         };
@@ -163,7 +167,8 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
                             coachName: application.coachName,
                             goal: application.applicant.goal,
                             type: 'Coaching',
-                            membershipDurationDays: durationInDays
+                            membershipDurationDays: durationInDays,
+                            uid: application.applicant.uid
                         });
                     }
                 }
