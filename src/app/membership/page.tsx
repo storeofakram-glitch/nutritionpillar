@@ -153,7 +153,7 @@ export default function MembershipPage() {
 
     const { pendingApplications, activeClients, archivedClients } = useMemo(() => {
         return {
-            pendingApplications: applications.filter(app => ['new', 'read', 'contacted'].includes(app.status)),
+            pendingApplications: applications.filter(app => ['new', 'contacted'].includes(app.status)),
             activeClients: applications.filter(app => app.status === 'active'),
             archivedClients: applications.filter(app => app.status === 'archived')
         };
@@ -217,7 +217,6 @@ export default function MembershipPage() {
             switch (status) {
                 case 'new': return 'bg-primary hover:bg-primary/80';
                 case 'active': return 'bg-green-600 hover:bg-green-700 text-white';
-                case 'read':
                 case 'contacted':
                     return 'bg-yellow-400 hover:bg-yellow-500 text-yellow-900';
                  case 'archived':
@@ -299,7 +298,7 @@ export default function MembershipPage() {
                                                     <Badge variant={'default'} className={cn(getStatusStyles(app.status))}>{app.status}</Badge>
                                                 </TableCell>
                                                 <TableCell className="text-right space-x-2">
-                                                    {(app.status === 'new' || app.status === 'read' || app.status === 'contacted') && (
+                                                    {(app.status === 'new' || app.status === 'contacted') && (
                                                         <>
                                                             <Button size="sm" variant="outline" onClick={() => handleStatusUpdate(app.id, 'active')}>Accept</Button>
                                                             <Button size="sm" variant="destructive" onClick={() => handleRejectApplication(app.id)}>Reject</Button>

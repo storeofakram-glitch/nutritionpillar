@@ -15,6 +15,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -45,13 +46,15 @@ export type CartItem = {
 
 export type City = {
   name: string;
-  price: number;
+  homeDeliveryPrice: number;
+  officeDeliveryPrice: number;
 };
 
 export type ShippingState = {
   id:string;
   state: string;
-  defaultPrice?: number;
+  defaultHomeDeliveryPrice?: number;
+  defaultOfficeDeliveryPrice?: number;
   cities: City[];
 };
 
@@ -69,6 +72,7 @@ export type OrderItem = {
 }
 
 export type PaymentMethod = 'Pay on Delivery' | 'Credit / Debit Card' | 'CIB / EDAHABIA Card' | 'Visa / Mastercard';
+export type DeliveryMethod = 'Home Delivery' | 'Desk (Office) Delivery';
 
 export type Order = {
   id: string;
@@ -78,6 +82,7 @@ export type Order = {
   amount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'canceled';
   paymentMethod?: PaymentMethod;
+  deliveryMethod?: DeliveryMethod;
   shippingAddress: {
     address: string;
     city: string;
@@ -100,6 +105,7 @@ export type OrderInput = {
   shippingAddress: Order['shippingAddress'];
   items: OrderItemInput[];
   paymentMethod?: PaymentMethod;
+  deliveryMethod?: DeliveryMethod;
 };
 
 export type Expense = {
@@ -318,6 +324,6 @@ export type CoachingApplication = {
     message?: string;
   };
   createdAt: string; // ISO 8601 string
-  status: 'new' | 'read' | 'contacted' | 'active' | 'rejected' | 'archived';
+  status: 'new' | 'contacted' | 'active' | 'rejected' | 'archived';
 };
     

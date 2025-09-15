@@ -20,7 +20,7 @@ interface ApplicationListProps {
   coachId: string;
 }
 
-const applicationStatuses: CoachingApplication['status'][] = ['new', 'read', 'contacted', 'active', 'archived'];
+const applicationStatuses: CoachingApplication['status'][] = ['new', 'contacted', 'active', 'archived'];
 
 export default function ApplicationList({ coachId }: ApplicationListProps) {
     const [applications, setApplications] = useState<CoachingApplication[]>([]);
@@ -51,7 +51,7 @@ export default function ApplicationList({ coachId }: ApplicationListProps) {
         setSelectedApplication(application);
         setIsViewDialogOpen(true);
         if (application.status === 'new') {
-            await updateApplicationStatus(application.id, 'read');
+            await updateApplicationStatus(application.id, 'contacted');
             fetchData();
         }
     };
@@ -77,7 +77,6 @@ export default function ApplicationList({ coachId }: ApplicationListProps) {
         switch (status) {
             case 'new': return 'bg-primary hover:bg-primary/80';
             case 'active': return 'bg-green-600 hover:bg-green-700 text-white';
-            case 'read':
             case 'contacted':
                 return 'bg-yellow-400 hover:bg-yellow-500 text-yellow-900';
             case 'archived':
