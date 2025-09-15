@@ -119,8 +119,11 @@ export default function MembershipPage() {
     const handleStatusUpdate = async (appId: string, status: CoachingApplication['status']) => {
         const result = await updateApplicationStatus(appId, status);
         if (result.success && coachDetails) {
-            toast({ title: "Status Updated", description: `Application status changed to "${status}".` });
-            // Refresh the applications list for the coach
+            if (status === 'contacted') {
+                 toast({ title: "Application Accepted!", description: "The administration will process your new client soon." });
+            } else {
+                toast({ title: "Status Updated", description: `Application status changed to "${status}".` });
+            }
             fetchCoachData(coachDetails);
         } else {
             toast({ variant: 'destructive', title: 'Error', description: 'Failed to update application status.'});
