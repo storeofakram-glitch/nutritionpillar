@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation';
 export default function LayoutContent({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const isAdminPage = pathname.startsWith('/admin');
-    const isLoginPage = pathname === '/admin/login';
+    const isLoginPage = pathname === '/login';
 
     if (isLoginPage) {
         return <>{children}</>;

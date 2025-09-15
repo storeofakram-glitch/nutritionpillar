@@ -21,9 +21,9 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export default function AdminLoginPage() {
+export default function LoginPage() {
   const { toast } = useToast();
-  const { signIn, user, loading } = useAuth();
+  const { signIn, user, isAdmin, loading } = useAuth();
   const router = useRouter();
 
   const form = useForm<LoginFormValues>({
@@ -35,10 +35,10 @@ export default function AdminLoginPage() {
   });
 
   useEffect(() => {
-    if (user) {
+    if (!loading && user && isAdmin) {
       router.push("/admin");
     }
-  }, [user, router]);
+  }, [user, isAdmin, loading, router]);
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
@@ -54,7 +54,7 @@ export default function AdminLoginPage() {
     }
   };
   
-  if (loading || user) {
+  if (loading || (user && isAdmin)) {
     return null; // Don't render anything while checking auth state or redirecting
   }
 

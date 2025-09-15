@@ -48,14 +48,10 @@ export default function AdminLayout({
   ]
   
   React.useEffect(() => {
-    if (!loading && !isAdmin && pathname !== '/admin/login') {
-      router.replace('/admin/login');
+    if (!loading && !isAdmin) {
+      router.replace('/login');
     }
   }, [user, isAdmin, loading, router, pathname]);
-
-  if (pathname === '/admin/login') {
-    return <>{children}</>;
-  }
   
   if (loading || !isAdmin) {
     return (
@@ -78,7 +74,7 @@ export default function AdminLayout({
   
   const handleSignOut = async () => {
     await signOut();
-    router.push('/admin/login');
+    router.push('/login');
   };
   
   return (
