@@ -3,29 +3,35 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper function to check if the user is an authenticated admin.
-    // This assumes you have set a custom claim { admin: true } on the user's account.
+    // Helper function to determine if the user is an admin
     function isAdmin() {
       return request.auth != null && request.auth.token.admin == true;
     }
 
-    // --- Admin-Only Collections ---
-    // Grant full access to admins for collections they manage.
-    // The `list` permission is crucial for the admin dashboard queries to work.
+    // --- Admin-Only Access ---
+    // Grants admins full read, write, and list permissions on these collections.
+    // The `list` permission is crucial for dashboard queries.
     match /(admins|contactSubmissions|counters|expenses|memberships|orders|coachingApplications)/{docId} {
-        allow list, read, write: if isAdmin();
+      allow list, read, write: if isAdmin();
     }
-
-    // --- Publicly Readable Collections ---
-    // Anyone can read these, but only admins can write to them.
+    
+    // --- Public Read, Admin Write Collections ---
+    // Allows anyone to read, but only admins to write.
     match /(products|coaches|settings|shippingOptions)/{docId} {
       allow read: if true;
       allow write: if isAdmin();
-      allow list: if isAdmin(); // Admins can list these too
+      // Admin list is inherited from the broader rule below for simplicity
     }
-    
-    // --- Publicly Creatable Documents ---
-    // Allow anyone to create documents in these collections (e.g., placing an order).
+
+    // --- Admin List for Publicly Readable Collections ---
+    // Admins also need to be able to list these collections for dashboard/admin functionality.
+    match /(products|coaches|settings|shippingOptions)/{docId} {
+        allow list: if isAdmin();
+    }
+
+    // --- Public Create Rules ---
+    // Allows anyone to create documents in these specific collections for things
+    // like placing an order or submitting a contact form.
     match /orders/{orderId} {
       allow create: if true;
     }
