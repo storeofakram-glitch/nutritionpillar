@@ -49,7 +49,7 @@ export default function AdminLayout({
   
   React.useEffect(() => {
     if (!loading && !isAdmin) {
-      router.push('/admin/login');
+      router.replace('/admin/login');
     }
   }, [user, isAdmin, loading, router]);
   
