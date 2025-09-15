@@ -26,8 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       
-      const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || '').split(',');
-      if (user && user.email && adminEmails.includes(user.email)) {
+      if (user) {
         setIsAdmin(true);
       } else {
         setIsAdmin(false);
@@ -40,10 +39,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [auth]);
 
   const signIn = async (email: string, password: string) => {
-    const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || '').split(',');
-    if (!adminEmails.includes(email)) {
-        throw new Error("You are not authorized to access this page.");
-    }
     await signInWithEmailAndPassword(auth, email, password);
   };
 
