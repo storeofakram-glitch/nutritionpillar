@@ -3,19 +3,66 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper function to check for authenticated users
+    
+    // Helper function to check if the user is authenticated.
     function isAuthenticated() {
       return request.auth != null;
     }
 
-    // Products: Public can read, admins can write
+    // Products can be read by anyone, but only written by authenticated users.
     match /products/{productId} {
       allow read: if true;
       allow write: if isAuthenticated();
     }
 
-    // Counters: Admins can read and write to manage counters like order numbers
+    // Coaches can be read by anyone, but only written by authenticated users.
+    match /coaches/{coachId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // Site settings can be read by anyone, but only written by authenticated users.
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    
+    // Shipping options can be read by anyone, but only written by authenticated users.
+    match /shippingOptions/{optionId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // Orders can be created by anyone, but only read, updated, or deleted by authenticated users.
+    match /orders/{orderId} {
+      allow create: if true;
+      allow list, read, update, delete: if isAuthenticated();
+    }
+    
+    // Coaching applications can be created by anyone, but managed only by authenticated users.
+    match /coachingApplications/{applicationId} {
+      allow create: if true;
+      allow list, read, update, delete: if isAuthenticated();
+    }
+
+    // Memberships can be read by anyone, but managed only by authenticated users.
+    match /memberships/{membershipId} {
+      allow read: if true;
+      allow create, update, delete, list: if isAuthenticated();
+    }
+    
+    // Contact submissions can be created by anyone, but read/managed only by authenticated users.
+     match /contactSubmissions/{submissionId} {
+      allow create: if true;
+      allow list, read, update, delete: if isAuthenticated();
+    }
+    
+    // Expenses can only be managed by authenticated users.
+    match /expenses/{expenseId} {
+      allow read, write, list: if isAuthenticated();
+    }
+    
+    // Counters are internal and can only be written to by authenticated users (as part of transactions).
     match /counters/{counterId} {
       allow read, write: if isAuthenticated();
     }

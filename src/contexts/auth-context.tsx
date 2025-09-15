@@ -2,7 +2,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, type User } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, type User } from 'firebase/auth';
 import { firebaseApp } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -23,14 +23,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const auth = getAuth(firebaseApp);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      // Any authenticated user is considered an admin
-      setIsAdmin(!!user);
-      setLoading(false);
+    // Set persistence on the client-side
+    setPersistence(auth, browserLocalPersistence).then(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setUser(user);
+            setIsAdmin(!!user);
+            setLoading(false);
+        });
+        return () => unsubscribe();
+    }).catch((error) => {
+        console.error("Error setting auth persistence:", error);
+        setLoading(false);
     });
-
-    return () => unsubscribe();
   }, [auth]);
 
   const signIn = async (email: string, password: string) => {
