@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { findMembershipByCode } from '@/services/membership-service';
 import type { RecommendedProduct, MembershipWithProducts, Coach, CoachingApplication, Membership } from '@/types';
-import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users, Mail, MessageSquare, User, UserX, History } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users, Mail, MessageSquare, User, UserX, History, Copy } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
@@ -137,6 +137,11 @@ export default function MembershipPage() {
         setIsRevokeDialogOpen(true);
     }
 
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text);
+        toast({ title: "Copied!", description: "Membership code copied to clipboard." });
+    }
+
     const { pendingApplications, activeClients, archivedClients } = useMemo(() => {
         return {
             pendingApplications: applications.filter(app => ['new', 'read', 'contacted'].includes(app.status)),
@@ -200,6 +205,7 @@ export default function MembershipPage() {
                 case 'contacted':
                     return 'bg-yellow-400 hover:bg-yellow-500 text-yellow-900';
                  case 'archived':
+                 case 'rejected':
                     return 'bg-red-600 hover:bg-red-700 text-white';
                 default: return ''; // uses default from Badge variant
             }
@@ -345,6 +351,15 @@ export default function MembershipPage() {
                                                 <p><span className="font-medium text-foreground">Phone:</span> {app.applicant.phone}</p>
                                                 <p><span className="font-medium text-foreground">Weight:</span> {app.applicant.weight}kg</p>
                                                 <p><span className="font-medium text-foreground">Height:</span> {app.applicant.height}cm</p>
+                                                 {app.membership?.code && (
+                                                    <div className="col-span-2 flex items-center gap-2">
+                                                        <span className="font-medium text-foreground">Code:</span>
+                                                        <Badge variant="secondary">{app.membership.code}</Badge>
+                                                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(app.membership!.code)}>
+                                                            <Copy className="h-3.5 w-3.5" />
+                                                        </Button>
+                                                    </div>
+                                                )}
                                             </div>
                                             {app.applicant.message && (
                                                 <div className="mt-3">
@@ -533,3 +548,5 @@ export default function MembershipPage() {
         </div>
     );
 }
+
+    
