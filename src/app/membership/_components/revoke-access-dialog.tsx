@@ -22,12 +22,12 @@ interface RevokeAccessDialogProps {
 }
 
 export default function RevokeAccessDialog({ isOpen, onOpenChange, athleteName, onConfirm }: RevokeAccessDialogProps) {
-    const [isDeleting, setIsDeleting] = useState(false);
+    const [isArchiving, setIsArchiving] = useState(false);
 
     const handleConfirm = async () => {
-        setIsDeleting(true);
+        setIsArchiving(true);
         await onConfirm();
-        setIsDeleting(false);
+        setIsArchiving(false);
         onOpenChange(false);
     };
 
@@ -35,9 +35,9 @@ export default function RevokeAccessDialog({ isOpen, onOpenChange, athleteName, 
         <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure you want to delete this athlete?</AlertDialogTitle>
+                    <AlertDialogTitle>Archive this athlete?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        This will permanently delete the application for "{athleteName}". This action cannot be undone.
+                        This will move the application for "{athleteName}" to your history. The client will no longer appear in your active list. This action can be reversed from the admin panel if needed.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -46,9 +46,9 @@ export default function RevokeAccessDialog({ isOpen, onOpenChange, athleteName, 
                         <Button
                             variant="destructive"
                             onClick={handleConfirm}
-                            disabled={isDeleting}
+                            disabled={isArchiving}
                         >
-                            {isDeleting ? "Deleting..." : "Delete Athlete"}
+                            {isArchiving ? "Archiving..." : "Archive Athlete"}
                         </Button>
                     </AlertDialogAction>
                 </AlertDialogFooter>

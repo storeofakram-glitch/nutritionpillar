@@ -12,6 +12,8 @@
 
 
 
+
+
 export type Product = {
   id: string;
   name: string;
@@ -314,8 +316,6 @@ export type CoachingApplication = {
     message?: string;
   };
   createdAt: string; // ISO 8601 string
-  status: 'new' | 'read' | 'contacted' | 'rejected' | 'active';
+  status: 'new' | 'read' | 'contacted' | 'active' | 'rejected' | 'archived';
 };
-    
-
     

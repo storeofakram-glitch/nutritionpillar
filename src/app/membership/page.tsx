@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { findMembershipByCode } from '@/services/membership-service';
 import type { RecommendedProduct, MembershipWithProducts, Coach, CoachingApplication, Membership } from '@/types';
-import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users, Mail, MessageSquare, User, UserX } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users, Mail, MessageSquare, User, UserX, History } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
@@ -23,6 +23,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
 import { findMembershipByApplicationId } from '@/services/membership-service';
 import RevokeAccessDialog from './_components/revoke-access-dialog';
+import AthleteHistoryDialog from './_components/athlete-history-dialog';
+
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center gap-1">
@@ -105,7 +107,7 @@ export default function MembershipPage() {
         }
     };
     
-    const handleStatusUpdate = async (appId: string, status: 'contacted' | 'active') => {
+    const handleStatusUpdate = async (appId: string, status: 'contacted' | 'active' | 'archived') => {
         const result = await updateApplicationStatus(appId, status);
         if (result.success && coachDetails) {
             toast({ title: "Status Updated", description: `Application status changed to "${status}".` });
@@ -126,14 +128,8 @@ export default function MembershipPage() {
         }
     };
 
-     const handleDeleteAthlete = async (appId: string) => {
-        const result = await deleteApplication(appId);
-        if (result.success && coachDetails) {
-             toast({ title: "Athlete Deleted", description: "The client's application has been permanently deleted." });
-             fetchCoachData(coachDetails);
-        } else {
-            toast({ variant: 'destructive', title: 'Error', description: 'Failed to delete athlete.'});
-        }
+     const handleArchiveAthlete = async (appId: string) => {
+        await handleStatusUpdate(appId, 'archived');
     };
 
     const handleOpenRevokeDialog = (app: CoachingApplication) => {
@@ -141,10 +137,11 @@ export default function MembershipPage() {
         setIsRevokeDialogOpen(true);
     }
 
-    const { pendingApplications, activeClients } = useMemo(() => {
+    const { pendingApplications, activeClients, archivedClients } = useMemo(() => {
         return {
             pendingApplications: applications.filter(app => ['new', 'read'].includes(app.status)),
             activeClients: applications.filter(app => app.status === 'active'),
+            archivedClients: applications.filter(app => app.status === 'archived')
         };
     }, [applications]);
 
@@ -209,11 +206,14 @@ export default function MembershipPage() {
         return (
             <Card>
                 <CardHeader>
-                    <div className="flex items-center gap-3 text-green-700 dark:text-green-400">
-                        <CheckCircle className="h-8 w-8" />
-                        <CardTitle className="text-2xl">Membership Active!</CardTitle>
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div className="flex items-center gap-3 text-green-700 dark:text-green-400">
+                            <CheckCircle className="h-8 w-8" />
+                            <CardTitle className="text-2xl">Membership Active!</CardTitle>
+                        </div>
+                        <AthleteHistoryDialog athletes={archivedClients} />
                     </div>
-                    <CardDescription>
+                     <CardDescription className="pt-2">
                         Welcome back, Coach {result.customerName}! This is your dashboard to manage client applications and track your active clients.
                     </CardDescription>
                 </CardHeader>
@@ -332,7 +332,7 @@ export default function MembershipPage() {
                                                     </Button>
                                                      <Button variant="destructive" size="icon" className="h-8 w-8" onClick={() => handleOpenRevokeDialog(app)}>
                                                         <UserX className="h-4 w-4" />
-                                                        <span className="sr-only">Delete Athlete</span>
+                                                        <span className="sr-only">Archive Athlete</span>
                                                      </Button>
                                                 </div>
                                             </div>
@@ -525,7 +525,7 @@ export default function MembershipPage() {
                     isOpen={isRevokeDialogOpen}
                     onOpenChange={setIsRevokeDialogOpen}
                     athleteName={selectedAppForRevoke.applicant.name}
-                    onConfirm={() => handleDeleteAthlete(selectedAppForRevoke.id)}
+                    onConfirm={() => handleArchiveAthlete(selectedAppForRevoke.id)}
                 />
             )}
         </div>
