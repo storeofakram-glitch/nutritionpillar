@@ -62,7 +62,6 @@ export type ShippingState = {
 export type Customer = {
   name: string;
   email: string;
-  uid?: string;
 }
 
 export type OrderItem = {
@@ -288,7 +287,6 @@ export type PersonalInfo = {
     state?: string;
     country?: string;
     nationality?: string;
-    uid?: string;
 };
 
 export type Coach = {
@@ -326,7 +324,6 @@ export type CoachingApplication = {
     goal: string;
     duration: string;
     message?: string;
-    uid?: string;
   };
   createdAt: string; // ISO 8601 string
   status: 'new' | 'read' | 'contacted' | 'active' | 'rejected' | 'archived';
