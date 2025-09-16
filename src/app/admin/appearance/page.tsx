@@ -138,7 +138,7 @@ const emptyValues: SiteSettings = {
 };
 
 
-export default function AdminAppearancePage({ authLoading }: { authLoading: boolean }) {
+export default function AdminAppearancePage({ authLoading }: { authLoading?: boolean }) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [isHeroOpen, setIsHeroOpen] = useState(false);

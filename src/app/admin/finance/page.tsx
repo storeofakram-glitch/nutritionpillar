@@ -1,5 +1,5 @@
 
-"use client"
+"use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { getTotalRevenue, getOrders, getTotalCostOfGoodsSold } from "@/services/order-service"

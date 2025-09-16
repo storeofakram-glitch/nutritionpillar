@@ -56,26 +56,6 @@ export default function AdminLayout({
     }
   }, [user, isAdmin, loading, router, pathname]);
   
-  if (loading || !isAdmin) {
-    return (
-        <div className="flex min-h-screen">
-            <div className="hidden md:flex w-72 flex-col gap-2 border-r p-2">
-                <Skeleton className="h-14 w-full" />
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-10 w-full" />
-            </div>
-            <div className="flex-1 p-6 space-y-6">
-                <Skeleton className="h-14 w-full" />
-                <Skeleton className="h-32 w-full" />
-                <Skeleton className="h-64 w-full" />
-            </div>
-        </div>
-    );
-  }
-  
   const handleSignOut = async () => {
     await signOut();
     router.push('/login');
@@ -140,10 +120,21 @@ export default function AdminLayout({
                 </Button>
             </header>
             <main className="p-6">
-                {React.Children.map(children, child =>
-                    React.isValidElement(child)
-                    ? React.cloneElement(child, { authLoading: loading } as any)
-                    : child
+                {loading || !isAdmin ? (
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between">
+                            <Skeleton className="h-10 w-48" />
+                            <Skeleton className="h-10 w-24" />
+                        </div>
+                        <Skeleton className="h-96 w-full" />
+                        <Skeleton className="h-64 w-full" />
+                    </div>
+                ) : (
+                    React.Children.map(children, child =>
+                        React.isValidElement(child)
+                        ? React.cloneElement(child, { authLoading: loading } as any)
+                        : child
+                    )
                 )}
             </main>
         </SidebarInset>
