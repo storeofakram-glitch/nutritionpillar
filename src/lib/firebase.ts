@@ -17,14 +17,11 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-let app: FirebaseApp;
-if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
-} else {
-    app = getApp();
-}
+const app: FirebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-export const firebaseApp = app;
-export const db = getFirestore(app);
+const db = getFirestore(app);
 
-export const analytics = isSupported().then(yes => yes ? getAnalytics(app) : null);
+// Initialize Analytics only on the client side
+const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
+
+export { app as firebaseApp, db, analytics };
