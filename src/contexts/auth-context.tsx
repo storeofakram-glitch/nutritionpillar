@@ -43,10 +43,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log('============================================');
     });
 
-    // Sign out any persisted user on application start to ensure clean state.
-    // This was added based on a previous request.
-    signOut(auth);
-
     // Cleanup subscription on unmount
     return () => unsubscribe();
   }, [auth]);
