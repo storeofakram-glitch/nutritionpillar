@@ -130,15 +130,6 @@ export default function Header() {
         </nav>
         <div className="flex flex-1 items-center justify-end gap-2">
            <SearchDialog />
-           <Link
-            href="/admin"
-            className={cn(
-                'text-sm transition-colors hover:text-primary text-foreground/80 hidden sm:inline-block',
-                pathname.startsWith('/admin') && 'text-primary font-semibold'
-            )}
-            >
-                Admin
-          </Link>
           <Button asChild variant="ghost" size="icon">
             <Link href="/cart" className="relative">
               <ShoppingBag className="h-5 w-5" />
