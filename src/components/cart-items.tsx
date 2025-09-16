@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/contexts/cart-context";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Trash2, ShoppingBag, ArrowLeft } from "lucide-react";
 
@@ -31,19 +31,8 @@ export default function CartItems() {
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between gap-4">
+      <CardHeader>
         <CardTitle className="text-2xl font-headline">Shopping Cart</CardTitle>
-        <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" asChild>
-                <Link href="/" className="flex items-center gap-1">
-                    <ArrowLeft className="h-3.5 w-3.5" />
-                    Continue Shopping
-                </Link>
-            </Button>
-            <Button variant="destructive" size="sm" onClick={clearCart} disabled={cartItems.length === 0}>
-                Clear Cart
-            </Button>
-        </div>
       </CardHeader>
       <CardContent>
         <div className="divide-y">
@@ -80,6 +69,17 @@ export default function CartItems() {
           ))}
         </div>
       </CardContent>
+      <CardFooter className="flex flex-row items-center justify-between gap-4">
+        <Button variant="outline" size="sm" asChild>
+            <Link href="/" className="flex items-center gap-1">
+                <ArrowLeft className="h-3.5 w-3.5" />
+                Continue Shopping
+            </Link>
+        </Button>
+        <Button variant="destructive" size="sm" onClick={clearCart} disabled={cartItems.length === 0}>
+            Clear Cart
+        </Button>
+      </CardFooter>
     </Card>
   );
 }
