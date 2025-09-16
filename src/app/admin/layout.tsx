@@ -61,6 +61,19 @@ export default function AdminLayout({
     router.push('/login');
   };
   
+  // While loading or if the user is not an admin (and not yet redirected),
+  // show a loading skeleton or nothing to prevent content flashing.
+  if (loading || !isAdmin) {
+    return (
+        <div className="flex h-screen w-full items-center justify-center">
+            <div className="flex flex-col items-center gap-4">
+                 <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                 <p className="text-muted-foreground">Loading Admin Dashboard...</p>
+            </div>
+        </div>
+    );
+  }
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen">
@@ -120,21 +133,10 @@ export default function AdminLayout({
                 </Button>
             </header>
             <main className="p-6">
-                {loading || !isAdmin ? (
-                    <div className="space-y-6">
-                        <div className="flex items-center justify-between">
-                            <Skeleton className="h-10 w-48" />
-                            <Skeleton className="h-10 w-24" />
-                        </div>
-                        <Skeleton className="h-96 w-full" />
-                        <Skeleton className="h-64 w-full" />
-                    </div>
-                ) : (
-                    React.Children.map(children, child =>
-                        React.isValidElement(child)
-                        ? React.cloneElement(child, { authLoading: loading } as { authLoading: boolean })
-                        : child
-                    )
+                {React.Children.map(children, child =>
+                    React.isValidElement(child)
+                    ? React.cloneElement(child, { authLoading: loading } as { authLoading: boolean })
+                    : child
                 )}
             </main>
         </SidebarInset>
