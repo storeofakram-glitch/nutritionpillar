@@ -59,12 +59,13 @@ export default function AdminLayout({
   if (loading || !isAdmin) {
     return (
         <div className="flex min-h-screen">
-            <div className="hidden md:block border-r p-2">
-                <div className="flex flex-col gap-2">
-                    <Skeleton className="h-10 w-full" />
-                    <Skeleton className="h-[calc(100vh-160px)] w-full" />
-                    <Skeleton className="h-20 w-full" />
-                </div>
+            <div className="hidden md:flex w-72 flex-col gap-2 border-r p-2">
+                <Skeleton className="h-14 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
             </div>
             <div className="flex-1 p-6 space-y-6">
                 <Skeleton className="h-14 w-full" />

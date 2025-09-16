@@ -27,7 +27,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       // This listener is called when the auth state is first checked and whenever it changes.
       setUser(user);
-      setIsAdmin(!!user); // Any logged-in user is an admin
+      // Any authenticated user is considered an admin as per the requirement.
+      setIsAdmin(!!user);
       
       // Once this has run once, we know the initial auth state has been determined.
       setLoading(false);
@@ -44,14 +45,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const handleSignOut = async () => {
     await signOut(auth);
   };
-
-  if (loading) {
-    return (
-        <div className="flex items-center justify-center h-screen">
-            <Skeleton className="h-screen w-screen" />
-        </div>
-    )
-  }
 
   return (
     <AuthContext.Provider value={{ user, isAdmin, loading, signIn, signOut: handleSignOut }}>
