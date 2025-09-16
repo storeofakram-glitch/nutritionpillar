@@ -49,12 +49,12 @@ export default function AdminLayout({
   ]
   
   React.useEffect(() => {
-    // This effect runs on every render of the layout, including navigation
-    // It ensures that if the auth state changes for any reason, the user is redirected.
+    // This effect runs whenever the loading or isAdmin state changes.
+    // It ensures that only authenticated admins can see the content.
     if (!loading && !isAdmin) {
       router.replace('/login');
     }
-  }, [user, isAdmin, loading, router, pathname]);
+  }, [isAdmin, loading, router]);
   
   const handleSignOut = async () => {
     await signOut();
@@ -132,7 +132,7 @@ export default function AdminLayout({
                 ) : (
                     React.Children.map(children, child =>
                         React.isValidElement(child)
-                        ? React.cloneElement(child, { authLoading: loading } as any)
+                        ? React.cloneElement(child, { authLoading: loading } as { authLoading: boolean })
                         : child
                     )
                 )}

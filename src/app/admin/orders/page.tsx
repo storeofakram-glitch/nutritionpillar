@@ -177,7 +177,7 @@ export default function AdminOrdersPage({ authLoading }: { authLoading?: boolean
               </TableRow>
             </TableHeader>
             <TableBody>
-              {loading ? renderSkeleton() : orders.map(order => (
+              {loading || authLoading ? renderSkeleton() : orders.map(order => (
                   <TableRow 
                     key={order.id}
                     className={cn(

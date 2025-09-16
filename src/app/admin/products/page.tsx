@@ -7,43 +7,20 @@ import AddProductDialog from "./_components/add-product-dialog"
 import ProductTable from "./_components/product-table"
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
-
-// --- START DEBUG IMPORTS ---
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { addDoc, collection } from 'firebase/firestore';
-import { firebaseApp, db } from '@/lib/firebase';
-// --- END DEBUG IMPORTS ---
+import { getAuth } from "firebase/auth";
+import { addDoc, collection } from "firebase/firestore";
+import { firebaseApp, db } from "@/lib/firebase";
+import { useToast } from "@/hooks/use-toast";
 
 
 export default function AdminProductsPage({ authLoading }: { authLoading?: boolean }) {
-  // We use a key to force re-mounting of the ProductTable component.
-  // This is a simple way to trigger a data refresh.
   const [refreshKey, setRefreshKey] = useState(0);
+  const { toast } = useToast();
 
   const handleRefresh = () => {
     setRefreshKey(prevKey => prevKey + 1);
   };
   
-  // --- START DEBUG STEP 1: CHECK AUTH STATE ---
-  useEffect(() => {
-    const auth = getAuth(firebaseApp);
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log('=== AUTH DEBUG ===');
-      console.log('User exists:', !!user);
-      if (user) {
-        console.log('User ID:', user.uid);
-        console.log('User email:', user.email);
-        user.getIdToken().then(token => {
-          console.log('Auth token exists:', !!token);
-        });
-      }
-      console.log('=== END DEBUG ===');
-    });
-    return () => unsubscribe(); // Cleanup subscription
-  }, []);
-  // --- END DEBUG STEP 1 ---
-
-  // --- START DEBUG STEP 2: TEST A SIMPLE WRITE ---
   const testWrite = async () => {
     const auth = getAuth(firebaseApp);
     console.log('=== WRITE TEST ===');
@@ -51,14 +28,18 @@ export default function AdminProductsPage({ authLoading }: { authLoading?: boole
     
     if (!auth.currentUser) {
       console.log('❌ No authenticated user at time of write');
-      alert('Test failed: No authenticated user. Check the console.');
+      toast({
+        variant: "destructive",
+        title: "Write Test Failed",
+        description: "No authenticated user found. Check console.",
+      });
       return;
     }
     
     try {
       const docRef = await addDoc(collection(db, 'products'), {
         name: 'Test Product',
-        description: 'This is a test product.',
+        description: 'This is a test product from a debug write.',
         category: 'Test',
         price: 100,
         quantity: 1,
@@ -66,16 +47,23 @@ export default function AdminProductsPage({ authLoading }: { authLoading?: boole
         createdAt: new Date().toISOString()
       });
       console.log('✅ Write successful! Doc ID:', docRef.id);
-      alert('Test write successful! Check the console and your Firestore database.');
+      toast({
+        title: "Write Test Successful!",
+        description: "Check the console and your database.",
+      });
       handleRefresh(); // Refresh the table to see the new product
     } catch (error: any) {
       console.log('❌ Write failed:', error);
       console.log('Error code:', error.code);
       console.log('Error message:', error.message);
-      alert(`Test write failed. Check the console. Error: ${error.message}`);
+      toast({
+        variant: "destructive",
+        title: "Write Test Failed",
+        description: `Check the console. Error: ${error.message}`,
+      });
     }
+    console.log('=== END WRITE TEST ===');
   };
-  // --- END DEBUG STEP 2 ---
 
 
   return (
@@ -87,7 +75,7 @@ export default function AdminProductsPage({ authLoading }: { authLoading?: boole
                 <CardDescription>Manage your products and view their sales performance.</CardDescription>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={testWrite}>
+              <Button variant="outline" size="sm" onClick={testWrite} disabled={authLoading}>
                 Test Database Write
               </Button>
               <Button variant="outline" size="icon" onClick={handleRefresh} disabled={authLoading}>

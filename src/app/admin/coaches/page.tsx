@@ -103,7 +103,7 @@ export default function AdminCoachesPage({ authLoading }: { authLoading?: boolea
                 </CardHeader>
                 <CardContent>
                     <ScrollArea className="h-[460px]">
-                        <CoachTable data={coachList} isLoading={loading} onDataChange={fetchData} />
+                        <CoachTable data={coachList} isLoading={loading || authLoading} onDataChange={fetchData} />
                     </ScrollArea>
                 </CardContent>
             </Card>
@@ -118,7 +118,7 @@ export default function AdminCoachesPage({ authLoading }: { authLoading?: boolea
                 </CardHeader>
                 <CardContent>
                      <ScrollArea className="h-[460px]">
-                        <CoachTable data={expertList} isLoading={loading} onDataChange={fetchData} />
+                        <CoachTable data={expertList} isLoading={loading || authLoading} onDataChange={fetchData} />
                     </ScrollArea>
                 </CardContent>
             </Card>

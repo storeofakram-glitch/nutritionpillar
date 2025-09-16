@@ -23,15 +23,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const auth = getAuth(firebaseApp);
 
   useEffect(() => {
-    // onAuthStateChanged returns an unsubscribe function.
-    // It's called when auth state is checked and whenever it changes.
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log('=== AUTH DEBUG: onAuthStateChanged triggered ===');
+      console.log('User exists:', !!user);
+      
       setUser(user);
-      setIsAdmin(!!user); // Any authenticated user is an admin.
-      setLoading(false); // Auth state determined.
+      setIsAdmin(!!user); // For this app, any authenticated user is an admin
+      
+      if (user) {
+        console.log('User ID:', user.uid);
+        console.log('User email:', user.email);
+        user.getIdToken().then(token => {
+            console.log('Auth token exists:', !!token);
+        });
+      }
+      
+      setLoading(false); // Auth state determined, set loading to false.
+      console.log('Auth loading state set to false.');
+      console.log('============================================');
     });
 
-    // Sign out any persisted user on application start.
+    // Sign out any persisted user on application start to ensure clean state.
+    // This was added based on a previous request.
     signOut(auth);
 
     // Cleanup subscription on unmount
