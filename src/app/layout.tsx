@@ -12,6 +12,12 @@ import { AuthProvider } from '@/contexts/auth-context';
 export const metadata: Metadata = {
   title: 'Nutrition Pillar - Your Supplement Marketplace',
   description: 'High-quality supplements to fuel your fitness journey.',
+  icons: {
+    icon: [
+        { url: 'https://github.com/storeofakram-glitch/NutritionPillar/blob/main/main%20logo%20nutrition%20pillar.png?raw=true', href: 'https://github.com/storeofakram-glitch/NutritionPillar/blob/main/main%20logo%20nutrition%20pillar.png?raw=true' },
+        { url: '/favicon.png', href: '/favicon.png' },
+    ]
+  }
 };
 
 export default function RootLayout({
@@ -24,7 +30,6 @@ export default function RootLayout({
       <head>
         <meta name="theme-color" content="#193382" />
         <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="https://github.com/storeofakram-glitch/NutritionPillar/blob/main/main%20logo%20nutrition%20pillar.png?raw=true" />
       </head>
       <body className={cn('font-body antialiased', 'min-h-screen bg-background font-sans', ptSans.variable, spaceGrotesk.variable)}>
         <FirebaseProvider>
