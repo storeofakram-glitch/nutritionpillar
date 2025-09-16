@@ -101,6 +101,7 @@ export default function Home() {
                 loop
                 muted
                 playsInline
+                loading="lazy"
             >
                 Your browser does not support the video tag.
             </video>
@@ -162,6 +163,7 @@ export default function Home() {
                         loop
                         muted
                         playsInline
+                        loading="lazy"
                     >
                         Your browser does not support the video tag.
                     </video>
@@ -173,6 +175,7 @@ export default function Home() {
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         referrerPolicy="strict-origin-when-cross-origin"
                         allowFullScreen
+                        loading="lazy"
                     ></iframe>
                 ) : (
                     <Image
