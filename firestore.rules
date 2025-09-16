@@ -1,38 +1,8 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-  
-    // Function to check if a user is signed in
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    // Products: Public can read, only authenticated can write
-    match /products/{productId} {
-      allow read: if true;
-      allow write: if isSignedIn();
-    }
-
-    // Orders: Only authenticated users can create. Read/Update/Delete for admins.
-    match /orders/{orderId} {
-      allow create: if isSignedIn();
-      allow read, update, delete: if isSignedIn();
-    }
-    
-    // Settings: Public can read, only authenticated can write
-    match /settings/{settingId} {
-      allow read: if true;
-      allow write: if isSignedIn();
-    }
-
-    // All other collections are writable by authenticated users and readable by anyone.
-    // This covers: coaches, coachingApplications, memberships, shippingOptions, 
-    // contactSubmissions, expenses, and counters.
-    match /{collection}/{docId} {
-        allow read: if true;
-        allow list: if true;
-        allow write: if isSignedIn();
+    match /{document=**} {
+      allow read, write: if true;
     }
   }
 }
