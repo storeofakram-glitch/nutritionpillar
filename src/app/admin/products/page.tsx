@@ -1,12 +1,19 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import AddProductDialog from "./_components/add-product-dialog"
 import ProductTable from "./_components/product-table"
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
+
+// --- START DEBUG IMPORTS ---
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { addDoc, collection } from 'firebase/firestore';
+import { firebaseApp, db } from '@/lib/firebase';
+// --- END DEBUG IMPORTS ---
+
 
 export default function AdminProductsPage({ authLoading }: { authLoading?: boolean }) {
   // We use a key to force re-mounting of the ProductTable component.
@@ -16,6 +23,60 @@ export default function AdminProductsPage({ authLoading }: { authLoading?: boole
   const handleRefresh = () => {
     setRefreshKey(prevKey => prevKey + 1);
   };
+  
+  // --- START DEBUG STEP 1: CHECK AUTH STATE ---
+  useEffect(() => {
+    const auth = getAuth(firebaseApp);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log('=== AUTH DEBUG ===');
+      console.log('User exists:', !!user);
+      if (user) {
+        console.log('User ID:', user.uid);
+        console.log('User email:', user.email);
+        user.getIdToken().then(token => {
+          console.log('Auth token exists:', !!token);
+        });
+      }
+      console.log('=== END DEBUG ===');
+    });
+    return () => unsubscribe(); // Cleanup subscription
+  }, []);
+  // --- END DEBUG STEP 1 ---
+
+  // --- START DEBUG STEP 2: TEST A SIMPLE WRITE ---
+  const testWrite = async () => {
+    const auth = getAuth(firebaseApp);
+    console.log('=== WRITE TEST ===');
+    console.log('Current user:', auth.currentUser);
+    
+    if (!auth.currentUser) {
+      console.log('❌ No authenticated user at time of write');
+      alert('Test failed: No authenticated user. Check the console.');
+      return;
+    }
+    
+    try {
+      const docRef = await addDoc(collection(db, 'products'), {
+        name: 'Test Product',
+        description: 'This is a test product.',
+        category: 'Test',
+        price: 100,
+        quantity: 1,
+        imageUrls: ['https://picsum.photos/400'],
+        createdAt: new Date().toISOString()
+      });
+      console.log('✅ Write successful! Doc ID:', docRef.id);
+      alert('Test write successful! Check the console and your Firestore database.');
+      handleRefresh(); // Refresh the table to see the new product
+    } catch (error: any) {
+      console.log('❌ Write failed:', error);
+      console.log('Error code:', error.code);
+      console.log('Error message:', error.message);
+      alert(`Test write failed. Check the console. Error: ${error.message}`);
+    }
+  };
+  // --- END DEBUG STEP 2 ---
+
 
   return (
     <Card>
@@ -26,6 +87,9 @@ export default function AdminProductsPage({ authLoading }: { authLoading?: boole
                 <CardDescription>Manage your products and view their sales performance.</CardDescription>
             </div>
             <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={testWrite}>
+                Test Database Write
+              </Button>
               <Button variant="outline" size="icon" onClick={handleRefresh} disabled={authLoading}>
                 <RefreshCw className="h-4 w-4" />
                 <span className="sr-only">Refresh</span>
