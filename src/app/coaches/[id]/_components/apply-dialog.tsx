@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ApplicationForm } from "./application-form";
 import type { Plan } from "@/types";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ApplyDialogProps {
   plan: Plan;
@@ -35,12 +36,14 @@ export default function ApplyDialog({ plan, coachId, coachName }: ApplyDialogPro
             Complete the form below to apply for this plan with {coachName}.
           </DialogDescription>
         </DialogHeader>
-        <ApplicationForm 
-            plan={plan} 
-            coachId={coachId}
-            coachName={coachName} 
-            onSuccess={() => setOpen(false)} 
-        />
+        <ScrollArea className="max-h-[80vh] pr-6">
+            <ApplicationForm 
+                plan={plan} 
+                coachId={coachId}
+                coachName={coachName} 
+                onSuccess={() => setOpen(false)} 
+            />
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
