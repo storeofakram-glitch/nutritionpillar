@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 
-export default function AdminCoachesPage() {
+export default function AdminCoachesPage({ authLoading }: { authLoading?: boolean }) {
     const [coaches, setCoaches] = useState<Coach[]>([]);
     const [memberships, setMemberships] = useState<Membership[]>([]);
     const [loading, setLoading] = useState(true);
@@ -85,7 +85,7 @@ export default function AdminCoachesPage() {
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <Button variant="outline" size="icon" onClick={fetchData} disabled={isPending}>
+                    <Button variant="outline" size="icon" onClick={fetchData} disabled={isPending || authLoading}>
                         <RefreshCw className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
                         <span className="sr-only">Refresh</span>
                     </Button>

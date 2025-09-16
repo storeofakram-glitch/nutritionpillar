@@ -38,7 +38,7 @@ import { cn } from "@/lib/utils";
 
 const orderStatuses: Order['status'][] = ['pending', 'processing', 'shipped', 'delivered', 'canceled'];
 
-export default function AdminOrdersPage() {
+export default function AdminOrdersPage({ authLoading }: { authLoading?: boolean }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [customerOrders, setCustomerOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -156,7 +156,7 @@ export default function AdminOrdersPage() {
                 A list of all the orders in your store.
               </CardDescription>
             </div>
-            <Button variant="outline" size="icon" onClick={fetchOrders} disabled={isPending}>
+            <Button variant="outline" size="icon" onClick={fetchOrders} disabled={isPending || authLoading}>
               <RefreshCw className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
               <span className="sr-only">Refresh</span>
             </Button>
@@ -205,7 +205,7 @@ export default function AdminOrdersPage() {
                       <TableCell className="text-right">
                           <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                  <Button size="icon" variant="ghost">
+                                  <Button size="icon" variant="ghost" disabled={authLoading}>
                                   <MoreHorizontal className="h-4 w-4" />
                                   <span className="sr-only">Actions</span>
                                   </Button>

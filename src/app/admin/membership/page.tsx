@@ -11,7 +11,7 @@ import type { Membership } from "@/types";
 import MembershipTable from "./_components/membership-table";
 import AddMembershipDialog from "./_components/add-membership-dialog";
 
-export default function AdminMembershipPage() {
+export default function AdminMembershipPage({ authLoading }: { authLoading?: boolean }) {
     const [memberships, setMemberships] = useState<Membership[]>([]);
     const [loading, setLoading] = useState(true);
     const [isPending, startTransition] = useTransition();
@@ -63,7 +63,7 @@ export default function AdminMembershipPage() {
                     <p className="text-muted-foreground">Manage coaching clients and view loyalty program members.</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button variant="outline" size="icon" onClick={fetchMemberships} disabled={isPending}>
+                    <Button variant="outline" size="icon" onClick={fetchMemberships} disabled={isPending || authLoading}>
                         <RefreshCw className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
                         <span className="sr-only">Refresh</span>
                     </Button>
@@ -102,7 +102,7 @@ export default function AdminMembershipPage() {
                             <CardTitle>Fitness Pillar Loyalty Members</CardTitle>
                             <CardDescription>Customers who automatically joined the loyalty program.</CardDescription>
                          </div>
-                         <Button onClick={handleGenerateLoyalty} disabled={isPending} size="sm">
+                         <Button onClick={handleGenerateLoyalty} disabled={isPending || authLoading} size="sm">
                             <ShieldPlus className="mr-2 h-4 w-4" />
                             {isPending ? 'Checking...' : 'Check for New Loyalty Members'}
                          </Button>

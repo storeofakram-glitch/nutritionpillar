@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button"
 import { format } from "date-fns"
 import { getProducts } from "@/services/product-service"
 
-export default function AdminFinancePage() {
+export default function AdminFinancePage({ authLoading }: { authLoading?: boolean }) {
     const [totalRevenue, setTotalRevenue] = useState(0)
     const [totalExpenses, setTotalExpenses] = useState(0)
     const [totalCOGS, setTotalCOGS] = useState(0);
@@ -101,7 +101,7 @@ export default function AdminFinancePage() {
                     <p className="text-muted-foreground">Track your store's financial performance.</p>
                 </div>
                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="icon" onClick={fetchFinanceData} disabled={isPending}>
+                    <Button variant="outline" size="icon" onClick={fetchFinanceData} disabled={isPending || authLoading}>
                         <RefreshCw className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
                         <span className="sr-only">Refresh</span>
                     </Button>

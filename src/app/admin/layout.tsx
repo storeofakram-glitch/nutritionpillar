@@ -139,7 +139,11 @@ export default function AdminLayout({
                 </Button>
             </header>
             <main className="p-6">
-                {children}
+                {React.Children.map(children, child =>
+                    React.isValidElement(child)
+                    ? React.cloneElement(child, { authLoading: loading } as any)
+                    : child
+                )}
             </main>
         </SidebarInset>
       </div>

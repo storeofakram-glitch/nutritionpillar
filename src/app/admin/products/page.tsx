@@ -8,7 +8,7 @@ import ProductTable from "./_components/product-table"
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 
-export default function AdminProductsPage() {
+export default function AdminProductsPage({ authLoading }: { authLoading?: boolean }) {
   // We use a key to force re-mounting of the ProductTable component.
   // This is a simple way to trigger a data refresh.
   const [refreshKey, setRefreshKey] = useState(0);
@@ -26,7 +26,7 @@ export default function AdminProductsPage() {
                 <CardDescription>Manage your products and view their sales performance.</CardDescription>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="icon" onClick={handleRefresh}>
+              <Button variant="outline" size="icon" onClick={handleRefresh} disabled={authLoading}>
                 <RefreshCw className="h-4 w-4" />
                 <span className="sr-only">Refresh</span>
               </Button>

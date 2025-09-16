@@ -138,7 +138,7 @@ const emptyValues: SiteSettings = {
 };
 
 
-export default function AdminAppearancePage() {
+export default function AdminAppearancePage({ authLoading }: { authLoading: boolean }) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [isHeroOpen, setIsHeroOpen] = useState(false);
@@ -864,7 +864,7 @@ export default function AdminAppearancePage() {
             </Card>
         </Collapsible>
 
-        <Button type="submit" size="lg" disabled={form.formState.isSubmitting}>
+        <Button type="submit" size="lg" disabled={form.formState.isSubmitting || authLoading}>
           {form.formState.isSubmitting ? "Saving..." : "Save All Settings"}
         </Button>
       </form>

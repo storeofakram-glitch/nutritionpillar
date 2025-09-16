@@ -8,7 +8,7 @@ import ShippingZonesTable from "./_components/shipping-zones-table"
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 
-export default function AdminShippingPage() {
+export default function AdminShippingPage({ authLoading }: { authLoading?: boolean }) {
     const [refreshKey, setRefreshKey] = useState(0);
 
     const handleRefresh = () => {
@@ -24,7 +24,7 @@ export default function AdminShippingPage() {
                         <CardDescription>Manage shipping zones and prices.</CardDescription>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Button variant="outline" size="icon" onClick={handleRefresh}>
+                        <Button variant="outline" size="icon" onClick={handleRefresh} disabled={authLoading}>
                             <RefreshCw className="h-4 w-4" />
                             <span className="sr-only">Refresh</span>
                         </Button>
