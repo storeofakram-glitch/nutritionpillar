@@ -35,7 +35,7 @@ export default function CartItems() {
         <CardTitle className="text-2xl font-headline">Shopping Cart</CardTitle>
         <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" asChild>
-                <Link href="/">
+                <Link href="/" className="flex items-center gap-1">
                     <ArrowLeft className="h-3.5 w-3.5" />
                     Continue Shopping
                 </Link>
