@@ -113,7 +113,7 @@ export default function JoinTeamPage() {
                              <div className="grid sm:grid-cols-2 gap-6">
                                 <FormItem>
                                     <FormLabel>Phone Number</FormLabel>
-                                    <div className="flex gap-2">
+                                    <div className="flex gap-3">
                                         <FormField
                                             control={form.control}
                                             name="countryCode"
@@ -233,3 +233,6 @@ export default function JoinTeamPage() {
   );
 }
 
+
+
+    
