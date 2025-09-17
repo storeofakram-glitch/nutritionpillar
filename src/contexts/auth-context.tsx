@@ -2,7 +2,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, type User } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, type User, type Auth } from 'firebase/auth';
 import { firebaseApp } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -19,10 +19,18 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true); // Start with loading as true
-  const auth = getAuth(firebaseApp);
+  const [loading, setLoading] = useState(true);
+  const [auth, setAuth] = useState<Auth | null>(null);
 
   useEffect(() => {
+    if (firebaseApp) {
+      setAuth(getAuth(firebaseApp));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!auth) return;
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       console.log('=== AUTH DEBUG: onAuthStateChanged triggered ===');
       console.log('User exists:', !!user);
@@ -48,10 +56,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [auth]);
 
   const signIn = async (email: string, password: string) => {
+    if (!auth) throw new Error("Auth not initialized");
     await signInWithEmailAndPassword(auth, email, password);
   };
 
   const handleSignOut = async () => {
+    if (!auth) throw new Error("Auth not initialized");
     await signOut(auth);
   };
 
