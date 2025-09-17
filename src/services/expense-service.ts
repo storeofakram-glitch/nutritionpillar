@@ -6,14 +6,14 @@ import { getDb } from '@/lib/firebase';
 import type { Expense } from '@/types';
 import { revalidatePath } from 'next/cache';
 
-const expensesCollection = collection(getDb(), 'expenses');
+const expensesCollection = () => collection(getDb(), 'expenses');
 
 /**
  * Fetches all expenses from the database, ordered by date descending.
  * @returns A promise that resolves to an array of expenses.
  */
 export async function getExpenses(): Promise<Expense[]> {
-    const q = query(expensesCollection, orderBy('date', 'desc'));
+    const q = query(expensesCollection(), orderBy('date', 'desc'));
     const snapshot = await getDocs(q);
     const expenses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Expense));
     return expenses;
@@ -26,7 +26,7 @@ export async function getExpenses(): Promise<Expense[]> {
  */
 export async function addExpense(expense: Omit<Expense, 'id'>) {
     try {
-        const docRef = await addDoc(expensesCollection, expense);
+        const docRef = await addDoc(expensesCollection(), expense);
         revalidatePath('/admin/finance');
         return { success: true, id: docRef.id };
     } catch (error) {
@@ -58,7 +58,7 @@ export async function deleteExpense(id: string) {
  * @returns A promise that resolves to the total expense amount.
  */
 export async function getTotalExpenses(): Promise<number> {
-    const snapshot = await getDocs(expensesCollection);
+    const snapshot = await getDocs(expensesCollection());
     const expenses = snapshot.docs.map(doc => doc.data() as Expense);
     const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
     return totalExpenses;

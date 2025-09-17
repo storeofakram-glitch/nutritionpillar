@@ -20,50 +20,33 @@ function isFirebaseConfigValid(config: typeof firebaseConfig): boolean {
 }
 
 let app: FirebaseApp;
-let db: Firestore;
-let auth;
+if (getApps().length === 0) {
+    if (isFirebaseConfigValid(firebaseConfig)) {
+        app = initializeApp(firebaseConfig);
+    } else {
+        console.error("Firebase config is missing one or more required values. App cannot be initialized.");
+        // Create a dummy app to avoid crashing, services will not work
+        app = initializeApp({ apiKey: "dummy-key-to-avoid-crash" });
+    }
+} else {
+    app = getApp();
+}
+
+const db = getFirestore(app);
+const auth = getAuth(app);
 let analytics;
 
 if (typeof window !== 'undefined') {
-    if (getApps().length === 0) {
-        if (isFirebaseConfigValid(firebaseConfig)) {
-            app = initializeApp(firebaseConfig);
-        } else {
-            console.error("Firebase config is missing one or more required values. App cannot be initialized.");
-            app = initializeApp({ apiKey: "dummy-key-to-avoid-crash" });
-        }
-    } else {
-        app = getApp();
+  isSupported().then(yes => {
+    if (yes) {
+      analytics = getAnalytics(app);
     }
-
-    db = getFirestore(app);
-    auth = getAuth(app);
-    
-    isSupported().then(yes => {
-      if (yes) {
-        analytics = getAnalytics(app);
-      }
-    });
+  });
 }
 
 // This function can be called from server components to get the db instance
 function getDb() {
-    if (db) {
-        return db;
-    }
-    // For server-side rendering, initialize a new app instance if it doesn't exist
-    if (getApps().length === 0) {
-       if (isFirebaseConfigValid(firebaseConfig)) {
-            app = initializeApp(firebaseConfig);
-        } else {
-            console.error("SSR: Firebase config is missing. App cannot be initialized.");
-            // Return a non-functional dummy to avoid crashing server components that import it
-            return {} as Firestore;
-        }
-    } else {
-        app = getApp();
-    }
-    return getFirestore(app);
+    return db;
 }
 
 export { app as firebaseApp, db, auth, analytics, getDb };

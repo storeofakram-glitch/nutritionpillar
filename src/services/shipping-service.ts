@@ -6,10 +6,10 @@ import { getDb } from '@/lib/firebase';
 import type { ShippingState } from '@/types';
 import { revalidatePath } from 'next/cache';
 
-const shippingOptionsCollection = collection(getDb(), 'shippingOptions');
+const shippingOptionsCollection = () => collection(getDb(), 'shippingOptions');
 
 export async function getShippingOptions(): Promise<ShippingState[]> {
-    const snapshot = await getDocs(shippingOptionsCollection);
+    const snapshot = await getDocs(shippingOptionsCollection());
     const options = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ShippingState));
     // Sort by state name
     options.sort((a, b) => a.state.localeCompare(b.state));
@@ -18,7 +18,7 @@ export async function getShippingOptions(): Promise<ShippingState[]> {
 
 export async function addShippingOption(option: Omit<ShippingState, 'id'>) {
     try {
-        const docRef = await addDoc(shippingOptionsCollection, option);
+        const docRef = await addDoc(shippingOptionsCollection(), option);
         revalidatePath('/admin/shipping');
         return { success: true, id: docRef.id };
     } catch (error) {

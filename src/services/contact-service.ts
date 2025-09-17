@@ -6,7 +6,7 @@ import { getDb } from '@/lib/firebase';
 import type { ContactSubmission } from '@/types';
 import { revalidatePath } from 'next/cache';
 
-const contactSubmissionsCollection = collection(getDb(), 'contactSubmissions');
+const contactSubmissionsCollection = () => collection(getDb(), 'contactSubmissions');
 
 /**
  * Adds a new contact form submission to the database.
@@ -20,7 +20,7 @@ export async function addSubmission(data: Omit<ContactSubmission, 'id' | 'create
             createdAt: new Date().toISOString(),
             status: 'new',
         };
-        const docRef = await addDoc(contactSubmissionsCollection, newSubmission);
+        const docRef = await addDoc(contactSubmissionsCollection(), newSubmission);
         revalidatePath('/admin/inbox');
         return { success: true, id: docRef.id };
     } catch (error) {
@@ -34,7 +34,7 @@ export async function addSubmission(data: Omit<ContactSubmission, 'id' | 'create
  * @returns A promise that resolves to an array of contact submissions.
  */
 export async function getSubmissions(): Promise<ContactSubmission[]> {
-    const q = query(contactSubmissionsCollection, orderBy('createdAt', 'desc'));
+    const q = query(contactSubmissionsCollection(), orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ContactSubmission));
 }
@@ -45,7 +45,7 @@ export async function getSubmissions(): Promise<ContactSubmission[]> {
  */
 export async function getUnreadSubmissionsCount(): Promise<number> {
     try {
-        const q = query(contactSubmissionsCollection, where('status', '==', 'new'));
+        const q = query(contactSubmissionsCollection(), where('status', '==', 'new'));
         const snapshot = await getCountFromServer(q);
         return snapshot.data().count;
     } catch (error) {

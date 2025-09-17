@@ -7,14 +7,14 @@ import type { Coach } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { addMembership } from './membership-service';
 
-const coachesCollection = collection(getDb(), 'coaches');
+const coachesCollection = () => collection(getDb(), 'coaches');
 
 /**
  * Fetches all coaches and experts from the database, ordered by creation date.
  * @returns A promise that resolves to an array of coaches/experts.
  */
 export async function getCoaches(): Promise<Coach[]> {
-    const q = query(coachesCollection, orderBy('createdAt', 'desc'));
+    const q = query(coachesCollection(), orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Coach));
 }
@@ -45,7 +45,7 @@ export async function getCoachById(id: string): Promise<Coach | null> {
  */
 export async function getCoachByName(name: string): Promise<Coach | null> {
     try {
-        const q = query(coachesCollection, where('name', '==', name));
+        const q = query(coachesCollection(), where('name', '==', name));
         const snapshot = await getDocs(q);
         if (!snapshot.empty) {
             const docSnap = snapshot.docs[0];
@@ -70,7 +70,7 @@ export async function addCoach(coach: Omit<Coach, 'id' | 'createdAt'>) {
             ...coach,
             createdAt: new Date().toISOString(),
         };
-        const docRef = await addDoc(coachesCollection, newCoach);
+        const docRef = await addDoc(coachesCollection(), newCoach);
 
         // After successfully adding the coach, create a membership for them.
         await addMembership({

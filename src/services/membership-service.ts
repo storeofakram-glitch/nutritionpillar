@@ -10,7 +10,7 @@ import { getOrders } from './order-service';
 import { getProductById } from './product-service';
 import { randomBytes } from 'crypto';
 
-const membershipsCollection = collection(getDb(), 'memberships');
+const membershipsCollection = () => collection(getDb(), 'memberships');
 
 /**
  * Generates a random, uppercase, 8-character alphanumeric code.
@@ -26,7 +26,7 @@ function generateMembershipCode(): string {
  * @returns A promise that resolves to an array of memberships.
  */
 export async function getMemberships(): Promise<Membership[]> {
-    const snapshot = await getDocs(query(membershipsCollection, orderBy('createdAt', 'desc')));
+    const snapshot = await getDocs(query(membershipsCollection(), orderBy('createdAt', 'desc')));
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Membership));
 }
 
@@ -36,7 +36,7 @@ export async function getMemberships(): Promise<Membership[]> {
  * @returns A promise that resolves to the membership details with products, or null if not found or expired.
  */
 export async function findMembershipByCode(code: string): Promise<MembershipWithProducts | null> {
-    const q = query(membershipsCollection, where('code', '==', code.toUpperCase()));
+    const q = query(membershipsCollection(), where('code', '==', code.toUpperCase()));
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
@@ -82,7 +82,7 @@ export async function findMembershipByCode(code: string): Promise<MembershipWith
  * @returns A promise that resolves to the membership or null if not found.
  */
 export async function findMembershipByApplicationId(applicationId: string): Promise<Membership | null> {
-    const q = query(membershipsCollection, where('applicationId', '==', applicationId));
+    const q = query(membershipsCollection(), where('applicationId', '==', applicationId));
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
@@ -120,7 +120,7 @@ export async function addMembership(membership: Partial<Omit<Membership, 'id' | 
         // Remove the temporary duration field before saving
         const { membershipDurationDays, ...finalMembership } = newMembership;
 
-        const docRef = await addDoc(membershipsCollection, finalMembership);
+        const docRef = await addDoc(membershipsCollection(), finalMembership);
         revalidatePath('/admin/membership');
         return { success: true, id: docRef.id };
     } catch (error) {
@@ -213,7 +213,7 @@ export async function generateLoyaltyMemberships(): Promise<{ success: boolean; 
                     recommendedProducts: [],
                     createdAt: new Date().toISOString(),
                 };
-                await addDoc(membershipsCollection, newMembership);
+                await addDoc(membershipsCollection(), newMembership);
                 newMembershipsCount++;
             }
         }

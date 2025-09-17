@@ -8,10 +8,10 @@ import type { Order, Product, OrderItem, OrderInput } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { getShippingOptions } from './shipping-service';
 
-const ordersCollection = collection(getDb(), 'orders');
+const ordersCollection = () => collection(getDb(), 'orders');
 
 export async function getOrders(): Promise<Order[]> {
-    const q = query(ordersCollection, orderBy('date', 'desc'));
+    const q = query(ordersCollection(), orderBy('date', 'desc'));
     const snapshot = await getDocs(q);
     const orders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Order));
     return orders;
@@ -104,7 +104,7 @@ export async function addOrder(orderInput: OrderInput) {
 
 
 export async function getTotalRevenue(): Promise<number> {
-    const q = query(ordersCollection, where('status', '==', 'delivered'));
+    const q = query(ordersCollection(), where('status', '==', 'delivered'));
     const snapshot = await getDocs(q);
     const orders = snapshot.docs.map(doc => doc.data() as Order);
 
@@ -119,7 +119,7 @@ export async function getTotalRevenue(): Promise<number> {
 }
 
 export async function getTotalCostOfGoodsSold(): Promise<number> {
-    const q = query(ordersCollection, where('status', '==', 'delivered'));
+    const q = query(ordersCollection(), where('status', '==', 'delivered'));
     const snapshot = await getDocs(q);
     const orders = snapshot.docs.map(doc => doc.data() as Order);
     

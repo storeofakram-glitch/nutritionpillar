@@ -8,7 +8,7 @@ import type { CoachingApplication } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { addMembership, findMembershipByApplicationId } from './membership-service';
 
-const applicationsCollection = collection(getDb(), 'coachingApplications');
+const applicationsCollection = () => collection(getDb(), 'coachingApplications');
 
 /**
  * Adds a new coaching application to the database.
@@ -22,7 +22,7 @@ export async function addApplication(data: Omit<CoachingApplication, 'id' | 'cre
             createdAt: new Date().toISOString(),
             status: 'new',
         };
-        const docRef = await addDoc(applicationsCollection, newApplication);
+        const docRef = await addDoc(applicationsCollection(), newApplication);
         revalidatePath('/admin/coaches');
         return { success: true, id: docRef.id };
     } catch (error) {
@@ -37,7 +37,7 @@ export async function addApplication(data: Omit<CoachingApplication, 'id' | 'cre
  * @returns A promise that resolves to an array of applications.
  */
 export async function getApplicationsByCoach(coachId: string): Promise<CoachingApplication[]> {
-    const q = query(applicationsCollection, where('coachId', '==', coachId));
+    const q = query(applicationsCollection(), where('coachId', '==', coachId));
     const snapshot = await getDocs(q);
     const applications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CoachingApplication));
     
@@ -54,7 +54,7 @@ export async function getApplicationsByCoach(coachId: string): Promise<CoachingA
  * @returns A promise that resolves to an array of active applications.
  */
 export async function getActiveApplicationsByCoach(coachId: string): Promise<CoachingApplication[]> {
-    const q = query(applicationsCollection, where('coachId', '==', coachId), where('status', '==', 'active'));
+    const q = query(applicationsCollection(), where('coachId', '==', coachId), where('status', '==', 'active'));
     const snapshot = await getDocs(q);
     const applications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CoachingApplication));
     applications.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -69,7 +69,7 @@ export async function getActiveApplicationsByCoach(coachId: string): Promise<Coa
  */
 export async function getApplicationsCountByCoach(coachId: string): Promise<number> {
      try {
-        const q = query(applicationsCollection, where('coachId', '==', coachId));
+        const q = query(applicationsCollection(), where('coachId', '==', coachId));
         const snapshot = await getCountFromServer(q);
         return snapshot.data().count;
     } catch (error) {
@@ -86,7 +86,7 @@ export async function getApplicationsCountByCoach(coachId: string): Promise<numb
  */
 export async function getNewApplicationsCountByCoach(coachId: string): Promise<number> {
      try {
-        const q = query(applicationsCollection, where('coachId', '==', coachId), where('status', '==', 'new'));
+        const q = query(applicationsCollection(), where('coachId', '==', coachId), where('status', '==', 'new'));
         const snapshot = await getCountFromServer(q);
         return snapshot.data().count;
     } catch (error) {
@@ -102,7 +102,7 @@ export async function getNewApplicationsCountByCoach(coachId: string): Promise<n
  */
 export async function getNewApplicationsCount(): Promise<number> {
      try {
-        const q = query(applicationsCollection, where('status', '==', 'new'));
+        const q = query(applicationsCollection(), where('status', '==', 'new'));
         const snapshot = await getCountFromServer(q);
         return snapshot.data().count;
     } catch (error) {

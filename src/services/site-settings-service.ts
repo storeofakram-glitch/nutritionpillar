@@ -6,7 +6,7 @@ import { getDb } from '@/lib/firebase';
 import type { SiteSettings } from '@/types';
 import { revalidatePath } from 'next/cache';
 
-const settingsDocRef = doc(getDb(), 'settings', 'homepage');
+const settingsDocRef = () => doc(getDb(), 'settings', 'homepage');
 
 /**
  * Fetches the site settings from Firestore.
@@ -14,7 +14,7 @@ const settingsDocRef = doc(getDb(), 'settings', 'homepage');
  */
 export async function getSiteSettings(): Promise<SiteSettings | null> {
     try {
-        const docSnap = await getDoc(settingsDocRef);
+        const docSnap = await getDoc(settingsDocRef());
         if (docSnap.exists()) {
             return docSnap.data() as SiteSettings;
         }
@@ -33,7 +33,7 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
  */
 export async function saveSiteSettings(settings: SiteSettings) {
     try {
-        await setDoc(settingsDocRef, settings, { merge: true });
+        await setDoc(settingsDocRef(), settings, { merge: true });
         // Revalidate all relevant paths to show changes immediately
         revalidatePath('/');
         revalidatePath('/about');

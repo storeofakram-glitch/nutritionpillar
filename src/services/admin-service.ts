@@ -35,7 +35,7 @@ export async function getCustomers(): Promise<Customer[]> {
  * @returns A promise that resolves to an array of orders.
  */
 export async function getCustomerOrders(customerEmail: string): Promise<Order[]> {
-    const q = query(ordersCollection, where('customer.email', '==', customerEmail));
+    const q = query(collection(getDb(), 'orders'), where('customer.email', '==', customerEmail));
     const snapshot = await getDocs(q);
     const orders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Order));
     // Sort by date descending
@@ -60,7 +60,6 @@ export async function getDashboardStats() {
         getTotalRevenue(),
         getTotalCostOfGoodsSold(),
         getTotalExpenses(),
-        getOrders(),
         getUnreadSubmissionsCount(),
         getNewApplicationsCount(),
     ]);

@@ -6,10 +6,10 @@ import { getDb } from '@/lib/firebase';
 import type { Product } from '@/types';
 import { revalidatePath } from 'next/cache';
 
-const productsCollection = collection(getDb(), 'products');
+const productsCollection = () => collection(getDb(), 'products');
 
 export async function getProducts(): Promise<Product[]> {
-    const snapshot = await getDocs(productsCollection);
+    const snapshot = await getDocs(productsCollection());
     const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
     return products;
 }
@@ -31,7 +31,7 @@ export async function getProductById(id: string): Promise<Product | null> {
 
 export async function addProduct(product: Omit<Product, 'id'>) {
     try {
-        const docRef = await addDoc(productsCollection, product);
+        const docRef = await addDoc(productsCollection(), product);
         // Revalidate all relevant paths after adding a product
         revalidatePath('/');
         revalidatePath('/admin/products');
