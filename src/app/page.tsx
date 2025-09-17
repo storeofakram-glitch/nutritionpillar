@@ -140,8 +140,8 @@ export default function Home() {
                     <Image
                         src={msg.logoUrl}
                         alt={msg.logoAlt || 'logo'}
-                        width={24}
-                        height={24}
+                        width={34}
+                        height={34}
                         className="object-contain"
                     />
                 )}
