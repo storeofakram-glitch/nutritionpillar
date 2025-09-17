@@ -146,7 +146,7 @@ export default function JoinTeamPage() {
                             />
                             <FormField control={form.control} name="resumeUrl" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Resume/Portfolio Link</FormLabel>
+                                    <FormLabel>Resume/Portfolio Link (Optional)</FormLabel>
                                     <FormControl><Input placeholder="https://linkedin.com/in/yourprofile" {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
