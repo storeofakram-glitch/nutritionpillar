@@ -108,14 +108,6 @@ export default function AdminLayout({
                         <span>Sign Out</span>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
-                <SidebarMenuItem>
-                    <Link href="/">
-                        <SidebarMenuButton tooltip="Back to site">
-                            <ArrowLeft />
-                            <span>Back to Site</span>
-                        </SidebarMenuButton>
-                    </Link>
-                </SidebarMenuItem>
             </SidebarMenu>
           </SidebarFooter>
         </Sidebar>
