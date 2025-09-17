@@ -1,6 +1,5 @@
 
 
-
 'use client';
 
 import Image from 'next/image';
@@ -22,6 +21,7 @@ import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import CoachesExpertsSection from '@/components/coaches-experts-section';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import ReactMarkdown from 'react-markdown';
 
 
 const LogoItem = ({ logo }: { logo: PartnershipLogo }) => {
@@ -126,9 +126,9 @@ export default function Home() {
           <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight">
             {hero.title}
           </h1>
-          <p className="text-lg md:text-xl max-w-2xl mb-8">
-            {hero.description}
-          </p>
+          <div className="text-lg md:text-xl max-w-2xl mb-8 prose dark:prose-invert prose-p:text-white">
+            <ReactMarkdown>{hero.description}</ReactMarkdown>
+          </div>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button asChild size="lg" className="font-bold bg-primary/70 text-white hover:bg-primary/90 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
               <Link href={hero.buttonLink}>{hero.buttonText}</Link>
