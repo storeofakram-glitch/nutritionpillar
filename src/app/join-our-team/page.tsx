@@ -25,6 +25,7 @@ const joinTeamFormSchema = z.object({
   position: z.enum(['Coach', 'Expert'], { required_error: "Please select a position." }),
   specialty: z.string({ required_error: "Please select a specialty."}),
   certifications: z.array(z.string()).optional(),
+  otherCertification: z.string().optional(),
   resumeUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
   message: z.string().min(20, { message: "Your message should be at least 20 characters." }),
   tiktokUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
@@ -87,6 +88,7 @@ export default function JoinTeamPage() {
       position: undefined,
       specialty: undefined,
       certifications: [],
+      otherCertification: '',
       resumeUrl: '',
       message: '',
       tiktokUrl: '',
@@ -96,13 +98,21 @@ export default function JoinTeamPage() {
   });
 
   const selectedSpecialty = form.watch('specialty') as keyof typeof certificationsBySpecialty;
+  const watchCertifications = form.watch('certifications');
 
   const onSubmit = async (data: JoinTeamFormValues) => {
     const fullPhoneNumber = `${data.countryCode}${data.phone}`;
+    
+    // Combine selected certifications with the "Other" value if present
+    const allCertifications = [...(data.certifications || [])];
+    if (data.otherCertification) {
+        allCertifications.push(data.otherCertification);
+    }
       
     const result = await addTeamApplication({
         ...data,
         phone: fullPhoneNumber,
+        certifications: allCertifications,
     });
 
     if (result.success) {
@@ -277,6 +287,40 @@ export default function JoinTeamPage() {
                                             }}
                                         />
                                         ))}
+                                         <FormField
+                                            control={form.control}
+                                            name="certifications"
+                                            render={({ field }) => (
+                                                <FormItem className="flex flex-row items-start space-x-3 space-y-0 mt-2">
+                                                    <FormControl>
+                                                        <Checkbox
+                                                            checked={field.value?.includes('Other')}
+                                                            onCheckedChange={(checked) => {
+                                                                const newValue = checked
+                                                                    ? [...(field.value || []), 'Other']
+                                                                    : field.value?.filter((value) => value !== 'Other');
+                                                                field.onChange(newValue);
+                                                            }}
+                                                        />
+                                                    </FormControl>
+                                                    <FormLabel className="font-normal">Other</FormLabel>
+                                                </FormItem>
+                                            )}
+                                        />
+                                        {watchCertifications?.includes('Other') && (
+                                            <FormField
+                                                control={form.control}
+                                                name="otherCertification"
+                                                render={({ field }) => (
+                                                    <FormItem className="pl-6 pt-2">
+                                                        <FormControl>
+                                                            <Input {...field} placeholder="Please specify your certification" />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        )}
                                         <FormMessage />
                                     </FormItem>
                                     )}
@@ -334,3 +378,5 @@ export default function JoinTeamPage() {
     </div>
   );
 }
+
+    
