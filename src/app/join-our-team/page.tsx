@@ -17,12 +17,15 @@ const joinTeamFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
   phone: z.string().min(10, { message: "Please enter a valid phone number." }),
-  position: z.string({ required_error: "Please select a position." }),
+  position: z.enum(['Coach', 'Expert'], { required_error: "Please select a position." }),
+  specialty: z.string({ required_error: "Please select a specialty."}),
   resumeUrl: z.string().url({ message: "Please provide a valid URL to your resume or portfolio." }),
   message: z.string().min(20, { message: "Your message should be at least 20 characters." }),
 });
 
 type JoinTeamFormValues = z.infer<typeof joinTeamFormSchema>;
+
+const specialties = ["Fitness", "Bodybuilding", "Nutrition", "Powerlifting", "CrossFit", "Calisthenics"];
 
 export default function JoinTeamPage() {
   const { toast } = useToast();
@@ -33,6 +36,7 @@ export default function JoinTeamPage() {
       email: '',
       phone: '',
       position: undefined,
+      specialty: undefined,
       resumeUrl: '',
       message: '',
     },
@@ -106,10 +110,7 @@ export default function JoinTeamPage() {
                                             </FormControl>
                                             <SelectContent>
                                                 <SelectItem value="Coach">Coach</SelectItem>
-                                                <SelectItem value="Nutrition Expert">Nutrition Expert</SelectItem>
-                                                <SelectItem value="Sales Associate">Sales Associate</SelectItem>
-                                                <SelectItem value="Marketing Specialist">Marketing Specialist</SelectItem>
-                                                <SelectItem value="Other">Other</SelectItem>
+                                                <SelectItem value="Expert">Expert</SelectItem>
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />
@@ -117,6 +118,26 @@ export default function JoinTeamPage() {
                                     )}
                                 />
                             </div>
+                             <FormField
+                                control={form.control}
+                                name="specialty"
+                                render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Specialty</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a specialty" />
+                                        </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {specialties.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField control={form.control} name="resumeUrl" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Resume/Portfolio Link</FormLabel>

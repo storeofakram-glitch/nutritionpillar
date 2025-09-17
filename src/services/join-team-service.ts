@@ -11,7 +11,8 @@ type TeamApplicationData = {
     name: string;
     email: string;
     phone: string;
-    position: string;
+    position: 'Coach' | 'Expert';
+    specialty: string;
     resumeUrl: string;
     message: string;
 }
