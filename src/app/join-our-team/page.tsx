@@ -21,6 +21,9 @@ const joinTeamFormSchema = z.object({
   specialty: z.string({ required_error: "Please select a specialty."}),
   resumeUrl: z.string().url({ message: "Please provide a valid URL to your resume or portfolio." }),
   message: z.string().min(20, { message: "Your message should be at least 20 characters." }),
+  tiktokUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
+  instagramUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
+  linkedinUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
 });
 
 type JoinTeamFormValues = z.infer<typeof joinTeamFormSchema>;
@@ -39,6 +42,9 @@ export default function JoinTeamPage() {
       specialty: undefined,
       resumeUrl: '',
       message: '',
+      tiktokUrl: '',
+      instagramUrl: '',
+      linkedinUrl: '',
     },
   });
 
@@ -145,6 +151,32 @@ export default function JoinTeamPage() {
                                     <FormMessage />
                                 </FormItem>
                             )} />
+                            <div className="space-y-2">
+                                <p className="text-sm font-medium">Social Links (Optional)</p>
+                                <div className="grid sm:grid-cols-3 gap-4">
+                                     <FormField control={form.control} name="tiktokUrl" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-xs">TikTok</FormLabel>
+                                            <FormControl><Input placeholder="TikTok URL" {...field} /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                     <FormField control={form.control} name="instagramUrl" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-xs">Instagram</FormLabel>
+                                            <FormControl><Input placeholder="Instagram URL" {...field} /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                     <FormField control={form.control} name="linkedinUrl" render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-xs">LinkedIn</FormLabel>
+                                            <FormControl><Input placeholder="LinkedIn URL" {...field} /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} />
+                                </div>
+                            </div>
                             <FormField control={form.control} name="message" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Why do you want to join our team?</FormLabel>

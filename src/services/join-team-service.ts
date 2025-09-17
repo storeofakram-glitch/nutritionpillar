@@ -5,8 +5,6 @@ import { collection, addDoc } from 'firebase/firestore';
 import { getDb } from '@/lib/firebase';
 import { revalidatePath } from 'next/cache';
 
-const teamApplicationsCollection = () => collection(getDb(), 'teamApplications');
-
 type TeamApplicationData = {
     name: string;
     email: string;
@@ -15,6 +13,9 @@ type TeamApplicationData = {
     specialty: string;
     resumeUrl: string;
     message: string;
+    tiktokUrl?: string;
+    instagramUrl?: string;
+    linkedinUrl?: string;
 }
 
 /**
@@ -40,3 +41,5 @@ export async function addTeamApplication(data: TeamApplicationData) {
         return { success: false, error: (error as Error).message };
     }
 }
+
+const teamApplicationsCollection = () => collection(getDb(), 'teamApplications');
