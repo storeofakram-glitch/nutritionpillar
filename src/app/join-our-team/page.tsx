@@ -12,11 +12,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { addTeamApplication } from '@/services/join-team-service';
+import { countryCodes } from '@/lib/country-codes';
 
 const joinTeamFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
-  phone: z.string().min(10, { message: "Please enter a valid phone number." }),
+  countryCode: z.string().min(1, "Country code is required."),
+  phone: z.string().min(1, "Phone number is required."),
   position: z.enum(['Coach', 'Expert'], { required_error: "Please select a position." }),
   specialty: z.string({ required_error: "Please select a specialty."}),
   resumeUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
@@ -37,6 +39,7 @@ export default function JoinTeamPage() {
     defaultValues: {
       name: '',
       email: '',
+      countryCode: 'DZ',
       phone: '',
       position: undefined,
       specialty: undefined,
@@ -49,7 +52,15 @@ export default function JoinTeamPage() {
   });
 
   const onSubmit = async (data: JoinTeamFormValues) => {
-    const result = await addTeamApplication(data);
+    const selectedCountry = countryCodes.find(c => c.code === data.countryCode);
+    const dialCode = selectedCountry ? selectedCountry.dial_code : '';
+    const fullPhoneNumber = `${dialCode}${data.phone}`;
+      
+    const result = await addTeamApplication({
+        ...data,
+        phone: fullPhoneNumber,
+    });
+
     if (result.success) {
       toast({
         title: "Application Sent!",
@@ -95,13 +106,39 @@ export default function JoinTeamPage() {
                                 )} />
                             </div>
                              <div className="grid sm:grid-cols-2 gap-6">
-                                <FormField control={form.control} name="phone" render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Phone Number</FormLabel>
-                                        <FormControl><Input type="tel" placeholder="Your phone number" {...field} /></FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )} />
+                                <FormItem>
+                                    <FormLabel>Phone Number</FormLabel>
+                                    <div className="flex gap-2">
+                                        <FormField
+                                            control={form.control}
+                                            name="countryCode"
+                                            render={({ field }) => (
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger className="w-32">
+                                                        <SelectValue placeholder="Code" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {countryCodes.map(country => (
+                                                        <SelectItem key={country.code} value={country.code}>
+                                                            {country.dial_code} ({country.code})
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="phone"
+                                            render={({ field }) => (
+                                            <FormControl><Input type="tel" placeholder="Phone Number" {...field} /></FormControl>
+                                            )}
+                                        />
+                                    </div>
+                                    <FormMessage />
+                                </FormItem>
                                  <FormField
                                     control={form.control}
                                     name="position"
@@ -147,7 +184,7 @@ export default function JoinTeamPage() {
                             <FormField control={form.control} name="resumeUrl" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Resume/Portfolio Link (Optional)</FormLabel>
-                                    <FormControl><Input placeholder="https://linkedin.com/in/yourprofile" {...field} /></FormControl>
+                                    <FormControl><Input placeholder="https://linkedin.com/in/yourprofile" {...field} value={field.value ?? ''} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />

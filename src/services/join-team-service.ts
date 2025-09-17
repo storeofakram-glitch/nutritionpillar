@@ -16,6 +16,7 @@ type TeamApplicationData = {
     tiktokUrl?: string;
     instagramUrl?: string;
     linkedinUrl?: string;
+    countryCode?: string;
 }
 
 /**
