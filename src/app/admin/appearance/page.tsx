@@ -1,5 +1,6 @@
 
 
+
 // This is a new file for the Appearance management page in the admin dashboard.
 "use client";
 
@@ -21,6 +22,7 @@ import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Separator } from "@/components/ui/separator";
 
 // Schemas for form validation
 const heroSettingsSchema = z.object({
@@ -31,6 +33,8 @@ const heroSettingsSchema = z.object({
     description: z.string().min(1, { message: "Description is required." }),
     buttonText: z.string().min(1, { message: "Button text is required." }),
     buttonLink: z.string().min(1, { message: "Button link is required." }),
+    button2Text: z.string().optional(),
+    button2Link: z.string().optional(),
 });
 
 const marqueeMessageSchema = z.object({
@@ -126,7 +130,7 @@ const siteSettingsSchema = z.object({
 });
 
 const emptyValues: SiteSettings = {
-    hero: { imageUrl: "", videoUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "" },
+    hero: { imageUrl: "", videoUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "", button2Text: "", button2Link: "" },
     marquee: { messages: [{ text: "", logoUrl: "", logoAlt: "" }] },
     partnershipLogos: [{ src: "", alt: "", hint: "", url: "" }],
     adBanner: { imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", title: "", description: "", buttonText: "", buttonLink: "", counter1Value: 0, counter1Label: '', counter2Value: 0, counter2Label: '', flashTitle: false },
@@ -279,6 +283,8 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                                 <FormMessage />
                             </FormItem>
                         )} />
+                        <Separator />
+                        <p className="text-sm font-medium">Button 1</p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                              <FormField control={form.control} name="hero.buttonText" render={({ field }) => (
                                 <FormItem>
@@ -291,6 +297,24 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                                 <FormItem>
                                     <FormLabel>Button Link</FormLabel>
                                     <FormControl><Input {...field} placeholder="/#products" /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                        </div>
+                        <Separator />
+                        <p className="text-sm font-medium">Button 2 (Optional)</p>
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                             <FormField control={form.control} name="hero.button2Text" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Button Text</FormLabel>
+                                    <FormControl><Input {...field} value={field.value ?? ''} placeholder="Find Your Coach" /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                             <FormField control={form.control} name="hero.button2Link" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Button Link</FormLabel>
+                                    <FormControl><Input {...field} value={field.value ?? ''} placeholder="/#coaches" /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />

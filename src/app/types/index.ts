@@ -18,6 +18,7 @@
 
 
 
+
 export type Product = {
   id: string;
   name: string;
@@ -142,6 +143,8 @@ export type HeroSettings = {
     description: string;
     buttonText: string;
     buttonLink: string;
+    button2Text?: string;
+    button2Link?: string;
 };
 
 export type MarqueeMessage = {
