@@ -120,18 +120,18 @@ export default function AdminLayout({
           </SidebarFooter>
         </Sidebar>
         <SidebarInset className="max-w-full flex-1">
-            <header className="flex h-14 items-center gap-4 border-b bg-background px-6">
+            <header className="flex h-14 items-center gap-4 border-b bg-background px-6 pr-16 md:pr-20">
                 <SidebarTrigger className="md:hidden" />
                 <div className="flex-1">
                     <h1 className="text-base md:text-lg font-semibold font-headline">
                         {navItems.find(item => pathname.startsWith(item.href) && (item.href === '/admin' ? pathname === item.href : true))?.label || 'Admin'}
                     </h1>
                 </div>
-                <Button variant="ghost" onClick={handleSignOut} className="gap-2">
-                    <LogOut className="h-4 w-4"/>
-                    <span className="hidden md:inline">Sign Out</span>
-                </Button>
             </header>
+             <Button variant="ghost" onClick={handleSignOut} className="fixed top-2 right-4 z-50 gap-2">
+                <LogOut className="h-4 w-4"/>
+                <span className="hidden md:inline">Sign Out</span>
+            </Button>
             <main className="p-6">
                 {React.Children.map(children, child =>
                     React.isValidElement(child)
