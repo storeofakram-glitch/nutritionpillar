@@ -125,7 +125,7 @@ export default function JoinTeamPage() {
                                                     placeholder="Select code..."
                                                     searchPlaceholder="Search code..."
                                                     notFoundText="No country found."
-                                                    triggerClassName="w-32"
+                                                    triggerClassName="w-[150px] flex-shrink-0"
                                                 />
                                             )}
                                         />
@@ -234,5 +234,7 @@ export default function JoinTeamPage() {
 }
 
 
+
+    
 
     

@@ -41,6 +41,11 @@ export function Combobox({
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
 
+  const selectedOptionLabel = React.useMemo(() => {
+    const selectedOption = options.find((option) => option.value === value);
+    return selectedOption ? selectedOption.label : value || placeholder;
+  }, [value, options, placeholder]);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -50,9 +55,7 @@ export function Combobox({
           aria-expanded={open}
           className={cn("justify-between", triggerClassName)}
         >
-          {value
-            ? options.find((option) => option.value === value)?.label || value
-            : placeholder}
+          <span className="truncate">{selectedOptionLabel}</span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -87,3 +90,5 @@ export function Combobox({
     </Popover>
   )
 }
+
+    
