@@ -52,6 +52,7 @@ export default function Home() {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const [isAdVideoLoaded, setIsAdVideoLoaded] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -206,17 +207,33 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-8 items-center bg-card p-8 rounded-lg shadow-lg shadow-primary/20">
             <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black">
                 {adBanner.backgroundVideoUrl ? (
-                    <video
-                        src={adBanner.backgroundVideoUrl}
-                        className="absolute top-0 left-0 w-full h-full object-cover"
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        loading="lazy"
-                    >
-                        Your browser does not support the video tag.
-                    </video>
+                    <>
+                        <Image
+                            src={adBanner.imageUrl}
+                            alt={adBanner.imageAlt || "Promotional banner"}
+                            data-ai-hint="promotional banner"
+                            fill
+                            className={cn(
+                                "object-cover transition-opacity duration-1000",
+                                isAdVideoLoaded ? "opacity-0" : "opacity-100"
+                            )}
+                        />
+                        <video
+                            src={adBanner.backgroundVideoUrl}
+                            className={cn(
+                                "absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000",
+                                isAdVideoLoaded ? "opacity-100" : "opacity-0"
+                            )}
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            loading="lazy"
+                            onCanPlay={() => setIsAdVideoLoaded(true)}
+                        >
+                            Your browser does not support the video tag.
+                        </video>
+                    </>
                 ) : adBanner.videoUrl ? (
                     <iframe
                         src={adBanner.videoUrl}
