@@ -15,6 +15,7 @@ import { addTeamApplication } from '@/services/join-team-service';
 import { countryCodes } from '@/lib/country-codes';
 import { Combobox } from '@/components/ui/combobox';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Briefcase, Feather, Heart } from 'lucide-react';
 
 const joinTeamFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -44,33 +45,31 @@ const countryCodeOptions = countryCodes.map(country => ({
 
 const certificationsBySpecialty = {
     Powerlifting: [
-        "IPF Coaching License",
-        "USPA Coach Certification",
-        "WDFPF Coach Certification",
+        "IPF (International Powerlifting Federation): IPF Coaching License",
+        "USPA (United States Powerlifting Association): USPA Coach Certification",
+        "WDFPF (World Drug-Free Powerlifting Federation): WDFPF Coach Certification",
     ],
     Bodybuilding: [
-        "NASM Certified Personal Trainer (CPT)",
-        "ACE Certified Personal Trainer",
-        "ISSA Certified Personal Trainer",
-        "IFBB Coach Certification",
-        "IFBB Nutrition Master Certification",
-        "IFBB Bodybuilding Master Certification",
+        "NASM (National Academy of Sports Medicine): Certified Personal Trainer (CPT)",
+        "ACE (American Council on Exercise): Certified Personal Trainer",
+        "ISSA (International Sports Sciences Association): Certified Personal Trainer",
+        "IFBB (International Federation of Bodybuilding and Fitness) Academy: Coach, Nutrition, and Bodybuilding Master Certifications",
     ],
     Fitness: [
-        "NASM Certified Personal Trainer (CPT)",
-        "ACE Certified Personal Trainer",
-        "ISSA Certified Personal Trainer",
+        "NASM (National Academy of Sports Medicine): Certified Personal Trainer (CPT)",
+        "ACE (American Council on Exercise): Certified Personal Trainer",
+        "ISSA (International Sports Sciences Association): Certified Personal Trainer",
     ],
     Nutrition: [
-        "Precision Nutrition (PN) Level 1",
-        "NASM Certified Nutrition Coach (CNC)",
-        "ISSA Certified Nutritionist",
+        "Precision Nutrition (PN): PN Level 1 Nutrition Certification",
+        "NASM (National Academy of Sports Medicine): Certified Nutrition Coach (CNC)",
+        "ISSA (International Sports Sciences Association): Certified Nutritionist",
     ],
     CrossFit: [
-        "CrossFit Level 1 Trainer (CF-L1)",
+        "CrossFit: CrossFit Level 1 Trainer (CF-L1)",
     ],
     Calisthenics: [
-        "WSWCF Academy",
+        "WSWCF (World Street Workout and Calisthenics Federation) Academy",
         "GMB Fitness",
     ]
 };
@@ -83,6 +82,7 @@ export default function JoinTeamPage() {
     defaultValues: {
       name: '',
       email: '',
+      age: undefined,
       countryCode: '+213',
       phone: '',
       position: undefined,
@@ -132,7 +132,19 @@ export default function JoinTeamPage() {
 
   return (
     <div className="container mx-auto px-4 py-12 md:py-16">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto space-y-8">
+            <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 gradient-border">
+              <CardHeader>
+                <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
+                  <Briefcase className="h-10 w-10 text-primary" />
+                </div>
+                <CardTitle className="font-headline text-2xl text-foreground">Become a Part of Our Story</CardTitle>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <p className="text-muted-foreground">We believe in passion, expertise, and the drive to make a difference. If you're ready to inspire others and grow with a leading brand in fitness, we invite you to apply below.</p>
+              </CardContent>
+            </Card>
+
             <Card>
                 <CardHeader className="text-center">
                     <CardTitle className="text-3xl md:text-4xl font-bold font-headline">Join Our Team</CardTitle>
@@ -185,7 +197,7 @@ export default function JoinTeamPage() {
                                                     placeholder="Select code..."
                                                     searchPlaceholder="Search code..."
                                                     notFoundText="No country found."
-                                                    triggerClassName="w-[150px] flex-shrink-0"
+                                                    triggerClassName="flex-shrink-0"
                                                 />
                                             )}
                                         />
@@ -378,5 +390,3 @@ export default function JoinTeamPage() {
     </div>
   );
 }
-
-    
