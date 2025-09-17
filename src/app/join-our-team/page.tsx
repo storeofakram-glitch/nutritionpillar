@@ -15,7 +15,7 @@ import { addTeamApplication } from '@/services/join-team-service';
 import { countryCodes } from '@/lib/country-codes';
 import { Combobox } from '@/components/ui/combobox';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Briefcase, Feather, Heart, CheckCircle2 } from 'lucide-react';
+import { Handshake, Feather, Heart, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const joinTeamFormSchema = z.object({
@@ -145,7 +145,7 @@ export default function JoinTeamPage() {
             <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 gradient-border">
               <CardHeader>
                 <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
-                  <Briefcase className="h-10 w-10 text-primary" />
+                  <Handshake className="h-10 w-10 text-primary" />
                 </div>
                 <CardTitle className="font-headline text-2xl text-foreground">Become a Part of Our Story</CardTitle>
               </CardHeader>
