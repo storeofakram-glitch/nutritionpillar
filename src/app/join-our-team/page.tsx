@@ -8,12 +8,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { addTeamApplication } from '@/services/join-team-service';
 import { countryCodes } from '@/lib/country-codes';
 import { Combobox } from '@/components/ui/combobox';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const joinTeamFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -23,6 +24,7 @@ const joinTeamFormSchema = z.object({
   phone: z.string().min(1, "Phone number is required."),
   position: z.enum(['Coach', 'Expert'], { required_error: "Please select a position." }),
   specialty: z.string({ required_error: "Please select a specialty."}),
+  certifications: z.array(z.string()).optional(),
   resumeUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
   message: z.string().min(20, { message: "Your message should be at least 20 characters." }),
   tiktokUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
@@ -39,6 +41,39 @@ const countryCodeOptions = countryCodes.map(country => ({
     label: `${country.name} (${country.dial_code})`,
 }));
 
+const certificationsBySpecialty = {
+    Powerlifting: [
+        "IPF Coaching License",
+        "USPA Coach Certification",
+        "WDFPF Coach Certification",
+    ],
+    Bodybuilding: [
+        "NASM Certified Personal Trainer (CPT)",
+        "ACE Certified Personal Trainer",
+        "ISSA Certified Personal Trainer",
+        "IFBB Coach Certification",
+        "IFBB Nutrition Master Certification",
+        "IFBB Bodybuilding Master Certification",
+    ],
+    Fitness: [
+        "NASM Certified Personal Trainer (CPT)",
+        "ACE Certified Personal Trainer",
+        "ISSA Certified Personal Trainer",
+    ],
+    Nutrition: [
+        "Precision Nutrition (PN) Level 1",
+        "NASM Certified Nutrition Coach (CNC)",
+        "ISSA Certified Nutritionist",
+    ],
+    CrossFit: [
+        "CrossFit Level 1 Trainer (CF-L1)",
+    ],
+    Calisthenics: [
+        "WSWCF Academy",
+        "GMB Fitness",
+    ]
+};
+
 
 export default function JoinTeamPage() {
   const { toast } = useToast();
@@ -51,6 +86,7 @@ export default function JoinTeamPage() {
       phone: '',
       position: undefined,
       specialty: undefined,
+      certifications: [],
       resumeUrl: '',
       message: '',
       tiktokUrl: '',
@@ -58,6 +94,8 @@ export default function JoinTeamPage() {
       linkedinUrl: '',
     },
   });
+
+  const selectedSpecialty = form.watch('specialty') as keyof typeof certificationsBySpecialty;
 
   const onSubmit = async (data: JoinTeamFormValues) => {
     const fullPhoneNumber = `${data.countryCode}${data.phone}`;
@@ -117,7 +155,7 @@ export default function JoinTeamPage() {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Age</FormLabel>
-                                        <FormControl><Input type="number" placeholder="Your age" {...field} /></FormControl>
+                                        <FormControl><Input type="number" placeholder="Your age" {...field} value={field.value || ''} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -179,7 +217,7 @@ export default function JoinTeamPage() {
                                 render={({ field }) => (
                                     <FormItem>
                                     <FormLabel>Specialty</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <Select onValueChange={field.onChange} value={field.value}>
                                         <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select a specialty" />
@@ -193,6 +231,58 @@ export default function JoinTeamPage() {
                                     </FormItem>
                                 )}
                             />
+
+                            {selectedSpecialty && certificationsBySpecialty[selectedSpecialty] && (
+                                <FormField
+                                    control={form.control}
+                                    name="certifications"
+                                    render={() => (
+                                    <FormItem>
+                                        <div className="mb-4">
+                                        <FormLabel className="text-base">Certifications for {selectedSpecialty}</FormLabel>
+                                        <FormDescription>
+                                            Select all the certifications you hold.
+                                        </FormDescription>
+                                        </div>
+                                        {certificationsBySpecialty[selectedSpecialty].map((item) => (
+                                        <FormField
+                                            key={item}
+                                            control={form.control}
+                                            name="certifications"
+                                            render={({ field }) => {
+                                            return (
+                                                <FormItem
+                                                    key={item}
+                                                    className="flex flex-row items-start space-x-3 space-y-0"
+                                                >
+                                                    <FormControl>
+                                                    <Checkbox
+                                                        checked={field.value?.includes(item)}
+                                                        onCheckedChange={(checked) => {
+                                                        return checked
+                                                            ? field.onChange([...(field.value || []), item])
+                                                            : field.onChange(
+                                                                field.value?.filter(
+                                                                (value) => value !== item
+                                                                )
+                                                            )
+                                                        }}
+                                                    />
+                                                    </FormControl>
+                                                    <FormLabel className="font-normal">
+                                                    {item}
+                                                    </FormLabel>
+                                                </FormItem>
+                                            )
+                                            }}
+                                        />
+                                        ))}
+                                        <FormMessage />
+                                    </FormItem>
+                                    )}
+                                />
+                            )}
+
                             <FormField control={form.control} name="resumeUrl" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Resume/Portfolio Link (Optional)</FormLabel>

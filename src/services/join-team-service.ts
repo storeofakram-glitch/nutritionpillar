@@ -12,6 +12,7 @@ type TeamApplicationData = {
     phone: string;
     position: 'Coach' | 'Expert';
     specialty: string;
+    certifications?: string[];
     resumeUrl?: string;
     message: string;
     tiktokUrl?: string;
