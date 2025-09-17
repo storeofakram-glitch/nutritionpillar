@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -145,7 +146,7 @@ export default function JoinTeamPage() {
             <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 gradient-border">
               <CardHeader>
                 <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
-                  <Feather className="h-10 w-10 text-primary" />
+                  <Handshake className="h-10 w-10 text-primary" />
                 </div>
                 <CardTitle className="font-headline text-2xl text-foreground">Become a Part of Our Story</CardTitle>
               </CardHeader>
@@ -244,6 +245,7 @@ export default function JoinTeamPage() {
                                                 searchPlaceholder="Search code..."
                                                 notFoundText="No country found."
                                                 triggerClassName={cn(
+                                                    "justify-between",
                                                     "bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500",
                                                     "w-auto"
                                                 )}
@@ -440,6 +442,8 @@ export default function JoinTeamPage() {
     </div>
   );
 }
+
+    
 
     
 
