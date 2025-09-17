@@ -105,7 +105,7 @@ export default function AdminLayout({
                 <SidebarMenuItem>
                     <SidebarMenuButton tooltip="Sign Out" onClick={handleSignOut}>
                         <LogOut />
-                        <span>Sign Out</span>
+                        
                     </SidebarMenuButton>
                 </SidebarMenuItem>
             </SidebarMenu>
