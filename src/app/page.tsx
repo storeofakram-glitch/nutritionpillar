@@ -51,6 +51,7 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -95,26 +96,29 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       <section className="relative w-full h-[60vh] md:h-[70vh] text-white overflow-hidden">
-        {hero.videoUrl ? (
+        <Image
+            src={hero.imageUrl}
+            alt={hero.alt || "Hero image"}
+            data-ai-hint="athlete training"
+            fill
+            className="object-cover"
+            priority
+        />
+        {hero.videoUrl && (
             <video
                 src={hero.videoUrl}
-                className="absolute top-0 left-0 w-full h-full object-cover"
+                className={cn(
+                  "absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000",
+                  isVideoLoaded ? "opacity-100" : "opacity-0"
+                )}
                 autoPlay
                 loop
                 muted
                 playsInline
-                loading="lazy"
+                onCanPlay={() => setIsVideoLoaded(true)}
             >
                 Your browser does not support the video tag.
             </video>
-        ) : (
-            <Image
-                src={hero.imageUrl}
-                alt={hero.alt || "Hero image"}
-                data-ai-hint="athlete training"
-                fill
-                className="object-cover"
-            />
         )}
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center h-full text-center p-4 bg-black/60">
           <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight">
