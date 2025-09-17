@@ -166,7 +166,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
               <p className="text-sm font-bold text-muted-foreground tracking-widest uppercase">WHAT WE OFFER</p>
-              <h2 className="inline-block gradient-border text-primary-foreground font-bold font-headline text-3xl md:text-4xl px-6 py-2 rounded-md mt-2 shadow-lg shadow-primary/20">Our Core Services</h2>
+              <h2 className="inline-block gradient-border text-foreground font-bold font-headline text-3xl md:text-4xl px-6 py-2 rounded-md mt-2 shadow-lg shadow-primary/20">Our Core Services</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
             <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 gradient-border">
