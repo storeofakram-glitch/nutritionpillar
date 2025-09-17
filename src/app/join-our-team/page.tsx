@@ -15,7 +15,7 @@ import { addTeamApplication } from '@/services/join-team-service';
 import { countryCodes } from '@/lib/country-codes';
 import { Combobox } from '@/components/ui/combobox';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Briefcase, Feather, Heart } from 'lucide-react';
+import { Briefcase, Feather, Heart, CheckCircle2 } from 'lucide-react';
 
 const joinTeamFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -73,6 +73,13 @@ const certificationsBySpecialty = {
         "GMB Fitness",
     ]
 };
+
+const requirements = [
+    { text: "Passion for fitness and helping others" },
+    { text: "Relevant certification or proven experience" },
+    { text: "Commitment to professionalism and reliability" },
+    { text: "Ability to work flexibly with clients online" },
+];
 
 
 export default function JoinTeamPage() {
@@ -132,7 +139,7 @@ export default function JoinTeamPage() {
 
   return (
     <div className="container mx-auto px-4 py-12 md:py-16">
-        <div className="max-w-2xl mx-auto space-y-8">
+        <div className="max-w-3xl mx-auto space-y-8">
             <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 gradient-border">
               <CardHeader>
                 <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
@@ -144,6 +151,18 @@ export default function JoinTeamPage() {
                 <p className="text-muted-foreground">We believe in passion, expertise, and the drive to make a difference. If you're ready to inspire others and grow with a leading brand in fitness, we invite you to apply below.</p>
               </CardContent>
             </Card>
+
+            <div className="mx-auto max-w-3xl w-full bg-gray-900 rounded-2xl border border-cyan-500 p-6 md:p-8 shadow-lg shadow-cyan-500/20">
+                <h3 className="text-xl font-bold text-white text-center mb-6">✅ What You Need Before Applying</h3>
+                <div className="space-y-4">
+                    {requirements.map((req, index) => (
+                        <div key={index} className="flex items-center gap-4 rounded-xl bg-gray-800 p-4 transition-colors hover:bg-gray-700/50">
+                            <CheckCircle2 className="h-6 w-6 text-cyan-400 flex-shrink-0" />
+                            <p className="text-gray-300">{req.text}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
 
             <Card>
                 <CardHeader className="text-center">
@@ -390,3 +409,5 @@ export default function JoinTeamPage() {
     </div>
   );
 }
+
+    
