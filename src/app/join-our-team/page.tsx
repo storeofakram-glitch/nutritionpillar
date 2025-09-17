@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { addTeamApplication } from '@/services/join-team-service';
@@ -145,7 +145,7 @@ export default function JoinTeamPage() {
             <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 gradient-border">
               <CardHeader>
                 <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
-                  <Handshake className="h-10 w-10 text-primary" />
+                  <Feather className="h-10 w-10 text-primary" />
                 </div>
                 <CardTitle className="font-headline text-2xl text-foreground">Become a Part of Our Story</CardTitle>
               </CardHeader>
@@ -245,7 +245,7 @@ export default function JoinTeamPage() {
                                                 notFoundText="No country found."
                                                 triggerClassName={cn(
                                                     "bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500",
-                                                    "flex-shrink-0 w-auto"
+                                                    "w-auto"
                                                 )}
                                             />
                                         )}
@@ -440,5 +440,7 @@ export default function JoinTeamPage() {
     </div>
   );
 }
+
+    
 
     
