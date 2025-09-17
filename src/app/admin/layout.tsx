@@ -120,9 +120,9 @@ export default function AdminLayout({
                     </h1>
                 </div>
             </header>
-             <Button variant="outline" onClick={handleSignOut} className="fixed top-2 right-4 z-50 gap-2">
+             <Button variant="outline" size="icon" onClick={handleSignOut} className="fixed top-2 right-4 z-50">
                 <LogOut className="h-4 w-4"/>
-                <span className="hidden md:inline">Sign Out</span>
+                <span className="sr-only">Sign Out</span>
             </Button>
             <main className="p-6">
                 {React.Children.map(children, child =>
