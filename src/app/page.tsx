@@ -169,7 +169,7 @@ export default function Home() {
               <h2 className="inline-block bg-secondary text-foreground font-bold font-headline text-3xl md:text-4xl px-6 py-2 rounded-md mt-2 shadow-lg shadow-primary/20">Our Core Services</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
-            <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 border-primary">
+            <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 gradient-border">
               <CardHeader>
                 <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
                   <ShoppingBag className="h-10 w-10 text-primary" />
@@ -185,7 +185,7 @@ export default function Home() {
                 </Button>
               </CardFooter>
             </Card>
-            <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 border-primary">
+            <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 gradient-border">
               <CardHeader>
                 <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
                   <UsersIcon className="h-10 w-10 text-primary" />

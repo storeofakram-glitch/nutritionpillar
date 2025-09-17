@@ -70,3 +70,13 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .gradient-border {
+    @apply border-0;
+    background: linear-gradient(to right, hsl(var(--primary) / 0.2), hsl(var(--accent) / 0.2)) padding-box,
+                linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent))) border-box;
+    border-radius: var(--radius);
+    border: 2px solid transparent;
+  }
+}
