@@ -27,6 +27,7 @@ const navLinks = [
     { href: '/faq', label: 'FAQ' },
     { href: '/membership', label: 'Membership' },
     { href: '/contact', label: 'Contact' },
+    { href: '/join-our-team', label: 'Join Our Team' },
 ];
 
 export default function Header() {
