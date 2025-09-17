@@ -132,7 +132,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-primary border-y border-primary/50">
+      <section className="bg-primary border-y border-primary/50 h-14">
         <Marquee>
           {marquee.messages.map((msg, i) => (
             <div key={i} className="flex items-center gap-6 mx-8">
