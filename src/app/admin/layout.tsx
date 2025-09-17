@@ -128,7 +128,7 @@ export default function AdminLayout({
                     </h1>
                 </div>
             </header>
-             <Button variant="ghost" onClick={handleSignOut} className="fixed top-2 right-4 z-50 gap-2">
+             <Button variant="outline" onClick={handleSignOut} className="fixed top-2 right-4 z-50 gap-2">
                 <LogOut className="h-4 w-4"/>
                 <span className="hidden md:inline">Sign Out</span>
             </Button>
