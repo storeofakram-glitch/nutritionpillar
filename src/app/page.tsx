@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import Image from 'next/image';
@@ -32,6 +31,7 @@ const LogoItem = ({ logo }: { logo: PartnershipLogo }) => {
                 data-ai-hint={logo.hint}
                 fill
                 className="object-contain transition-all duration-300 md:grayscale md:hover:grayscale-0"
+                sizes="(max-width: 768px) 33vw, 20vw"
             />
         </div>
     );
@@ -138,10 +138,10 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
               <p className="text-sm font-bold text-muted-foreground tracking-widest uppercase">WHAT WE OFFER</p>
-              <h2 className="inline-block bg-secondary text-foreground font-bold font-headline text-3xl md:text-4xl px-6 py-2 rounded-md mt-2 shadow-lg shadow-primary/20">Our Core Services</h2>
+              <h2 className="inline-block bg-secondary text-foreground font-bold font-headline text-3xl md:text-4xl px-6 py-2 rounded-md mt-2 shadow-2xl shadow-primary/20">Our Core Services</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
-            <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
+            <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 border-primary">
               <CardHeader>
                 <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
                   <ShoppingBag className="h-10 w-10 text-primary" />
@@ -157,7 +157,7 @@ export default function Home() {
                 </Button>
               </CardFooter>
             </Card>
-            <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
+            <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 border-primary">
               <CardHeader>
                 <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
                   <UsersIcon className="h-10 w-10 text-primary" />
@@ -188,6 +188,7 @@ export default function Home() {
                         width={34}
                         height={34}
                         className="object-contain"
+                        style={{ width: 'auto' }}
                     />
                 )}
                 <span className="font-semibold text-primary-foreground whitespace-nowrap">{msg.text}</span>
