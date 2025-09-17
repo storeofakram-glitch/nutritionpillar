@@ -2,14 +2,14 @@
 'use server';
 
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getDb } from '@/lib/firebase';
 import type { Order, Customer } from '@/types';
 import { getOrders, getTotalCostOfGoodsSold, getTotalRevenue } from './order-service';
 import { getTotalExpenses } from './expense-service';
 import { getUnreadSubmissionsCount } from './contact-service';
 import { getNewApplicationsCount } from './application-service';
 
-const ordersCollection = collection(db, 'orders');
+const ordersCollection = collection(getDb(), 'orders');
 
 /**
  * Fetches all orders and derives a unique list of customers.

@@ -2,11 +2,11 @@
 'use server';
 
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy, Timestamp, where,getCountFromServer } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getDb } from '@/lib/firebase';
 import type { ContactSubmission } from '@/types';
 import { revalidatePath } from 'next/cache';
 
-const contactSubmissionsCollection = collection(db, 'contactSubmissions');
+const contactSubmissionsCollection = collection(getDb(), 'contactSubmissions');
 
 /**
  * Adds a new contact form submission to the database.
@@ -63,7 +63,7 @@ export async function getUnreadSubmissionsCount(): Promise<number> {
  */
 export async function updateSubmissionStatus(id: string, status: ContactSubmission['status']) {
     try {
-        const docRef = doc(db, 'contactSubmissions', id);
+        const docRef = doc(getDb(), 'contactSubmissions', id);
         await updateDoc(docRef, { status });
         revalidatePath('/admin/inbox');
         return { success: true };
@@ -80,7 +80,7 @@ export async function updateSubmissionStatus(id: string, status: ContactSubmissi
  */
 export async function deleteSubmission(id: string) {
     try {
-        const docRef = doc(db, 'contactSubmissions', id);
+        const docRef = doc(getDb(), 'contactSubmissions', id);
         await deleteDoc(docRef);
         revalidatePath('/admin/inbox');
         return { success: true };

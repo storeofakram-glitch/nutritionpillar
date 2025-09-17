@@ -3,12 +3,12 @@
 'use server';
 
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, where, orderBy, getCountFromServer, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getDb } from '@/lib/firebase';
 import type { CoachingApplication } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { addMembership, findMembershipByApplicationId } from './membership-service';
 
-const applicationsCollection = collection(db, 'coachingApplications');
+const applicationsCollection = collection(getDb(), 'coachingApplications');
 
 /**
  * Adds a new coaching application to the database.
@@ -121,6 +121,7 @@ export async function getNewApplicationsCount(): Promise<number> {
  */
 export async function updateApplicationStatus(id: string, status: CoachingApplication['status']) {
     try {
+        const db = getDb();
         const docRef = doc(db, 'coachingApplications', id);
 
         if (status === 'rejected') {
@@ -186,7 +187,7 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
  */
 export async function deleteApplication(id: string) {
     try {
-        const docRef = doc(db, 'coachingApplications', id);
+        const docRef = doc(getDb(), 'coachingApplications', id);
         await deleteDoc(docRef);
         revalidatePath('/admin/coaches');
         return { success: true };
@@ -195,5 +196,3 @@ export async function deleteApplication(id: string) {
         return { success: false, error: (error as Error).message };
     }
 }
-
-    

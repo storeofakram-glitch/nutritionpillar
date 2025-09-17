@@ -3,12 +3,12 @@
 'use server';
 
 import { collection, doc, runTransaction, getDocs, query, where, orderBy, updateDoc, deleteDoc, addDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getDb } from '@/lib/firebase';
 import type { Order, Product, OrderItem, OrderInput } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { getShippingOptions } from './shipping-service';
 
-const ordersCollection = collection(db, 'orders');
+const ordersCollection = collection(getDb(), 'orders');
 
 export async function getOrders(): Promise<Order[]> {
     const q = query(ordersCollection, orderBy('date', 'desc'));
@@ -18,6 +18,7 @@ export async function getOrders(): Promise<Order[]> {
 }
 
 export async function addOrder(orderInput: OrderInput) {
+    const db = getDb();
     // This function is now simplified to run with client-side authentication context.
     // The complex transaction for order number generation has been removed.
     try {
@@ -84,8 +85,6 @@ export async function addOrder(orderInput: OrderInput) {
                 deliveryMethod: orderInput.deliveryMethod || 'Home Delivery',
             };
 
-            // Use addDoc directly within the transaction context if supported,
-            // or create a new doc ref and set it.
             const newOrderRef = doc(collection(db, 'orders'));
             transaction.set(newOrderRef, newOrderData);
         });
@@ -137,7 +136,7 @@ export async function getTotalCostOfGoodsSold(): Promise<number> {
 
 export async function updateOrderStatus(id: string, status: Order['status']) {
     try {
-        const docRef = doc(db, 'orders', id);
+        const docRef = doc(getDb(), 'orders', id);
         await updateDoc(docRef, { status });
         revalidatePath('/admin/orders');
         revalidatePath('/admin/finance');
@@ -151,7 +150,7 @@ export async function updateOrderStatus(id: string, status: Order['status']) {
 
 export async function deleteOrder(id: string) {
     try {
-        const docRef = doc(db, 'orders', id);
+        const docRef = doc(getDb(), 'orders', id);
         await deleteDoc(docRef);
         revalidatePath('/admin/orders');
         revalidatePath('/admin/finance');

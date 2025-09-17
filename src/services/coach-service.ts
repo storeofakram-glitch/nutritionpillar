@@ -2,12 +2,12 @@
 'use server';
 
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy, getDoc, where } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getDb } from '@/lib/firebase';
 import type { Coach } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { addMembership } from './membership-service';
 
-const coachesCollection = collection(db, 'coaches');
+const coachesCollection = collection(getDb(), 'coaches');
 
 /**
  * Fetches all coaches and experts from the database, ordered by creation date.
@@ -26,7 +26,7 @@ export async function getCoaches(): Promise<Coach[]> {
  */
 export async function getCoachById(id: string): Promise<Coach | null> {
     try {
-        const docRef = doc(db, 'coaches', id);
+        const docRef = doc(getDb(), 'coaches', id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
             return { id: docSnap.id, ...docSnap.data() } as Coach;
@@ -96,7 +96,7 @@ export async function addCoach(coach: Omit<Coach, 'id' | 'createdAt'>) {
  */
 export async function updateCoach(id: string, data: Partial<Omit<Coach, 'id' | 'createdAt'>>) {
     try {
-        const docRef = doc(db, 'coaches', id);
+        const docRef = doc(getDb(), 'coaches', id);
         await updateDoc(docRef, data);
         revalidatePath('/admin/coaches');
         revalidatePath('/');
@@ -115,7 +115,7 @@ export async function updateCoach(id: string, data: Partial<Omit<Coach, 'id' | '
  */
 export async function deleteCoach(id: string) {
     try {
-        const docRef = doc(db, 'coaches', id);
+        const docRef = doc(getDb(), 'coaches', id);
         await deleteDoc(docRef);
         revalidatePath('/admin/coaches');
         revalidatePath('/');

@@ -2,11 +2,11 @@
 'use server';
 
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getDb } from '@/lib/firebase';
 import type { Product } from '@/types';
 import { revalidatePath } from 'next/cache';
 
-const productsCollection = collection(db, 'products');
+const productsCollection = collection(getDb(), 'products');
 
 export async function getProducts(): Promise<Product[]> {
     const snapshot = await getDocs(productsCollection);
@@ -16,7 +16,7 @@ export async function getProducts(): Promise<Product[]> {
 
 export async function getProductById(id: string): Promise<Product | null> {
     try {
-        const docRef = doc(db, 'products', id);
+        const docRef = doc(getDb(), 'products', id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
             return { id: docSnap.id, ...docSnap.data() } as Product;
@@ -45,7 +45,7 @@ export async function addProduct(product: Omit<Product, 'id'>) {
 
 export async function updateProduct(id: string, product: Partial<Omit<Product, 'id'>>) {
     try {
-        const docRef = doc(db, 'products', id);
+        const docRef = doc(getDb(), 'products', id);
         await updateDoc(docRef, product);
         // Revalidate all relevant paths after updating a product
         revalidatePath('/');
@@ -61,7 +61,7 @@ export async function updateProduct(id: string, product: Partial<Omit<Product, '
 
 export async function deleteProduct(id: string) {
     try {
-        const docRef = doc(db, 'products', id);
+        const docRef = doc(getDb(), 'products', id);
         await deleteDoc(docRef);
         // Revalidate all relevant paths after deleting a product
         revalidatePath('/');

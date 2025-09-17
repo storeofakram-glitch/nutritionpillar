@@ -3,14 +3,14 @@
 'use server';
 
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, where, orderBy } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getDb } from '@/lib/firebase';
 import type { Membership, MembershipWithProducts, Product, RecommendedProduct } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { getOrders } from './order-service';
 import { getProductById } from './product-service';
 import { randomBytes } from 'crypto';
 
-const membershipsCollection = collection(db, 'memberships');
+const membershipsCollection = collection(getDb(), 'memberships');
 
 /**
  * Generates a random, uppercase, 8-character alphanumeric code.
@@ -137,7 +137,7 @@ export async function addMembership(membership: Partial<Omit<Membership, 'id' | 
  */
 export async function updateMembership(id: string, data: Partial<Omit<Membership, 'id'>>) {
     try {
-        const docRef = doc(db, 'memberships', id);
+        const docRef = doc(getDb(), 'memberships', id);
         await updateDoc(docRef, data);
         revalidatePath('/admin/membership');
         revalidatePath('/admin/coaches');
@@ -155,7 +155,7 @@ export async function updateMembership(id: string, data: Partial<Omit<Membership
  */
 export async function deleteMembership(id: string) {
     try {
-        const docRef = doc(db, 'memberships', id);
+        const docRef = doc(getDb(), 'memberships', id);
         await deleteDoc(docRef);
         revalidatePath('/admin/membership');
         return { success: true };

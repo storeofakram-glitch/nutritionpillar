@@ -1,12 +1,10 @@
 // src/lib/firebase.ts
 
-// Import the functions you need from the SDKs you need
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, Firestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-// Your web app's Firebase configuration pulled from environment variables.
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -17,14 +15,12 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-// This function checks if all the necessary Firebase config values are present.
 function isFirebaseConfigValid(config: typeof firebaseConfig): boolean {
     return Object.values(config).every(value => value);
 }
 
-// Initialize Firebase App
 let app: FirebaseApp;
-let db;
+let db: Firestore;
 let auth;
 let analytics;
 
@@ -34,8 +30,6 @@ if (typeof window !== 'undefined') {
             app = initializeApp(firebaseConfig);
         } else {
             console.error("Firebase config is missing one or more required values. App cannot be initialized.");
-            // We create a dummy app to prevent the app from crashing.
-            // Firebase services will not work.
             app = initializeApp({ apiKey: "dummy-key-to-avoid-crash" });
         }
     } else {
@@ -52,4 +46,24 @@ if (typeof window !== 'undefined') {
     });
 }
 
-export { app as firebaseApp, db, auth, analytics };
+// This function can be called from server components to get the db instance
+function getDb() {
+    if (db) {
+        return db;
+    }
+    // For server-side rendering, initialize a new app instance if it doesn't exist
+    if (getApps().length === 0) {
+       if (isFirebaseConfigValid(firebaseConfig)) {
+            app = initializeApp(firebaseConfig);
+        } else {
+            console.error("SSR: Firebase config is missing. App cannot be initialized.");
+            // Return a non-functional dummy to avoid crashing server components that import it
+            return {} as Firestore;
+        }
+    } else {
+        app = getApp();
+    }
+    return getFirestore(app);
+}
+
+export { app as firebaseApp, db, auth, analytics, getDb };

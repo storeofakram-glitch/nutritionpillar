@@ -2,11 +2,11 @@
 'use server';
 
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getDb } from '@/lib/firebase';
 import type { SiteSettings } from '@/types';
 import { revalidatePath } from 'next/cache';
 
-const settingsDocRef = doc(db, 'settings', 'homepage');
+const settingsDocRef = doc(getDb(), 'settings', 'homepage');
 
 /**
  * Fetches the site settings from Firestore.
@@ -34,8 +34,12 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
 export async function saveSiteSettings(settings: SiteSettings) {
     try {
         await setDoc(settingsDocRef, settings, { merge: true });
-        // Revalidate the homepage path to show changes immediately
+        // Revalidate all relevant paths to show changes immediately
         revalidatePath('/');
+        revalidatePath('/about');
+        revalidatePath('/faq');
+        revalidatePath('/terms-of-service');
+        revalidatePath('/privacy-policy');
         return { success: true };
     } catch (error) {
         console.error("Error saving site settings: ", error);

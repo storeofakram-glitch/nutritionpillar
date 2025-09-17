@@ -1,11 +1,12 @@
+
 'use server';
 
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getDb } from '@/lib/firebase';
 import type { ShippingState } from '@/types';
 import { revalidatePath } from 'next/cache';
 
-const shippingOptionsCollection = collection(db, 'shippingOptions');
+const shippingOptionsCollection = collection(getDb(), 'shippingOptions');
 
 export async function getShippingOptions(): Promise<ShippingState[]> {
     const snapshot = await getDocs(shippingOptionsCollection);
@@ -28,7 +29,7 @@ export async function addShippingOption(option: Omit<ShippingState, 'id'>) {
 
 export async function updateShippingOption(id: string, option: Partial<Omit<ShippingState, 'id'>>) {
     try {
-        const docRef = doc(db, 'shippingOptions', id);
+        const docRef = doc(getDb(), 'shippingOptions', id);
         await updateDoc(docRef, option);
         revalidatePath('/admin/shipping');
         return { success: true };
@@ -40,7 +41,7 @@ export async function updateShippingOption(id: string, option: Partial<Omit<Ship
 
 export async function deleteShippingOption(id: string) {
     try {
-        const docRef = doc(db, 'shippingOptions', id);
+        const docRef = doc(getDb(), 'shippingOptions', id);
         await deleteDoc(docRef);
         revalidatePath('/admin/shipping');
         return { success: true };

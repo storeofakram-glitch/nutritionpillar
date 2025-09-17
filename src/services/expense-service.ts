@@ -2,11 +2,11 @@
 'use server';
 
 import { collection, getDocs, addDoc, query, orderBy, doc, deleteDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { getDb } from '@/lib/firebase';
 import type { Expense } from '@/types';
 import { revalidatePath } from 'next/cache';
 
-const expensesCollection = collection(db, 'expenses');
+const expensesCollection = collection(getDb(), 'expenses');
 
 /**
  * Fetches all expenses from the database, ordered by date descending.
@@ -42,7 +42,7 @@ export async function addExpense(expense: Omit<Expense, 'id'>) {
  */
 export async function deleteExpense(id: string) {
     try {
-        const docRef = doc(db, 'expenses', id);
+        const docRef = doc(getDb(), 'expenses', id);
         await deleteDoc(docRef);
         revalidatePath('/admin/finance');
         return { success: true };
