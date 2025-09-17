@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import ProductGrid from '@/components/product-grid';
 import { getProducts } from '@/services/product-service';
 import Marquee from '@/components/ui/marquee';
-import { ArrowRight, BrainCircuit } from 'lucide-react';
+import { ArrowRight, BrainCircuit, ShoppingBag, Users as UsersIcon } from 'lucide-react';
 import { getSiteSettings } from '@/services/site-settings-service';
 import type { SiteSettings, Product, PartnershipLogo } from '@/types';
 import NewArrivalsCarousel from '@/components/new-arrivals-carousel';
@@ -20,6 +20,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import CoachesExpertsSection from '@/components/coaches-experts-section';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+
 
 const LogoItem = ({ logo }: { logo: PartnershipLogo }) => {
     const content = (
@@ -132,6 +134,45 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="py-12 md:py-16">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-8">
+            <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
+              <CardHeader>
+                <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
+                  <ShoppingBag className="h-10 w-10 text-primary" />
+                </div>
+                <CardTitle className="font-headline text-2xl">Premium Supplements</CardTitle>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <p className="text-muted-foreground">Explore our curated selection of high-quality supplements, from protein powders to pre-workouts, all designed to fuel your performance.</p>
+              </CardContent>
+              <CardFooter>
+                <Button asChild>
+                  <Link href="#products">Shop Products <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                </Button>
+              </CardFooter>
+            </Card>
+            <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
+              <CardHeader>
+                <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
+                  <UsersIcon className="h-10 w-10 text-primary" />
+                </div>
+                <CardTitle className="font-headline text-2xl">Expert Coaching</CardTitle>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <p className="text-muted-foreground">Connect with our team of experienced coaches and experts to get personalized guidance and plans tailored to your specific fitness goals.</p>
+              </CardContent>
+              <CardFooter>
+                <Button asChild>
+                  <Link href="#coaches">Find a Coach <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+        </div>
+      </section>
+      
       <section className="bg-primary border-y border-primary/50 min-h-[40px] flex items-center">
         <Marquee>
           {marquee.messages.map((msg, i) => (
