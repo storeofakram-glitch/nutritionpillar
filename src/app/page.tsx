@@ -137,7 +137,7 @@ export default function Home() {
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
-              <p className="text-sm font-bold text-primary tracking-widest uppercase">WHAT WE OFFER</p>
+              <p className="text-sm font-bold text-muted-foreground tracking-widest uppercase">WHAT WE OFFER</p>
               <h2 className="inline-block bg-secondary text-foreground font-bold font-headline text-3xl md:text-4xl px-6 py-2 rounded-md mt-2 shadow-lg shadow-primary/20">Our Core Services</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
