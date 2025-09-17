@@ -105,14 +105,13 @@ export default function AdminLayout({
                 <SidebarMenuItem>
                     <SidebarMenuButton tooltip="Sign Out" onClick={handleSignOut}>
                         <LogOut />
-                        
                     </SidebarMenuButton>
                 </SidebarMenuItem>
             </SidebarMenu>
           </SidebarFooter>
         </Sidebar>
         <SidebarInset className="max-w-full flex-1">
-            <header className="flex h-14 items-center gap-4 border-b bg-background px-6 pr-16 md:pr-20">
+            <header className="flex h-14 items-center gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6 pr-16 md:pr-20">
                 <SidebarTrigger className="md:hidden" />
                 <div className="flex-1">
                     <h1 className="text-base md:text-lg font-semibold font-headline">
@@ -120,7 +119,7 @@ export default function AdminLayout({
                     </h1>
                 </div>
             </header>
-             <Button variant="outline" size="icon" onClick={handleSignOut} className="fixed top-2 right-4 z-50">
+             <Button variant="outline" size="icon" onClick={handleSignOut} className="fixed top-2 right-4 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                 <LogOut className="h-4 w-4"/>
                 <span className="sr-only">Sign Out</span>
             </Button>
