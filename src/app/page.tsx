@@ -132,19 +132,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-primary border-y border-primary/50 min-h-[48px] flex items-center">
+      <section className="bg-primary border-y border-primary/50 min-h-[40px] flex items-center">
         <Marquee>
           {marquee.messages.map((msg, i) => (
             <div key={i} className="flex items-center gap-6 mx-8">
-                {msg.logoUrl && (
-                    <Image 
-                        src={msg.logoUrl}
-                        alt={msg.logoAlt || 'Marquee Logo'}
-                        width={32}
-                        height={32}
-                        className="object-contain"
-                    />
-                )}
                 <span className="font-semibold text-primary-foreground whitespace-nowrap">{msg.text}</span>
             </div>
           ))}
