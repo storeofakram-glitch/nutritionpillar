@@ -1,11 +1,12 @@
+// src/lib/firebase.ts
 
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Your web app's Firebase configuration pulled from environment variables.
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -16,14 +17,39 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
-const app: FirebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+// This function checks if all the necessary Firebase config values are present.
+function isFirebaseConfigValid(config: typeof firebaseConfig): boolean {
+    return Object.values(config).every(value => value);
+}
 
-const db = getFirestore(app);
+// Initialize Firebase App
+let app: FirebaseApp;
+let db;
+let auth;
+let analytics;
 
-// Initialize Analytics only on the client side
-const analytics = typeof window !== 'undefined' && isSupported() 
-  ? getAnalytics(app) 
-  : null;
+if (typeof window !== 'undefined') {
+    if (getApps().length === 0) {
+        if (isFirebaseConfigValid(firebaseConfig)) {
+            app = initializeApp(firebaseConfig);
+        } else {
+            console.error("Firebase config is missing one or more required values. App cannot be initialized.");
+            // We create a dummy app to prevent the app from crashing.
+            // Firebase services will not work.
+            app = initializeApp({ apiKey: "dummy-key-to-avoid-crash" });
+        }
+    } else {
+        app = getApp();
+    }
 
-export { app as firebaseApp, db, analytics };
+    db = getFirestore(app);
+    auth = getAuth(app);
+    
+    isSupported().then(yes => {
+      if (yes) {
+        analytics = getAnalytics(app);
+      }
+    });
+}
+
+export { app as firebaseApp, db, auth, analytics };
