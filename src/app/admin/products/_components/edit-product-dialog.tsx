@@ -1,3 +1,4 @@
+
 "use client"
 
 import {
@@ -9,6 +10,7 @@ import {
 } from "@/components/ui/dialog"
 import { ProductForm } from "./product-form"
 import type { Product } from "@/types"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface EditProductDialogProps {
     isOpen: boolean;
@@ -28,14 +30,16 @@ export default function EditProductDialog({ isOpen, onOpenChange, product, onDia
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Edit Product</DialogTitle>
           <DialogDescription>
             Update the details for "{product.name}".
           </DialogDescription>
         </DialogHeader>
-        <ProductForm product={product} onFormSubmit={onDialogClose} />
+        <ScrollArea className="max-h-[80vh] pr-6">
+            <ProductForm product={product} onFormSubmit={onDialogClose} />
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   )

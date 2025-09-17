@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { PlusCircle } from "lucide-react"
 import { ProductForm } from "./product-form"
 import { useState } from "react"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface AddProductDialogProps {
   onProductAdded: () => void;
@@ -35,14 +36,16 @@ export default function AddProductDialog({ onProductAdded }: AddProductDialogPro
           Add Product
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Add New Product</DialogTitle>
           <DialogDescription>
             Fill in the details below to add a new product to your store.
           </DialogDescription>
         </DialogHeader>
-        <ProductForm onFormSubmit={handleFormSubmit} />
+        <ScrollArea className="max-h-[80vh] pr-6">
+          <ProductForm onFormSubmit={handleFormSubmit} />
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   )
