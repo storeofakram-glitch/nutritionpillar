@@ -8,6 +8,7 @@ import { revalidatePath } from 'next/cache';
 type TeamApplicationData = {
     name: string;
     email: string;
+    age: number;
     phone: string;
     position: 'Coach' | 'Expert';
     specialty: string;

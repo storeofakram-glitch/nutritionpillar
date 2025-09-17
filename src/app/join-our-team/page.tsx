@@ -18,6 +18,7 @@ import { Combobox } from '@/components/ui/combobox';
 const joinTeamFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
+  age: z.coerce.number().min(18, { message: "You must be at least 18 years old to apply." }),
   countryCode: z.string().min(1, "Country code is required."),
   phone: z.string().min(1, "Phone number is required."),
   position: z.enum(['Coach', 'Expert'], { required_error: "Please select a position." }),
@@ -110,6 +111,17 @@ export default function JoinTeamPage() {
                                     </FormItem>
                                 )} />
                             </div>
+                            <FormField
+                                control={form.control}
+                                name="age"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Age</FormLabel>
+                                        <FormControl><Input type="number" placeholder="Your age" {...field} /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                              <div className="grid sm:grid-cols-2 gap-6">
                                 <FormItem>
                                     <FormLabel>Phone Number</FormLabel>
@@ -232,9 +244,3 @@ export default function JoinTeamPage() {
     </div>
   );
 }
-
-
-
-    
-
-    
