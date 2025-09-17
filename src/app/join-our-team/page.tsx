@@ -19,7 +19,7 @@ const joinTeamFormSchema = z.object({
   phone: z.string().min(10, { message: "Please enter a valid phone number." }),
   position: z.enum(['Coach', 'Expert'], { required_error: "Please select a position." }),
   specialty: z.string({ required_error: "Please select a specialty."}),
-  resumeUrl: z.string().url({ message: "Please provide a valid URL to your resume or portfolio." }),
+  resumeUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
   message: z.string().min(20, { message: "Your message should be at least 20 characters." }),
   tiktokUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
   instagramUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
@@ -157,21 +157,21 @@ export default function JoinTeamPage() {
                                      <FormField control={form.control} name="tiktokUrl" render={({ field }) => (
                                         <FormItem>
                                             <FormLabel className="text-xs">TikTok</FormLabel>
-                                            <FormControl><Input placeholder="TikTok URL" {...field} /></FormControl>
+                                            <FormControl><Input placeholder="TikTok URL" {...field} value={field.value ?? ''} /></FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )} />
                                      <FormField control={form.control} name="instagramUrl" render={({ field }) => (
                                         <FormItem>
                                             <FormLabel className="text-xs">Instagram</FormLabel>
-                                            <FormControl><Input placeholder="Instagram URL" {...field} /></FormControl>
+                                            <FormControl><Input placeholder="Instagram URL" {...field} value={field.value ?? ''} /></FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )} />
                                      <FormField control={form.control} name="linkedinUrl" render={({ field }) => (
                                         <FormItem>
                                             <FormLabel className="text-xs">LinkedIn</FormLabel>
-                                            <FormControl><Input placeholder="LinkedIn URL" {...field} /></FormControl>
+                                            <FormControl><Input placeholder="LinkedIn URL" {...field} value={field.value ?? ''} /></FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )} />
