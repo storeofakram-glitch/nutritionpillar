@@ -134,6 +134,26 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="bg-secondary border-y border-border min-h-[40px] flex items-center">
+        <Marquee>
+          {marquee.messages.map((msg, i) => (
+            <div key={i} className="flex items-center gap-4 mx-6">
+                {msg.logoUrl && (
+                    <Image
+                        src={msg.logoUrl}
+                        alt={msg.logoAlt || 'logo'}
+                        width={34}
+                        height={34}
+                        className="object-contain"
+                        style={{ height: '34px', width: 'auto' }}
+                    />
+                )}
+                <span className="font-semibold text-secondary-foreground whitespace-nowrap">{msg.text}</span>
+            </div>
+          ))}
+        </Marquee>
+      </section>
+
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
@@ -175,26 +195,6 @@ export default function Home() {
             </Card>
           </div>
         </div>
-      </section>
-      
-      <section className="bg-primary border-y border-primary/50 min-h-[40px] flex items-center">
-        <Marquee>
-          {marquee.messages.map((msg, i) => (
-            <div key={i} className="flex items-center gap-4 mx-6">
-                {msg.logoUrl && (
-                    <Image
-                        src={msg.logoUrl}
-                        alt={msg.logoAlt || 'logo'}
-                        width={34}
-                        height={34}
-                        className="object-contain"
-                        style={{ height: '34px', width: 'auto' }}
-                    />
-                )}
-                <span className="font-semibold text-primary-foreground whitespace-nowrap">{msg.text}</span>
-            </div>
-          ))}
-        </Marquee>
       </section>
 
       <section className="py-8 md:py-12 bg-background">
