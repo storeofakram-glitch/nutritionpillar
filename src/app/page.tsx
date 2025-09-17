@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import Image from 'next/image';
@@ -228,7 +229,6 @@ export default function Home() {
                             loop
                             muted
                             playsInline
-                            loading="lazy"
                             onCanPlay={() => setIsAdVideoLoaded(true)}
                         >
                             Your browser does not support the video tag.
