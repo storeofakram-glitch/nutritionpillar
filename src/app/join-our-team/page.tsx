@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { addTeamApplication } from '@/services/join-team-service';
@@ -16,6 +16,7 @@ import { countryCodes } from '@/lib/country-codes';
 import { Combobox } from '@/components/ui/combobox';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Briefcase, Feather, Heart, CheckCircle2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const joinTeamFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -118,6 +119,7 @@ export default function JoinTeamPage() {
       
     const result = await addTeamApplication({
         ...data,
+        age: data.age,
         phone: fullPhoneNumber,
         certifications: allCertifications,
     });
@@ -190,252 +192,253 @@ export default function JoinTeamPage() {
                 </div>
             </div>
 
-            <Card>
-                <CardHeader className="text-center">
-                    <CardTitle className="text-3xl md:text-4xl font-bold font-headline">Join Our Team</CardTitle>
-                    <CardDescription className="text-lg">
+            <div className="mx-auto max-w-3xl w-full bg-gray-900 rounded-2xl border border-cyan-500 p-6 md:p-8 shadow-lg shadow-cyan-500/20">
+                <div className="text-center mb-6">
+                    <h2 className="text-3xl md:text-4xl font-bold font-headline text-white">Join Our Team</h2>
+                    <p className="text-lg text-gray-400 mt-2">
                         We're looking for passionate individuals to join us on our mission. If you're ready to make an impact, we'd love to hear from you.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                            <div className="grid sm:grid-cols-2 gap-6">
-                                <FormField control={form.control} name="name" render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Full Name</FormLabel>
-                                        <FormControl><Input placeholder="Your full name" {...field} /></FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )} />
-                                <FormField control={form.control} name="email" render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Email Address</FormLabel>
-                                        <FormControl><Input type="email" placeholder="your.email@example.com" {...field} /></FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )} />
-                            </div>
-                            <FormField
-                                control={form.control}
-                                name="age"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Age</FormLabel>
-                                        <FormControl><Input type="number" placeholder="Your age" {...field} value={field.value || ''} /></FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                             <div className="grid sm:grid-cols-2 gap-6">
+                    </p>
+                </div>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        <div className="grid sm:grid-cols-2 gap-6">
+                            <FormField control={form.control} name="name" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Phone Number</FormLabel>
-                                    <div className="flex gap-3">
-                                        <FormField
-                                            control={form.control}
-                                            name="countryCode"
-                                            render={({ field }) => (
-                                                <Combobox
-                                                    options={countryCodeOptions}
-                                                    value={field.value}
-                                                    onChange={field.onChange}
-                                                    placeholder="Select code..."
-                                                    searchPlaceholder="Search code..."
-                                                    notFoundText="No country found."
-                                                    triggerClassName="flex-shrink-0"
-                                                />
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="phone"
-                                            render={({ field }) => (
-                                            <FormControl><Input type="tel" placeholder="Phone Number" {...field} /></FormControl>
-                                            )}
-                                        />
-                                    </div>
+                                    <FormLabel className="text-white font-bold">Full Name</FormLabel>
+                                    <FormControl><Input placeholder="Your full name" {...field} className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500" /></FormControl>
                                     <FormMessage />
                                 </FormItem>
-                                 <FormField
-                                    control={form.control}
-                                    name="position"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                        <FormLabel>Position</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a position" />
-                                            </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                <SelectItem value="Coach">Coach</SelectItem>
-                                                <SelectItem value="Expert">Expert</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
+                            )} />
+                            <FormField control={form.control} name="email" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-white font-bold">Email Address</FormLabel>
+                                    <FormControl><Input type="email" placeholder="your.email@example.com" {...field} className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500" /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                        </div>
+                        <FormField
+                            control={form.control}
+                            name="age"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-white font-bold">Age</FormLabel>
+                                    <FormControl><Input type="number" placeholder="Your age" {...field} value={field.value || ''} className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500" /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                         <div className="grid sm:grid-cols-2 gap-6">
+                            <FormItem>
+                                <FormLabel className="text-white font-bold">Phone Number</FormLabel>
+                                <div className="flex gap-3">
+                                    <FormField
+                                        control={form.control}
+                                        name="countryCode"
+                                        render={({ field }) => (
+                                            <Combobox
+                                                options={countryCodeOptions}
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                                placeholder="Select code..."
+                                                searchPlaceholder="Search code..."
+                                                notFoundText="No country found."
+                                                triggerClassName={cn(
+                                                    "bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500",
+                                                    "flex-shrink-0 w-auto"
+                                                )}
+                                            />
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="phone"
+                                        render={({ field }) => (
+                                        <FormControl><Input type="tel" placeholder="Phone Number" {...field} className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500" /></FormControl>
+                                        )}
+                                    />
+                                </div>
+                                <FormMessage />
+                            </FormItem>
                              <FormField
                                 control={form.control}
-                                name="specialty"
+                                name="position"
                                 render={({ field }) => (
                                     <FormItem>
-                                    <FormLabel>Specialty</FormLabel>
-                                    <Select onValueChange={field.onChange} value={field.value}>
+                                    <FormLabel className="text-white font-bold">Position</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a specialty" />
+                                        <SelectTrigger className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500">
+                                            <SelectValue placeholder="Select a position" />
                                         </SelectTrigger>
                                         </FormControl>
-                                        <SelectContent>
-                                            {specialties.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                                        <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                                            <SelectItem value="Coach">Coach</SelectItem>
+                                            <SelectItem value="Expert">Expert</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
                                     </FormItem>
                                 )}
                             />
+                        </div>
+                         <FormField
+                            control={form.control}
+                            name="specialty"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel className="text-white font-bold">Specialty</FormLabel>
+                                <Select onValueChange={field.onChange} value={field.value}>
+                                    <FormControl>
+                                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500">
+                                        <SelectValue placeholder="Select a specialty" />
+                                    </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                                        {specialties.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                            {selectedSpecialty && certificationsBySpecialty[selectedSpecialty] && (
-                                <FormField
-                                    control={form.control}
-                                    name="certifications"
-                                    render={() => (
-                                    <FormItem>
-                                        <div className="mb-4">
-                                        <FormLabel className="text-base">Certifications for {selectedSpecialty}</FormLabel>
-                                        <FormDescription>
-                                            Select all the certifications you hold.
-                                        </FormDescription>
-                                        </div>
-                                        {certificationsBySpecialty[selectedSpecialty].map((item) => (
-                                        <FormField
-                                            key={item}
-                                            control={form.control}
-                                            name="certifications"
-                                            render={({ field }) => {
-                                            return (
-                                                <FormItem
-                                                    key={item}
-                                                    className="flex flex-row items-start space-x-3 space-y-0"
-                                                >
-                                                    <FormControl>
-                                                    <Checkbox
-                                                        checked={field.value?.includes(item)}
-                                                        onCheckedChange={(checked) => {
-                                                        return checked
-                                                            ? field.onChange([...(field.value || []), item])
-                                                            : field.onChange(
-                                                                field.value?.filter(
-                                                                (value) => value !== item
-                                                                )
+                        {selectedSpecialty && certificationsBySpecialty[selectedSpecialty] && (
+                            <FormField
+                                control={form.control}
+                                name="certifications"
+                                render={() => (
+                                <FormItem className="rounded-xl border border-gray-700 bg-gray-800 p-4">
+                                    <div className="mb-4">
+                                    <FormLabel className="text-base text-white font-bold">Certifications for {selectedSpecialty}</FormLabel>
+                                    <FormDescription className="text-gray-400">
+                                        Select all the certifications you hold.
+                                    </FormDescription>
+                                    </div>
+                                    {certificationsBySpecialty[selectedSpecialty].map((item) => (
+                                    <FormField
+                                        key={item}
+                                        control={form.control}
+                                        name="certifications"
+                                        render={({ field }) => {
+                                        return (
+                                            <FormItem
+                                                key={item}
+                                                className="flex flex-row items-start space-x-3 space-y-0 mb-2"
+                                            >
+                                                <FormControl>
+                                                <Checkbox
+                                                    className="border-gray-500 data-[state=checked]:bg-cyan-500 data-[state=checked]:text-white"
+                                                    checked={field.value?.includes(item)}
+                                                    onCheckedChange={(checked) => {
+                                                    return checked
+                                                        ? field.onChange([...(field.value || []), item])
+                                                        : field.onChange(
+                                                            field.value?.filter(
+                                                            (value) => value !== item
                                                             )
+                                                        )
+                                                    }}
+                                                />
+                                                </FormControl>
+                                                <FormLabel className="font-normal text-gray-300">
+                                                {item}
+                                                </FormLabel>
+                                            </FormItem>
+                                        )
+                                        }}
+                                    />
+                                    ))}
+                                     <FormField
+                                        control={form.control}
+                                        name="certifications"
+                                        render={({ field }) => (
+                                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 mt-2">
+                                                <FormControl>
+                                                    <Checkbox
+                                                        className="border-gray-500 data-[state=checked]:bg-cyan-500 data-[state=checked]:text-white"
+                                                        checked={field.value?.includes('Other')}
+                                                        onCheckedChange={(checked) => {
+                                                            const newValue = checked
+                                                                ? [...(field.value || []), 'Other']
+                                                                : field.value?.filter((value) => value !== 'Other');
+                                                            field.onChange(newValue);
                                                         }}
                                                     />
-                                                    </FormControl>
-                                                    <FormLabel className="font-normal">
-                                                    {item}
-                                                    </FormLabel>
-                                                </FormItem>
-                                            )
-                                            }}
-                                        />
-                                        ))}
-                                         <FormField
+                                                </FormControl>
+                                                <FormLabel className="font-normal text-gray-300">Other</FormLabel>
+                                            </FormItem>
+                                        )}
+                                    />
+                                    {watchCertifications?.includes('Other') && (
+                                        <FormField
                                             control={form.control}
-                                            name="certifications"
+                                            name="otherCertification"
                                             render={({ field }) => (
-                                                <FormItem className="flex flex-row items-start space-x-3 space-y-0 mt-2">
+                                                <FormItem className="pl-6 pt-2">
                                                     <FormControl>
-                                                        <Checkbox
-                                                            checked={field.value?.includes('Other')}
-                                                            onCheckedChange={(checked) => {
-                                                                const newValue = checked
-                                                                    ? [...(field.value || []), 'Other']
-                                                                    : field.value?.filter((value) => value !== 'Other');
-                                                                field.onChange(newValue);
-                                                            }}
-                                                        />
+                                                        <Input {...field} placeholder="Please specify your certification" className="bg-gray-700 border-gray-600 text-white rounded-lg" />
                                                     </FormControl>
-                                                    <FormLabel className="font-normal">Other</FormLabel>
+                                                    <FormMessage />
                                                 </FormItem>
                                             )}
                                         />
-                                        {watchCertifications?.includes('Other') && (
-                                            <FormField
-                                                control={form.control}
-                                                name="otherCertification"
-                                                render={({ field }) => (
-                                                    <FormItem className="pl-6 pt-2">
-                                                        <FormControl>
-                                                            <Input {...field} placeholder="Please specify your certification" />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        )}
+                                    )}
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                        )}
+
+                        <FormField control={form.control} name="resumeUrl" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-white font-bold">Resume/Portfolio Link (Optional)</FormLabel>
+                                <FormControl><Input placeholder="https://linkedin.com/in/yourprofile" {...field} value={field.value ?? ''} className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500" /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <div className="space-y-2">
+                            <p className="text-sm font-medium text-white font-bold">Social Links (Optional)</p>
+                            <div className="grid sm:grid-cols-3 gap-4">
+                                 <FormField control={form.control} name="tiktokUrl" render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-xs text-gray-400">TikTok</FormLabel>
+                                        <FormControl><Input placeholder="TikTok URL" {...field} value={field.value ?? ''} className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500" /></FormControl>
                                         <FormMessage />
                                     </FormItem>
-                                    )}
-                                />
-                            )}
-
-                            <FormField control={form.control} name="resumeUrl" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Resume/Portfolio Link (Optional)</FormLabel>
-                                    <FormControl><Input placeholder="https://linkedin.com/in/yourprofile" {...field} value={field.value ?? ''} /></FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )} />
-                            <div className="space-y-2">
-                                <p className="text-sm font-medium">Social Links (Optional)</p>
-                                <div className="grid sm:grid-cols-3 gap-4">
-                                     <FormField control={form.control} name="tiktokUrl" render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="text-xs">TikTok</FormLabel>
-                                            <FormControl><Input placeholder="TikTok URL" {...field} value={field.value ?? ''} /></FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )} />
-                                     <FormField control={form.control} name="instagramUrl" render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="text-xs">Instagram</FormLabel>
-                                            <FormControl><Input placeholder="Instagram URL" {...field} value={field.value ?? ''} /></FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )} />
-                                     <FormField control={form.control} name="linkedinUrl" render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="text-xs">LinkedIn</FormLabel>
-                                            <FormControl><Input placeholder="LinkedIn URL" {...field} value={field.value ?? ''} /></FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )} />
-                                </div>
+                                )} />
+                                 <FormField control={form.control} name="instagramUrl" render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-xs text-gray-400">Instagram</FormLabel>
+                                        <FormControl><Input placeholder="Instagram URL" {...field} value={field.value ?? ''} className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500" /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} />
+                                 <FormField control={form.control} name="linkedinUrl" render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-xs text-gray-400">LinkedIn</FormLabel>
+                                        <FormControl><Input placeholder="LinkedIn URL" {...field} value={field.value ?? ''} className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500" /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} />
                             </div>
-                            <FormField control={form.control} name="message" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Why do you want to join our team?</FormLabel>
-                                    <FormControl><Textarea placeholder="Tell us a bit about yourself and why you'd be a great fit..." rows={6} {...field} /></FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )} />
-                            <Button type="submit" className="w-full font-bold" size="lg" disabled={form.formState.isSubmitting}>
-                                {form.formState.isSubmitting ? 'Submitting...' : 'Submit Application'}
-                            </Button>
-                        </form>
-                    </Form>
-                </CardContent>
-            </Card>
+                        </div>
+                        <FormField control={form.control} name="message" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-white font-bold">Why do you want to join our team?</FormLabel>
+                                <FormControl><Textarea placeholder="Tell us a bit about yourself and why you'd be a great fit..." rows={6} {...field} className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500" /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <Button type="submit" className="w-full font-bold bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl text-lg h-12 transition-all hover:shadow-lg hover:shadow-cyan-500/30" size="lg" disabled={form.formState.isSubmitting}>
+                            {form.formState.isSubmitting ? 'Submitting...' : 'Submit Application'}
+                        </Button>
+                    </form>
+                </Form>
+            </div>
         </div>
     </div>
   );
 }
-
-    
 
     
