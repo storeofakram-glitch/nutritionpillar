@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { addTeamApplication } from '@/services/join-team-service';
 import { countryCodes } from '@/lib/country-codes';
+import { Combobox } from '@/components/ui/combobox';
 
 const joinTeamFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -32,6 +33,12 @@ type JoinTeamFormValues = z.infer<typeof joinTeamFormSchema>;
 
 const specialties = ["Fitness", "Bodybuilding", "Nutrition", "Powerlifting", "CrossFit", "Calisthenics"];
 
+const countryCodeOptions = countryCodes.map(country => ({
+    value: country.dial_code,
+    label: `${country.name} (${country.dial_code})`,
+}));
+
+
 export default function JoinTeamPage() {
   const { toast } = useToast();
   const form = useForm<JoinTeamFormValues>({
@@ -39,7 +46,7 @@ export default function JoinTeamPage() {
     defaultValues: {
       name: '',
       email: '',
-      countryCode: 'DZ',
+      countryCode: '+213',
       phone: '',
       position: undefined,
       specialty: undefined,
@@ -52,9 +59,7 @@ export default function JoinTeamPage() {
   });
 
   const onSubmit = async (data: JoinTeamFormValues) => {
-    const selectedCountry = countryCodes.find(c => c.code === data.countryCode);
-    const dialCode = selectedCountry ? selectedCountry.dial_code : '';
-    const fullPhoneNumber = `${dialCode}${data.phone}`;
+    const fullPhoneNumber = `${data.countryCode}${data.phone}`;
       
     const result = await addTeamApplication({
         ...data,
@@ -113,20 +118,15 @@ export default function JoinTeamPage() {
                                             control={form.control}
                                             name="countryCode"
                                             render={({ field }) => (
-                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                <FormControl>
-                                                    <SelectTrigger className="w-32">
-                                                        <SelectValue placeholder="Code" />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {countryCodes.map(country => (
-                                                        <SelectItem key={country.code} value={country.code}>
-                                                            {country.dial_code} ({country.code})
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
+                                                <Combobox
+                                                    options={countryCodeOptions}
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                    placeholder="Select code..."
+                                                    searchPlaceholder="Search code..."
+                                                    notFoundText="No country found."
+                                                    triggerClassName="w-32"
+                                                />
                                             )}
                                         />
                                         <FormField
@@ -232,3 +232,4 @@ export default function JoinTeamPage() {
     </div>
   );
 }
+
