@@ -188,7 +188,7 @@ export default function Home() {
                         width={34}
                         height={34}
                         className="object-contain"
-                        style={{ width: 'auto' }}
+                        style={{ height: '34px', width: 'auto' }}
                     />
                 )}
                 <span className="font-semibold text-primary-foreground whitespace-nowrap">{msg.text}</span>
