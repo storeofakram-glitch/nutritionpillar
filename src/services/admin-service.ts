@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { collection, getDocs, query, where } from 'firebase/firestore';
@@ -60,6 +61,7 @@ export async function getDashboardStats() {
         getTotalRevenue(),
         getTotalCostOfGoodsSold(),
         getTotalExpenses(),
+        getOrders(),
         getUnreadSubmissionsCount(),
         getNewApplicationsCount(),
     ]);
@@ -91,3 +93,4 @@ export async function getDashboardStats() {
         newApplications,
     };
 }
+
