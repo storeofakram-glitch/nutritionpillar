@@ -103,7 +103,7 @@ export default function JoinTeamPage() {
       phone: '',
       address: '',
       city: '',
-      state: undefined,
+      state: '',
       country: undefined,
       nationality: undefined,
       position: undefined,
@@ -244,8 +244,9 @@ export default function JoinTeamPage() {
                                 </FormItem>
                             )}
                         />
-                         <div className="grid sm:grid-cols-2 gap-6">
-                            <FormItem>
+                         
+                        <div className="grid sm:grid-cols-1 gap-6">
+                           <FormItem>
                                 <FormLabel className="text-white font-bold">Phone Number</FormLabel>
                                 <div className="flex gap-3">
                                     <FormField
@@ -535,4 +536,5 @@ export default function JoinTeamPage() {
     </div>
   );
 }
+
 
