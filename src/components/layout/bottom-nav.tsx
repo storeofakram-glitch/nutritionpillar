@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -50,11 +51,18 @@ export default function BottomNav() {
           </Link>
         ))}
          <SearchDialog>
-            <Button variant="ghost" className="flex flex-col items-center gap-1 text-xs text-muted-foreground h-auto p-0">
-                <Search className="h-6 w-6" />
+            <div
+                onClick={handleNavClick}
+                className={cn(
+                'flex flex-col items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-primary'
+                )}
+            >
+                <div className="relative">
+                    <Search className="h-6 w-6" />
+                </div>
                 <span>Search</span>
-            </Button>
-         </SearchDialog>
+            </div>
+        </SearchDialog>
       </div>
     </nav>
   );
