@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { addTeamApplication } from '@/services/join-team-service';
@@ -90,24 +90,19 @@ const requirements = [
     { text: "Ability to work flexibly with clients online" },
 ];
 
-
-export default function JoinTeamPage() {
-  const { toast } = useToast();
-  const form = useForm<JoinTeamFormValues>({
-    resolver: zodResolver(joinTeamFormSchema),
-    defaultValues: {
+const defaultFormValues: JoinTeamFormValues = {
       name: '',
       email: '',
-      age: undefined,
+      age: 18,
       countryCode: '+213',
       phone: '',
       address: '',
       city: '',
       state: '',
-      country: undefined,
-      nationality: undefined,
-      position: undefined,
-      specialty: undefined,
+      country: '',
+      nationality: '',
+      position: 'Coach',
+      specialty: '',
       certifications: [],
       otherCertification: '',
       resumeUrl: '',
@@ -115,7 +110,13 @@ export default function JoinTeamPage() {
       tiktokUrl: '',
       instagramUrl: '',
       linkedinUrl: '',
-    },
+};
+
+export default function JoinTeamPage() {
+  const { toast } = useToast();
+  const form = useForm<JoinTeamFormValues>({
+    resolver: zodResolver(joinTeamFormSchema),
+    defaultValues: defaultFormValues,
   });
 
   const selectedSpecialty = form.watch('specialty') as keyof typeof certificationsBySpecialty;
@@ -142,7 +143,7 @@ export default function JoinTeamPage() {
         title: "Application Sent!",
         description: "Thank you for your interest in joining our team. We will review your application and get back to you.",
       });
-      form.reset();
+      form.reset(defaultFormValues);
     } else {
       toast({
         variant: "destructive",
@@ -321,7 +322,7 @@ export default function JoinTeamPage() {
                                 render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="text-white font-bold">Country</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <Select onValueChange={field.onChange} value={field.value}>
                                     <FormControl>
                                         <SelectTrigger className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500">
                                             <SelectValue placeholder="Select a country" />
@@ -341,7 +342,7 @@ export default function JoinTeamPage() {
                                 render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="text-white font-bold">Nationality</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <Select onValueChange={field.onChange} value={field.value}>
                                     <FormControl>
                                         <SelectTrigger className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500">
                                             <SelectValue placeholder="Select a nationality" />
@@ -363,7 +364,7 @@ export default function JoinTeamPage() {
                             render={({ field }) => (
                                 <FormItem>
                                 <FormLabel className="text-white font-bold">Position</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select onValueChange={field.onChange} value={field.value}>
                                     <FormControl>
                                     <SelectTrigger className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500">
                                         <SelectValue placeholder="Select a position" />
@@ -536,6 +537,7 @@ export default function JoinTeamPage() {
     </div>
   );
 }
+
 
 
 
