@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { collection, addDoc, getDocs, query, orderBy } from 'firebase/firestore';
@@ -11,6 +12,11 @@ export type TeamApplicationData = {
     email: string;
     age: number;
     phone: string;
+    address: string;
+    city: string;
+    state: string;
+    country: string;
+    nationality: string;
     position: 'Coach' | 'Expert';
     specialty: string;
     certifications?: string[];

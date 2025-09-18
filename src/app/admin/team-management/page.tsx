@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useEffect, useState } from "react";
@@ -28,9 +29,16 @@ const ApplicationDetailsDialog = ({ application }: { application: TeamApplicatio
             <ScrollArea className="max-h-[60vh] pr-4">
             <div className="space-y-4 py-4 text-sm">
                 <p><strong>Received:</strong> {formatDistanceToNow(new Date(application.createdAt), { addSuffix: true })}</p>
-                <p><strong>Email:</strong> {application.email}</p>
-                <p><strong>Phone:</strong> {application.phone}</p>
-                <p><strong>Age:</strong> {application.age}</p>
+                <div className="grid grid-cols-2 gap-4">
+                    <p><strong>Email:</strong> {application.email}</p>
+                    <p><strong>Phone:</strong> {application.phone}</p>
+                    <p><strong>Age:</strong> {application.age}</p>
+                    <p><strong>Nationality:</strong> {application.nationality}</p>
+                </div>
+                <div>
+                    <p><strong>Address:</strong></p>
+                    <p className="text-muted-foreground">{application.address}, {application.city}, {application.state}, {application.country}</p>
+                </div>
                 
                 {application.certifications && application.certifications.length > 0 && (
                     <div>

@@ -18,6 +18,8 @@ import { Combobox } from '@/components/ui/combobox';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Handshake, Feather, Heart, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { dzStates } from '@/lib/dz-states';
+
 
 const joinTeamFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -25,6 +27,11 @@ const joinTeamFormSchema = z.object({
   age: z.coerce.number().min(18, { message: "You must be at least 18 years old to apply." }),
   countryCode: z.string().min(1, "Country code is required."),
   phone: z.string().min(1, "Phone number is required."),
+  address: z.string().min(2, "Address is required."),
+  city: z.string().min(2, "City is required."),
+  state: z.string().min(1, "State is required."),
+  country: z.string().min(1, "Country is required."),
+  nationality: z.string().min(1, "Nationality is required."),
   position: z.enum(['Coach', 'Expert'], { required_error: "Please select a position." }),
   specialty: z.string({ required_error: "Please select a specialty."}),
   certifications: z.array(z.string()).optional(),
@@ -94,6 +101,11 @@ export default function JoinTeamPage() {
       age: undefined,
       countryCode: '+213',
       phone: '',
+      address: '',
+      city: '',
+      state: undefined,
+      country: undefined,
+      nationality: undefined,
       position: undefined,
       specialty: undefined,
       certifications: [],
@@ -267,26 +279,113 @@ export default function JoinTeamPage() {
                             </FormItem>
                              <FormField
                                 control={form.control}
-                                name="position"
+                                name="address"
                                 render={({ field }) => (
                                     <FormItem>
-                                    <FormLabel className="text-white font-bold">Position</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl>
-                                        <SelectTrigger className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500">
-                                            <SelectValue placeholder="Select a position" />
-                                        </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                                            <SelectItem value="Coach">Coach</SelectItem>
-                                            <SelectItem value="Expert">Expert</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
+                                        <FormLabel className="text-white font-bold">Address</FormLabel>
+                                        <FormControl><Input placeholder="Street Address" {...field} className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500" /></FormControl>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
                         </div>
+                        <div className="grid sm:grid-cols-2 gap-6">
+                            <FormField
+                                control={form.control}
+                                name="city"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-white font-bold">City</FormLabel>
+                                        <FormControl><Input placeholder="City" {...field} className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500" /></FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="state"
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-white font-bold">State (Wilaya)</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500">
+                                            <SelectValue placeholder="Select a state" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                                        {dzStates.map(s => <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>)}
+                                    </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className="grid sm:grid-cols-2 gap-6">
+                            <FormField
+                                control={form.control}
+                                name="country"
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-white font-bold">Country</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500">
+                                            <SelectValue placeholder="Select a country" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                                        {countryCodes.map(c => <SelectItem key={c.code} value={c.name}>{c.name}</SelectItem>)}
+                                    </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                             <FormField
+                                control={form.control}
+                                name="nationality"
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-white font-bold">Nationality</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500">
+                                            <SelectValue placeholder="Select a nationality" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                                        {countryCodes.map(c => <SelectItem key={c.code} value={c.name}>{c.name}</SelectItem>)}
+                                    </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <FormField
+                            control={form.control}
+                            name="position"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel className="text-white font-bold">Position</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500">
+                                        <SelectValue placeholder="Select a position" />
+                                    </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                                        <SelectItem value="Coach">Coach</SelectItem>
+                                        <SelectItem value="Expert">Expert</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                          <FormField
                             control={form.control}
                             name="specialty"
@@ -445,12 +544,3 @@ export default function JoinTeamPage() {
     </div>
   );
 }
-
-    
-
-    
-
-    
-
-
-
