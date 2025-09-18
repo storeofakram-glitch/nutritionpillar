@@ -41,6 +41,19 @@ const heroSettingsSchema = z.object({
     button2Link: z.string().optional(),
 });
 
+const coreServiceSchema = z.object({
+    title: translatedTextSchema,
+    description: translatedTextSchema,
+    buttonText: translatedTextSchema,
+    buttonLink: z.string().min(1, "Button link is required."),
+});
+
+const coreServicesSettingsSchema = z.object({
+    heading: translatedTextSchema,
+    subheading: translatedTextSchema,
+    services: z.tuple([coreServiceSchema, coreServiceSchema]),
+});
+
 const marqueeMessageSchema = z.object({
   text: z.string().min(1, "Message cannot be empty."),
   logoUrl: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
@@ -121,6 +134,7 @@ const socialLinksSchema = z.object({
 
 const siteSettingsSchema = z.object({
   hero: heroSettingsSchema,
+  coreServices: coreServicesSettingsSchema,
   marquee: z.object({
     messages: z.array(marqueeMessageSchema)
   }),
@@ -136,6 +150,14 @@ const siteSettingsSchema = z.object({
 
 const emptyValues: SiteSettings = {
     hero: { imageUrl: "", videoUrl: "", alt: "", title: "", description: { en: "", ar: "" }, buttonText: "", buttonLink: "", button2Text: "", button2Link: "" },
+    coreServices: {
+        heading: { en: "Our Core Services", ar: "خدماتنا الأساسية" },
+        subheading: { en: "WHAT WE OFFER", ar: "ماذا نقدم" },
+        services: [
+            { title: { en: "Premium Supplements", ar: "مكملات ممتازة" }, description: { en: "Explore our curated selection of high-quality supplements, from protein powders to pre-workouts, all designed to fuel your performance.", ar: "استكشف مجموعتنا المختارة من المكملات الغذائية عالية الجودة، من مساحيق البروتين إلى ما قبل التمرين، كلها مصممة لتعزيز أدائك." }, buttonText: { en: "Shop Products", ar: "تسوق المنتجات" }, buttonLink: "#products" },
+            { title: { en: "Expert Coaching", ar: "تدريب الخبراء" }, description: { en: "Connect with our team of experienced coaches and experts to get personalized guidance and plans tailored to your specific fitness goals.", ar: "تواصل مع فريقنا من المدربين والخبراء ذوي الخبرة للحصول على إرشادات وخطط شخصية مصممة خصيصًا لأهداف اللياقة البدنية الخاصة بك." }, buttonText: { en: "Find a Coach", ar: "ابحث عن مدرب" }, buttonLink: "#coaches" },
+        ]
+    },
     marquee: { messages: [{ text: "", logoUrl: "", logoAlt: "" }] },
     partnershipLogos: [{ src: "", alt: "", hint: "", url: "" }],
     adBanner: { imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", title: "", description: "", buttonText: "", buttonLink: "", counter1Value: 0, counter1Label: '', counter2Value: 0, counter2Label: '', flashTitle: false },
@@ -152,6 +174,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [isHeroOpen, setIsHeroOpen] = useState(false);
+  const [isCoreServicesOpen, setIsCoreServicesOpen] = useState(false);
   const [isMarqueeOpen, setIsMarqueeOpen] = useState(false);
   const [isLogosOpen, setIsLogosOpen] = useState(false);
   const [isBannerOpen, setIsBannerOpen] = useState(false);
@@ -178,6 +201,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
         
         form.reset({
              hero: { ...emptyValues.hero, ...settings.hero },
+             coreServices: { ...emptyValues.coreServices, ...settings.coreServices },
              marquee: { messages: messages.length > 0 ? messages : emptyValues.marquee.messages }, 
              partnershipLogos: partnershipLogos.length > 0 ? partnershipLogos : emptyValues.partnershipLogos,
              adBanner: { ...emptyValues.adBanner, ...settings.adBanner },
@@ -333,6 +357,87 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                                 </FormItem>
                             )} />
                         </div>
+                    </CardContent>
+                </CollapsibleContent>
+            </Card>
+        </Collapsible>
+        
+        <Collapsible open={isCoreServicesOpen} onOpenChange={setIsCoreServicesOpen}>
+            <Card>
+                 <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>Core Services Section</CardTitle>
+                        <CardDescription>Manage the two main service cards on the homepage.</CardDescription>
+                    </div>
+                    <CollapsibleTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <ChevronDown className={cn("h-5 w-5 transition-transform", isCoreServicesOpen && "rotate-180")} />
+                            <span className="sr-only">{isCoreServicesOpen ? 'Collapse' : 'Expand'}</span>
+                        </Button>
+                    </CollapsibleTrigger>
+                </CardHeader>
+                <CollapsibleContent>
+                    <CardContent className="space-y-6 pt-4">
+                        <div className="space-y-4 rounded-lg border p-4">
+                             <h4 className="font-medium">Section Headers</h4>
+                             <FormField control={form.control} name="coreServices.subheading.en" render={({ field }) => (
+                                <FormItem><FormLabel>Sub-heading (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                            <FormField control={form.control} name="coreServices.subheading.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Sub-heading (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                            )} />
+                             <FormField control={form.control} name="coreServices.heading.en" render={({ field }) => (
+                                <FormItem><FormLabel>Main Heading (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                             <FormField control={form.control} name="coreServices.heading.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Main Heading (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
+
+                         <div className="space-y-4 rounded-lg border p-4">
+                             <h4 className="font-medium">Service Card 1: Supplements</h4>
+                             <FormField control={form.control} name="coreServices.services.0.title.en" render={({ field }) => (
+                                <FormItem><FormLabel>Title (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                            <FormField control={form.control} name="coreServices.services.0.title.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Title (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                            )} />
+                             <FormField control={form.control} name="coreServices.services.0.description.en" render={({ field }) => (
+                                <FormItem><FormLabel>Description (English)</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                             <FormField control={form.control} name="coreServices.services.0.description.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Description (Arabic)</FormLabel><FormControl><Textarea {...field} dir="rtl" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                              <FormField control={form.control} name="coreServices.services.0.buttonText.en" render={({ field }) => (
+                                <FormItem><FormLabel>Button Text (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                            <FormField control={form.control} name="coreServices.services.0.buttonText.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Button Text (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
+
+                         <div className="space-y-4 rounded-lg border p-4">
+                             <h4 className="font-medium">Service Card 2: Coaching</h4>
+                            <FormField control={form.control} name="coreServices.services.1.title.en" render={({ field }) => (
+                                <FormItem><FormLabel>Title (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                            <FormField control={form.control} name="coreServices.services.1.title.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Title (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                            )} />
+                             <FormField control={form.control} name="coreServices.services.1.description.en" render={({ field }) => (
+                                <FormItem><FormLabel>Description (English)</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                             <FormField control={form.control} name="coreServices.services.1.description.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Description (Arabic)</FormLabel><FormControl><Textarea {...field} dir="rtl" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                              <FormField control={form.control} name="coreServices.services.1.buttonText.en" render={({ field }) => (
+                                <FormItem><FormLabel>Button Text (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                            <FormField control={form.control} name="coreServices.services.1.buttonText.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Button Text (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
+
                     </CardContent>
                 </CollapsibleContent>
             </Card>

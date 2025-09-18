@@ -135,6 +135,19 @@ export type HeroSettings = {
     button2Link?: string;
 };
 
+export type CoreService = {
+  title: TranslatedText;
+  description: TranslatedText;
+  buttonText: TranslatedText;
+  buttonLink: string;
+};
+
+export type CoreServicesSettings = {
+  heading: TranslatedText;
+  subheading: TranslatedText;
+  services: [CoreService, CoreService]; 
+};
+
 export type MarqueeMessage = {
   text: string;
   logoUrl?: string;
@@ -214,6 +227,7 @@ export type SocialLinks = {
 
 export type SiteSettings = {
   hero: HeroSettings;
+  coreServices: CoreServicesSettings;
   marquee: {
     messages: MarqueeMessage[];
   };

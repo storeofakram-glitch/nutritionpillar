@@ -94,7 +94,7 @@ export default function Home() {
       )
   }
 
-  const { hero, marquee, adBanner, partnershipLogos, socialLinks } = siteSettings;
+  const { hero, coreServices, marquee, adBanner, partnershipLogos, socialLinks } = siteSettings;
   const isAdBannerLinkExternal = adBanner.buttonLink?.startsWith('http://') || adBanner.buttonLink?.startsWith('https://');
   const mapUrl = socialLinks?.mapLocationUrl || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3198.405783303357!2d3.05896!3d36.71277!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x128fafb4a22c5e5b%3A0x4c2c5f6cac23b8a1!2sAlgiers!5e0!3m2!1sen!2sdz!4v1620056238383!5m2!1sen!2sdz";
 
@@ -168,8 +168,8 @@ export default function Home() {
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
-              <p className="text-sm font-bold text-muted-foreground tracking-widest uppercase">WHAT WE OFFER</p>
-              <h2 className="inline-block gradient-border text-foreground font-bold font-headline text-3xl md:text-4xl px-6 py-2 rounded-md mt-2 shadow-lg shadow-primary/20">Our Core Services</h2>
+              <p className="text-sm font-bold text-muted-foreground tracking-widest uppercase">{coreServices.subheading[language]}</p>
+              <h2 className="inline-block gradient-border text-foreground font-bold font-headline text-3xl md:text-4xl px-6 py-2 rounded-md mt-2 shadow-lg shadow-primary/20">{coreServices.heading[language]}</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
             <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 gradient-border">
@@ -177,14 +177,14 @@ export default function Home() {
                 <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
                   <ShoppingBag className="h-10 w-10 text-primary" />
                 </div>
-                <CardTitle className="font-headline text-2xl">Premium Supplements</CardTitle>
+                <CardTitle className="font-headline text-2xl">{coreServices.services[0].title[language]}</CardTitle>
               </CardHeader>
               <CardContent className="flex-grow">
-                <p className="text-muted-foreground">Explore our curated selection of high-quality supplements, from protein powders to pre-workouts, all designed to fuel your performance.</p>
+                <p className="text-muted-foreground">{coreServices.services[0].description[language]}</p>
               </CardContent>
               <CardFooter>
                 <Button asChild>
-                  <Link href="#products">Shop Products <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                  <Link href={coreServices.services[0].buttonLink}>{coreServices.services[0].buttonText[language]} <ArrowRight className="ml-2 h-4 w-4" /></Link>
                 </Button>
               </CardFooter>
             </Card>
@@ -193,14 +193,14 @@ export default function Home() {
                 <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
                   <UsersIcon className="h-10 w-10 text-primary" />
                 </div>
-                <CardTitle className="font-headline text-2xl">Expert Coaching</CardTitle>
+                <CardTitle className="font-headline text-2xl">{coreServices.services[1].title[language]}</CardTitle>
               </CardHeader>
               <CardContent className="flex-grow">
-                <p className="text-muted-foreground">Connect with our team of experienced coaches and experts to get personalized guidance and plans tailored to your specific fitness goals.</p>
+                <p className="text-muted-foreground">{coreServices.services[1].description[language]}</p>
               </CardContent>
               <CardFooter>
                 <Button asChild>
-                  <Link href="#coaches">Find a Coach <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                  <Link href={coreServices.services[1].buttonLink}>{coreServices.services[1].buttonText[language]} <ArrowRight className="ml-2 h-4 w-4" /></Link>
                 </Button>
               </CardFooter>
             </Card>
