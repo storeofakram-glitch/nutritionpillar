@@ -1,6 +1,5 @@
 
 
-
 // This is a new file for the Appearance management page in the admin dashboard.
 "use client";
 
@@ -24,13 +23,18 @@ import { Switch } from "@/components/ui/switch";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 
+const translatedTextSchema = z.object({
+  en: z.string().min(1, { message: "English text is required." }),
+  ar: z.string().min(1, { message: "Arabic text is required." }),
+});
+
 // Schemas for form validation
 const heroSettingsSchema = z.object({
     imageUrl: z.string().url({ message: "Please enter a valid URL." }).or(z.literal('')),
     videoUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
     alt: z.string().min(1, { message: "Alt text is required." }),
     title: z.string().min(1, { message: "Title is required." }),
-    description: z.string().min(1, { message: "Description is required." }),
+    description: translatedTextSchema,
     buttonText: z.string().min(1, { message: "Button text is required." }),
     buttonLink: z.string().min(1, { message: "Button link is required." }),
     button2Text: z.string().optional(),
@@ -127,10 +131,11 @@ const siteSettingsSchema = z.object({
   termsPage: termsPageSettingsSchema,
   privacyPage: privacyPageSettingsSchema,
   socialLinks: socialLinksSchema,
+  language: z.enum(['en', 'ar']).default('en'),
 });
 
 const emptyValues: SiteSettings = {
-    hero: { imageUrl: "", videoUrl: "", alt: "", title: "", description: "", buttonText: "", buttonLink: "", button2Text: "", button2Link: "" },
+    hero: { imageUrl: "", videoUrl: "", alt: "", title: "", description: { en: "", ar: "" }, buttonText: "", buttonLink: "", button2Text: "", button2Link: "" },
     marquee: { messages: [{ text: "", logoUrl: "", logoAlt: "" }] },
     partnershipLogos: [{ src: "", alt: "", hint: "", url: "" }],
     adBanner: { imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", title: "", description: "", buttonText: "", buttonLink: "", counter1Value: 0, counter1Label: '', counter2Value: 0, counter2Label: '', flashTitle: false },
@@ -139,6 +144,7 @@ const emptyValues: SiteSettings = {
     termsPage: { title: "Terms of Service", content: "Please add your terms of service here." },
     privacyPage: { title: "Privacy Policy", content: "Please add your privacy policy here." },
     socialLinks: { facebook: "", instagram: "", youtube: "", linkedin: "", twitter: "", mapLocationUrl: "" },
+    language: 'en',
 };
 
 
@@ -184,6 +190,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
              termsPage: { ...emptyValues.termsPage, ...settings.termsPage },
              privacyPage: { ...emptyValues.privacyPage, ...settings.privacyPage },
              socialLinks: { ...emptyValues.socialLinks, ...settings.socialLinks },
+             language: settings.language || 'en',
         });
       }
       setLoading(false);
@@ -276,10 +283,17 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                                 <FormMessage />
                             </FormItem>
                         )} />
-                        <FormField control={form.control} name="hero.description" render={({ field }) => (
+                        <FormField control={form.control} name="hero.description.en" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Description</FormLabel>
+                                <FormLabel>Description (English)</FormLabel>
                                 <FormControl><Textarea {...field} placeholder="Enter a short description" /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                         <FormField control={form.control} name="hero.description.ar" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Description (Arabic)</FormLabel>
+                                <FormControl><Textarea {...field} placeholder="Enter description in Arabic" dir="rtl" /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />

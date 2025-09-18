@@ -21,6 +21,7 @@ import Image from 'next/image';
 import type { SocialLinks } from '@/types';
 import { getSiteSettings } from '@/services/site-settings-service';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { useLanguage } from '@/contexts/language-context';
 
 
 const navLinks = [
@@ -37,7 +38,7 @@ export default function Header() {
   const pathname = usePathname();
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
   const [socialLinks, setSocialLinks] = React.useState<SocialLinks>({});
-  const [currentLang, setCurrentLang] = React.useState('en');
+  const { language, setLanguage } = useLanguage();
 
   React.useEffect(() => {
     async function fetchSettings() {
@@ -154,10 +155,10 @@ export default function Header() {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem onSelect={() => setCurrentLang('en')}>
+                    <DropdownMenuItem onSelect={() => setLanguage('en')}>
                         <span>English</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => setCurrentLang('ar')}>
+                    <DropdownMenuItem onSelect={() => setLanguage('ar')}>
                         <span>العربية</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>

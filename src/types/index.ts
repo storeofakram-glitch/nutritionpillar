@@ -1,23 +1,11 @@
 
 
+export type TranslatedText = {
+  en: string;
+  ar: string;
+};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export type Language = 'en' | 'ar';
 
 export type Product = {
   id: string;
@@ -140,9 +128,11 @@ export type HeroSettings = {
     videoUrl?: string;
     alt: string;
     title: string;
-    description: string;
+    description: TranslatedText;
     buttonText: string;
     buttonLink: string;
+    button2Text?: string;
+    button2Link?: string;
 };
 
 export type MarqueeMessage = {
@@ -234,6 +224,7 @@ export type SiteSettings = {
   termsPage: TermsPageSettings;
   privacyPage: PrivacyPageSettings;
   socialLinks: SocialLinks;
+  language: Language;
 };
 
 export type RecommendedProduct = {

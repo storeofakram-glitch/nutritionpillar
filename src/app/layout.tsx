@@ -8,6 +8,7 @@ import { ptSans, spaceGrotesk } from './fonts';
 import type { Metadata, Viewport } from 'next';
 import LayoutContent from './layout-content';
 import { AuthProvider } from '@/contexts/auth-context';
+import { LanguageProvider } from '@/contexts/language-context';
 
 export const metadata: Metadata = {
   title: 'Nutrition Pillar - Your Supplement Marketplace',
@@ -34,10 +35,12 @@ export default function RootLayout({
       <body className={cn('font-body antialiased', 'min-h-screen bg-background font-sans', ptSans.variable, spaceGrotesk.variable)}>
         <FirebaseProvider>
           <AuthProvider>
-            <CartProvider>
-              <LayoutContent>{children}</LayoutContent>
-              <Toaster />
-            </CartProvider>
+            <LanguageProvider>
+              <CartProvider>
+                <LayoutContent>{children}</LayoutContent>
+                <Toaster />
+              </CartProvider>
+            </LanguageProvider>
           </AuthProvider>
         </FirebaseProvider>
       </body>
