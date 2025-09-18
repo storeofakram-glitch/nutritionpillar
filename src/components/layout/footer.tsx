@@ -23,14 +23,14 @@ export default function Footer() {
 
   return (
     <footer className="border-t">
-      <div className="container flex flex-col items-center justify-between gap-6 py-10 md:h-24 md:flex-row md:py-0">
-        <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-          <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
+      <div className="container grid grid-cols-1 md:grid-cols-3 items-center gap-4 py-8 text-center md:text-left">
+        <div className="md:col-span-1">
+          <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} Nutrition Pillar. All Rights Reserved.
           </p>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-1 md:col-span-1">
             <Button variant="ghost" size="icon" asChild>
                 <Link href={socialLinks.facebook || '#'} aria-label="Facebook"><Facebook className="h-5 w-5" /></Link>
             </Button>
@@ -48,7 +48,7 @@ export default function Footer() {
             </Button>
         </div>
 
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <div className="flex items-center justify-center md:justify-end gap-4 text-xs md:text-sm text-muted-foreground md:col-span-1">
             <Link href="/terms-of-service" className="hover:text-primary">Terms of Service</Link>
             <Link href="/privacy-policy" className="hover:text-primary">Privacy Policy</Link>
         </div>
