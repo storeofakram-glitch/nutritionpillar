@@ -8,15 +8,19 @@ import { Badge } from "@/components/ui/badge";
 import type { ClientPayment, Coach } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 interface ClientPaymentsTableProps {
     clients: ClientPayment[];
     coaches: Coach[];
     isLoading: boolean;
     onDataChange: () => void;
+    searchTerm: string;
+    onSearchTermChange: (term: string) => void;
 }
 
-export default function ClientPaymentsTable({ clients, coaches, isLoading, onDataChange }: ClientPaymentsTableProps) {
+export default function ClientPaymentsTable({ clients, coaches, isLoading, onDataChange, searchTerm, onSearchTermChange }: ClientPaymentsTableProps) {
 
     const renderSkeleton = () => Array.from({ length: 3 }).map((_, i) => (
         <TableRow key={i}>
@@ -39,8 +43,22 @@ export default function ClientPaymentsTable({ clients, coaches, isLoading, onDat
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Client Payments</CardTitle>
-                <CardDescription>Track payments received from coaching clients.</CardDescription>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex-1">
+                        <CardTitle>Client Payments</CardTitle>
+                        <CardDescription>Track payments received from coaching clients.</CardDescription>
+                    </div>
+                     <div className="relative">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            type="search"
+                            placeholder="Search by client or coach..."
+                            className="pl-8 sm:w-[240px]"
+                            value={searchTerm}
+                            onChange={(e) => onSearchTermChange(e.target.value)}
+                        />
+                    </div>
+                </div>
             </CardHeader>
             <CardContent>
                 <Table>
@@ -66,7 +84,7 @@ export default function ClientPaymentsTable({ clients, coaches, isLoading, onDat
                     </TableBody>
                 </Table>
                  {!isLoading && clients.length === 0 && (
-                    <p className="text-center text-muted-foreground py-8">No client payments recorded yet.</p>
+                    <p className="text-center text-muted-foreground py-8">No client payments found.</p>
                 )}
             </CardContent>
         </Card>

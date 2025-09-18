@@ -3,21 +3,24 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { CoachWithFinancials } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { generatePayoutsFromPending } from "@/services/coach-finance-service";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 interface PayoutsTableProps {
     coachesWithPending: CoachWithFinancials[];
     isLoading: boolean;
     onDataChange: () => void;
+    searchTerm: string;
+    onSearchTermChange: (term: string) => void;
 }
 
-export default function PayoutsTable({ coachesWithPending, isLoading, onDataChange }: PayoutsTableProps) {
+export default function PayoutsTable({ coachesWithPending, isLoading, onDataChange, searchTerm, onSearchTermChange }: PayoutsTableProps) {
     const { toast } = useToast();
     const [processingId, setProcessingId] = useState<string | null>(null);
 
@@ -45,8 +48,22 @@ export default function PayoutsTable({ coachesWithPending, isLoading, onDataChan
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Pending Payouts</CardTitle>
-                <CardDescription>A list of coaches with outstanding balances to be paid.</CardDescription>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex-1">
+                        <CardTitle>Pending Payouts</CardTitle>
+                        <CardDescription>A list of coaches with outstanding balances to be paid.</CardDescription>
+                    </div>
+                     <div className="relative">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            type="search"
+                            placeholder="Search by coach name..."
+                            className="pl-8 sm:w-[240px]"
+                            value={searchTerm}
+                            onChange={(e) => onSearchTermChange(e.target.value)}
+                        />
+                    </div>
+                </div>
             </CardHeader>
             <CardContent>
                 <Table>

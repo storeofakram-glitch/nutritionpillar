@@ -5,19 +5,22 @@ import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Search } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { CoachWithFinancials } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import EditCommissionDialog from "./edit-commission-dialog";
+import { Input } from "@/components/ui/input";
 
 interface CommissionTableProps {
     coaches: CoachWithFinancials[];
     isLoading: boolean;
     onDataChange: () => void;
+    searchTerm: string;
+    onSearchTermChange: (term: string) => void;
 }
 
-export default function CommissionTable({ coaches, isLoading, onDataChange }: CommissionTableProps) {
+export default function CommissionTable({ coaches, isLoading, onDataChange, searchTerm, onSearchTermChange }: CommissionTableProps) {
     const [selectedCoach, setSelectedCoach] = useState<CoachWithFinancials | null>(null);
     const [isEditOpen, setIsEditOpen] = useState(false);
 
@@ -44,8 +47,22 @@ export default function CommissionTable({ coaches, isLoading, onDataChange }: Co
         <>
             <Card>
                 <CardHeader>
-                    <CardTitle>Coach Commissions</CardTitle>
-                    <CardDescription>Manage commission rates for your coaches and experts.</CardDescription>
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="flex-1">
+                            <CardTitle>Coach Commissions</CardTitle>
+                            <CardDescription>Manage commission rates for your coaches and experts.</CardDescription>
+                        </div>
+                         <div className="relative">
+                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input
+                                type="search"
+                                placeholder="Search by name..."
+                                className="pl-8 sm:w-[240px]"
+                                value={searchTerm}
+                                onChange={(e) => onSearchTermChange(e.target.value)}
+                            />
+                        </div>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <Table>
@@ -71,6 +88,13 @@ export default function CommissionTable({ coaches, isLoading, onDataChange }: Co
                                     </TableCell>
                                 </TableRow>
                             ))}
+                             {!isLoading && coaches.length === 0 && (
+                                <TableRow>
+                                    <TableCell colSpan={3} className="text-center h-24 text-muted-foreground">
+                                        No coaches found.
+                                    </TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </CardContent>

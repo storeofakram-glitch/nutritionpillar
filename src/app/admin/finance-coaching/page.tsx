@@ -19,6 +19,10 @@ export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?
     const [payments, setPayments] = useState<ClientPayment[]>([]);
     const [payouts, setPayouts] = useState<CoachPayout[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const [commissionsSearch, setCommissionsSearch] = useState("");
+    const [clientPaymentsSearch, setClientPaymentsSearch] = useState("");
+    const [pendingPayoutsSearch, setPendingPayoutsSearch] = useState("");
     
     const fetchData = async () => {
         setLoading(true);
@@ -44,29 +48,44 @@ export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?
         fetchData();
     }, []);
 
-    const { coachesWithFinancials, totalRevenue, totalPaidOut, pendingPayouts, coachesWithPending } = useMemo(() => {
-        const financialsMap = new Map(financials.map(f => [f.coachId, f]));
+    const { 
+        totalRevenue, 
+        totalPaidOut, 
+        pendingPayoutsTotal, 
+    } = useMemo(() => {
+        const revenue = payments.reduce((sum, p) => p.status === 'paid' ? sum + p.amount : sum, 0);
+        const paid = payouts.reduce((sum, p) => p.status === 'completed' ? sum + p.amount : sum, 0);
+        const pending = financials.reduce((sum, fin) => sum + (fin.pendingPayout || 0), 0);
         
+        return { 
+            totalRevenue: revenue,
+            totalPaidOut: paid,
+            pendingPayoutsTotal: pending,
+        };
+    }, [financials, payments, payouts]);
+
+     const filteredCoachesWithFinancials = useMemo(() => {
+        const financialsMap = new Map(financials.map(f => [f.coachId, f]));
         const coachesWithData: CoachWithFinancials[] = coaches.map(coach => {
             const coachFinancials = financialsMap.get(coach.id) || { commissionRate: 70, pendingPayout: 0 };
             return { ...coach, ...coachFinancials };
         });
+        return coachesWithData.filter(c => c.name.toLowerCase().includes(commissionsSearch.toLowerCase()));
+    }, [coaches, financials, commissionsSearch]);
 
-        const revenue = payments.reduce((sum, p) => p.status === 'paid' ? sum + p.amount : sum, 0);
-        const paid = payouts.reduce((sum, p) => p.status === 'completed' ? sum + p.amount : sum, 0);
-        
-        const pending = financials.reduce((sum, fin) => sum + (fin.pendingPayout || 0), 0);
+    const filteredClientPayments = useMemo(() => {
+        return payments.filter(p => 
+            p.clientName.toLowerCase().includes(clientPaymentsSearch.toLowerCase()) ||
+            p.coachName.toLowerCase().includes(clientPaymentsSearch.toLowerCase())
+        );
+    }, [payments, clientPaymentsSearch]);
 
-        const pendingCoaches = coachesWithData.filter(c => (c.pendingPayout || 0) > 0);
-        
-        return { 
-            coachesWithFinancials: coachesWithData,
-            totalRevenue: revenue,
-            totalPaidOut: paid,
-            pendingPayouts: pending,
-            coachesWithPending: pendingCoaches,
-        };
-    }, [coaches, financials, payments, payouts]);
+    const filteredCoachesWithPending = useMemo(() => {
+         return filteredCoachesWithFinancials.filter(c => 
+            (c.pendingPayout || 0) > 0 &&
+            c.name.toLowerCase().includes(pendingPayoutsSearch.toLowerCase())
+        );
+    }, [filteredCoachesWithFinancials, pendingPayoutsSearch]);
     
     const StatsCard = ({ title, value, icon: Icon, description }: { title: string, value: string, icon: React.ElementType, description: string }) => (
         <Card>
@@ -91,16 +110,35 @@ export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <StatsCard title="Total Client Revenue" value={`DZD ${totalRevenue.toFixed(2)}`} icon={DollarSign} description="Total paid by all coaching clients." />
                 <StatsCard title="Total Paid to Coaches" value={`DZD ${totalPaidOut.toFixed(2)}`} icon={TrendingUp} description="Total amount successfully paid out." />
-                <StatsCard title="Pending Payouts" value={`DZD ${pendingPayouts.toFixed(2)}`} icon={Wallet} description="Amount waiting to be paid out." />
-                <StatsCard title="Platform Net" value={`DZD ${(totalRevenue - totalPaidOut - pendingPayouts).toFixed(2)}`} icon={Percent} description="Total revenue minus total payouts." />
+                <StatsCard title="Pending Payouts" value={`DZD ${pendingPayoutsTotal.toFixed(2)}`} icon={Wallet} description="Amount waiting to be paid out." />
+                <StatsCard title="Platform Net" value={`DZD ${(totalRevenue - totalPaidOut - pendingPayoutsTotal).toFixed(2)}`} icon={Percent} description="Total revenue minus total payouts." />
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                <CommissionTable coaches={coachesWithFinancials} isLoading={loading} onDataChange={fetchData} />
-                <ClientPaymentsTable clients={payments} coaches={coaches} isLoading={loading} onDataChange={fetchData} />
+                <CommissionTable 
+                    coaches={filteredCoachesWithFinancials} 
+                    isLoading={loading} 
+                    onDataChange={fetchData} 
+                    searchTerm={commissionsSearch}
+                    onSearchTermChange={setCommissionsSearch}
+                />
+                <ClientPaymentsTable 
+                    clients={filteredClientPayments} 
+                    coaches={coaches} 
+                    isLoading={loading} 
+                    onDataChange={fetchData} 
+                    searchTerm={clientPaymentsSearch}
+                    onSearchTermChange={setClientPaymentsSearch}
+                />
             </div>
 
-            <PayoutsTable coachesWithPending={coachesWithPending} isLoading={loading} onDataChange={fetchData} />
+            <PayoutsTable 
+                coachesWithPending={filteredCoachesWithPending} 
+                isLoading={loading} 
+                onDataChange={fetchData} 
+                searchTerm={pendingPayoutsSearch}
+                onSearchTermChange={setPendingPayoutsSearch}
+            />
             <PayoutsHistoryTable payouts={payouts} coaches={coaches} isLoading={loading} />
         </div>
     );
