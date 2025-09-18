@@ -104,6 +104,7 @@ export default function Home() {
             alt={hero.alt || "Hero image"}
             data-ai-hint="athlete training"
             fill
+            sizes="100vw"
             className="object-cover"
             priority
         />
