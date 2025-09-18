@@ -85,21 +85,21 @@ const adBannerSchema = z.object({
 
 
 const aboutPageSettingsSchema = z.object({
-    title: z.string().min(1, "Title is required."),
-    subtitle: z.string().min(1, "Subtitle is required."),
+    title: translatedTextSchema,
+    subtitle: translatedTextSchema,
     imageUrl: z.string().url({ message: "Please enter a valid URL." }).or(z.literal('')),
     imageAlt: z.string().min(1, "Image alt text is required."),
     videoUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
     backgroundVideoUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
-    storyTitle: z.string().min(1, "Story title is required."),
-    storyContent1: z.string().min(1, "Story content is required."),
-    storyContent2: z.string().min(1, "Story content is required."),
-    missionTitle: z.string().min(1, "Mission title is required."),
-    missionContent: z.string().min(1, "Mission content is required."),
-    visionTitle: z.string().min(1, "Vision title is required."),
-    visionContent: z.string().min(1, "Vision content is required."),
-    valuesTitle: z.string().min(1, "Values title is required."),
-    valuesContent: z.string().min(1, "Values content is required."),
+    storyTitle: translatedTextSchema,
+    storyContent1: translatedTextSchema,
+    storyContent2: translatedTextSchema,
+    missionTitle: translatedTextSchema,
+    missionContent: translatedTextSchema,
+    visionTitle: translatedTextSchema,
+    visionContent: translatedTextSchema,
+    valuesTitle: translatedTextSchema,
+    valuesContent: translatedTextSchema,
 });
 
 const faqItemSchema = z.object({
@@ -161,7 +161,7 @@ const emptyValues: SiteSettings = {
     marquee: { messages: [{ text: "", logoUrl: "", logoAlt: "" }] },
     partnershipLogos: [{ src: "", alt: "", hint: "", url: "" }],
     adBanner: { imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", title: "", description: "", buttonText: "", buttonLink: "", counter1Value: 0, counter1Label: '', counter2Value: 0, counter2Label: '', flashTitle: false },
-    aboutPage: { title: "", subtitle: "", imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", storyTitle: "", storyContent1: "", storyContent2: "", missionTitle: "", missionContent: "", visionTitle: "", visionContent: "", valuesTitle: "", valuesContent: "" },
+    aboutPage: { title: { en: "", ar: "" }, subtitle: { en: "", ar: "" }, imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", storyTitle: { en: "", ar: "" }, storyContent1: { en: "", ar: "" }, storyContent2: { en: "", ar: "" }, missionTitle: { en: "", ar: "" }, missionContent: { en: "", ar: "" }, visionTitle: { en: "", ar: "" }, visionContent: { en: "", ar: "" }, valuesTitle: { en: "", ar: "" }, valuesContent: { en: "", ar: "" } },
     faqPage: { title: "", subtitle: "", faqs: [{ question: "", answer: "" }] },
     termsPage: { title: "Terms of Service", content: "Please add your terms of service here." },
     privacyPage: { title: "Privacy Policy", content: "Please add your privacy policy here." },
@@ -709,12 +709,22 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                 </CardHeader>
                 <CollapsibleContent>
                     <CardContent className="space-y-4 pt-4">
-                         <FormField control={form.control} name="aboutPage.title" render={({ field }) => (
-                            <FormItem><FormLabel>Main Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                        )} />
-                         <FormField control={form.control} name="aboutPage.subtitle" render={({ field }) => (
-                            <FormItem><FormLabel>Subtitle</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
-                        )} />
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField control={form.control} name="aboutPage.title.en" render={({ field }) => (
+                                <FormItem><FormLabel>Main Title (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                             <FormField control={form.control} name="aboutPage.title.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Main Title (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField control={form.control} name="aboutPage.subtitle.en" render={({ field }) => (
+                                <FormItem><FormLabel>Subtitle (English)</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                             <FormField control={form.control} name="aboutPage.subtitle.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Subtitle (Arabic)</FormLabel><FormControl><Textarea {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
                          <FormField control={form.control} name="aboutPage.backgroundVideoUrl" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Background Video URL (Autoplay)</FormLabel>
@@ -737,38 +747,77 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                         <FormField control={form.control} name="aboutPage.imageAlt" render={({ field }) => (
                             <FormItem><FormLabel>Image Alt Text</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
-                        <FormField control={form.control} name="aboutPage.storyTitle" render={({ field }) => (
-                            <FormItem><FormLabel>Story Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                        )} />
-                        <FormField control={form.control} name="aboutPage.storyContent1" render={({ field }) => (
-                            <FormItem><FormLabel>Story Paragraph 1</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem>
-                        )} />
-                        <FormField control={form.control} name="aboutPage.storyContent2" render={({ field }) => (
-                            <FormItem><FormLabel>Story Paragraph 2</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem>
-                        )} />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField control={form.control} name="aboutPage.storyTitle.en" render={({ field }) => (
+                                <FormItem><FormLabel>Story Title (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                            <FormField control={form.control} name="aboutPage.storyTitle.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Story Title (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField control={form.control} name="aboutPage.storyContent1.en" render={({ field }) => (
+                                <FormItem><FormLabel>Story Paragraph 1 (English)</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                            <FormField control={form.control} name="aboutPage.storyContent1.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Story Paragraph 1 (Arabic)</FormLabel><FormControl><Textarea {...field} rows={4} dir="rtl" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField control={form.control} name="aboutPage.storyContent2.en" render={({ field }) => (
+                                <FormItem><FormLabel>Story Paragraph 2 (English)</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                             <FormField control={form.control} name="aboutPage.storyContent2.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Story Paragraph 2 (Arabic)</FormLabel><FormControl><Textarea {...field} rows={4} dir="rtl" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                             <FormField control={form.control} name="aboutPage.missionTitle" render={({ field }) => (
-                                <FormItem><FormLabel>Mission Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                             <FormField control={form.control} name="aboutPage.missionTitle.en" render={({ field }) => (
+                                <FormItem><FormLabel>Mission Title (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                             )} />
-                             <FormField control={form.control} name="aboutPage.missionContent" render={({ field }) => (
-                                <FormItem><FormLabel>Mission Content</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
-                            )} />
-                        </div>
-                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                             <FormField control={form.control} name="aboutPage.visionTitle" render={({ field }) => (
-                                <FormItem><FormLabel>Vision Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                            )} />
-                             <FormField control={form.control} name="aboutPage.visionContent" render={({ field }) => (
-                                <FormItem><FormLabel>Vision Content</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                             <FormField control={form.control} name="aboutPage.missionTitle.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Mission Title (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
-                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                             <FormField control={form.control} name="aboutPage.valuesTitle" render={({ field }) => (
-                                <FormItem><FormLabel>Values Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                             <FormField control={form.control} name="aboutPage.missionContent.en" render={({ field }) => (
+                                <FormItem><FormLabel>Mission Content (English)</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
                             )} />
-                             <FormField control={form.control} name="aboutPage.valuesContent" render={({ field }) => (
-                                <FormItem><FormLabel>Values Content</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                             <FormField control={form.control} name="aboutPage.missionContent.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Mission Content (Arabic)</FormLabel><FormControl><Textarea {...field} dir="rtl" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                             <FormField control={form.control} name="aboutPage.visionTitle.en" render={({ field }) => (
+                                <FormItem><FormLabel>Vision Title (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                             <FormField control={form.control} name="aboutPage.visionTitle.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Vision Title (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                             <FormField control={form.control} name="aboutPage.visionContent.en" render={({ field }) => (
+                                <FormItem><FormLabel>Vision Content (English)</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                            <FormField control={form.control} name="aboutPage.visionContent.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Vision Content (Arabic)</FormLabel><FormControl><Textarea {...field} dir="rtl" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                             <FormField control={form.control} name="aboutPage.valuesTitle.en" render={({ field }) => (
+                                <FormItem><FormLabel>Values Title (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                            <FormField control={form.control} name="aboutPage.valuesTitle.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Values Title (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                             <FormField control={form.control} name="aboutPage.valuesContent.en" render={({ field }) => (
+                                <FormItem><FormLabel>Values Content (English)</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
+                             <FormField control={form.control} name="aboutPage.valuesContent.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Values Content (Arabic)</FormLabel><FormControl><Textarea {...field} dir="rtl" /></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
                     </CardContent>

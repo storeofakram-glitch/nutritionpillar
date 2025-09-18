@@ -178,21 +178,21 @@ export type AdBanner = {
 };
 
 export type AboutPageSettings = {
-    title: string;
-    subtitle: string;
+    title: TranslatedText;
+    subtitle: TranslatedText;
     imageUrl: string;
     imageAlt: string;
     videoUrl?: string;
     backgroundVideoUrl?: string;
-    storyTitle: string;
-    storyContent1: string;
-    storyContent2: string;
-    missionTitle: string;
-    missionContent: string;
-    visionTitle: string;
-    visionContent: string;
-    valuesTitle: string;
-    valuesContent: string;
+    storyTitle: TranslatedText;
+    storyContent1: TranslatedText;
+    storyContent2: TranslatedText;
+    missionTitle: TranslatedText;
+    missionContent: TranslatedText;
+    visionTitle: TranslatedText;
+    visionContent: TranslatedText;
+    valuesTitle: TranslatedText;
+    valuesContent: TranslatedText;
 };
 
 export type FaqItem = {
