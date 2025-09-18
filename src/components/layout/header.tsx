@@ -21,8 +21,6 @@ import Image from 'next/image';
 import type { SocialLinks } from '@/types';
 import { getSiteSettings } from '@/services/site-settings-service';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
-import UsFlag from '../icons/us-flag';
-import DzFlag from '../icons/dz-flag';
 
 
 const navLinks = [
@@ -157,11 +155,9 @@ export default function Header() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                     <DropdownMenuItem onSelect={() => setCurrentLang('en')}>
-                        <UsFlag className="h-4 w-6 mr-2" />
                         <span>English</span>
                     </DropdownMenuItem>
                     <DropdownMenuItem onSelect={() => setCurrentLang('ar')}>
-                        <DzFlag className="h-4 w-6 mr-2" />
                         <span>العربية</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
