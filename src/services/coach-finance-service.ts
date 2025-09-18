@@ -91,6 +91,52 @@ export async function getCoachPayouts(): Promise<CoachPayout[]> {
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CoachPayout));
 }
 
+export async function generatePayoutsFromPending(coachId: string, amount: number) {
+    if (amount <= 0) {
+        return { success: false, error: "Payout amount must be positive." };
+    }
+    try {
+        await runTransaction(getDb(), async (transaction) => {
+            const coachFinRef = doc(getDb(), 'coach_financials', coachId);
+            const coachFinDoc = await transaction.get(coachFinRef);
+
+            if (!coachFinDoc.exists()) {
+                throw new Error("Coach financial record not found.");
+            }
+
+            const currentPending = coachFinDoc.data().pendingPayout || 0;
+            if (currentPending < amount) {
+                throw new Error("Payout amount exceeds pending balance.");
+            }
+            const currentPaidOut = coachFinDoc.data().paidOut || 0;
+
+            // Create a new historical payout record
+            const newPayout: Omit<CoachPayout, 'id'> = {
+                coachId,
+                amount,
+                payoutDate: new Date().toISOString(),
+                status: 'completed',
+                paymentMethod: 'other', // Default method
+            };
+            const newPayoutRef = doc(collection(getDb(), 'coach_payouts'));
+            transaction.set(newPayoutRef, newPayout);
+
+            // Update the coach's financial summary
+            transaction.update(coachFinRef, {
+                pendingPayout: currentPending - amount,
+                paidOut: currentPaidOut + amount,
+            });
+        });
+
+        revalidatePath('/admin/finance-coaching');
+        return { success: true };
+    } catch (error) {
+        console.error("Error generating payout from pending: ", error);
+        return { success: false, error: (error as Error).message };
+    }
+}
+
+
 export async function processPayout(payoutId: string) {
      try {
         await runTransaction(getDb(), async (transaction) => {

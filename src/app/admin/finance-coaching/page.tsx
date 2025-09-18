@@ -43,25 +43,27 @@ export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?
         fetchData();
     }, []);
 
-    const { coachesWithFinancials, totalRevenue, totalPaidOut, pendingPayouts } = useMemo(() => {
+    const { coachesWithFinancials, totalRevenue, totalPaidOut, pendingPayouts, coachesWithPending } = useMemo(() => {
         const financialsMap = new Map(financials.map(f => [f.coachId, f]));
         
         const coachesWithData: CoachWithFinancials[] = coaches.map(coach => {
-            const coachFinancials = financialsMap.get(coach.id) || { commissionRate: 70 }; // Default to 70%
+            const coachFinancials = financialsMap.get(coach.id) || { commissionRate: 70, pendingPayout: 0 };
             return { ...coach, ...coachFinancials };
         });
 
         const revenue = payments.reduce((sum, p) => p.status === 'paid' ? sum + p.amount : sum, 0);
         const paid = payouts.reduce((sum, p) => p.status === 'completed' ? sum + p.amount : sum, 0);
         
-        // Correctly sum the pending payouts from each coach's financial record
         const pending = financials.reduce((sum, fin) => sum + (fin.pendingPayout || 0), 0);
+
+        const pendingCoaches = coachesWithData.filter(c => (c.pendingPayout || 0) > 0);
         
         return { 
             coachesWithFinancials: coachesWithData,
             totalRevenue: revenue,
             totalPaidOut: paid,
-            pendingPayouts: pending
+            pendingPayouts: pending,
+            coachesWithPending: pendingCoaches,
         };
     }, [coaches, financials, payments, payouts]);
     
@@ -97,7 +99,7 @@ export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?
                 <ClientPaymentsTable clients={payments} coaches={coaches} isLoading={loading} onDataChange={fetchData} />
             </div>
 
-            <PayoutsTable payouts={payouts} coaches={coaches} isLoading={loading} onDataChange={fetchData} />
+            <PayoutsTable payouts={payouts} coachesWithPending={coachesWithPending} isLoading={loading} onDataChange={fetchData} />
         </div>
     );
 }

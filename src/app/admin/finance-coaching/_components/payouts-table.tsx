@@ -5,31 +5,32 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { CoachPayout, Coach } from "@/types";
+import type { CoachWithFinancials } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
-import { format } from "date-fns";
-import { processPayout } from "@/services/coach-finance-service";
+import { generatePayoutsFromPending } from "@/services/coach-finance-service";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 interface PayoutsTableProps {
-    payouts: CoachPayout[];
-    coaches: Coach[];
+    coachesWithPending: CoachWithFinancials[];
     isLoading: boolean;
     onDataChange: () => void;
 }
 
-export default function PayoutsTable({ payouts, coaches, isLoading, onDataChange }: PayoutsTableProps) {
+export default function PayoutsTable({ coachesWithPending, isLoading, onDataChange }: PayoutsTableProps) {
     const { toast } = useToast();
-    const coachMap = new Map(coaches.map(c => [c.id, c.name]));
+    const [processingId, setProcessingId] = useState<string | null>(null);
 
-    const handleProcess = async (payoutId: string) => {
-        const result = await processPayout(payoutId);
+    const handleProcessPayout = async (coachId: string, amount: number) => {
+        setProcessingId(coachId);
+        const result = await generatePayoutsFromPending(coachId, amount);
         if (result.success) {
-            toast({ title: "Payout Processed", description: "Payout marked as completed and records updated." });
+            toast({ title: "Payout Processed", description: `A payout of DZD ${amount.toFixed(2)} has been recorded.` });
             onDataChange();
         } else {
             toast({ variant: "destructive", title: "Error", description: result.error });
         }
+        setProcessingId(null);
     };
 
     const renderSkeleton = () => Array.from({ length: 3 }).map((_, i) => (
@@ -37,55 +38,47 @@ export default function PayoutsTable({ payouts, coaches, isLoading, onDataChange
             <TableCell><Skeleton className="h-5 w-24" /></TableCell>
             <TableCell><Skeleton className="h-5 w-20" /></TableCell>
             <TableCell><Skeleton className="h-5 w-20" /></TableCell>
-            <TableCell><Skeleton className="h-5 w-16" /></TableCell>
             <TableCell className="text-right"><Skeleton className="h-8 w-24 ml-auto" /></TableCell>
         </TableRow>
     ));
-    
-    const getStatusVariant = (status: CoachPayout['status']) => {
-        switch (status) {
-            case 'completed': return 'default';
-            case 'pending': return 'secondary';
-            case 'failed': return 'destructive';
-            default: return 'outline';
-        }
-    };
 
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Coach Payouts</CardTitle>
-                <CardDescription>View and process payouts for your coaching staff.</CardDescription>
+                <CardTitle>Pending Payouts</CardTitle>
+                <CardDescription>A list of coaches with outstanding balances to be paid.</CardDescription>
             </CardHeader>
             <CardContent>
                 <Table>
                     <TableHeader>
                         <TableRow>
                             <TableHead>Coach</TableHead>
-                            <TableHead>Amount</TableHead>
-                            <TableHead>Date</TableHead>
-                            <TableHead>Status</TableHead>
+                            <TableHead>Commission</TableHead>
+                            <TableHead>Amount Owed</TableHead>
                             <TableHead className="text-right">Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {isLoading ? renderSkeleton() : payouts.map(payout => (
-                            <TableRow key={payout.id}>
-                                <TableCell className="font-medium">{coachMap.get(payout.coachId) || 'Unknown Coach'}</TableCell>
-                                <TableCell>DZD {payout.amount.toFixed(2)}</TableCell>
-                                <TableCell>{format(new Date(payout.payoutDate), "PPP")}</TableCell>
-                                <TableCell><Badge variant={getStatusVariant(payout.status)}>{payout.status}</Badge></TableCell>
+                        {isLoading ? renderSkeleton() : coachesWithPending.map(coach => (
+                            <TableRow key={coach.id}>
+                                <TableCell className="font-medium">{coach.name}</TableCell>
+                                <TableCell>{coach.commissionRate || 70}%</TableCell>
+                                <TableCell className="font-semibold text-primary">DZD {coach.pendingPayout?.toFixed(2) || '0.00'}</TableCell>
                                 <TableCell className="text-right">
-                                    {payout.status === 'pending' && (
-                                        <Button size="sm" onClick={() => handleProcess(payout.id)}>Mark as Paid</Button>
-                                    )}
+                                    <Button 
+                                        size="sm" 
+                                        onClick={() => handleProcessPayout(coach.id, coach.pendingPayout || 0)}
+                                        disabled={processingId === coach.id}
+                                    >
+                                        {processingId === coach.id ? "Processing..." : "Process Payout"}
+                                    </Button>
                                 </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
-                {!isLoading && payouts.length === 0 && (
-                    <p className="text-center text-muted-foreground py-8">No payouts recorded yet.</p>
+                {!isLoading && coachesWithPending.length === 0 && (
+                    <p className="text-center text-muted-foreground py-8">No pending payouts at the moment.</p>
                 )}
             </CardContent>
         </Card>
