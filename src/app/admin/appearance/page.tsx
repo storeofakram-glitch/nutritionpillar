@@ -480,7 +480,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Logo URL (Optional)</FormLabel>
-                                        <FormControl><Input {...field} placeholder="https://example.com/logo.png" /></FormControl>
+                                        <FormControl><Input {...field} value={field.value ?? ''} placeholder="https://example.com/logo.png" /></FormControl>
                                         <FormDescription>Recommended size: 40x40 pixels.</FormDescription>
                                         <FormMessage />
                                     </FormItem>
@@ -492,7 +492,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Logo Alt Text</FormLabel>
-                                        <FormControl><Input {...field} placeholder="Logo description" /></FormControl>
+                                        <FormControl><Input {...field} value={field.value ?? ''} placeholder="Logo description" /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
