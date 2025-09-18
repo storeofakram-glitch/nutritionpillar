@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Facebook, Instagram, Youtube, Linkedin, Twitter, Music, Menu, ShoppingBag, ShieldCheck } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Linkedin, Twitter, Music, Menu, ShoppingBag, ShieldCheck, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/cart-context';
 import { usePathname } from 'next/navigation';
@@ -20,6 +20,10 @@ import { SearchDialog } from '../search-dialog';
 import Image from 'next/image';
 import type { SocialLinks } from '@/types';
 import { getSiteSettings } from '@/services/site-settings-service';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import UsFlag from '../icons/us-flag';
+import DzFlag from '../icons/dz-flag';
+
 
 const navLinks = [
     { href: '/', label: 'Home' },
@@ -35,6 +39,7 @@ export default function Header() {
   const pathname = usePathname();
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
   const [socialLinks, setSocialLinks] = React.useState<SocialLinks>({});
+  const [currentLang, setCurrentLang] = React.useState('en');
 
   React.useEffect(() => {
     async function fetchSettings() {
@@ -142,6 +147,26 @@ export default function Header() {
               <span className="sr-only">Shopping Cart</span>
             </Link>
           </Button>
+
+           <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                        <Globe className="h-5 w-5" />
+                        <span className="sr-only">Change language</span>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem onSelect={() => setCurrentLang('en')}>
+                        <UsFlag className="h-4 w-6 mr-2" />
+                        <span>English</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => setCurrentLang('ar')}>
+                        <DzFlag className="h-4 w-6 mr-2" />
+                        <span>العربية</span>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+
         </div>
       </div>
     </header>
