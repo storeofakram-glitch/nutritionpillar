@@ -2,14 +2,14 @@
 
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { getTeamApplications, type TeamApplicationData } from "@/services/join-team-service";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from "date-fns";
-import { MoreHorizontal, RefreshCw, Mail, Phone, Link as LinkIcon, Download } from "lucide-react";
+import { MoreHorizontal, RefreshCw, Mail, Phone, Link as LinkIcon, Download, Search } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
@@ -17,6 +17,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import Link from "next/link";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import DeleteTeamApplicationDialog from "./_components/delete-team-application-dialog";
+import { Input } from "@/components/ui/input";
 
 const ApplicationDetailsDialog = ({ application }: { application: TeamApplicationData }) => {
     return (
@@ -81,6 +82,7 @@ export default function TeamManagementPage({ authLoading }: { authLoading?: bool
     const [loading, setLoading] = useState(true);
     const [selectedApp, setSelectedApp] = useState<TeamApplicationData | null>(null);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
     const { toast } = useToast();
 
     const fetchApplications = async () => {
@@ -98,6 +100,13 @@ export default function TeamManagementPage({ authLoading }: { authLoading?: bool
     useEffect(() => {
         fetchApplications();
     }, []);
+
+    const filteredApplications = useMemo(() => {
+        return applications.filter(app => 
+            app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            app.phone.includes(searchTerm)
+        );
+    }, [applications, searchTerm]);
 
     const handleDeleteClick = (application: TeamApplicationData) => {
         setSelectedApp(application);
@@ -154,12 +163,22 @@ export default function TeamManagementPage({ authLoading }: { authLoading?: bool
         <>
             <Card>
                 <CardHeader>
-                    <div className="flex items-start justify-between gap-4">
+                    <div className="flex flex-col md:flex-row items-start justify-between gap-4">
                         <div className="flex-1">
                             <CardTitle>Team Management</CardTitle>
                             <CardDescription>Review applications from individuals wanting to join your team.</CardDescription>
                         </div>
-                         <div className="flex items-center gap-2">
+                        <div className="flex w-full md:w-auto items-center gap-2">
+                             <div className="relative flex-1 md:flex-initial">
+                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    type="search"
+                                    placeholder="Search by name or phone..."
+                                    className="pl-8 sm:w-[200px] lg:w-[250px]"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
                             <Button variant="outline" size="icon" onClick={fetchApplications} disabled={authLoading || loading}>
                                 <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                             </Button>
@@ -181,7 +200,7 @@ export default function TeamManagementPage({ authLoading }: { authLoading?: bool
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {loading ? renderSkeleton() : applications.map(app => (
+                            {loading ? renderSkeleton() : filteredApplications.map(app => (
                                 <Dialog key={app.id}>
                                     <TableRow>
                                         <TableCell className="font-medium">{app.name}</TableCell>
@@ -212,7 +231,7 @@ export default function TeamManagementPage({ authLoading }: { authLoading?: bool
                                     <ApplicationDetailsDialog application={app} />
                                 </Dialog>
                             ))}
-                            {!loading && applications.length === 0 && (
+                            {!loading && filteredApplications.length === 0 && (
                                 <TableRow>
                                     <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
                                         No applications found.
