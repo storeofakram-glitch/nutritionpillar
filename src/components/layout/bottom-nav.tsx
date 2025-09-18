@@ -16,7 +16,6 @@ export default function BottomNav() {
     { href: '/cart', label: 'Cart', icon: ShoppingBag, count: cartCount },
     { href: '/membership', label: 'Membership', icon: ShieldCheck },
     { href: '/join-our-team', label: 'Team', icon: Users },
-    { href: '/contact', label: 'Contact', icon: Mail },
   ];
 
   const handleNavClick = () => {
