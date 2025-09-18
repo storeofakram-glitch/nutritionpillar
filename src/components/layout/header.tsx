@@ -142,36 +142,37 @@ export default function Header() {
               <NavLink key={link.href} href={link.href}>{link.label}</NavLink>
           ))}
         </nav>
-        <div className="flex flex-1 items-center justify-end gap-2">
-          <Button asChild variant="ghost" size="icon">
-            <Link href="/cart" className="relative">
-              <ShoppingBag className="h-5 w-5" />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
-                  {cartCount}
-                </span>
-              )}
-              <span className="sr-only">Shopping Cart</span>
-            </Link>
-          </Button>
+        <div className="flex flex-1 items-center justify-end">
+           <div className="flex items-center gap-2">
+              <Button asChild variant="ghost" size="icon">
+                <Link href="/cart" className="relative">
+                  <ShoppingBag className="h-5 w-5" />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+                      {cartCount}
+                    </span>
+                  )}
+                  <span className="sr-only">Shopping Cart</span>
+                </Link>
+              </Button>
 
-           <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                        <Globe className="h-5 w-5" />
-                        <span className="sr-only">Change language</span>
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuItem onSelect={() => setLanguage('en')}>
-                        <span>English</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => setLanguage('ar')}>
-                        <span>العربية</span>
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-
+               <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <Globe className="h-5 w-5" />
+                            <span className="sr-only">Change language</span>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onSelect={() => setLanguage('en')}>
+                            <span>English</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => setLanguage('ar')}>
+                            <span>العربية</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
         </div>
       </div>
     </header>
