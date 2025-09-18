@@ -131,7 +131,7 @@ export type HeroSettings = {
     description: TranslatedText;
     buttonText: string;
     buttonLink: string;
-    button2Text?: string;
+    button2Text?: TranslatedText;
     button2Link?: string;
 };
 

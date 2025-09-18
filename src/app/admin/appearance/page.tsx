@@ -37,7 +37,7 @@ const heroSettingsSchema = z.object({
     description: translatedTextSchema,
     buttonText: z.string().min(1, { message: "Button text is required." }),
     buttonLink: z.string().min(1, { message: "Button link is required." }),
-    button2Text: z.string().optional(),
+    button2Text: translatedTextSchema.optional(),
     button2Link: z.string().optional(),
 });
 
@@ -149,7 +149,7 @@ const siteSettingsSchema = z.object({
 });
 
 const emptyValues: SiteSettings = {
-    hero: { imageUrl: "", videoUrl: "", alt: "", title: "", description: { en: "", ar: "" }, buttonText: "", buttonLink: "", button2Text: "", button2Link: "" },
+    hero: { imageUrl: "", videoUrl: "", alt: "", title: "", description: { en: "", ar: "" }, buttonText: "", buttonLink: "", button2Text: { en: "", ar: "" }, button2Link: "" },
     coreServices: {
         heading: { en: "Our Core Services", ar: "خدماتنا الأساسية" },
         subheading: { en: "WHAT WE OFFER", ar: "ماذا نقدم" },
@@ -342,16 +342,25 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                         <Separator />
                         <p className="text-sm font-medium">Button 2 (Optional)</p>
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                             <FormField control={form.control} name="hero.button2Text" render={({ field }) => (
+                             <FormField control={form.control} name="hero.button2Text.en" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Button Text</FormLabel>
+                                    <FormLabel>Button Text (English)</FormLabel>
                                     <FormControl><Input {...field} value={field.value ?? ''} placeholder="Find Your Coach" /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
+                             <FormField control={form.control} name="hero.button2Text.ar" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Button Text (Arabic)</FormLabel>
+                                    <FormControl><Input {...field} value={field.value ?? ''} placeholder="ابحث عن مدربك" dir="rtl" /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                        </div>
+                         <div className="grid grid-cols-1">
                              <FormField control={form.control} name="hero.button2Link" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Button Link</FormLabel>
+                                    <FormLabel>Button 2 Link</FormLabel>
                                     <FormControl><Input {...field} value={field.value ?? ''} placeholder="/#coaches" /></FormControl>
                                     <FormMessage />
                                 </FormItem>
