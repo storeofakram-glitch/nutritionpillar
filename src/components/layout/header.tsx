@@ -135,7 +135,7 @@ export default function Header() {
             className="h-8 w-8 rounded-full"
             data-ai-hint="logo"
           />
-          <span className="font-bold font-headline text-base md:inline-block">Nutrition Pillar</span>
+          <span className="hidden font-bold font-headline text-base md:inline-block">Nutrition Pillar</span>
         </Link>
         <nav className="hidden md:flex flex-1 items-center gap-6 text-sm">
           {navLinks.map(link => (
@@ -176,4 +176,3 @@ export default function Header() {
     </header>
   );
 }
-
