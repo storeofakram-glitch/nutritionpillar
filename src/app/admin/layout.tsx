@@ -18,7 +18,7 @@ import {
   SidebarFooter,
   SidebarInset
 } from "@/components/ui/sidebar"
-import { Home, Package, ShoppingCart, Truck, Users, ArrowLeft, DollarSign, Brush, ShieldCheck, Megaphone, Mail, UserCheck, LogOut } from "lucide-react"
+import { Home, Package, ShoppingCart, Truck, Users, ArrowLeft, DollarSign, Brush, ShieldCheck, Megaphone, Mail, UserCheck, LogOut, ClipboardList } from "lucide-react"
 import Header from "@/components/layout/header"
 import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
@@ -40,6 +40,7 @@ export default function AdminLayout({
     { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
     { href: "/admin/customers", label: "Customers", icon: Users },
     { href: "/admin/coaches", label: "Coaches", icon: UserCheck },
+    { href: "/admin/team-management", label: "Team Management", icon: ClipboardList },
     { href: "/admin/shipping", label: "Shipping", icon: Truck },
     { href: "/admin/finance", label: "Finance", icon: DollarSign },
     { href: "/admin/finance-coaching", label: "Finance (Coaching)", icon: DollarSign },
