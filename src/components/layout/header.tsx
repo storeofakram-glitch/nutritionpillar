@@ -137,12 +137,12 @@ export default function Header() {
           />
           <span className="font-bold font-headline text-base md:inline-block">Nutrition Pillar</span>
         </Link>
-        <nav className="hidden md:flex flex-1 items-center gap-6 text-sm">
+        <nav className="hidden md:flex items-center gap-6 text-sm flex-1">
           {navLinks.map(link => (
               <NavLink key={link.href} href={link.href}>{link.label}</NavLink>
           ))}
         </nav>
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex items-center justify-end">
             <Button asChild variant="ghost" size="icon">
             <Link href="/cart" className="relative">
                 <ShoppingBag className="h-5 w-5" />
