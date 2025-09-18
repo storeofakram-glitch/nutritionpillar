@@ -10,12 +10,15 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import type { CoachingApplication } from "@/types"
+import type { CoachingApplication, Coach, Plan } from "@/types"
 import { format } from "date-fns"
-import { Mail, MessageSquare } from "lucide-react"
+import { Mail, MessageSquare, CreditCard } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { getCoachById } from "@/services/coach-service";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ViewApplicationDialogProps {
     isOpen: boolean;
@@ -25,7 +28,24 @@ interface ViewApplicationDialogProps {
 
 export default function ViewApplicationDialog({ isOpen, onOpenChange, application }: ViewApplicationDialogProps) {
   
+  const [coach, setCoach] = useState<Coach | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchCoach() {
+      if (isOpen && application) {
+        setLoading(true);
+        const coachData = await getCoachById(application.coachId);
+        setCoach(coachData);
+        setLoading(false);
+      }
+    }
+    fetchCoach();
+  }, [isOpen, application]);
+  
   const { applicant } = application;
+
+  const appliedPlan = coach?.plans?.find(p => p.title === application.planTitle);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -49,6 +69,15 @@ export default function ViewApplicationDialog({ isOpen, onOpenChange, applicatio
                     <div><span className="font-semibold">Goal:</span> {applicant.goal}</div>
                     <div><span className="font-semibold">Duration:</span> {applicant.duration}</div>
                 </div>
+                 {appliedPlan && (
+                    <div>
+                        <h4 className="font-semibold mb-2">Plan Price:</h4>
+                         <div className="flex items-center gap-2 text-primary font-bold p-3 bg-primary/10 rounded-md">
+                            <CreditCard className="h-5 w-5" />
+                            <span>DZD {appliedPlan.price.toLocaleString()} / {appliedPlan.pricePeriod}</span>
+                        </div>
+                    </div>
+                 )}
                 {applicant.message && (
                     <div>
                         <h4 className="font-semibold mb-2">Additional Message:</h4>
