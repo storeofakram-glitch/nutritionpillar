@@ -18,7 +18,7 @@ export default function LayoutContent({ children }: { children: React.ReactNode 
     return (
         <div className="relative flex min-h-dvh flex-col bg-background">
             {!isAdminPage && <Header />}
-            <main className="flex-1 pb-24 md:pb-0">{children}</main>
+            <main className="flex-1 pb-28 md:pb-0">{children}</main>
             {!isAdminPage && <Footer />}
             {!isAdminPage && <BottomNav />}
         </div>
