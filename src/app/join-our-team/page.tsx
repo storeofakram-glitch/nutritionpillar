@@ -32,7 +32,7 @@ const joinTeamFormSchema = z.object({
   state: z.string().min(1, "State is required."),
   country: z.string().min(1, "Country is required."),
   nationality: z.string().min(1, "Nationality is required."),
-  position: z.enum(['Coach', 'Expert'], { required_error: "Please select a position." }),
+  position: z.enum(['Coach', 'Expert'], { required_error: "Please select a position."}),
   specialty: z.string({ required_error: "Please select a specialty."}),
   certifications: z.array(z.string()).optional(),
   otherCertification: z.string().optional(),
@@ -101,7 +101,7 @@ const defaultFormValues: JoinTeamFormValues = {
       state: '',
       country: '',
       nationality: '',
-      position: 'Coach',
+      position: '' as unknown as 'Coach' | 'Expert',
       specialty: '',
       certifications: [],
       otherCertification: '',
@@ -537,6 +537,7 @@ export default function JoinTeamPage() {
     </div>
   );
 }
+
 
 
 
