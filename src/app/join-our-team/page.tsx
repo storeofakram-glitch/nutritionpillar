@@ -245,7 +245,7 @@ export default function JoinTeamPage() {
                             )}
                         />
                          
-                        <div className="grid sm:grid-cols-1 gap-6">
+                        <div className="space-y-6">
                            <FormItem>
                                 <FormLabel className="text-white font-bold">Phone Number</FormLabel>
                                 <div className="flex gap-3">
@@ -489,7 +489,7 @@ export default function JoinTeamPage() {
                         <FormField control={form.control} name="resumeUrl" render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="text-white font-bold">Resume/Portfolio Link (Optional)</FormLabel>
-                                <FormControl><Input placeholder="https://your-portfolio-url.com" {...field} value={field.value ?? ''} className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500" /></FormControl>
+                                <FormControl><Input placeholder=" Portfolio URL" {...field} value={field.value ?? ''} className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500" /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
@@ -536,6 +536,7 @@ export default function JoinTeamPage() {
     </div>
   );
 }
+
 
 
 
