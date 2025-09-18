@@ -243,7 +243,7 @@ export default function Home() {
                 ) : adBanner.videoUrl ? (
                     <iframe
                         src={adBanner.videoUrl}
-                        title={adBanner.title}
+                        title={adBanner.title[language]}
                         className="absolute top-0 left-0 w-full h-full"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         referrerPolicy="strict-origin-when-cross-origin"
@@ -265,20 +265,20 @@ export default function Home() {
                     "text-3xl md:text-4xl font-bold font-headline mb-4",
                     adBanner.flashTitle && 'animate-flash'
                 )}>
-                    {adBanner.title}
+                    {adBanner.title[language]}
                 </h2>
                 <p className="text-muted-foreground mb-6">
-                    {adBanner.description}
+                    {adBanner.description[language]}
                 </p>
 
                 <div className="flex justify-center md:justify-start gap-4 mb-6">
                     <div className="flex flex-col items-center justify-center p-3 rounded-lg bg-primary/10 border border-primary/20">
                         <DynamicCounter endValue={adBanner.counter1Value || 0} suffix="+" className="text-2xl font-bold text-primary" />
-                        <p className="text-xs text-muted-foreground mt-1">{adBanner.counter1Label || 'Happy Clients'}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{adBanner.counter1Label?.[language] || ''}</p>
                     </div>
                     <div className="flex flex-col items-center justify-center p-3 rounded-lg bg-primary/10 border border-primary/20">
                         <DynamicCounter endValue={adBanner.counter2Value || 0} suffix="+" className="text-2xl font-bold text-primary" />
-                        <p className="text-xs text-muted-foreground mt-1">{adBanner.counter2Label || 'Transformations'}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{adBanner.counter2Label?.[language] || ''}</p>
                     </div>
                 </div>
 
@@ -288,7 +288,7 @@ export default function Home() {
                         target={isAdBannerLinkExternal ? '_blank' : '_self'}
                         rel={isAdBannerLinkExternal ? 'noopener noreferrer' : ''}
                     >
-                        {adBanner.buttonText}
+                        {adBanner.buttonText[language]}
                         <ArrowRight className="ml-2 h-5 w-5" />
                     </Link>
                 </Button>

@@ -72,14 +72,14 @@ const adBannerSchema = z.object({
   imageAlt: z.string().min(1, { message: "Alt text is required." }),
   videoUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
   backgroundVideoUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
-  title: z.string().min(1, { message: "Title is required." }),
-  description: z.string().min(1, { message: "Description is required." }),
-  buttonText: z.string().min(1, { message: "Button text is required." }),
+  title: translatedTextSchema,
+  description: translatedTextSchema,
+  buttonText: translatedTextSchema,
   buttonLink: z.string().min(1, { message: "Button link is required." }),
   counter1Value: z.coerce.number().optional(),
-  counter1Label: z.string().optional(),
+  counter1Label: translatedTextSchema.optional(),
   counter2Value: z.coerce.number().optional(),
-  counter2Label: z.string().optional(),
+  counter2Label: translatedTextSchema.optional(),
   flashTitle: z.boolean().optional(),
 });
 
@@ -160,7 +160,7 @@ const emptyValues: SiteSettings = {
     },
     marquee: { messages: [{ text: "", logoUrl: "", logoAlt: "" }] },
     partnershipLogos: [{ src: "", alt: "", hint: "", url: "" }],
-    adBanner: { imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", title: "", description: "", buttonText: "", buttonLink: "", counter1Value: 0, counter1Label: '', counter2Value: 0, counter2Label: '', flashTitle: false },
+    adBanner: { imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", title: { en: "", ar: "" }, description: { en: "", ar: "" }, buttonText: { en: "", ar: "" }, buttonLink: "", counter1Value: 0, counter1Label: { en: "", ar: "" }, counter2Value: 0, counter2Label: { en: "", ar: "" }, flashTitle: false },
     aboutPage: { title: { en: "", ar: "" }, subtitle: { en: "", ar: "" }, imageUrl: "", imageAlt: "", videoUrl: "", backgroundVideoUrl: "", storyTitle: { en: "", ar: "" }, storyContent1: { en: "", ar: "" }, storyContent2: { en: "", ar: "" }, missionTitle: { en: "", ar: "" }, missionContent: { en: "", ar: "" }, visionTitle: { en: "", ar: "" }, visionContent: { en: "", ar: "" }, valuesTitle: { en: "", ar: "" }, valuesContent: { en: "", ar: "" } },
     faqPage: { title: "", subtitle: "", faqs: [{ question: "", answer: "" }] },
     termsPage: { title: "Terms of Service", content: "Please add your terms of service here." },
@@ -200,11 +200,11 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
         const faqs = settings.faqPage?.faqs?.map(f => ({ question: f.question || '', answer: f.answer || '' })) || [];
         
         form.reset({
-             hero: { ...emptyValues.hero, ...settings.hero },
+             hero: { ...emptyValues.hero, ...settings.hero, button2Text: settings.hero?.button2Text || { en: '', ar: '' }, button2Link: settings.hero?.button2Link || '' },
              coreServices: { ...emptyValues.coreServices, ...settings.coreServices },
              marquee: { messages: messages.length > 0 ? messages : emptyValues.marquee.messages }, 
              partnershipLogos: partnershipLogos.length > 0 ? partnershipLogos : emptyValues.partnershipLogos,
-             adBanner: { ...emptyValues.adBanner, ...settings.adBanner },
+             adBanner: { ...emptyValues.adBanner, ...settings.adBanner, counter1Label: settings.adBanner?.counter1Label || { en: '', ar: '' }, counter2Label: settings.adBanner?.counter2Label || { en: '', ar: '' } },
              aboutPage: { ...emptyValues.aboutPage, ...settings.aboutPage },
              faqPage: { 
                 title: settings.faqPage?.title || emptyValues.faqPage.title,
@@ -654,9 +654,14 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                             </FormItem>
                         )} />
 
-                        <FormField control={form.control} name="adBanner.title" render={({ field }) => (
-                            <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="Enter a catchy title" /></FormControl><FormMessage /></FormItem>
-                        )} />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField control={form.control} name="adBanner.title.en" render={({ field }) => (
+                                <FormItem><FormLabel>Title (English)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="Enter a catchy title" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                            <FormField control={form.control} name="adBanner.title.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Title (Arabic)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="Enter a catchy title" dir="rtl" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
                         <FormField
                             control={form.control}
                             name="adBanner.flashTitle"
@@ -677,35 +682,53 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                                 </FormItem>
                             )}
                         />
-                        <FormField control={form.control} name="adBanner.description" render={({ field }) => (
-                            <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} placeholder="Enter a short description" /></FormControl><FormMessage /></FormItem>
-                        )} />
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField control={form.control} name="adBanner.description.en" render={({ field }) => (
+                                <FormItem><FormLabel>Description (English)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} placeholder="Enter a short description" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                            <FormField control={form.control} name="adBanner.description.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Description (Arabic)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} placeholder="Enter a short description" dir="rtl" /></FormControl><FormMessage /></FormItem>
+                            )} />
+                        </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField control={form.control} name="adBanner.counter1Value" render={({ field }) => (
                                 <FormItem><FormLabel>Counter 1 Value</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
-                            <FormField control={form.control} name="adBanner.counter1Label" render={({ field }) => (
-                                <FormItem><FormLabel>Counter 1 Label</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="e.g. Happy Clients" /></FormControl><FormMessage /></FormItem>
-                            )} />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormField control={form.control} name="adBanner.counter1Label.en" render={({ field }) => (
+                                    <FormItem><FormLabel>Counter 1 Label (EN)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="e.g. Happy Clients" /></FormControl><FormMessage /></FormItem>
+                                )} />
+                                <FormField control={form.control} name="adBanner.counter1Label.ar" render={({ field }) => (
+                                    <FormItem><FormLabel>Counter 1 Label (AR)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="e.g. عملاء سعداء" dir="rtl" /></FormControl><FormMessage /></FormItem>
+                                )} />
+                            </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField control={form.control} name="adBanner.counter2Value" render={({ field }) => (
                                 <FormItem><FormLabel>Counter 2 Value</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} placeholder="e.g. 50" /></FormControl><FormMessage /></FormItem>
                             )} />
-                            <FormField control={form.control} name="adBanner.counter2Label" render={({ field }) => (
-                                <FormItem><FormLabel>Counter 2 Label</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="e.g. Products Sold" /></FormControl><FormMessage /></FormItem>
-                            )} />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <FormField control={form.control} name="adBanner.counter2Label.en" render={({ field }) => (
+                                    <FormItem><FormLabel>Counter 2 Label (EN)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="e.g. Products Sold" /></FormControl><FormMessage /></FormItem>
+                                )} />
+                                <FormField control={form.control} name="adBanner.counter2Label.ar" render={({ field }) => (
+                                    <FormItem><FormLabel>Counter 2 Label (AR)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="e.g. المنتجات المباعة" dir="rtl" /></FormControl><FormMessage /></FormItem>
+                                )} />
+                            </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormField control={form.control} name="adBanner.buttonText" render={({ field }) => (
-                                <FormItem><FormLabel>Button Text</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="Shop Now" /></FormControl><FormMessage /></FormItem>
+                            <FormField control={form.control} name="adBanner.buttonText.en" render={({ field }) => (
+                                <FormItem><FormLabel>Button Text (English)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="Shop Now" /></FormControl><FormMessage /></FormItem>
                             )} />
-                            <FormField control={form.control} name="adBanner.buttonLink" render={({ field }) => (
-                                <FormItem><FormLabel>Button Link</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="/#products" /></FormControl><FormMessage /></FormItem>
+                             <FormField control={form.control} name="adBanner.buttonText.ar" render={({ field }) => (
+                                <FormItem><FormLabel>Button Text (Arabic)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="تسوق الآن" dir="rtl" /></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
+                        <FormField control={form.control} name="adBanner.buttonLink" render={({ field }) => (
+                            <FormItem><FormLabel>Button Link</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="/#products" /></FormControl><FormMessage /></FormItem>
+                        )} />
                     </CardContent>
                 </CollapsibleContent>
             </Card>

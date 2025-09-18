@@ -166,14 +166,14 @@ export type AdBanner = {
   imageAlt: string;
   videoUrl?: string;
   backgroundVideoUrl?: string;
-  title: string;
-  description: string;
-  buttonText: string;
+  title: TranslatedText;
+  description: TranslatedText;
+  buttonText: TranslatedText;
   buttonLink: string;
   counter1Value?: number;
-  counter1Label?: string;
+  counter1Label?: TranslatedText;
   counter2Value?: number;
-  counter2Label?: string;
+  counter2Label?: TranslatedText;
   flashTitle?: boolean;
 };
 
@@ -346,6 +346,4 @@ export type Admin = {
   updatedAt: string; // ISO 8601 string
   isActive: boolean;
 };
-    
-
     
