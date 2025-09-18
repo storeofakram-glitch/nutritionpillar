@@ -23,6 +23,7 @@ export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?
     const [commissionsSearch, setCommissionsSearch] = useState("");
     const [clientPaymentsSearch, setClientPaymentsSearch] = useState("");
     const [pendingPayoutsSearch, setPendingPayoutsSearch] = useState("");
+    const [payoutsHistorySearch, setPayoutsHistorySearch] = useState("");
     
     const fetchData = async () => {
         setLoading(true);
@@ -87,6 +88,14 @@ export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?
         );
     }, [filteredCoachesWithFinancials, pendingPayoutsSearch]);
     
+    const filteredPayoutsHistory = useMemo(() => {
+        const coachMap = new Map(coaches.map(c => [c.id, c.name]));
+        return payouts.filter(p => {
+            const coachName = coachMap.get(p.coachId) || '';
+            return coachName.toLowerCase().includes(payoutsHistorySearch.toLowerCase());
+        });
+    }, [payouts, coaches, payoutsHistorySearch]);
+
     const StatsCard = ({ title, value, icon: Icon, description }: { title: string, value: string, icon: React.ElementType, description: string }) => (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -139,7 +148,13 @@ export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?
                 searchTerm={pendingPayoutsSearch}
                 onSearchTermChange={setPendingPayoutsSearch}
             />
-            <PayoutsHistoryTable payouts={payouts} coaches={coaches} isLoading={loading} />
+            <PayoutsHistoryTable 
+                payouts={filteredPayoutsHistory} 
+                coaches={coaches} 
+                isLoading={loading}
+                searchTerm={payoutsHistorySearch}
+                onSearchTermChange={setPayoutsHistorySearch}
+            />
         </div>
     );
 }

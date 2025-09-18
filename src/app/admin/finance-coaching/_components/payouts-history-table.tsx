@@ -7,14 +7,18 @@ import { Badge } from "@/components/ui/badge";
 import type { Coach, CoachPayout } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 interface PayoutsHistoryTableProps {
     payouts: CoachPayout[];
     coaches: Coach[];
     isLoading: boolean;
+    searchTerm: string;
+    onSearchTermChange: (term: string) => void;
 }
 
-export default function PayoutsHistoryTable({ payouts, coaches, isLoading }: PayoutsHistoryTableProps) {
+export default function PayoutsHistoryTable({ payouts, coaches, isLoading, searchTerm, onSearchTermChange }: PayoutsHistoryTableProps) {
     const coachMap = new Map(coaches.map(c => [c.id, c.name]));
 
     const renderSkeleton = () => Array.from({ length: 3 }).map((_, i) => (
@@ -38,8 +42,22 @@ export default function PayoutsHistoryTable({ payouts, coaches, isLoading }: Pay
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Payout History</CardTitle>
-                <CardDescription>A log of all past payouts made to coaches.</CardDescription>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex-1">
+                        <CardTitle>Payout History</CardTitle>
+                        <CardDescription>A log of all past payouts made to coaches.</CardDescription>
+                    </div>
+                     <div className="relative">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            type="search"
+                            placeholder="Search by coach..."
+                            className="pl-8 sm:w-[240px]"
+                            value={searchTerm}
+                            onChange={(e) => onSearchTermChange(e.target.value)}
+                        />
+                    </div>
+                </div>
             </CardHeader>
             <CardContent>
                 <Table>
