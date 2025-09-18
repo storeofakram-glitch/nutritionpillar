@@ -2,7 +2,7 @@
 
 'use server';
 
-import { collection, addDoc, getDocs, query, orderBy } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, orderBy, doc, deleteDoc } from 'firebase/firestore';
 import { getDb } from '@/lib/firebase';
 import { revalidatePath } from 'next/cache';
 
@@ -68,5 +68,22 @@ export async function getTeamApplications(): Promise<TeamApplicationData[]> {
     } catch (error) {
         console.error("Error fetching team applications: ", error);
         return [];
+    }
+}
+
+/**
+ * Deletes a team application from the database.
+ * @param id The ID of the application to delete.
+ * @returns An object indicating success or failure.
+ */
+export async function deleteTeamApplication(id: string) {
+    try {
+        const docRef = doc(getDb(), 'teamApplications', id);
+        await deleteDoc(docRef);
+        revalidatePath('/admin/team-management');
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting team application: ", error);
+        return { success: false, error: (error as Error).message };
     }
 }

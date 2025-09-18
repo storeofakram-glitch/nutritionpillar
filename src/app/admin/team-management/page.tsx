@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import Link from "next/link";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import DeleteTeamApplicationDialog from "./_components/delete-team-application-dialog";
 
 const ApplicationDetailsDialog = ({ application }: { application: TeamApplicationData }) => {
     return (
@@ -78,6 +79,8 @@ const ApplicationDetailsDialog = ({ application }: { application: TeamApplicatio
 export default function TeamManagementPage({ authLoading }: { authLoading?: boolean }) {
     const [applications, setApplications] = useState<TeamApplicationData[]>([]);
     const [loading, setLoading] = useState(true);
+    const [selectedApp, setSelectedApp] = useState<TeamApplicationData | null>(null);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const { toast } = useToast();
 
     const fetchApplications = async () => {
@@ -95,6 +98,17 @@ export default function TeamManagementPage({ authLoading }: { authLoading?: bool
     useEffect(() => {
         fetchApplications();
     }, []);
+
+    const handleDeleteClick = (application: TeamApplicationData) => {
+        setSelectedApp(application);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const onDialogClose = () => {
+        setSelectedApp(null);
+        setIsDeleteDialogOpen(false);
+        fetchApplications();
+    };
 
     const downloadCSV = () => {
         const header = "Name,Email,Phone,Age,Position,Specialty,Resume URL,TikTok,Instagram,LinkedIn,Message\n";
@@ -137,74 +151,87 @@ export default function TeamManagementPage({ authLoading }: { authLoading?: bool
     ));
 
     return (
-        <Card>
-            <CardHeader>
-                <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                        <CardTitle>Team Management</CardTitle>
-                        <CardDescription>Review applications from individuals wanting to join your team.</CardDescription>
+        <>
+            <Card>
+                <CardHeader>
+                    <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                            <CardTitle>Team Management</CardTitle>
+                            <CardDescription>Review applications from individuals wanting to join your team.</CardDescription>
+                        </div>
+                         <div className="flex items-center gap-2">
+                            <Button variant="outline" size="icon" onClick={fetchApplications} disabled={authLoading || loading}>
+                                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                            </Button>
+                            <Button variant="outline" size="icon" onClick={downloadCSV} disabled={authLoading || loading || applications.length === 0}>
+                                <Download className="h-4 w-4" />
+                            </Button>
+                        </div>
                     </div>
-                     <div className="flex items-center gap-2">
-                        <Button variant="outline" size="icon" onClick={fetchApplications} disabled={authLoading || loading}>
-                            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                        </Button>
-                        <Button variant="outline" size="icon" onClick={downloadCSV} disabled={authLoading || loading || applications.length === 0}>
-                            <Download className="h-4 w-4" />
-                        </Button>
-                    </div>
-                </div>
-            </CardHeader>
-            <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Applicant</TableHead>
-                            <TableHead>Position</TableHead>
-                            <TableHead>Specialty</TableHead>
-                            <TableHead>Date</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {loading ? renderSkeleton() : applications.map(app => (
-                            <Dialog key={app.id}>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Applicant</TableHead>
+                                <TableHead>Position</TableHead>
+                                <TableHead>Specialty</TableHead>
+                                <TableHead>Date</TableHead>
+                                <TableHead className="text-right">Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {loading ? renderSkeleton() : applications.map(app => (
+                                <Dialog key={app.id}>
+                                    <TableRow>
+                                        <TableCell className="font-medium">{app.name}</TableCell>
+                                        <TableCell><Badge variant="secondary">{app.position}</Badge></TableCell>
+                                        <TableCell><Badge variant="outline">{app.specialty}</Badge></TableCell>
+                                        <TableCell className="text-muted-foreground">{formatDistanceToNow(new Date(app.createdAt), { addSuffix: true })}</TableCell>
+                                        <TableCell className="text-right">
+                                             <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button size="icon" variant="ghost">
+                                                        <MoreHorizontal className="h-4 w-4" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent>
+                                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                    <DialogTrigger asChild>
+                                                        <DropdownMenuItem>View Details</DropdownMenuItem>
+                                                    </DialogTrigger>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem asChild><Link href={`mailto:${app.email}`}><Mail className="mr-2 h-4 w-4" />Email</Link></DropdownMenuItem>
+                                                    <DropdownMenuItem asChild><Link href={`tel:${app.phone}`}><Phone className="mr-2 h-4 w-4" />Call</Link></DropdownMenuItem>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem onSelect={() => handleDeleteClick(app)} className="text-red-500">Delete</DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </TableCell>
+                                    </TableRow>
+                                    <ApplicationDetailsDialog application={app} />
+                                </Dialog>
+                            ))}
+                            {!loading && applications.length === 0 && (
                                 <TableRow>
-                                    <TableCell className="font-medium">{app.name}</TableCell>
-                                    <TableCell><Badge variant="secondary">{app.position}</Badge></TableCell>
-                                    <TableCell><Badge variant="outline">{app.specialty}</Badge></TableCell>
-                                    <TableCell className="text-muted-foreground">{formatDistanceToNow(new Date(app.createdAt), { addSuffix: true })}</TableCell>
-                                    <TableCell className="text-right">
-                                         <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button size="icon" variant="ghost">
-                                                    <MoreHorizontal className="h-4 w-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent>
-                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                <DialogTrigger asChild>
-                                                    <DropdownMenuItem>View Details</DropdownMenuItem>
-                                                </DialogTrigger>
-                                                <DropdownMenuSeparator />
-                                                <DropdownMenuItem asChild><Link href={`mailto:${app.email}`}><Mail className="mr-2 h-4 w-4" />Email</Link></DropdownMenuItem>
-                                                <DropdownMenuItem asChild><Link href={`tel:${app.phone}`}><Phone className="mr-2 h-4 w-4" />Call</Link></DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
+                                    <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                                        No applications found.
                                     </TableCell>
                                 </TableRow>
-                                <ApplicationDetailsDialog application={app} />
-                            </Dialog>
-                        ))}
-                        {!loading && applications.length === 0 && (
-                            <TableRow>
-                                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
-                                    No applications found.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </CardContent>
-        </Card>
+                            )}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+
+            {selectedApp && (
+                <DeleteTeamApplicationDialog 
+                    isOpen={isDeleteDialogOpen}
+                    onOpenChange={setIsDeleteDialogOpen}
+                    application={selectedApp}
+                    onDialogClose={onDialogClose}
+                />
+            )}
+        </>
     )
 }
