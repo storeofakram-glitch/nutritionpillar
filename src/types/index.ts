@@ -333,7 +333,7 @@ export type CoachingApplication = {
     message?: string;
   };
   createdAt: string; // ISO 8601 string
-  status: 'new' | 'read' | 'contacted' | 'active' | 'rejected' | 'archived';
+  status: 'new' | 'contacted' | 'active' | 'rejected' | 'archived';
 };
 
 export type Admin = {

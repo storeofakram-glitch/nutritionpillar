@@ -50,10 +50,6 @@ export default function ApplicationList({ coachId }: ApplicationListProps) {
     const handleView = async (application: CoachingApplication) => {
         setSelectedApplication(application);
         setIsViewDialogOpen(true);
-        if (application.status === 'new') {
-            await updateApplicationStatus(application.id, 'read');
-            fetchData();
-        }
     };
 
     const handleDelete = (application: CoachingApplication) => {
@@ -77,7 +73,6 @@ export default function ApplicationList({ coachId }: ApplicationListProps) {
         switch (status) {
             case 'new': return 'bg-primary hover:bg-primary/80';
             case 'active': return 'bg-green-600 hover:bg-green-700 text-white';
-            case 'read': return 'bg-gray-500 hover:bg-gray-600 text-white';
             case 'contacted':
                 return 'bg-yellow-400 hover:bg-yellow-500 text-yellow-900';
             case 'archived':
