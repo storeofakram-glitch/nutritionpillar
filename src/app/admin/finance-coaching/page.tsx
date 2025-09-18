@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import CommissionTable from "./_components/commission-table";
 import ClientPaymentsTable from "./_components/client-payments-table";
 import PayoutsTable from "./_components/payouts-table";
+import PayoutsHistoryTable from "./_components/payouts-history-table";
 
 export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?: boolean }) {
     const [coaches, setCoaches] = useState<Coach[]>([]);
@@ -99,7 +100,8 @@ export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?
                 <ClientPaymentsTable clients={payments} coaches={coaches} isLoading={loading} onDataChange={fetchData} />
             </div>
 
-            <PayoutsTable payouts={payouts} coachesWithPending={coachesWithPending} isLoading={loading} onDataChange={fetchData} />
+            <PayoutsTable coachesWithPending={coachesWithPending} isLoading={loading} onDataChange={fetchData} />
+            <PayoutsHistoryTable payouts={payouts} coaches={coaches} isLoading={loading} />
         </div>
     );
 }
