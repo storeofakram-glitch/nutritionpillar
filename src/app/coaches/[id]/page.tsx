@@ -4,9 +4,11 @@ import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import CoachProfileView from './_components/coach-profile-view';
 import Link from 'next/link';
+import React from 'react';
 
 // This is a Server Component
-export default async function CoachProfilePage({ params }: { params: { id: string } }) {
+export default async function CoachProfilePage({ params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = React.use(paramsPromise);
   const coach = await getCoachById(params.id);
 
   if (!coach) {

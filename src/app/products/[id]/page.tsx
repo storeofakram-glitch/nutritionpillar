@@ -3,9 +3,11 @@ import { getProductById } from '@/services/product-service';
 import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import ProductView from './_components/product-view';
+import React from 'react';
 
 // This is now a Server Component
-export default async function ProductDetailPage({ params }: { params: { id: string } }) {
+export default async function ProductDetailPage({ params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = React.use(paramsPromise);
   const product = await getProductById(params.id);
 
   if (!product) {
