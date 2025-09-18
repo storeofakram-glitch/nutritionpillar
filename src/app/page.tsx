@@ -201,7 +201,7 @@ export default function Home() {
                 </CardContent>
                 <CardFooter>
                   <Button asChild>
-                    <Link href={coreServices.services[1].buttonLink}>{coreServices.services[1].buttonText[language]} <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                    <Link href={coreServices.services[1].buttonLink}>{coreServices.services[1].buttonText[language]}</Link>
                   </Button>
                 </CardFooter>
               </Card>
