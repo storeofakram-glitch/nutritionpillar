@@ -489,7 +489,7 @@ export default function JoinTeamPage() {
                         <FormField control={form.control} name="resumeUrl" render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="text-white font-bold">Resume/Portfolio Link (Optional)</FormLabel>
-                                <FormControl><Input placeholder="https://linkedin.com/in/yourprofile" {...field} value={field.value ?? ''} className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500" /></FormControl>
+                                <FormControl><Input placeholder="https://your-portfolio-url.com" {...field} value={field.value ?? ''} className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500" /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
@@ -536,5 +536,6 @@ export default function JoinTeamPage() {
     </div>
   );
 }
+
 
 
