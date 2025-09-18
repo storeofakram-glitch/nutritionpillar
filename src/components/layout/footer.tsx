@@ -23,15 +23,15 @@ export default function Footer() {
 
   return (
     <footer className="border-t">
-      <div className="container relative py-8">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
-          <div className="order-2 md:order-1 flex-1">
+      <div className="container py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+          <div className="order-2 md:order-1 flex items-center justify-center md:justify-start">
             <p className="text-sm text-muted-foreground">
               © {new Date().getFullYear()} Nutrition Pillar. All Rights Reserved.
             </p>
           </div>
           
-          <div className="order-1 md:order-2 flex flex-1 items-center justify-center gap-1">
+          <div className="order-1 md:order-2 flex items-center justify-center gap-1">
               <Button variant="ghost" size="icon" asChild>
                   <Link href={socialLinks.facebook || '#'} aria-label="Facebook"><Facebook className="h-5 w-5" /></Link>
               </Button>
@@ -49,8 +49,8 @@ export default function Footer() {
               </Button>
           </div>
 
-          <div className="order-3 md:order-3 flex-1 flex justify-center md:justify-end">
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+          <div className="order-3 md:order-3 hidden md:flex justify-end">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <Link href="/terms-of-service" className="hover:text-primary">Terms of Service</Link>
               <Link href="/privacy-policy" className="hover:text-primary">Privacy Policy</Link>
             </div>

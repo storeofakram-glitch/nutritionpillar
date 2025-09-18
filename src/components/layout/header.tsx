@@ -96,7 +96,16 @@ export default function Header() {
                           </SheetClose>
                         ))}
                    </nav>
-                   <div className="mt-auto flex items-center justify-center gap-2 border-t pt-6">
+                   <div className="mt-auto pt-6 border-t">
+                     <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground mb-4">
+                        <SheetClose asChild>
+                            <Link href="/terms-of-service" className="hover:text-primary">Terms of Service</Link>
+                        </SheetClose>
+                        <SheetClose asChild>
+                            <Link href="/privacy-policy" className="hover:text-primary">Privacy Policy</Link>
+                        </SheetClose>
+                    </div>
+                    <div className="flex items-center justify-center gap-2">
                         <Button variant="ghost" size="icon" asChild>
                             <Link href={socialLinks.facebook || '#'} aria-label="Facebook"><Facebook className="h-5 w-5" /></Link>
                         </Button>
@@ -113,6 +122,7 @@ export default function Header() {
                             <Link href={socialLinks.twitter || '#'} aria-label="Twitter"><Twitter className="h-5 w-5" /></Link>
                         </Button>
                     </div>
+                   </div>
                 </SheetContent>
             </Sheet>
         </div>
