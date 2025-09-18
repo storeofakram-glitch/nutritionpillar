@@ -134,7 +134,7 @@ export default function Home() {
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button asChild size="lg" className="font-bold bg-primary/70 text-white hover:bg-primary/90 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
-              <Link href={hero.buttonLink}>{hero.buttonText}</Link>
+              <Link href={hero.buttonLink}>{hero.buttonText[language]}</Link>
             </Button>
             {hero.button2Text?.en && hero.button2Link && (
                 <Button asChild size="lg" className="font-bold bg-primary/70 text-white hover:bg-primary/90 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
@@ -357,3 +357,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

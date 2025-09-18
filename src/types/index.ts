@@ -129,7 +129,7 @@ export type HeroSettings = {
     alt: string;
     title: string;
     description: TranslatedText;
-    buttonText: string;
+    buttonText: TranslatedText;
     buttonLink: string;
     button2Text?: TranslatedText;
     button2Link?: string;
@@ -346,4 +346,6 @@ export type Admin = {
   updatedAt: string; // ISO 8601 string
   isActive: boolean;
 };
+    
+
     

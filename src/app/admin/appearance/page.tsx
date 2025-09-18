@@ -1,4 +1,5 @@
 
+
 // This is a new file for the Appearance management page in the admin dashboard.
 "use client";
 
@@ -34,7 +35,7 @@ const heroSettingsSchema = z.object({
     alt: z.string().min(1, { message: "Alt text is required." }),
     title: z.string().min(1, { message: "Title is required." }),
     description: translatedTextSchema,
-    buttonText: z.string().min(1, { message: "Button text is required." }),
+    buttonText: translatedTextSchema,
     buttonLink: z.string().min(1, { message: "Button link is required." }),
     button2Text: translatedTextSchema.optional(),
     button2Link: z.string().optional(),
@@ -148,7 +149,7 @@ const siteSettingsSchema = z.object({
 });
 
 const emptyValues: SiteSettings = {
-    hero: { imageUrl: "", videoUrl: "", alt: "", title: "", description: { en: "", ar: "" }, buttonText: "", buttonLink: "", button2Text: { en: "", ar: "" }, button2Link: "" },
+    hero: { imageUrl: "", videoUrl: "", alt: "", title: "", description: { en: "", ar: "" }, buttonText: { en: "", ar: "" }, buttonLink: "", button2Text: { en: "", ar: "" }, button2Link: "" },
     coreServices: {
         heading: { en: "Our Core Services", ar: "خدماتنا الأساسية" },
         subheading: { en: "WHAT WE OFFER", ar: "ماذا نقدم" },
@@ -261,7 +262,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         
         <Collapsible open={isHeroOpen} onOpenChange={setIsHeroOpen}>
-            <Card className={cn("transition-all", isHeroOpen && "border-primary")}>
+            <Card className={cn("transition-all", isHeroOpen && "border-primary border-2")}>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                         <CardTitle>Hero Section</CardTitle>
@@ -323,16 +324,25 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                         <Separator />
                         <p className="text-sm font-medium">Button 1</p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                             <FormField control={form.control} name="hero.buttonText" render={({ field }) => (
+                             <FormField control={form.control} name="hero.buttonText.en" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Button Text</FormLabel>
+                                    <FormLabel>Button Text (English)</FormLabel>
                                     <FormControl><Input {...field} value={field.value ?? ''} placeholder="Shop Now" /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
+                              <FormField control={form.control} name="hero.buttonText.ar" render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Button Text (Arabic)</FormLabel>
+                                    <FormControl><Input {...field} value={field.value ?? ''} placeholder="تسوق الآن" dir="rtl" /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                        </div>
+                        <div className="grid grid-cols-1">
                              <FormField control={form.control} name="hero.buttonLink" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Button Link</FormLabel>
+                                    <FormLabel>Button 1 Link</FormLabel>
                                     <FormControl><Input {...field} value={field.value ?? ''} placeholder="/#products" /></FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -371,7 +381,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
         </Collapsible>
         
         <Collapsible open={isCoreServicesOpen} onOpenChange={setIsCoreServicesOpen}>
-            <Card className={cn("transition-all", isCoreServicesOpen && "border-primary")}>
+            <Card className={cn("transition-all", isCoreServicesOpen && "border-primary border-2")}>
                  <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                         <CardTitle>Core Services Section</CardTitle>
@@ -452,7 +462,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
         </Collapsible>
         
         <Collapsible open={isMarqueeOpen} onOpenChange={setIsMarqueeOpen}>
-            <Card className={cn("transition-all", isMarqueeOpen && "border-primary")}>
+            <Card className={cn("transition-all", isMarqueeOpen && "border-primary border-2")}>
             <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                     <CardTitle>Marquee Settings</CardTitle>
@@ -523,7 +533,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
 
 
         <Collapsible open={isLogosOpen} onOpenChange={setIsLogosOpen}>
-          <Card className={cn("transition-all", isLogosOpen && "border-primary")}>
+          <Card className={cn("transition-all", isLogosOpen && "border-primary border-2")}>
             <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                     <CardTitle>Partnership Logos</CardTitle>
@@ -597,7 +607,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
         
         
         <Collapsible open={isBannerOpen} onOpenChange={setIsBannerOpen}>
-            <Card className={cn("transition-all", isBannerOpen && "border-primary")}>
+            <Card className={cn("transition-all", isBannerOpen && "border-primary border-2")}>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                         <CardTitle>Ad Banner</CardTitle>
@@ -702,7 +712,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
         </Collapsible>
         
         <Collapsible open={isAboutOpen} onOpenChange={setIsAboutOpen}>
-            <Card className={cn("transition-all", isAboutOpen && "border-primary")}>
+            <Card className={cn("transition-all", isAboutOpen && "border-primary border-2")}>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                         <CardTitle>About Page Settings</CardTitle>
@@ -834,7 +844,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
         </Collapsible>
         
         <Collapsible open={isFaqOpen} onOpenChange={setIsFaqOpen}>
-            <Card className={cn("transition-all", isFaqOpen && "border-primary")}>
+            <Card className={cn("transition-all", isFaqOpen && "border-primary border-2")}>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                         <CardTitle>FAQ Page Settings</CardTitle>
@@ -903,7 +913,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
         </Collapsible>
 
         <Collapsible open={isTermsOpen} onOpenChange={setIsTermsOpen}>
-            <Card className={cn("transition-all", isTermsOpen && "border-primary")}>
+            <Card className={cn("transition-all", isTermsOpen && "border-primary border-2")}>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                         <CardTitle>Terms of Service Page</CardTitle>
@@ -962,7 +972,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
         </Collapsible>
         
         <Collapsible open={isPrivacyOpen} onOpenChange={setIsPrivacyOpen}>
-            <Card className={cn("transition-all", isPrivacyOpen && "border-primary")}>
+            <Card className={cn("transition-all", isPrivacyOpen && "border-primary border-2")}>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                         <CardTitle>Privacy Policy Page</CardTitle>
@@ -1021,7 +1031,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
         </Collapsible>
 
         <Collapsible open={isSocialOpen} onOpenChange={setIsSocialOpen}>
-            <Card className={cn("transition-all", isSocialOpen && "border-primary")}>
+            <Card className={cn("transition-all", isSocialOpen && "border-primary border-2")}>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                         <CardTitle>Social Links & Location</CardTitle>
@@ -1071,5 +1081,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
     </Form>
   );
 }
+
+    
 
     
