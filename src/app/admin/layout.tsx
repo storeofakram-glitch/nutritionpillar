@@ -90,7 +90,7 @@ export default function AdminLayout({
                 <SidebarMenuItem key={item.href}>
                   <Link href={item.href}>
                     <SidebarMenuButton 
-                        isActive={pathname.startsWith(item.href) && (item.href === '/admin' ? pathname === item.href : true) }
+                        isActive={item.href === '/admin' ? pathname === item.href : pathname.startsWith(item.href)}
                         tooltip={item.label}
                     >
                         <item.icon />
@@ -116,7 +116,7 @@ export default function AdminLayout({
                 <SidebarTrigger className="md:hidden" />
                 <div className="flex-1">
                     <h1 className="text-base md:text-lg font-semibold font-headline">
-                        {navItems.find(item => pathname.startsWith(item.href) && (item.href === '/admin' ? pathname === item.href : true))?.label || 'Admin'}
+                        {navItems.find(item => pathname === item.href)?.label || navItems.find(item => item.href !== '/admin' && pathname.startsWith(item.href))?.label || 'Admin'}
                     </h1>
                 </div>
             </header>
