@@ -16,7 +16,6 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import * as React from 'react';
-import { SearchDialog } from '../search-dialog';
 import Image from 'next/image';
 import type { SocialLinks } from '@/types';
 import { getSiteSettings } from '@/services/site-settings-service';
@@ -136,7 +135,7 @@ export default function Header() {
             className="h-8 w-8 rounded-full"
             data-ai-hint="logo"
           />
-          <span className="font-bold font-headline text-base md:text-lg">Nutrition Pillar</span>
+          <span className="hidden font-bold font-headline text-base md:text-lg sm:inline-block">Nutrition Pillar</span>
         </Link>
         <nav className="hidden md:flex items-center gap-6 text-sm">
           {navLinks.map(link => (
@@ -144,7 +143,6 @@ export default function Header() {
           ))}
         </nav>
         <div className="flex flex-1 items-center justify-end gap-2">
-           <SearchDialog />
           <Button asChild variant="ghost" size="icon">
             <Link href="/cart" className="relative">
               <ShoppingBag className="h-5 w-5" />
