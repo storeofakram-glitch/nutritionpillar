@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { addTeamApplication } from '@/services/join-team-service';
@@ -151,7 +151,10 @@ export default function JoinTeamPage() {
                 <CardTitle className="font-headline text-2xl text-foreground">Become a Part of Our Story</CardTitle>
               </CardHeader>
               <CardContent className="flex-grow">
-                <p className="text-muted-foreground">We believe in passion, expertise, and the drive to make a difference. If you're ready to inspire others and grow with a leading brand in fitness, we invite you to apply below.</p>
+                <div className="text-muted-foreground space-y-2">
+                    <p>Join us and inspire others with your expertise. Track your progress and impact as a distinguished coach or expert.</p>
+                    <p dir="rtl" className="font-medium">انضم معنا وألهم الآخرين من خلال خبرتك. تتبع تقدمك وأثرَك كمدرب أو خبير مميز.</p>
+                </div>
               </CardContent>
             </Card>
 
@@ -448,4 +451,5 @@ export default function JoinTeamPage() {
     
 
     
+
 
