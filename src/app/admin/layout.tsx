@@ -86,19 +86,26 @@ export default function AdminLayout({
           </SidebarHeader>
           <SidebarContent className="pt-8">
             <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <Link href={item.href}>
-                    <SidebarMenuButton 
-                        isActive={item.href === '/admin' ? pathname === item.href : pathname.startsWith(item.href)}
-                        tooltip={item.label}
-                    >
-                        <item.icon />
-                        <span>{item.label}</span>
-                    </SidebarMenuButton>
-                  </Link>
-                </SidebarMenuItem>
-              ))}
+              {navItems.map((item) => {
+                const isFinancePage = item.href === '/admin/finance';
+                const isActive = isFinancePage 
+                    ? pathname === item.href 
+                    : (item.href === '/admin' ? pathname === item.href : pathname.startsWith(item.href));
+
+                return (
+                    <SidebarMenuItem key={item.href}>
+                    <Link href={item.href}>
+                        <SidebarMenuButton 
+                            isActive={isActive}
+                            tooltip={item.label}
+                        >
+                            <item.icon />
+                            <span>{item.label}</span>
+                        </SidebarMenuButton>
+                    </Link>
+                    </SidebarMenuItem>
+                )
+              })}
             </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>
