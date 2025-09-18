@@ -1,11 +1,12 @@
-
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, ShoppingBag, Mail, ShieldCheck, Users } from 'lucide-react';
+import { Home, ShoppingBag, ShieldCheck, Users, Search } from 'lucide-react';
 import { useCart } from '@/contexts/cart-context';
 import { cn } from '@/lib/utils';
+import { SearchDialog } from '../search-dialog';
+import { Button } from '../ui/button';
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -48,6 +49,12 @@ export default function BottomNav() {
             <span>{link.label}</span>
           </Link>
         ))}
+         <SearchDialog>
+            <Button variant="ghost" className="flex flex-col items-center gap-1 text-xs text-muted-foreground h-auto p-0">
+                <Search className="h-6 w-6" />
+                <span>Search</span>
+            </Button>
+         </SearchDialog>
       </div>
     </nav>
   );

@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -17,7 +16,7 @@ import { Button } from "./ui/button"
 import type { Product } from "@/types"
 import { getProducts } from "@/services/product-service"
 
-export function SearchDialog() {
+export function SearchDialog({ children }: { children?: React.ReactNode }) {
   const [open, setOpen] = React.useState(false)
   const [allProducts, setAllProducts] = React.useState<Product[]>([])
   const [searchTerm, setSearchTerm] = React.useState("")
@@ -64,15 +63,19 @@ export function SearchDialog() {
 
   return (
     <>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="text-foreground/80"
-        onClick={() => setOpen(true)}
-      >
-        <Search className="h-5 w-5" />
-        <span className="sr-only">Search</span>
-      </Button>
+      {children ? (
+         <div onClick={() => setOpen(true)}>{children}</div>
+      ) : (
+        <Button
+            variant="ghost"
+            size="icon"
+            className="text-foreground/80"
+            onClick={() => setOpen(true)}
+        >
+            <Search className="h-5 w-5" />
+            <span className="sr-only">Search</span>
+        </Button>
+      )}
       <CommandDialog open={open} onOpenChange={handleOpenChange}>
         <CommandInput 
             placeholder="Type a product name..." 
