@@ -161,7 +161,7 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
                             membershipDurationDays: durationInDays
                         });
                         
-                        // Create pending payment record
+                        // Create a "paid" payment record
                         const coach = await getCoachById(application.coachId);
                         const plan = coach?.plans?.find(p => p.title === application.planTitle);
                         const planPrice = plan?.price || 0;
@@ -173,7 +173,7 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
                             coachName: application.coachName,
                             amount: planPrice,
                             paymentDate: new Date().toISOString(),
-                            status: 'pending',
+                            status: 'paid',
                         });
                     }
                 }

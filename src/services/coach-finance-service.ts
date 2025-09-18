@@ -49,19 +49,19 @@ export async function getClientPayments(): Promise<ClientPayment[]> {
 
 export async function addClientPayment(payment: Omit<ClientPayment, 'id' | 'coachShare'>) {
     try {
-        // Here we would get the coach's commission rate
-        // For now, let's assume 70%
-        const coachShare = payment.amount * 0.70;
-        
         await runTransaction(getDb(), async (transaction) => {
+            const coachFinRef = doc(getDb(), 'coach_financials', payment.coachId);
+            const coachFinDoc = await transaction.get(coachFinRef);
+
+            const commissionRate = coachFinDoc.exists() ? coachFinDoc.data().commissionRate : 70;
+            const coachShare = payment.amount * (commissionRate / 100);
+
             const newPayment: Omit<ClientPayment, 'id'> = { ...payment, coachShare };
             const newPaymentRef = doc(collection(getDb(), 'client_payments'));
             transaction.set(newPaymentRef, newPayment);
             
-            // If payment is 'paid', update coach's pending payout
+            // If payment is 'paid', update coach's pending payout immediately
             if(payment.status === 'paid') {
-                const coachFinRef = doc(getDb(), 'coach_financials', payment.coachId);
-                const coachFinDoc = await transaction.get(coachFinRef);
                 if (coachFinDoc.exists()) {
                     const currentPending = coachFinDoc.data().pendingPayout || 0;
                     transaction.update(coachFinRef, { pendingPayout: currentPending + coachShare });
@@ -129,4 +129,3 @@ export async function processPayout(payoutId: string) {
         return { success: false, error: (error as Error).message };
     }
 }
-
