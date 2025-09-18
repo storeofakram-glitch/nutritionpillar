@@ -7,6 +7,8 @@ import { getDb } from '@/lib/firebase';
 import type { CoachingApplication } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { addMembership, findMembershipByApplicationId } from './membership-service';
+import { addClientPayment } from './coach-finance-service';
+import { getCoachById } from './coach-service';
 
 const applicationsCollection = () => collection(getDb(), 'coachingApplications');
 
@@ -113,7 +115,7 @@ export async function getNewApplicationsCount(): Promise<number> {
 
 
 /**
- * Updates the status of a specific application and creates a membership if status is 'active'.
+ * Updates the status of a specific application and creates a membership and payment record if status is 'active'.
  * If the status is 'rejected', the application is deleted.
  * @param id The ID of the application to update.
  * @param status The new status.
@@ -129,32 +131,24 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
         } else {
             await updateDoc(docRef, { status });
 
-            // If the status is 'active', create a membership for the client
+            // If the status is 'active', create related records
             if (status === 'active') {
                 const appDoc = await getDoc(docRef);
                 if (appDoc.exists()) {
-                    const application = appDoc.data() as CoachingApplication;
+                    const application = { id: appDoc.id, ...appDoc.data() } as CoachingApplication;
                     
-                    // Check if a membership already exists for this application
                     const existingMembership = await findMembershipByApplicationId(id);
 
                     if (!existingMembership) {
                         let durationInDays = 0;
                         switch (application.applicant.duration) {
-                            case '1 month':
-                                durationInDays = 30;
-                                break;
-                            case '3 months':
-                                durationInDays = 90;
-                                break;
-                            case '6 months':
-                                durationInDays = 180;
-                                break;
-                            case '1 year':
-                                durationInDays = 365;
-                                break;
+                            case '1 month': durationInDays = 30; break;
+                            case '3 months': durationInDays = 90; break;
+                            case '6 months': durationInDays = 180; break;
+                            case '1 year': durationInDays = 365; break;
                         }
 
+                        // Create membership
                         await addMembership({
                             applicationId: id,
                             customerName: application.applicant.name,
@@ -166,6 +160,21 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
                             type: 'Coaching',
                             membershipDurationDays: durationInDays
                         });
+                        
+                        // Create pending payment record
+                        const coach = await getCoachById(application.coachId);
+                        const plan = coach?.plans?.find(p => p.title === application.planTitle);
+                        const planPrice = plan?.price || 0;
+
+                        await addClientPayment({
+                            clientId: application.id,
+                            clientName: application.applicant.name,
+                            coachId: application.coachId,
+                            coachName: application.coachName,
+                            amount: planPrice,
+                            paymentDate: new Date().toISOString(),
+                            status: 'pending',
+                        });
                     }
                 }
             }
@@ -173,6 +182,7 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
 
         revalidatePath('/admin/coaches');
         revalidatePath('/membership');
+        revalidatePath('/admin/finance-coaching');
         return { success: true };
     } catch (error) {
         console.error("Error updating application status: ", error);
