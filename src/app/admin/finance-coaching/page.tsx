@@ -53,7 +53,9 @@ export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?
 
         const revenue = payments.reduce((sum, p) => p.status === 'paid' ? sum + p.amount : sum, 0);
         const paid = payouts.reduce((sum, p) => p.status === 'completed' ? sum + p.amount : sum, 0);
-        const pending = payouts.reduce((sum, p) => p.status === 'pending' ? sum + p.amount : sum, 0);
+        
+        // Correctly sum the pending payouts from each coach's financial record
+        const pending = financials.reduce((sum, fin) => sum + (fin.pendingPayout || 0), 0);
         
         return { 
             coachesWithFinancials: coachesWithData,
