@@ -310,10 +310,43 @@ export type Coach = {
   createdAt: string; // ISO 8601 string
 };
 
+export type CoachFinancials = {
+    id?: string; // The doc ID is the coachId
+    coachId: string;
+    commissionRate: number; // e.g., 70 for 70%
+    totalEarnings: number;
+    paidOut: number;
+    pendingPayout: number;
+};
+
+export type CoachWithFinancials = Coach & Partial<Omit<CoachFinancials, 'id' | 'coachId'>>;
+
+
+export type ClientPayment = {
+    id: string;
+    clientId: string; // Corresponds to CoachingApplication ID
+    clientName: string;
+    coachId: string;
+    coachName: string;
+    amount: number;
+    paymentDate: string; // ISO 8601
+    status: 'paid' | 'pending' | 'overdue';
+    coachShare: number; // Calculated amount for the coach
+};
+
+export type CoachPayout = {
+    id: string;
+    coachId: string;
+    amount: number;
+    payoutDate: string; // ISO 8601
+    status: 'pending' | 'completed' | 'failed';
+    paymentMethod: 'bank_transfer' | 'cash' | 'other';
+};
+
+
 export type CoachWithMembership = Coach & {
     membershipCode?: string;
 };
-
 
 export type CoachingApplication = {
   id: string;
