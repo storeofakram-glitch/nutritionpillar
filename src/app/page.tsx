@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import Image from 'next/image';
@@ -119,6 +118,7 @@ export default function Home() {
                 )}
                 autoPlay
                 loop
+                muted
                 playsInline
                 onCanPlay={() => setIsVideoLoaded(true)}
             >
@@ -136,7 +136,7 @@ export default function Home() {
             <Button asChild size="lg" className="font-bold bg-primary/70 text-white hover:bg-primary/90 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
               <Link href={hero.buttonLink}>{hero.buttonText[language]}</Link>
             </Button>
-            {hero.button2Text?.en && hero.button2Link && (
+            {hero.button2Text?.[language] && hero.button2Link && (
                 <Button asChild size="lg" className="font-bold bg-primary/70 text-white hover:bg-primary/90 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
                     <Link href={hero.button2Link}>{hero.button2Text[language]}</Link>
                 </Button>
@@ -234,6 +234,7 @@ export default function Home() {
                             )}
                             autoPlay
                             loop
+                            muted
                             playsInline
                             onCanPlay={() => setIsAdVideoLoaded(true)}
                         >
