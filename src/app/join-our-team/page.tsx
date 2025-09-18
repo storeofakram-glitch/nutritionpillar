@@ -30,7 +30,7 @@ const joinTeamFormSchema = z.object({
   certifications: z.array(z.string()).optional(),
   otherCertification: z.string().optional(),
   resumeUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
-  message: z.string().min(20, { message: "Your message should be at least 20 characters." }),
+  message: z.string().optional(),
   tiktokUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
   instagramUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
   linkedinUrl: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
@@ -146,7 +146,7 @@ export default function JoinTeamPage() {
             <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 gradient-border">
               <CardHeader>
                 <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
-                  <Feather className="h-10 w-10 text-primary" />
+                  <Handshake className="h-10 w-10 text-primary" />
                 </div>
                 <CardTitle className="font-headline text-2xl text-foreground">Become a Part of Our Story</CardTitle>
               </CardHeader>
@@ -427,7 +427,7 @@ export default function JoinTeamPage() {
                         </div>
                         <FormField control={form.control} name="message" render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="text-white font-bold">Why do you want to join our team?</FormLabel>
+                                <FormLabel className="text-white font-bold">Why do you want to join our team? (Optional)</FormLabel>
                                 <FormControl><Textarea placeholder="Tell us a bit about yourself and why you'd be a great fit..." rows={6} {...field} className="bg-gray-800 border-gray-700 text-white rounded-xl p-3 focus:ring-cyan-500 focus:border-cyan-500" /></FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -448,3 +448,4 @@ export default function JoinTeamPage() {
     
 
     
+
