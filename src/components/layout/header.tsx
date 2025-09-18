@@ -65,10 +65,11 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center px-4">
-        <div className="mr-4 flex items-center gap-4 md:hidden">
+        {/* Mobile Header */}
+        <div className="flex w-full items-center gap-4 md:hidden">
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                 <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon" className="mr-2">
+                    <Button variant="ghost" size="icon">
                         <Menu className="h-5 w-5" />
                         <span className="sr-only">Toggle Menu</span>
                     </Button>
@@ -124,9 +125,21 @@ export default function Header() {
                    </div>
                 </SheetContent>
             </Sheet>
+            <Link href="/" className="flex-1 flex items-center space-x-2">
+              <Image
+                src="https://github.com/akramFit/Nutrition-Pillar-Assets/blob/main/logo%20nutrition%20pillar.png?raw=true"
+                alt="Nutrition Pillar Logo"
+                width={32}
+                height={32}
+                className="h-8 w-8 rounded-full"
+                data-ai-hint="logo"
+              />
+              <span className="font-bold font-headline text-base">Nutrition Pillar</span>
+            </Link>
         </div>
 
-        <Link href="/" className="mr-6 flex items-center space-x-2">
+        {/* Desktop Header */}
+        <Link href="/" className="mr-6 hidden items-center space-x-2 md:flex">
           <Image
             src="https://github.com/akramFit/Nutrition-Pillar-Assets/blob/main/logo%20nutrition%20pillar.png?raw=true"
             alt="Nutrition Pillar Logo"
@@ -137,12 +150,12 @@ export default function Header() {
           />
           <span className="font-bold font-headline text-base md:inline-block">Nutrition Pillar</span>
         </Link>
-        <nav className="hidden md:flex items-center gap-6 text-sm flex-1">
+        <nav className="hidden md:flex flex-1 items-center gap-6 text-sm">
           {navLinks.map(link => (
               <NavLink key={link.href} href={link.href}>{link.label}</NavLink>
           ))}
         </nav>
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-end gap-2">
             <Button asChild variant="ghost" size="icon">
             <Link href="/cart" className="relative">
                 <ShoppingBag className="h-5 w-5" />
