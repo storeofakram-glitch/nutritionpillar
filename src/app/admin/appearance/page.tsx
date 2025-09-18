@@ -195,7 +195,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
       const settings = await getSiteSettings();
       if (settings) {
         // Ensure nested arrays have default values to avoid uncontrolled component errors
-        const messages = settings.marquee?.messages?.map(m => ({ text: m.text, logoUrl: m.logoUrl || '', logoAlt: m.logoAlt || '' })) || [];
+        const messages = settings.marquee?.messages?.map(m => ({ text: m.text || '', logoUrl: m.logoUrl || '', logoAlt: m.logoAlt || '' })) || [];
         const partnershipLogos = settings.partnershipLogos?.map(l => ({ ...l, src: l.src || '', alt: l.alt || '', url: l.url || '' })) || [];
         const faqs = settings.faqPage?.faqs?.map(f => ({ question: f.question || '', answer: f.answer || '' })) || [];
         
@@ -288,7 +288,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                         <FormField control={form.control} name="hero.imageUrl" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Fallback Image URL</FormLabel>
-                                <FormControl><Input {...field} placeholder="https://picsum.photos/1920/1080" /></FormControl>
+                                <FormControl><Input {...field} value={field.value ?? ''} placeholder="https://picsum.photos/1920/1080" /></FormControl>
                                 <FormDescription>Required. Shown if no video is provided. Recommended aspect ratio: 16:9.</FormDescription>
                                 <FormMessage />
                             </FormItem>
@@ -296,28 +296,28 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                         <FormField control={form.control} name="hero.alt" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Image Alt Text</FormLabel>
-                                <FormControl><Input {...field} placeholder="Hero banner image" /></FormControl>
+                                <FormControl><Input {...field} value={field.value ?? ''} placeholder="Hero banner image" /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
                         <FormField control={form.control} name="hero.title" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Title</FormLabel>
-                                <FormControl><Input {...field} placeholder="Enter a catchy title" /></FormControl>
+                                <FormControl><Input {...field} value={field.value ?? ''} placeholder="Enter a catchy title" /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
                         <FormField control={form.control} name="hero.description.en" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Description (English)</FormLabel>
-                                <FormControl><Textarea {...field} placeholder="Enter a short description" /></FormControl>
+                                <FormControl><Textarea {...field} value={field.value ?? ''} placeholder="Enter a short description" /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
                          <FormField control={form.control} name="hero.description.ar" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Description (Arabic)</FormLabel>
-                                <FormControl><Textarea {...field} placeholder="Enter description in Arabic" dir="rtl" /></FormControl>
+                                <FormControl><Textarea {...field} value={field.value ?? ''} placeholder="Enter description in Arabic" dir="rtl" /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
@@ -327,14 +327,14 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                              <FormField control={form.control} name="hero.buttonText" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Button Text</FormLabel>
-                                    <FormControl><Input {...field} placeholder="Shop Now" /></FormControl>
+                                    <FormControl><Input {...field} value={field.value ?? ''} placeholder="Shop Now" /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                              <FormField control={form.control} name="hero.buttonLink" render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Button Link</FormLabel>
-                                    <FormControl><Input {...field} placeholder="/#products" /></FormControl>
+                                    <FormControl><Input {...field} value={field.value ?? ''} placeholder="/#products" /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
@@ -381,60 +381,60 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                         <div className="space-y-4 rounded-lg border p-4">
                              <h4 className="font-medium">Section Headers</h4>
                              <FormField control={form.control} name="coreServices.subheading.en" render={({ field }) => (
-                                <FormItem><FormLabel>Sub-heading (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Sub-heading (English)</FormLabel><FormControl><Input {...field} value={field.value ?? ''}/></FormControl><FormMessage /></FormItem>
                             )} />
                             <FormField control={form.control} name="coreServices.subheading.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Sub-heading (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Sub-heading (Arabic)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} dir="rtl"/></FormControl><FormMessage /></FormItem>
                             )} />
                              <FormField control={form.control} name="coreServices.heading.en" render={({ field }) => (
-                                <FormItem><FormLabel>Main Heading (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Main Heading (English)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
                              <FormField control={form.control} name="coreServices.heading.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Main Heading (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Main Heading (Arabic)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} dir="rtl"/></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
 
                          <div className="space-y-4 rounded-lg border p-4">
                              <h4 className="font-medium">Service Card 1: Supplements</h4>
                              <FormField control={form.control} name="coreServices.services.0.title.en" render={({ field }) => (
-                                <FormItem><FormLabel>Title (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Title (English)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
                             <FormField control={form.control} name="coreServices.services.0.title.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Title (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Title (Arabic)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} dir="rtl"/></FormControl><FormMessage /></FormItem>
                             )} />
                              <FormField control={form.control} name="coreServices.services.0.description.en" render={({ field }) => (
-                                <FormItem><FormLabel>Description (English)</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Description (English)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
                              <FormField control={form.control} name="coreServices.services.0.description.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Description (Arabic)</FormLabel><FormControl><Textarea {...field} dir="rtl" /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Description (Arabic)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} dir="rtl" /></FormControl><FormMessage /></FormItem>
                             )} />
                               <FormField control={form.control} name="coreServices.services.0.buttonText.en" render={({ field }) => (
-                                <FormItem><FormLabel>Button Text (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Button Text (English)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
                             <FormField control={form.control} name="coreServices.services.0.buttonText.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Button Text (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Button Text (Arabic)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} dir="rtl"/></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
 
                          <div className="space-y-4 rounded-lg border p-4">
                              <h4 className="font-medium">Service Card 2: Coaching</h4>
                             <FormField control={form.control} name="coreServices.services.1.title.en" render={({ field }) => (
-                                <FormItem><FormLabel>Title (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Title (English)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
                             <FormField control={form.control} name="coreServices.services.1.title.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Title (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Title (Arabic)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} dir="rtl"/></FormControl><FormMessage /></FormItem>
                             )} />
                              <FormField control={form.control} name="coreServices.services.1.description.en" render={({ field }) => (
-                                <FormItem><FormLabel>Description (English)</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Description (English)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
                              <FormField control={form.control} name="coreServices.services.1.description.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Description (Arabic)</FormLabel><FormControl><Textarea {...field} dir="rtl" /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Description (Arabic)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} dir="rtl" /></FormControl><FormMessage /></FormItem>
                             )} />
                               <FormField control={form.control} name="coreServices.services.1.buttonText.en" render={({ field }) => (
-                                <FormItem><FormLabel>Button Text (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Button Text (English)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
                             <FormField control={form.control} name="coreServices.services.1.buttonText.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Button Text (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Button Text (Arabic)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} dir="rtl"/></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
 
@@ -469,7 +469,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Message Text</FormLabel>
-                                        <FormControl><Input {...field} placeholder={`Message ${index + 1}`} /></FormControl>
+                                        <FormControl><Input {...field} value={field.value ?? ''} placeholder={`Message ${index + 1}`} /></FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -623,7 +623,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                         <FormField control={form.control} name="adBanner.imageUrl" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Fallback Image URL</FormLabel>
-                                <FormControl><Input {...field} placeholder="https://picsum.photos/1200/600" /></FormControl>
+                                <FormControl><Input {...field} value={field.value ?? ''} placeholder="https://picsum.photos/1200/600" /></FormControl>
                                 <FormDescription>Required. This is shown if no video URLs are provided.</FormDescription>
                                 <FormMessage />
                             </FormItem>
@@ -631,13 +631,13 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                         <FormField control={form.control} name="adBanner.imageAlt" render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Image Alt Text</FormLabel>
-                                <FormControl><Input {...field} placeholder="Promotional banner image" /></FormControl>
+                                <FormControl><Input {...field} value={field.value ?? ''} placeholder="Promotional banner image" /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
 
                         <FormField control={form.control} name="adBanner.title" render={({ field }) => (
-                            <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} placeholder="Enter a catchy title" /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="Enter a catchy title" /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField
                             control={form.control}
@@ -660,7 +660,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                             )}
                         />
                         <FormField control={form.control} name="adBanner.description" render={({ field }) => (
-                            <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} placeholder="Enter a short description" /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} placeholder="Enter a short description" /></FormControl><FormMessage /></FormItem>
                         )} />
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -682,10 +682,10 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField control={form.control} name="adBanner.buttonText" render={({ field }) => (
-                                <FormItem><FormLabel>Button Text</FormLabel><FormControl><Input {...field} placeholder="Shop Now" /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Button Text</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="Shop Now" /></FormControl><FormMessage /></FormItem>
                             )} />
                             <FormField control={form.control} name="adBanner.buttonLink" render={({ field }) => (
-                                <FormItem><FormLabel>Button Link</FormLabel><FormControl><Input {...field} placeholder="/#products" /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Button Link</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="/#products" /></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
                     </CardContent>
@@ -711,18 +711,18 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                     <CardContent className="space-y-4 pt-4">
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField control={form.control} name="aboutPage.title.en" render={({ field }) => (
-                                <FormItem><FormLabel>Main Title (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Main Title (English)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
                              <FormField control={form.control} name="aboutPage.title.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Main Title (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Main Title (Arabic)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} dir="rtl"/></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField control={form.control} name="aboutPage.subtitle.en" render={({ field }) => (
-                                <FormItem><FormLabel>Subtitle (English)</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Subtitle (English)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
                              <FormField control={form.control} name="aboutPage.subtitle.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Subtitle (Arabic)</FormLabel><FormControl><Textarea {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Subtitle (Arabic)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} dir="rtl"/></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
                          <FormField control={form.control} name="aboutPage.backgroundVideoUrl" render={({ field }) => (
@@ -742,82 +742,82 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                             </FormItem>
                         )} />
                         <FormField control={form.control} name="aboutPage.imageUrl" render={({ field }) => (
-                            <FormItem><FormLabel>Fallback Image URL</FormLabel><FormControl><Input {...field} /></FormControl><FormDescription>Required. Shown if no video. Recommended aspect ratio: 1:1.</FormDescription><FormMessage /></FormItem>
+                            <FormItem><FormLabel>Fallback Image URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormDescription>Required. Shown if no video. Recommended aspect ratio: 1:1.</FormDescription><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name="aboutPage.imageAlt" render={({ field }) => (
-                            <FormItem><FormLabel>Image Alt Text</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>Image Alt Text</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField control={form.control} name="aboutPage.storyTitle.en" render={({ field }) => (
-                                <FormItem><FormLabel>Story Title (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Story Title (English)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
                             <FormField control={form.control} name="aboutPage.storyTitle.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Story Title (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Story Title (Arabic)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} dir="rtl"/></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField control={form.control} name="aboutPage.storyContent1.en" render={({ field }) => (
-                                <FormItem><FormLabel>Story Paragraph 1 (English)</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Story Paragraph 1 (English)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} rows={4} /></FormControl><FormMessage /></FormItem>
                             )} />
                             <FormField control={form.control} name="aboutPage.storyContent1.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Story Paragraph 1 (Arabic)</FormLabel><FormControl><Textarea {...field} rows={4} dir="rtl" /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Story Paragraph 1 (Arabic)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} rows={4} dir="rtl" /></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField control={form.control} name="aboutPage.storyContent2.en" render={({ field }) => (
-                                <FormItem><FormLabel>Story Paragraph 2 (English)</FormLabel><FormControl><Textarea {...field} rows={4} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Story Paragraph 2 (English)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} rows={4} /></FormControl><FormMessage /></FormItem>
                             )} />
                              <FormField control={form.control} name="aboutPage.storyContent2.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Story Paragraph 2 (Arabic)</FormLabel><FormControl><Textarea {...field} rows={4} dir="rtl" /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Story Paragraph 2 (Arabic)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} rows={4} dir="rtl" /></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                              <FormField control={form.control} name="aboutPage.missionTitle.en" render={({ field }) => (
-                                <FormItem><FormLabel>Mission Title (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Mission Title (English)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
                              <FormField control={form.control} name="aboutPage.missionTitle.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Mission Title (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl"/></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Mission Title (Arabic)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} dir="rtl"/></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                              <FormField control={form.control} name="aboutPage.missionContent.en" render={({ field }) => (
-                                <FormItem><FormLabel>Mission Content (English)</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Mission Content (English)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
                              <FormField control={form.control} name="aboutPage.missionContent.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Mission Content (Arabic)</FormLabel><FormControl><Textarea {...field} dir="rtl" /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Mission Content (Arabic)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} dir="rtl" /></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                              <FormField control={form.control} name="aboutPage.visionTitle.en" render={({ field }) => (
-                                <FormItem><FormLabel>Vision Title (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Vision Title (English)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
                              <FormField control={form.control} name="aboutPage.visionTitle.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Vision Title (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl" /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Vision Title (Arabic)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} dir="rtl" /></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                              <FormField control={form.control} name="aboutPage.visionContent.en" render={({ field }) => (
-                                <FormItem><FormLabel>Vision Content (English)</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Vision Content (English)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
                             <FormField control={form.control} name="aboutPage.visionContent.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Vision Content (Arabic)</FormLabel><FormControl><Textarea {...field} dir="rtl" /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Vision Content (Arabic)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} dir="rtl" /></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                              <FormField control={form.control} name="aboutPage.valuesTitle.en" render={({ field }) => (
-                                <FormItem><FormLabel>Values Title (English)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Values Title (English)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
                             <FormField control={form.control} name="aboutPage.valuesTitle.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Values Title (Arabic)</FormLabel><FormControl><Input {...field} dir="rtl" /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Values Title (Arabic)</FormLabel><FormControl><Input {...field} value={field.value ?? ''} dir="rtl" /></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                              <FormField control={form.control} name="aboutPage.valuesContent.en" render={({ field }) => (
-                                <FormItem><FormLabel>Values Content (English)</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Values Content (English)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                             )} />
                              <FormField control={form.control} name="aboutPage.valuesContent.ar" render={({ field }) => (
-                                <FormItem><FormLabel>Values Content (Arabic)</FormLabel><FormControl><Textarea {...field} dir="rtl" /></FormControl><FormMessage /></FormItem>
+                                <FormItem><FormLabel>Values Content (Arabic)</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} dir="rtl" /></FormControl><FormMessage /></FormItem>
                             )} />
                         </div>
                     </CardContent>
@@ -842,10 +842,10 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                 <CollapsibleContent>
                     <CardContent className="space-y-4 pt-4">
                         <FormField control={form.control} name="faqPage.title" render={({ field }) => (
-                            <FormItem><FormLabel>Main Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>Main Title</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name="faqPage.subtitle" render={({ field }) => (
-                            <FormItem><FormLabel>Subtitle</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>Subtitle</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                         )} />
                         
                         <div className="space-y-4">
@@ -860,7 +860,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Question</FormLabel>
-                                                <FormControl><Input {...field} /></FormControl>
+                                                <FormControl><Input {...field} value={field.value ?? ''} /></FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
@@ -871,7 +871,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Answer</FormLabel>
-                                                <FormControl><Textarea {...field} rows={3} /></FormControl>
+                                                <FormControl><Textarea {...field} value={field.value ?? ''} rows={3} /></FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
@@ -911,7 +911,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                 <CollapsibleContent>
                     <CardContent className="space-y-4 pt-4">
                         <FormField control={form.control} name="termsPage.title" render={({ field }) => (
-                            <FormItem><FormLabel>Page Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>Page Title</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name="termsPage.content" render={({ field }) => (
                             <FormItem>
@@ -943,7 +943,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                                         </PopoverContent>
                                     </Popover>
                                 </div>
-                                <FormControl><Textarea {...field} rows={20} /></FormControl>
+                                <FormControl><Textarea {...field} value={field.value ?? ''} rows={20} /></FormControl>
                                 <FormDescription>Use markdown for formatting (e.g., # Heading, * list item).</FormDescription>
                                 <FormMessage />
                             </FormItem>
@@ -970,7 +970,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                 <CollapsibleContent>
                     <CardContent className="space-y-4 pt-4">
                         <FormField control={form.control} name="privacyPage.title" render={({ field }) => (
-                            <FormItem><FormLabel>Page Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>Page Title</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name="privacyPage.content" render={({ field }) => (
                             <FormItem>
@@ -1002,7 +1002,7 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
                                         </PopoverContent>
                                     </Popover>
                                 </div>
-                                <FormControl><Textarea {...field} rows={20} /></FormControl>
+                                <FormControl><Textarea {...field} value={field.value ?? ''} rows={20} /></FormControl>
                                 <FormDescription>Use markdown for formatting (e.g., # Heading, * list item).</FormDescription>
                                 <FormMessage />
                             </FormItem>
@@ -1063,3 +1063,5 @@ export default function AdminAppearancePage({ authLoading }: { authLoading?: boo
     </Form>
   );
 }
+
+    
