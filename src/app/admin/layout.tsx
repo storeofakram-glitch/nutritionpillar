@@ -42,7 +42,7 @@ export default function AdminLayout({
     { href: "/admin/coaches", label: "Coaches", icon: UserCheck },
     { href: "/admin/team-management", label: "Team Management", icon: ClipboardList },
     { href: "/admin/shipping", label: "Shipping", icon: Truck },
-    { href: "/admin/finance", label: "Finance", icon: DollarSign },
+    { href: "/admin/finance", label: "Finance (Products)", icon: DollarSign },
     { href: "/admin/finance-coaching", label: "Finance (Coaching)", icon: DollarSign },
     { href: "/admin/membership", label: "Membership", icon: ShieldCheck },
     { href: "/admin/appearance", label: "Appearance", icon: Brush },
