@@ -23,34 +23,36 @@ export default function Footer() {
 
   return (
     <footer className="border-t">
-      <div className="container grid grid-cols-1 md:grid-cols-3 items-center gap-4 py-8 text-center md:text-left">
-        <div className="md:col-span-1">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Nutrition Pillar. All Rights Reserved.
-          </p>
-        </div>
-        
-        <div className="flex items-center justify-center gap-1 md:col-span-1">
-            <Button variant="ghost" size="icon" asChild>
-                <Link href={socialLinks.facebook || '#'} aria-label="Facebook"><Facebook className="h-5 w-5" /></Link>
-            </Button>
-            <Button variant="ghost" size="icon" asChild>
-                <Link href={socialLinks.instagram || '#'} aria-label="Instagram"><Instagram className="h-5 w-5" /></Link>
-            </Button>
-             <Button variant="ghost" size="icon" asChild>
-                <Link href={socialLinks.youtube || '#'} aria-label="YouTube"><Youtube className="h-5 w-5" /></Link>
-            </Button>
-             <Button variant="ghost" size="icon" asChild>
-                <Link href={socialLinks.linkedin || '#'} aria-label="LinkedIn"><Linkedin className="h-5 w-5" /></Link>
-            </Button>
-             <Button variant="ghost" size="icon" asChild>
-                <Link href={socialLinks.twitter || '#'} aria-label="Twitter"><Twitter className="h-5 w-5" /></Link>
-            </Button>
-        </div>
+      <div className="container relative py-8">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+          <div className="order-2 md:order-1">
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} Nutrition Pillar. All Rights Reserved.
+            </p>
+          </div>
+          
+          <div className="order-3 md:order-2 flex items-center justify-center gap-1">
+              <Button variant="ghost" size="icon" asChild>
+                  <Link href={socialLinks.facebook || '#'} aria-label="Facebook"><Facebook className="h-5 w-5" /></Link>
+              </Button>
+              <Button variant="ghost" size="icon" asChild>
+                  <Link href={socialLinks.instagram || '#'} aria-label="Instagram"><Instagram className="h-5 w-5" /></Link>
+              </Button>
+               <Button variant="ghost" size="icon" asChild>
+                  <Link href={socialLinks.youtube || '#'} aria-label="YouTube"><Youtube className="h-5 w-5" /></Link>
+              </Button>
+               <Button variant="ghost" size="icon" asChild>
+                  <Link href={socialLinks.linkedin || '#'} aria-label="LinkedIn"><Linkedin className="h-5 w-5" /></Link>
+              </Button>
+               <Button variant="ghost" size="icon" asChild>
+                  <Link href={socialLinks.twitter || '#'} aria-label="Twitter"><Twitter className="h-5 w-5" /></Link>
+              </Button>
+          </div>
 
-        <div className="flex items-center justify-center md:justify-end gap-4 text-xs text-muted-foreground md:col-span-1">
-            <Link href="/terms-of-service" className="hover:text-primary">Terms of Service</Link>
-            <Link href="/privacy-policy" className="hover:text-primary">Privacy Policy</Link>
+          <div className="order-1 md:order-3 md:absolute md:top-8 md:right-8 flex items-center justify-center gap-4 text-xs text-muted-foreground">
+              <Link href="/terms-of-service" className="hover:text-primary">Terms of Service</Link>
+              <Link href="/privacy-policy" className="hover:text-primary">Privacy Policy</Link>
+          </div>
         </div>
       </div>
     </footer>
