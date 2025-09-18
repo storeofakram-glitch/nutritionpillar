@@ -146,7 +146,7 @@ export default function JoinTeamPage() {
             <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 gradient-border">
               <CardHeader>
                 <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
-                  <Handshake className="h-10 w-10 text-primary" />
+                  <Feather className="h-10 w-10 text-primary" />
                 </div>
                 <CardTitle className="font-headline text-2xl text-foreground">Become a Part of Our Story</CardTitle>
               </CardHeader>
@@ -194,10 +194,10 @@ export default function JoinTeamPage() {
             </div>
 
             <div className="mx-auto max-w-3xl w-full bg-gray-900 rounded-2xl border border-cyan-500 p-6 md:p-8 shadow-lg shadow-cyan-500/20">
-                <div className="text-center mb-6">
-                    <h2 className="text-3xl md:text-4xl font-bold font-headline text-white">Join Our Team</h2>
+                <div className="text-center mb-8">
+                    <h2 className="text-3xl md:text-4xl font-bold font-headline text-white">🚀 Ready to Make an Impact?</h2>
                     <p className="text-lg text-gray-400 mt-2">
-                        We're looking for passionate individuals to join us on our mission. If you're ready to make an impact, we'd love to hear from you.
+                        Fill out the form below to apply and become part of our growing community.
                     </p>
                 </div>
                 <Form {...form}>
