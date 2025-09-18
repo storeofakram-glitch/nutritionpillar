@@ -48,7 +48,7 @@ export default function Footer() {
             </Button>
         </div>
 
-        <div className="flex items-center justify-center md:justify-end gap-4 text-xs md:text-sm text-muted-foreground md:col-span-1">
+        <div className="flex items-center justify-center md:justify-end gap-4 text-xs text-muted-foreground md:col-span-1">
             <Link href="/terms-of-service" className="hover:text-primary">Terms of Service</Link>
             <Link href="/privacy-policy" className="hover:text-primary">Privacy Policy</Link>
         </div>
