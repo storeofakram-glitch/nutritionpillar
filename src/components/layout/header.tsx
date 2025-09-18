@@ -142,7 +142,7 @@ export default function Header() {
               <NavLink key={link.href} href={link.href}>{link.label}</NavLink>
           ))}
         </nav>
-        <div className="flex flex-1 items-center justify-end">
+        <div className="flex flex-1 items-center justify-end gap-2">
             <Button asChild variant="ghost" size="icon">
             <Link href="/cart" className="relative">
                 <ShoppingBag className="h-5 w-5" />
