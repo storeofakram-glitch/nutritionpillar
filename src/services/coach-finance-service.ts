@@ -1,6 +1,5 @@
 
 
-
 'use server';
 
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy, getDoc, runTransaction, where, writeBatch } from 'firebase/firestore';
@@ -78,15 +77,17 @@ export async function addClientPayment(payment: Omit<ClientPayment, 'id' | 'coac
         await runTransaction(db, async (transaction) => {
             const coachFinRef = doc(db, 'coach_financials', payment.coachId);
             const coachFinDoc = await transaction.get(coachFinRef);
-
+            
             const commissionRate = coachFinDoc.exists() ? coachFinDoc.data().commissionRate : 70;
             const coachShare = payment.amount * (commissionRate / 100);
 
-            // Add the new client payment record
+            // Create refs for the new documents first
             const newPaymentRef = doc(collection(db, 'client_payments'));
+            const newPayoutRef = doc(collection(db, 'coach_payouts'));
+
+            // Now, perform all write operations
             transaction.set(newPaymentRef, { ...payment, coachShare });
 
-            // If payment is 'paid', immediately add to pending payouts
             if (payment.status === 'paid') {
                 const newPayout: Omit<CoachPayout, 'id'> = {
                     coachId: payment.coachId,
@@ -98,10 +99,8 @@ export async function addClientPayment(payment: Omit<ClientPayment, 'id' | 'coac
                     status: 'pending',
                     paymentMethod: 'other',
                 };
-                const newPayoutRef = doc(collection(db, 'coach_payouts'));
                 transaction.set(newPayoutRef, newPayout);
                 
-                // Update coach's aggregate financials
                 if (coachFinDoc.exists()) {
                     const currentPending = coachFinDoc.data().pendingPayout || 0;
                     const currentTotal = coachFinDoc.data().totalEarnings || 0;
@@ -139,15 +138,28 @@ export async function deleteClientPayment(paymentId: string) {
             if (!paymentDoc.exists()) {
                 throw new Error("Payment record not found.");
             }
+            
+            // Fetch the corresponding payout document to delete it as well.
+            // This is a read operation, so it must happen before writes.
+            const payoutQuery = query(
+                collection(db, 'coach_payouts'),
+                where('clientPaymentId', '==', paymentId),
+                where('status', '==', 'pending')
+            );
+            const payoutSnapshot = await getDocs(payoutQuery);
+            const payoutDocToDelete = !payoutSnapshot.empty ? payoutSnapshot.docs[0] : null;
+
 
             const paymentData = paymentDoc.data() as ClientPayment;
             const { coachId, coachShare, status } = paymentData;
+            
+            // All read operations are done. Now perform writes.
 
             // Delete the payment itself
             transaction.delete(paymentRef);
 
             // If the payment was 'paid', we need to reverse the financial entries
-            if (status === 'paid') {
+            if (status === 'paid' && coachShare > 0) {
                 const coachFinRef = doc(db, 'coach_financials', coachId);
                 const coachFinDoc = await transaction.get(coachFinRef);
 
@@ -160,16 +172,10 @@ export async function deleteClientPayment(paymentId: string) {
                     });
                 }
 
-                // Also delete the corresponding 'pending' payout record
-                const payoutQuery = query(
-                    payoutsCollection(),
-                    where('clientPaymentId', '==', paymentId),
-                    where('status', '==', 'pending')
-                );
-                const payoutSnapshot = await getDocs(payoutQuery);
-                payoutSnapshot.forEach(payoutDoc => {
-                    transaction.delete(payoutDoc.ref);
-                });
+                // Also delete the corresponding 'pending' payout record if found
+                if(payoutDocToDelete) {
+                    transaction.delete(payoutDocToDelete.ref);
+                }
             }
         });
 

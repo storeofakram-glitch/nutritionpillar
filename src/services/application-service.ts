@@ -129,9 +129,7 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
         if (status === 'rejected') {
             await deleteDoc(docRef);
         } else {
-            await updateDoc(docRef, { status });
-
-            // If the status is 'active', create related records
+             // If the status is 'active', create related records
             if (status === 'active') {
                 const appDoc = await getDoc(docRef);
                 if (appDoc.exists()) {
@@ -181,6 +179,7 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
                     }
                 }
             }
+             await updateDoc(docRef, { status });
         }
 
         revalidatePath('/admin/coaches');
