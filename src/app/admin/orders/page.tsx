@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { MoreHorizontal, RefreshCw } from "lucide-react"
+import { MoreHorizontal, RefreshCw, Search } from "lucide-react"
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -35,6 +35,7 @@ import ViewCustomerDialog from "../customers/_components/view-customer-dialog";
 import DeleteOrderDialog from "./_components/delete-order-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
 const orderStatuses: Order['status'][] = ['pending', 'processing', 'shipped', 'delivered', 'canceled'];
 
@@ -49,6 +50,8 @@ export default function AdminOrdersPage({ authLoading }: { authLoading?: boolean
   const [isViewCustomerOpen, setIsViewCustomerOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
 
   const fetchOrders = () => {
     setLoading(true);
@@ -67,6 +70,19 @@ export default function AdminOrdersPage({ authLoading }: { authLoading?: boolean
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  const filteredOrders = useMemo(() => {
+    if (!searchTerm) {
+        return orders;
+    }
+    return orders.filter(order => 
+        order.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.shippingAddress.phone.includes(searchTerm) ||
+        String(order.orderNumber).padStart(6, '0').includes(searchTerm)
+    );
+  }, [orders, searchTerm]);
+
 
   const customersWithCanceledOrders = useMemo(() => {
     const customerPhones = new Set<string>();
@@ -149,17 +165,29 @@ export default function AdminOrdersPage({ authLoading }: { authLoading?: boolean
     <>
       <Card>
         <CardHeader>
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col md:flex-row items-start justify-between gap-4">
             <div className="flex-1">
               <CardTitle>Orders</CardTitle>
               <CardDescription>
                 A list of all the orders in your store.
               </CardDescription>
             </div>
-            <Button variant="outline" size="icon" onClick={fetchOrders} disabled={isPending || authLoading}>
-              <RefreshCw className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
-              <span className="sr-only">Refresh</span>
-            </Button>
+             <div className="flex w-full md:w-auto items-center gap-2">
+                <div className="relative flex-1 md:flex-initial">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                        type="search"
+                        placeholder="Search orders..."
+                        className="pl-8 sm:w-[200px] lg:w-[250px]"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                <Button variant="outline" size="icon" onClick={fetchOrders} disabled={isPending || authLoading}>
+                  <RefreshCw className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
+                  <span className="sr-only">Refresh</span>
+                </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -177,7 +205,7 @@ export default function AdminOrdersPage({ authLoading }: { authLoading?: boolean
               </TableRow>
             </TableHeader>
             <TableBody>
-              {loading || authLoading ? renderSkeleton() : orders.map(order => (
+              {loading || authLoading ? renderSkeleton() : filteredOrders.map(order => (
                   <TableRow 
                     key={order.id}
                     className={cn(
@@ -237,6 +265,13 @@ export default function AdminOrdersPage({ authLoading }: { authLoading?: boolean
                       </TableCell>
                   </TableRow>
               ))}
+               {!loading && filteredOrders.length === 0 && (
+                <TableRow>
+                    <TableCell colSpan={6} className="h-24 text-center">
+                        {searchTerm ? `No orders found for "${searchTerm}".` : "No orders found."}
+                    </TableCell>
+                </TableRow>
+            )}
             </TableBody>
           </Table>
         </CardContent>
