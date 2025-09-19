@@ -313,24 +313,24 @@ export default function MembershipPage() {
                     
                     {coachFinancials && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <Card>
+                            <Card className="bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800">
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">Pending Payout</CardTitle>
-                                    <Wallet className="h-4 w-4 text-muted-foreground" />
+                                    <CardTitle className="text-sm font-medium text-yellow-800 dark:text-yellow-200">Pending Payout</CardTitle>
+                                    <Wallet className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold">DZD {coachFinancials.pendingPayout.toFixed(2)}</div>
-                                    <p className="text-xs text-muted-foreground">Amount waiting to be paid out to you.</p>
+                                    <div className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">DZD {coachFinancials.pendingPayout.toFixed(2)}</div>
+                                    <p className="text-xs text-yellow-600 dark:text-yellow-500">Amount waiting to be paid out to you.</p>
                                 </CardContent>
                             </Card>
-                            <Card>
+                            <Card className="bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800">
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
-                                    <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                                    <CardTitle className="text-sm font-medium text-green-800 dark:text-green-200">Total Paid</CardTitle>
+                                    <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold">DZD {coachFinancials.paidOut.toFixed(2)}</div>
-                                    <p className="text-xs text-muted-foreground">Total amount you have been paid out.</p>
+                                    <div className="text-2xl font-bold text-green-700 dark:text-green-300">DZD {coachFinancials.paidOut.toFixed(2)}</div>
+                                    <p className="text-xs text-green-600 dark:text-green-500">Total amount you have been paid out.</p>
                                 </CardContent>
                             </Card>
                         </div>
@@ -666,6 +666,7 @@ export default function MembershipPage() {
         </div>
     );
 }
+
 
 
 
