@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { addShippingOption, updateShippingOption } from "@/services/shipping-service"
 import type { ShippingState } from "@/types"
-import { PlusCircle, Trash2, ChevronDown } from "lucide-react"
+import { PlusCircle, Trash2, ChevronDown, Search } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { dzStates } from "@/lib/dz-states"
 import { useEffect, useMemo, useRef, useState } from "react"
@@ -55,6 +55,7 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
   const isEditMode = !!shippingZone;
   const initialRender = useRef(true);
   const [openStates, setOpenStates] = useState<boolean[]>([]);
+  const [citySearchTerm, setCitySearchTerm] = useState("");
 
   const form = useForm<ShippingZoneFormValues>({
     resolver: zodResolver(shippingZoneSchema),
@@ -75,8 +76,12 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
 
   const availableCities = useMemo(() => {
     const selectedStateData = dzStates.find(s => s.name === watchedState);
-    return selectedStateData ? selectedStateData.cities : [];
-  }, [watchedState]);
+    if (!selectedStateData) return [];
+    if (!citySearchTerm) return selectedStateData.cities;
+    return selectedStateData.cities.filter(city => 
+        city.toLowerCase().includes(citySearchTerm.toLowerCase())
+    );
+  }, [watchedState, citySearchTerm]);
 
   useEffect(() => {
     if (initialRender.current) {
@@ -214,11 +219,23 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
+                                                         <div className="p-2">
+                                                            <div className="relative">
+                                                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                                                <Input 
+                                                                    placeholder="Search cities..."
+                                                                    value={citySearchTerm}
+                                                                    onChange={(e) => setCitySearchTerm(e.target.value)}
+                                                                    className="pl-8 mb-1"
+                                                                />
+                                                            </div>
+                                                        </div>
                                                         {availableCities.map((city) => (
                                                             <SelectItem key={city} value={city}>
                                                                 {city}
                                                             </SelectItem>
                                                         ))}
+                                                        {availableCities.length === 0 && <p className="p-2 text-center text-sm text-muted-foreground">No city found.</p>}
                                                     </SelectContent>
                                                 </Select>
                                                 <FormMessage />
@@ -277,3 +294,5 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
     </Form>
   )
 }
+
+    
