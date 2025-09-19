@@ -63,9 +63,9 @@ export default function ManageProgramsDialog({ application, onUpdate }: ManagePr
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon" className="h-8 w-8">
-            <BookMarked className="h-4 w-4" />
-            <span className="sr-only">Manage Programs</span>
+        <Button variant="outline" size="sm">
+            <BookMarked className="h-4 w-4 mr-2" />
+            Manage Programs
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -112,4 +112,3 @@ export default function ManageProgramsDialog({ application, onUpdate }: ManagePr
     </Dialog>
   );
 }
-

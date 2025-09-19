@@ -440,7 +440,7 @@ export default function MembershipPage() {
                                                             <span className="sr-only">WhatsApp</span>
                                                         </a>
                                                     </Button>
-                                                     <Button variant="destructive" size="icon" className="h-8 w-8 ml-2" onClick={() => handleOpenRevokeDialog(app)}>
+                                                     <Button variant="destructive" size="icon" className="h-8 w-8" onClick={() => handleOpenRevokeDialog(app)}>
                                                         <UserX className="h-4 w-4" />
                                                         <span className="sr-only">Archive Athlete</span>
                                                      </Button>
@@ -711,10 +711,3 @@ export default function MembershipPage() {
         </div>
     );
 }
-
-
-
-
-
-
-
