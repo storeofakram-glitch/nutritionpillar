@@ -127,7 +127,6 @@ export default function MembershipPage() {
                     setCoachDetails(coach);
                     await fetchCoachData(coach);
                 } else {
-                    // Handle case where membership exists but coach record doesn't
                     toast({
                         variant: 'destructive',
                         title: 'Coach Data Missing',
@@ -137,7 +136,7 @@ export default function MembershipPage() {
             }
         } catch (error) {
             console.error("Error during membership check:", error);
-            toast({ variant: 'destructive', title: 'Error', description: 'Could not verify membership. Please try again.' });
+            toast({ variant: 'destructive', title: 'Error', description: (error as Error).message || 'Could not verify membership. Please try again.' });
             setResult('invalid');
         } finally {
             setIsLoading(false);
@@ -463,6 +462,8 @@ export default function MembershipPage() {
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
+                                            <TableHead>Client</TableHead>
+                                            <TableHead>Plan</TableHead>
                                             <TableHead>Date</TableHead>
                                             <TableHead>Amount</TableHead>
                                             <TableHead>Status</TableHead>
@@ -471,6 +472,8 @@ export default function MembershipPage() {
                                     <TableBody>
                                         {payoutHistory.map(payout => (
                                             <TableRow key={payout.id}>
+                                                <TableCell>{payout.clientName}</TableCell>
+                                                <TableCell>{payout.planTitle}</TableCell>
                                                 <TableCell>{format(new Date(payout.payoutDate), 'PPP')}</TableCell>
                                                 <TableCell className="font-medium">DZD {payout.amount.toFixed(2)}</TableCell>
                                                 <TableCell>
@@ -663,5 +666,6 @@ export default function MembershipPage() {
         </div>
     );
 }
+
 
 

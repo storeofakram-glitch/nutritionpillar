@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import type { CoachWithFinancials } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
-import { generatePayoutsFromPending } from "@/services/coach-finance-service";
+import { processAllPendingPayoutsForCoach } from "@/services/coach-finance-service";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -26,9 +26,9 @@ export default function PayoutsTable({ coachesWithPending, isLoading, onDataChan
 
     const handleProcessPayout = async (coachId: string, amount: number) => {
         setProcessingId(coachId);
-        const result = await generatePayoutsFromPending(coachId, amount);
+        const result = await processAllPendingPayoutsForCoach(coachId);
         if (result.success) {
-            toast({ title: "Payout Processed", description: `A payout of DZD ${amount.toFixed(2)} has been recorded.` });
+            toast({ title: "Payout Processed", description: `A payout of DZD ${amount.toFixed(2)} has been recorded for the coach.` });
             onDataChange();
         } else {
             toast({ variant: "destructive", title: "Error", description: result.error });
@@ -101,3 +101,4 @@ export default function PayoutsTable({ coachesWithPending, isLoading, onDataChan
         </Card>
     );
 }
+

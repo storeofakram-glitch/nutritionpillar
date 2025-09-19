@@ -311,7 +311,7 @@ export type Coach = {
 };
 
 export type CoachFinancials = {
-    id?: string; // The doc ID is the coachId
+    id: string;
     coachId: string;
     commissionRate: number; // e.g., 70 for 70%
     totalEarnings: number;
@@ -328,6 +328,7 @@ export type ClientPayment = {
     clientName: string;
     coachId: string;
     coachName: string;
+    planTitle: string;
     amount: number;
     paymentDate: string; // ISO 8601
     status: 'paid' | 'pending' | 'overdue';
@@ -337,7 +338,10 @@ export type ClientPayment = {
 export type CoachPayout = {
     id: string;
     coachId: string;
-    amount: number;
+    clientPaymentId: string;
+    clientName: string;
+    planTitle: string;
+    amount: number; // This is the coach's share
     payoutDate: string; // ISO 8601
     status: 'pending' | 'completed' | 'failed';
     paymentMethod: 'bank_transfer' | 'cash' | 'other';

@@ -2,7 +2,7 @@
 
 'use server';
 
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy, getDoc, runTransaction, where } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy, getDoc, runTransaction, where, writeBatch } from 'firebase/firestore';
 import { getDb } from '@/lib/firebase';
 import type { CoachFinancials, ClientPayment, CoachPayout, Coach } from '@/types';
 import { revalidatePath } from 'next/cache';
@@ -73,26 +73,45 @@ export async function getClientPayments(): Promise<ClientPayment[]> {
 
 export async function addClientPayment(payment: Omit<ClientPayment, 'id' | 'coachShare'>) {
     try {
-        await runTransaction(getDb(), async (transaction) => {
-            const coachFinRef = doc(getDb(), 'coach_financials', payment.coachId);
+        const db = getDb();
+        await runTransaction(db, async (transaction) => {
+            const coachFinRef = doc(db, 'coach_financials', payment.coachId);
             const coachFinDoc = await transaction.get(coachFinRef);
 
             const commissionRate = coachFinDoc.exists() ? coachFinDoc.data().commissionRate : 70;
             const coachShare = payment.amount * (commissionRate / 100);
 
-            const newPayment: Omit<ClientPayment, 'id'> = { ...payment, coachShare };
-            const newPaymentRef = doc(collection(getDb(), 'client_payments'));
-            transaction.set(newPaymentRef, newPayment);
-            
-            // If payment is 'paid', update coach's pending payout immediately
-            if(payment.status === 'paid') {
+            // Add the new client payment record
+            const newPaymentRef = doc(collection(db, 'client_payments'));
+            transaction.set(newPaymentRef, { ...payment, coachShare });
+
+            // If payment is 'paid', immediately add to pending payouts
+            if (payment.status === 'paid') {
+                const newPayout: Omit<CoachPayout, 'id'> = {
+                    coachId: payment.coachId,
+                    clientPaymentId: newPaymentRef.id,
+                    clientName: payment.clientName,
+                    planTitle: payment.planTitle,
+                    amount: coachShare,
+                    payoutDate: new Date().toISOString(),
+                    status: 'pending',
+                    paymentMethod: 'other',
+                };
+                const newPayoutRef = doc(collection(db, 'coach_payouts'));
+                transaction.set(newPayoutRef, newPayout);
+                
+                // Update coach's aggregate financials
                 if (coachFinDoc.exists()) {
                     const currentPending = coachFinDoc.data().pendingPayout || 0;
-                    transaction.update(coachFinRef, { pendingPayout: currentPending + coachShare });
+                    const currentTotal = coachFinDoc.data().totalEarnings || 0;
+                    transaction.update(coachFinRef, { 
+                        pendingPayout: currentPending + coachShare,
+                        totalEarnings: currentTotal + coachShare,
+                    });
                 } else {
                      transaction.set(coachFinRef, { 
                         commissionRate: 70, // default
-                        totalEarnings: 0,
+                        totalEarnings: coachShare,
                         paidOut: 0,
                         pendingPayout: coachShare,
                      });
@@ -119,46 +138,62 @@ export async function getCoachPayoutsByCoachId(coachId: string): Promise<CoachPa
     const q = query(payoutsCollection(), where('coachId', '==', coachId));
     const snapshot = await getDocs(q);
     const payouts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CoachPayout));
-    // Sort in code instead of in the query to avoid needing a composite index
+    
     payouts.sort((a, b) => new Date(b.payoutDate).getTime() - new Date(a.payoutDate).getTime());
     return payouts;
 }
 
 
-export async function generatePayoutsFromPending(coachId: string, amount: number) {
-    if (amount <= 0) {
-        return { success: false, error: "Payout amount must be positive." };
-    }
+/**
+ * Processes all pending payouts for a specific coach.
+ * This marks all 'pending' payouts as 'completed' and updates the coach's financial summary.
+ * @param coachId The ID of the coach whose payouts are to be processed.
+ * @returns An object indicating success or failure.
+ */
+export async function processAllPendingPayoutsForCoach(coachId: string) {
+    const db = getDb();
     try {
-        await runTransaction(getDb(), async (transaction) => {
-            const coachFinRef = doc(getDb(), 'coach_financials', coachId);
-            const coachFinDoc = await transaction.get(coachFinRef);
+        await runTransaction(db, async (transaction) => {
+            // Find all pending payouts for the coach
+            const pendingPayoutsQuery = query(
+                payoutsCollection(),
+                where('coachId', '==', coachId),
+                where('status', '==', 'pending')
+            );
+            const pendingPayoutsSnapshot = await getDocs(pendingPayoutsQuery);
 
+            if (pendingPayoutsSnapshot.empty) {
+                throw new Error("No pending payouts found for this coach.");
+            }
+
+            let totalPayoutAmount = 0;
+            const batch = writeBatch(db);
+
+            // Mark each pending payout as 'completed'
+            pendingPayoutsSnapshot.forEach(payoutDoc => {
+                const payoutData = payoutDoc.data() as CoachPayout;
+                totalPayoutAmount += payoutData.amount;
+                batch.update(payoutDoc.ref, { status: 'completed' });
+            });
+            
+            // Commit the batch updates
+            await batch.commit();
+
+            // Update the coach's aggregate financial record
+            const coachFinRef = doc(db, 'coach_financials', coachId);
+            const coachFinDoc = await transaction.get(coachFinRef);
+            
             if (!coachFinDoc.exists()) {
+                // This case should ideally not happen if a financial doc is created with the first payment
                 throw new Error("Coach financial record not found.");
             }
 
-            const currentPending = coachFinDoc.data().pendingPayout || 0;
-            if (currentPending < amount) {
-                throw new Error("Payout amount exceeds pending balance.");
-            }
             const currentPaidOut = coachFinDoc.data().paidOut || 0;
-
-            // Create a new historical payout record
-            const newPayout: Omit<CoachPayout, 'id'> = {
-                coachId,
-                amount,
-                payoutDate: new Date().toISOString(),
-                status: 'completed',
-                paymentMethod: 'other', // Default method
-            };
-            const newPayoutRef = doc(collection(getDb(), 'coach_payouts'));
-            transaction.set(newPayoutRef, newPayout);
-
-            // Update the coach's financial summary
+            const currentPending = coachFinDoc.data().pendingPayout || 0;
+            
             transaction.update(coachFinRef, {
-                pendingPayout: currentPending - amount,
-                paidOut: currentPaidOut + amount,
+                pendingPayout: Math.max(0, currentPending - totalPayoutAmount),
+                paidOut: currentPaidOut + totalPayoutAmount,
             });
         });
 
@@ -166,47 +201,7 @@ export async function generatePayoutsFromPending(coachId: string, amount: number
         revalidatePath('/membership');
         return { success: true };
     } catch (error) {
-        console.error("Error generating payout from pending: ", error);
-        return { success: false, error: (error as Error).message };
-    }
-}
-
-
-export async function processPayout(payoutId: string) {
-     try {
-        await runTransaction(getDb(), async (transaction) => {
-            const payoutRef = doc(getDb(), 'coach_payouts', payoutId);
-            const payoutDoc = await transaction.get(payoutRef);
-
-            if (!payoutDoc.exists() || payoutDoc.data().status !== 'pending') {
-                throw new Error("Payout not found or not in pending state.");
-            }
-            const payoutData = payoutDoc.data() as Omit<CoachPayout, 'id'>;
-
-            // Mark payout as completed
-            transaction.update(payoutRef, { status: 'completed' });
-
-            // Update coach's financial record
-            const coachFinRef = doc(getDb(), 'coach_financials', payoutData.coachId);
-            const coachFinDoc = await transaction.get(coachFinRef);
-             if (!coachFinDoc.exists()) {
-                throw new Error("Coach financial record not found.");
-            }
-            const currentPaidOut = coachFinDoc.data().paidOut || 0;
-            const currentPending = coachFinDoc.data().pendingPayout || 0;
-            const currentTotalEarnings = coachFinDoc.data().totalEarnings || 0;
-
-            transaction.update(coachFinRef, {
-                paidOut: currentPaidOut + payoutData.amount,
-                pendingPayout: currentPending - payoutData.amount,
-                totalEarnings: currentTotalEarnings + payoutData.amount
-            });
-        });
-
-        revalidatePath('/admin/finance-coaching');
-        return { success: true };
-    } catch (error) {
-        console.error("Error processing payout: ", error);
+        console.error("Error processing all pending payouts: ", error);
         return { success: false, error: (error as Error).message };
     }
 }
