@@ -27,7 +27,9 @@ export default function ClientPaymentsTable({ clients, coaches, isLoading, onDat
             <TableCell><Skeleton className="h-5 w-24" /></TableCell>
             <TableCell><Skeleton className="h-5 w-24" /></TableCell>
             <TableCell><Skeleton className="h-5 w-20" /></TableCell>
+            <TableCell><Skeleton className="h-5 w-20" /></TableCell>
             <TableCell><Skeleton className="h-5 w-16" /></TableCell>
+            <TableCell><Skeleton className="h-5 w-24" /></TableCell>
         </TableRow>
     ));
 
@@ -66,6 +68,7 @@ export default function ClientPaymentsTable({ clients, coaches, isLoading, onDat
                         <TableRow>
                             <TableHead>Client</TableHead>
                             <TableHead>Coach</TableHead>
+                            <TableHead>Plan</TableHead>
                             <TableHead>Amount</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead>Date</TableHead>
@@ -76,6 +79,7 @@ export default function ClientPaymentsTable({ clients, coaches, isLoading, onDat
                             <TableRow key={client.id}>
                                 <TableCell className="font-medium">{client.clientName}</TableCell>
                                 <TableCell>{client.coachName}</TableCell>
+                                <TableCell>{client.planTitle}</TableCell>
                                 <TableCell>DZD {client.amount.toFixed(2)}</TableCell>
                                 <TableCell><Badge variant={getStatusVariant(client.status)}>{client.status}</Badge></TableCell>
                                 <TableCell>{format(new Date(client.paymentDate), "PPP")}</TableCell>
