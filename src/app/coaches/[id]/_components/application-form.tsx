@@ -26,7 +26,7 @@ const applicationFormSchema = z.object({
   name: z.string().min(2, "Name is required."),
   email: z.string().email("Please enter a valid email."),
   countryCode: z.string().min(1, "Country code is required."),
-  phone: z.string().regex(/^[1-9][0-9]{8}$/, "Please enter your 9-digit number without the leading '0'."),
+  phone: z.string().regex(/^[1-9]/, "Phone number cannot start with a '0'.").min(1, "Phone number is required."),
   age: z.coerce.number().int().positive("Age must be a positive number."),
   weight: z.coerce.number().positive("Weight must be a positive number."),
   height: z.coerce.number().int().positive("Height must be a positive number."),
@@ -148,7 +148,7 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
                         control={form.control}
                         name="phone"
                         render={({ field }) => (
-                           <FormControl><Input type="tel" maxLength={9} placeholder="Your Phone Number" {...field} /></FormControl>
+                           <FormControl><Input type="tel" placeholder="Your Phone Number" {...field} /></FormControl>
                         )}
                     />
                 </div>
