@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy, getDoc, runTransaction } from 'firebase/firestore';
@@ -15,6 +16,28 @@ export async function getCoachFinancials(): Promise<CoachFinancials[]> {
     const snapshot = await getDocs(query(financialsCollection()));
     return snapshot.docs.map(doc => ({ id: doc.id, coachId: doc.id, ...doc.data() } as CoachFinancials));
 }
+
+export async function getCoachFinancialsById(coachId: string): Promise<CoachFinancials | null> {
+    try {
+        const docRef = doc(getDb(), 'coach_financials', coachId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            return { id: docSnap.id, coachId: docSnap.id, ...docSnap.data() } as CoachFinancials;
+        }
+        // Return a default object if no financials exist yet, so the dashboard doesn't break
+        return {
+            coachId,
+            commissionRate: 70, // Default rate
+            totalEarnings: 0,
+            paidOut: 0,
+            pendingPayout: 0,
+        };
+    } catch (error) {
+        console.error("Error getting coach financials by ID: ", error);
+        return null;
+    }
+}
+
 
 export async function updateCoachCommission(coachId: string, commissionRate: number) {
     try {

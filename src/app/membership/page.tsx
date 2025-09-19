@@ -1,6 +1,6 @@
 
 
-"use client";
+'use client';
 
 import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,8 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { findMembershipByCode } from '@/services/membership-service';
-import type { RecommendedProduct, MembershipWithProducts, Coach, CoachingApplication, Membership } from '@/types';
-import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users, Mail, MessageSquare, User, UserX, History, Copy } from 'lucide-react';
+import type { RecommendedProduct, MembershipWithProducts, Coach, CoachingApplication, Membership, CoachFinancials } from '@/types';
+import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users, Mail, MessageSquare, User, UserX, History, Copy, Wallet, TrendingUp } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
@@ -18,6 +18,7 @@ import { differenceInDays } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getCoachByName } from '@/services/coach-service';
 import { getApplicationsByCoach, updateApplicationStatus, deleteApplication } from '@/services/application-service';
+import { getCoachFinancialsById } from '@/services/coach-finance-service';
 import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
@@ -53,13 +54,18 @@ export default function MembershipPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [result, setResult] = useState<MembershipWithProducts | 'invalid' | null>(null);
     const [coachDetails, setCoachDetails] = useState<Coach | null>(null);
+    const [coachFinancials, setCoachFinancials] = useState<CoachFinancials | null>(null);
     const [applications, setApplications] = useState<EnrichedApplication[]>([]);
     const [isRevokeDialogOpen, setIsRevokeDialogOpen] = useState(false);
     const [selectedAppForRevoke, setSelectedAppForRevoke] = useState<CoachingApplication | null>(null);
     const { toast } = useToast();
 
     const fetchCoachData = async (coach: Coach) => {
-        const coachApps = await getApplicationsByCoach(coach.id);
+        const [coachApps, financials] = await Promise.all([
+            getApplicationsByCoach(coach.id),
+            getCoachFinancialsById(coach.id)
+        ]);
+
         const enrichedApps = await Promise.all(
             coachApps.map(async (app) => {
                 const membership = await findMembershipByApplicationId(app.id);
@@ -67,6 +73,7 @@ export default function MembershipPage() {
             })
         );
         setApplications(enrichedApps);
+        setCoachFinancials(financials);
     }
 
     const handleCheckMembership = async (e: React.FormEvent) => {
@@ -83,6 +90,8 @@ export default function MembershipPage() {
         setResult(null);
         setCoachDetails(null);
         setApplications([]);
+        setCoachFinancials(null);
+
 
         try {
             const foundMembership = await findMembershipByCode(membershipCode);
@@ -274,6 +283,32 @@ export default function MembershipPage() {
                             <StarRating rating={coachDetails.rating} />
                         </div>
                     </div>
+                    
+                    {coachFinancials && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <Card>
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium">Pending Payout</CardTitle>
+                                    <Wallet className="h-4 w-4 text-muted-foreground" />
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="text-2xl font-bold">DZD {coachFinancials.pendingPayout.toFixed(2)}</div>
+                                    <p className="text-xs text-muted-foreground">Amount waiting to be paid out to you.</p>
+                                </CardContent>
+                            </Card>
+                            <Card>
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
+                                    <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="text-2xl font-bold">DZD {coachFinancials.paidOut.toFixed(2)}</div>
+                                    <p className="text-xs text-muted-foreground">Total amount you have been paid out.</p>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    )}
+
 
                     <Separator />
 
