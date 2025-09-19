@@ -55,7 +55,8 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
   const isEditMode = !!shippingZone;
   const initialRender = useRef(true);
   const [openStates, setOpenStates] = useState<boolean[]>([]);
-  const [citySearchTerm, setCitySearchTerm] = useState("");
+  const [cityDropdownSearch, setCityDropdownSearch] = useState("");
+  const [addedCitySearch, setAddedCitySearch] = useState("");
 
   const form = useForm<ShippingZoneFormValues>({
     resolver: zodResolver(shippingZoneSchema),
@@ -77,11 +78,18 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
   const availableCities = useMemo(() => {
     const selectedStateData = dzStates.find(s => s.name === watchedState);
     if (!selectedStateData) return [];
-    if (!citySearchTerm) return selectedStateData.cities;
+    if (!cityDropdownSearch) return selectedStateData.cities;
     return selectedStateData.cities.filter(city => 
-        city.toLowerCase().includes(citySearchTerm.toLowerCase())
+        city.toLowerCase().includes(cityDropdownSearch.toLowerCase())
     );
-  }, [watchedState, citySearchTerm]);
+  }, [watchedState, cityDropdownSearch]);
+  
+  const filteredAddedCities = useMemo(() => {
+    return fields.map((field, index) => ({ field, index })).filter(({ field, index }) => {
+        const cityName = form.getValues(`cities.${index}.name`);
+        return cityName.toLowerCase().includes(addedCitySearch.toLowerCase());
+    });
+  }, [fields, addedCitySearch, form]);
 
   useEffect(() => {
     if (initialRender.current) {
@@ -191,8 +199,18 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
 
         <div>
             <FormLabel>City-Specific Prices (Overrides)</FormLabel>
+            <div className="relative my-2">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                    placeholder="Search added cities..."
+                    value={addedCitySearch}
+                    onChange={(e) => setAddedCitySearch(e.target.value)}
+                    className="pl-8"
+                    disabled={!watchedState || fields.length === 0}
+                />
+            </div>
             <div className="space-y-3 mt-2">
-                {fields.map((field, index) => (
+                {filteredAddedCities.map(({ field, index }) => (
                     <Collapsible key={field.id} open={openStates[index] || false} onOpenChange={(isOpen) => handleOpenChange(index, isOpen)}>
                         <div className="border rounded-md bg-background">
                             <div className="p-3 flex items-center justify-between">
@@ -224,8 +242,8 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
                                                                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                                                 <Input 
                                                                     placeholder="Search cities..."
-                                                                    value={citySearchTerm}
-                                                                    onChange={(e) => setCitySearchTerm(e.target.value)}
+                                                                    value={cityDropdownSearch}
+                                                                    onChange={(e) => setCityDropdownSearch(e.target.value)}
                                                                     className="pl-8 mb-1"
                                                                 />
                                                             </div>
@@ -294,5 +312,3 @@ export function ShippingZoneForm({ onFormSubmit, shippingZone }: ShippingZoneFor
     </Form>
   )
 }
-
-    
