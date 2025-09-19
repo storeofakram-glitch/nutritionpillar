@@ -116,9 +116,12 @@ export async function getCoachPayouts(): Promise<CoachPayout[]> {
 }
 
 export async function getCoachPayoutsByCoachId(coachId: string): Promise<CoachPayout[]> {
-    const q = query(payoutsCollection(), where('coachId', '==', coachId), orderBy('payoutDate', 'desc'));
+    const q = query(payoutsCollection(), where('coachId', '==', coachId));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CoachPayout));
+    const payouts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CoachPayout));
+    // Sort in code instead of in the query to avoid needing a composite index
+    payouts.sort((a, b) => new Date(b.payoutDate).getTime() - new Date(a.payoutDate).getTime());
+    return payouts;
 }
 
 
