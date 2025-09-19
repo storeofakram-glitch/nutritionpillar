@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useEffect, useState, useTransition } from "react"
+import { useEffect, useState, useTransition, useMemo } from "react"
 import { MoreHorizontal } from "lucide-react"
 
 import type { ShippingState } from "@/types"
@@ -28,7 +28,11 @@ import { Skeleton } from "@/components/ui/skeleton"
 import EditShippingZoneDialog from "./edit-shipping-zone-dialog"
 import DeleteShippingZoneDialog from "./delete-shipping-zone-dialog"
 
-export default function ShippingZonesTable() {
+interface ShippingZonesTableProps {
+  searchTerm: string;
+}
+
+export default function ShippingZonesTable({ searchTerm }: ShippingZonesTableProps) {
   const [shippingOptions, setShippingOptions] = useState<ShippingState[]>([])
   const [loading, setLoading] = useState(true)
   const [isPending, startTransition] = useTransition()
@@ -55,6 +59,12 @@ export default function ShippingZonesTable() {
     fetchShippingOptions()
   }, [])
   
+  const filteredShippingOptions = useMemo(() => {
+    return shippingOptions.filter(option =>
+      option.state.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [shippingOptions, searchTerm]);
+
   const handleEditClick = (zone: ShippingState) => {
     setSelectedZone(zone);
     setIsEditDialogOpen(true);
@@ -96,7 +106,7 @@ export default function ShippingZonesTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {shippingOptions.map((option) => (
+        {filteredShippingOptions.map((option) => (
           <TableRow key={option.id}>
             <TableCell className="font-medium">{option.state}</TableCell>
              <TableCell>
@@ -143,10 +153,10 @@ export default function ShippingZonesTable() {
             </TableCell>
           </TableRow>
         ))}
-         {!loading && shippingOptions.length === 0 && (
+         {!loading && filteredShippingOptions.length === 0 && (
             <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center">
-                    No shipping zones defined.
+                <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
+                    {searchTerm ? `No zones found for "${searchTerm}"` : "No shipping zones defined."}
                 </TableCell>
             </TableRow>
         )}
