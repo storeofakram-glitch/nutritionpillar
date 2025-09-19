@@ -127,6 +127,7 @@ export async function addClientPayment(payment: Omit<ClientPayment, 'id' | 'coac
     }
 }
 
+
 // COACH PAYOUTS
 export async function getCoachPayouts(): Promise<CoachPayout[]> {
     const snapshot = await getDocs(query(payoutsCollection(), orderBy('payoutDate', 'desc')));
@@ -134,7 +135,7 @@ export async function getCoachPayouts(): Promise<CoachPayout[]> {
 }
 
 export async function getCoachPayoutsByCoachId(coachId: string): Promise<CoachPayout[]> {
-    const q = query(collection(getDb(), 'coach_payouts'), where('coachId', '==', coachId));
+    const q = query(payoutsCollection(), where('coachId', '==', coachId));
     const snapshot = await getDocs(q);
     const payouts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CoachPayout));
     
@@ -151,47 +152,46 @@ export async function getCoachPayoutsByCoachId(coachId: string): Promise<CoachPa
  */
 export async function processAllPendingPayoutsForCoach(coachId: string) {
     const db = getDb();
+    const coachFinRef = doc(db, 'coach_financials', coachId);
+    const pendingPayoutsQuery = query(
+        collection(db, 'coach_payouts'),
+        where('coachId', '==', coachId),
+        where('status', '==', 'pending')
+    );
+
     try {
-        // Use a transaction to ensure atomicity
+        const pendingPayoutsSnapshot = await getDocs(pendingPayoutsQuery);
+
+        if (pendingPayoutsSnapshot.empty) {
+            return { success: true, message: "No pending payouts to process." };
+        }
+
         await runTransaction(db, async (transaction) => {
-            // 1. Find all pending payouts for the coach
-            const pendingPayoutsQuery = query(
-                collection(db, 'coach_payouts'),
-                where('coachId', '==', coachId),
-                where('status', '==', 'pending')
-            );
-            
-            // Note: getDocs cannot be used inside a transaction.
-            // We fetch the documents outside and then use their refs inside.
-            const pendingPayoutsSnapshot = await getDocs(pendingPayoutsQuery);
-
-            if (pendingPayoutsSnapshot.empty) {
-                // It's not an error to have no pending payouts, just nothing to do.
-                return;
-            }
-
-            let totalPayoutAmount = 0;
-            
-            // 2. Prepare updates for each pending payout
-            pendingPayoutsSnapshot.forEach(payoutDoc => {
-                const payoutData = payoutDoc.data() as CoachPayout;
-                totalPayoutAmount += payoutData.amount;
-                transaction.update(payoutDoc.ref, { status: 'completed' });
-            });
-            
-            // 3. Update the coach's aggregate financial record
-            const coachFinRef = doc(db, 'coach_financials', coachId);
+            // READ: Get the coach's financial document first.
             const coachFinDoc = await transaction.get(coachFinRef);
             
             if (!coachFinDoc.exists()) {
-                // This case should ideally not happen if a financial doc is created with the first payment
                 throw new Error("Coach financial record not found during payout processing.");
             }
+
+            let totalPayoutAmount = 0;
+            const payoutDocsToUpdate: {ref: any, data: any}[] = [];
+
+            // This loop now only prepares data; it does not perform reads or writes.
+            pendingPayoutsSnapshot.forEach(payoutDoc => {
+                const payoutData = payoutDoc.data() as CoachPayout;
+                totalPayoutAmount += payoutData.amount;
+                payoutDocsToUpdate.push({ ref: payoutDoc.ref, data: { status: 'completed' } });
+            });
+            
+            // WRITE: Now perform all the updates.
+            payoutDocsToUpdate.forEach(payout => {
+                transaction.update(payout.ref, payout.data);
+            });
 
             const currentPaidOut = coachFinDoc.data().paidOut || 0;
             const currentPending = coachFinDoc.data().pendingPayout || 0;
             
-            // Update the financials within the transaction
             transaction.update(coachFinRef, {
                 pendingPayout: Math.max(0, currentPending - totalPayoutAmount),
                 paidOut: currentPaidOut + totalPayoutAmount,
