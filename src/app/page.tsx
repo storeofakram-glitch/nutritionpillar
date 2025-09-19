@@ -11,7 +11,7 @@ import { ArrowRight, BrainCircuit, ShoppingBag, Users as UsersIcon } from 'lucid
 import { getSiteSettings } from '@/services/site-settings-service';
 import type { SiteSettings, Product, PartnershipLogo } from '@/types';
 import NewArrivalsCarousel from '@/components/new-arrivals-carousel';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselDots } from '@/components/ui/carousel';
 import { useEffect, useState } from 'react';
 import DynamicCounter from '@/components/dynamic-counter';
 import { Badge } from '@/components/ui/badge';
@@ -329,8 +329,9 @@ export default function Home() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="flex" />
-              <CarouselNext className="flex" />
+              <CarouselPrevious />
+              <CarouselNext />
+              <CarouselDots />
             </Carousel>
           </div>
         </div>

@@ -98,8 +98,8 @@ export default function NewArrivalsCarousel() {
                     </CarouselItem>
                 ))}
             </CarouselContent>
-            <CarouselPrevious className="flex" />
-            <CarouselNext className="flex" />
+            <CarouselPrevious />
+            <CarouselNext />
             <CarouselDots />
         </Carousel>
       </div>
