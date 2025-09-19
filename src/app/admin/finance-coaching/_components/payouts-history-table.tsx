@@ -95,4 +95,3 @@ export default function PayoutsHistoryTable({ payouts, coaches, isLoading, searc
         </Card>
     );
 }
-
