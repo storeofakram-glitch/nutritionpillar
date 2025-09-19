@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { findMembershipByCode } from '@/services/membership-service';
 import type { RecommendedProduct, MembershipWithProducts, Coach, CoachingApplication, Membership, CoachFinancials, CoachPayout } from '@/types';
-import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users, Mail, MessageSquare, User, UserX, History, Copy, Wallet, TrendingUp } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users, Mail, MessageSquare, User, UserX, History, Copy, Wallet, TrendingUp, Search } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
@@ -59,6 +59,7 @@ export default function MembershipPage() {
     const [payoutHistory, setPayoutHistory] = useState<CoachPayout[]>([]);
     const [isRevokeDialogOpen, setIsRevokeDialogOpen] = useState(false);
     const [selectedAppForRevoke, setSelectedAppForRevoke] = useState<CoachingApplication | null>(null);
+    const [activeClientSearchTerm, setActiveClientSearchTerm] = useState('');
     const { toast } = useToast();
 
     const fetchCoachData = async (coach: Coach) => {
@@ -188,6 +189,13 @@ export default function MembershipPage() {
             archivedClients: applications.filter(app => app.status === 'archived')
         };
     }, [applications]);
+
+    const filteredActiveClients = useMemo(() => {
+        if (!activeClientSearchTerm) return activeClients;
+        return activeClients.filter(app =>
+            app.applicant.name.toLowerCase().includes(activeClientSearchTerm.toLowerCase())
+        );
+    }, [activeClients, activeClientSearchTerm]);
 
     const SupplementGuideTable = ({ recommendations }: { recommendations: (RecommendedProduct & { product: any })[] }) => (
         <div className="w-full overflow-hidden rounded-lg border">
@@ -381,10 +389,22 @@ export default function MembershipPage() {
                     </div>
                     
                     <div>
-                        <h3 className="font-semibold text-lg mb-4">Your Active Clients</h3>
-                        {activeClients.length > 0 ? (
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
+                            <h3 className="font-semibold text-lg">Your Active Clients</h3>
+                            <div className="relative">
+                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    type="search"
+                                    placeholder="Search by name..."
+                                    className="pl-8"
+                                    value={activeClientSearchTerm}
+                                    onChange={(e) => setActiveClientSearchTerm(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        {filteredActiveClients.length > 0 ? (
                             <div className="space-y-4">
-                                {activeClients.map(app => {
+                                {filteredActiveClients.map(app => {
                                     const daysLeft = getDaysLeft(app.membership?.expiresAt);
                                     const isActive = daysLeft === null || daysLeft > 0;
                                     return (
@@ -452,7 +472,9 @@ export default function MembershipPage() {
                                 )})}
                             </div>
                         ) : (
-                            <p className="text-center text-muted-foreground py-4">You have no active clients yet.</p>
+                            <p className="text-center text-muted-foreground py-4">
+                                {activeClientSearchTerm ? `No clients found for "${activeClientSearchTerm}".` : 'You have no active clients yet.'}
+                            </p>
                         )}
                     </div>
                      <div>
@@ -666,6 +688,7 @@ export default function MembershipPage() {
         </div>
     );
 }
+
 
 
 
