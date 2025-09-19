@@ -9,16 +9,16 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { findMembershipByCode } from '@/services/membership-service';
-import type { RecommendedProduct, MembershipWithProducts, Coach, CoachingApplication, Membership, CoachFinancials } from '@/types';
+import type { RecommendedProduct, MembershipWithProducts, Coach, CoachingApplication, Membership, CoachFinancials, CoachPayout } from '@/types';
 import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users, Mail, MessageSquare, User, UserX, History, Copy, Wallet, TrendingUp } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, format } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { getCoachByName } from '@/services/coach-service';
 import { getApplicationsByCoach, updateApplicationStatus, deleteApplication } from '@/services/application-service';
-import { getCoachFinancialsById } from '@/services/coach-finance-service';
+import { getCoachFinancialsById, getCoachPayoutsByCoachId } from '@/services/coach-finance-service';
 import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
@@ -56,14 +56,16 @@ export default function MembershipPage() {
     const [coachDetails, setCoachDetails] = useState<Coach | null>(null);
     const [coachFinancials, setCoachFinancials] = useState<CoachFinancials | null>(null);
     const [applications, setApplications] = useState<EnrichedApplication[]>([]);
+    const [payoutHistory, setPayoutHistory] = useState<CoachPayout[]>([]);
     const [isRevokeDialogOpen, setIsRevokeDialogOpen] = useState(false);
     const [selectedAppForRevoke, setSelectedAppForRevoke] = useState<CoachingApplication | null>(null);
     const { toast } = useToast();
 
     const fetchCoachData = async (coach: Coach) => {
-        const [coachApps, financials] = await Promise.all([
+        const [coachApps, financials, payouts] = await Promise.all([
             getApplicationsByCoach(coach.id),
-            getCoachFinancialsById(coach.id)
+            getCoachFinancialsById(coach.id),
+            getCoachPayoutsByCoachId(coach.id)
         ]);
 
         const enrichedApps = await Promise.all(
@@ -74,6 +76,7 @@ export default function MembershipPage() {
         );
         setApplications(enrichedApps);
         setCoachFinancials(financials);
+        setPayoutHistory(payouts);
     }
 
     const handleCheckMembership = async (e: React.FormEvent) => {
@@ -91,6 +94,7 @@ export default function MembershipPage() {
         setCoachDetails(null);
         setApplications([]);
         setCoachFinancials(null);
+        setPayoutHistory([]);
 
 
         try {
@@ -235,6 +239,15 @@ export default function MembershipPage() {
                  case 'rejected':
                     return 'bg-red-600 hover:bg-red-700 text-white';
                 default: return ''; // uses default from Badge variant
+            }
+        }
+        
+         const getPayoutStatusStyles = (status: CoachPayout['status']): string => {
+            switch (status) {
+                case 'completed': return 'bg-green-600 hover:bg-green-700 text-white';
+                case 'pending': return 'bg-yellow-400 hover:bg-yellow-500 text-yellow-900';
+                case 'failed': return 'bg-red-600 hover:bg-red-700 text-white';
+                default: return '';
             }
         }
 
@@ -428,6 +441,35 @@ export default function MembershipPage() {
                             <p className="text-center text-muted-foreground py-4">You have no active clients yet.</p>
                         )}
                     </div>
+                     <div>
+                        <h3 className="font-semibold text-lg mb-4">Your Payout History</h3>
+                        {payoutHistory.length > 0 ? (
+                            <div className="w-full overflow-hidden rounded-lg border">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Date</TableHead>
+                                            <TableHead>Amount</TableHead>
+                                            <TableHead>Status</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {payoutHistory.map(payout => (
+                                            <TableRow key={payout.id}>
+                                                <TableCell>{format(new Date(payout.payoutDate), 'PPP')}</TableCell>
+                                                <TableCell className="font-medium">DZD {payout.amount.toFixed(2)}</TableCell>
+                                                <TableCell>
+                                                    <Badge variant={'default'} className={cn(getPayoutStatusStyles(payout.status))}>{payout.status}</Badge>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        ) : (
+                            <p className="text-center text-muted-foreground py-4">You have no payout history yet.</p>
+                        )}
+                    </div>
 
                 </CardContent>
             </Card>
@@ -606,3 +648,4 @@ export default function MembershipPage() {
         </div>
     );
 }
+

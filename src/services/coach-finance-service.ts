@@ -2,7 +2,7 @@
 
 'use server';
 
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy, getDoc, runTransaction } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy, getDoc, runTransaction, where } from 'firebase/firestore';
 import { getDb } from '@/lib/firebase';
 import type { CoachFinancials, ClientPayment, CoachPayout, Coach } from '@/types';
 import { revalidatePath } from 'next/cache';
@@ -26,6 +26,7 @@ export async function getCoachFinancialsById(coachId: string): Promise<CoachFina
         }
         // Return a default object if no financials exist yet, so the dashboard doesn't break
         return {
+            id: coachId,
             coachId,
             commissionRate: 70, // Default rate
             totalEarnings: 0,
@@ -114,6 +115,13 @@ export async function getCoachPayouts(): Promise<CoachPayout[]> {
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CoachPayout));
 }
 
+export async function getCoachPayoutsByCoachId(coachId: string): Promise<CoachPayout[]> {
+    const q = query(payoutsCollection(), where('coachId', '==', coachId), orderBy('payoutDate', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CoachPayout));
+}
+
+
 export async function generatePayoutsFromPending(coachId: string, amount: number) {
     if (amount <= 0) {
         return { success: false, error: "Payout amount must be positive." };
@@ -152,6 +160,7 @@ export async function generatePayoutsFromPending(coachId: string, amount: number
         });
 
         revalidatePath('/admin/finance-coaching');
+        revalidatePath('/membership');
         return { success: true };
     } catch (error) {
         console.error("Error generating payout from pending: ", error);
