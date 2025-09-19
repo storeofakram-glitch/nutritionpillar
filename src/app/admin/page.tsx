@@ -117,6 +117,7 @@ export default async function AdminDashboardPage() {
                                     <TableRow>
                                         <TableHead>Customer</TableHead>
                                         <TableHead>Status</TableHead>
+                                        <TableHead>Date</TableHead>
                                         <TableHead className="text-right">Amount</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -129,6 +130,9 @@ export default async function AdminDashboardPage() {
                                             </TableCell>
                                             <TableCell>
                                                 <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                {format(new Date(order.date), "PPP")}
                                             </TableCell>
                                             <TableCell className="text-right">DZD {order.amount.toFixed(2)}</TableCell>
                                         </TableRow>
