@@ -4,10 +4,10 @@
 
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { getDb } from '@/lib/firebase';
-import type { Order, Customer } from '@/types';
+import type { Order, Customer, CoachingApplication } from '@/types';
 import { getOrders, getTotalCostOfGoodsSold, getTotalRevenue } from './order-service';
 import { getTotalExpenses } from './expense-service';
-import { getUnreadSubmissionsCount } from './contact-service';
+import { getUnreadSubmissionsCount, getAllApplications } from './contact-service';
 import { getNewApplicationsCount } from './application-service';
 
 const ordersCollection = collection(getDb(), 'orders');
@@ -55,6 +55,7 @@ export async function getDashboardStats() {
         totalCOGS,
         totalExpenses,
         allOrders,
+        allApplications,
         unreadMessages,
         newApplications,
     ] = await Promise.all([
@@ -62,6 +63,7 @@ export async function getDashboardStats() {
         getTotalCostOfGoodsSold(),
         getTotalExpenses(),
         getOrders(),
+        getAllApplications(),
         getUnreadSubmissionsCount(),
         getNewApplicationsCount(),
     ]);
@@ -82,6 +84,7 @@ export async function getDashboardStats() {
         }, new Set<string>()).size;
         
     const recentOrders = allOrders.slice(0, 5);
+    const recentApplications = allApplications.slice(0, 5);
 
     return {
         totalRevenue,
@@ -89,8 +92,8 @@ export async function getDashboardStats() {
         netProfit,
         newCustomersThisMonth,
         recentOrders,
+        recentApplications,
         unreadMessages,
         newApplications,
     };
 }
-

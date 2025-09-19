@@ -11,7 +11,7 @@ import { AuthProvider } from '@/contexts/auth-context';
 import { LanguageProvider } from '@/contexts/language-context';
 
 export const metadata: Metadata = {
-  title: 'Nutrition Pillar - Your Supplement Marketplace',
+  title: 'Nutrition Pillar - Your Complete Platform for Supplements & Sports Coaching',
   description: 'High-quality supplements to fuel your fitness journey.',
   icons: {
     icon: [

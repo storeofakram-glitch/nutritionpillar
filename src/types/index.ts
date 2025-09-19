@@ -275,7 +275,7 @@ export type ContactSubmission = {
     subject: string;
     message: string;
     createdAt: string; // ISO 8601 string
-    status: 'new' | 'archived';
+    status: 'new' | 'read' | 'archived';
 };
 
 export type Plan = {

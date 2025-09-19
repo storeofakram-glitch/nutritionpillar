@@ -34,6 +34,18 @@ export async function addApplication(data: Omit<CoachingApplication, 'id' | 'cre
 }
 
 /**
+ * Fetches all applications from the database, ordered by creation date.
+ * @returns A promise that resolves to an array of applications.
+ */
+export async function getAllApplications(): Promise<CoachingApplication[]> {
+    const q = query(applicationsCollection(), orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+    const applications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CoachingApplication));
+    return applications;
+}
+
+
+/**
  * Fetches all applications for a specific coach.
  * @param coachId The ID of the coach.
  * @returns A promise that resolves to an array of applications.

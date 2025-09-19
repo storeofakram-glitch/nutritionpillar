@@ -89,3 +89,11 @@ export async function deleteSubmission(id: string) {
         return { success: false, error: (error as Error).message };
     }
 }
+
+
+// This function is being moved to application-service.ts to avoid circular dependencies
+// export async function getAllApplications(): Promise<CoachingApplication[]> {
+//     const q = query(collection(getDb(), 'coachingApplications'), orderBy('createdAt', 'desc'));
+//     const snapshot = await getDocs(q);
+//     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CoachingApplication));
+// }
