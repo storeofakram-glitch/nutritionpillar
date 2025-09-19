@@ -26,7 +26,7 @@ const applicationFormSchema = z.object({
   name: z.string().min(2, "Name is required."),
   email: z.string().email("Please enter a valid email."),
   countryCode: z.string().min(1, "Country code is required."),
-  phone: z.string().min(1, "Phone number is required.").regex(/^[0-9]+$/, "Only numbers are allowed."),
+  phone: z.string().min(1, "Phone number is required.").regex(/^[0-9]+$/, "Only numbers are allowed in a phone number."),
   age: z.coerce.number().int().positive("Age must be a positive number."),
   weight: z.coerce.number().positive("Weight must be a positive number."),
   height: z.coerce.number().int().positive("Height must be a positive number."),
