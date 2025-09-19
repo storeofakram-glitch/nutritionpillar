@@ -38,6 +38,9 @@ export default function Header() {
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
   const [socialLinks, setSocialLinks] = React.useState<SocialLinks>({});
   const { language, setLanguage } = useLanguage();
+  const [hoveredLink, setHoveredLink] = React.useState<{left: number, width: number} | null>(null);
+  const navRef = React.useRef<HTMLDivElement>(null);
+
 
   React.useEffect(() => {
     async function fetchSettings() {
@@ -49,13 +52,27 @@ export default function Header() {
     fetchSettings();
   }, []);
   
+  const handleNavLinkHover = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const target = e.currentTarget;
+    if (navRef.current) {
+        const navRect = navRef.current.getBoundingClientRect();
+        const left = target.getBoundingClientRect().left - navRect.left;
+        setHoveredLink({ left, width: target.offsetWidth });
+    }
+  };
+
+  const handleNavMouseLeave = () => {
+    setHoveredLink(null);
+  };
+  
   const NavLink = ({ href, children }: { href: string, children: React.ReactNode }) => (
     <Link
       href={href}
+      onMouseEnter={handleNavLinkHover}
       onClick={() => setIsSheetOpen(false)}
       className={cn(
-        'transition-colors hover:text-primary',
-        pathname === href ? 'text-primary font-semibold' : 'text-foreground/80'
+        'transition-colors relative z-10',
+        pathname === href ? 'text-primary font-semibold' : 'text-foreground/80 hover:text-primary'
       )}
     >
       {children}
@@ -92,7 +109,10 @@ export default function Header() {
                    <nav className="flex flex-col gap-6 text-lg font-medium mt-8">
                        {navLinks.map(link => (
                           <SheetClose asChild key={link.href}>
-                             <NavLink href={link.href}>{link.label}</NavLink>
+                             <Link href={link.href} className={cn(
+                                'transition-colors hover:text-primary',
+                                pathname === link.href ? 'text-primary font-semibold' : 'text-foreground/80'
+                              )}>{link.label}</Link>
                           </SheetClose>
                         ))}
                    </nav>
@@ -150,10 +170,26 @@ export default function Header() {
           />
           <span className="font-bold font-headline text-base md:inline-block">Nutrition Pillar</span>
         </Link>
-        <nav className="hidden md:flex flex-1 items-center gap-6 text-sm">
-          {navLinks.map(link => (
+        <nav 
+            ref={navRef}
+            className="hidden md:flex flex-1 items-center gap-6 text-sm relative"
+            onMouseLeave={handleNavMouseLeave}
+        >
+            {hoveredLink && (
+              <div 
+                  className="absolute bg-primary/10 rounded-md transition-all duration-300 ease-out"
+                  style={{
+                      left: `${hoveredLink.left}px`,
+                      width: `${hoveredLink.width}px`,
+                      height: '2.25rem', // 36px
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                  }}
+              />
+            )}
+            {navLinks.map(link => (
               <NavLink key={link.href} href={link.href}>{link.label}</NavLink>
-          ))}
+            ))}
         </nav>
         <div className="flex items-center justify-end gap-2">
             <Button asChild variant="ghost" size="icon">
