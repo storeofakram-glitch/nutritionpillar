@@ -1,15 +1,54 @@
 
+'use client';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getDashboardStats } from "@/services/admin-service";
-import { DollarSign, ShoppingCart, Users, Activity, Mail, UserPlus } from "lucide-react";
+import { DollarSign, ShoppingCart, Users, Activity, Mail, UserPlus, Search } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
+import { useEffect, useState, useMemo } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
 
-export default async function AdminDashboardPage() {
-    const stats = await getDashboardStats();
+// Define a type for the stats to avoid using 'any'
+type DashboardStats = Awaited<ReturnType<typeof getDashboardStats>>;
+
+export default function AdminDashboardPage() {
+    const [stats, setStats] = useState<DashboardStats | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [orderSearchTerm, setOrderSearchTerm] = useState('');
+    const [appSearchTerm, setAppSearchTerm] = useState('');
+
+    useEffect(() => {
+        async function loadStats() {
+            setLoading(true);
+            const fetchedStats = await getDashboardStats();
+            setStats(fetchedStats);
+            setLoading(false);
+        }
+        loadStats();
+    }, []);
+
+    const filteredRecentOrders = useMemo(() => {
+        if (!stats) return [];
+        if (!orderSearchTerm) return stats.recentOrders;
+        return stats.recentOrders.filter(order =>
+            order.customer.name.toLowerCase().includes(orderSearchTerm.toLowerCase()) ||
+            order.customer.email.toLowerCase().includes(orderSearchTerm.toLowerCase())
+        );
+    }, [stats, orderSearchTerm]);
+
+    const filteredRecentApplications = useMemo(() => {
+        if (!stats) return [];
+        if (!appSearchTerm) return stats.recentApplications;
+        return stats.recentApplications.filter(app =>
+            app.applicant.name.toLowerCase().includes(appSearchTerm.toLowerCase())
+        );
+    }, [stats, appSearchTerm]);
+
 
     const getStatusVariant = (status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'canceled') => {
         switch (status) {
@@ -32,27 +71,45 @@ export default async function AdminDashboardPage() {
     }
 
     const getRecentOrdersDescription = () => {
+        if (!stats) return "";
         const count = stats.recentOrders.length;
-        if (count === 1) {
-            return "Your most recent order.";
-        }
-        if (count > 1 && count < 5) {
-            return `Your ${count} most recent orders.`;
-        }
+        if (count === 1) return "Your most recent order.";
+        if (count > 1 && count < 5) return `Your ${count} most recent orders.`;
         return "Your 5 most recent orders.";
     }
     
     const getRecentApplicationsDescription = () => {
+        if (!stats) return "";
         const count = stats.recentApplications.length;
-        if (count === 1) {
-            return "Your most recent coaching application.";
-        }
-        if (count > 1 && count < 5) {
-            return `Your ${count} most recent applications.`;
-        }
+        if (count === 1) return "Your most recent coaching application.";
+        if (count > 1 && count < 5) return `Your ${count} most recent applications.`;
         return "Your 5 most recent applications.";
     }
 
+    if (loading) {
+        return (
+            <div className="space-y-6">
+                <div>
+                    <Skeleton className="h-8 w-48 mb-2" />
+                    <Skeleton className="h-5 w-72" />
+                </div>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <Skeleton className="h-28" />
+                    <Skeleton className="h-28" />
+                    <Skeleton className="h-28" />
+                    <Skeleton className="h-28" />
+                </div>
+                <div className="grid gap-6">
+                    <Skeleton className="h-96" />
+                    <Skeleton className="h-96" />
+                </div>
+            </div>
+        )
+    }
+    
+    if (!stats) {
+        return <p>Could not load dashboard data.</p>
+    }
 
     return (
         <div className="space-y-6">
@@ -105,10 +162,23 @@ export default async function AdminDashboardPage() {
             </div>
             
             <div className="grid grid-cols-1 gap-6">
-                <Card className="lg:col-span-2">
+                <Card>
                     <CardHeader>
-                        <CardTitle>Recent Orders</CardTitle>
-                        <CardDescription>{getRecentOrdersDescription()}</CardDescription>
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <div className="flex-1">
+                                <CardTitle>Recent Orders</CardTitle>
+                                <CardDescription>{getRecentOrdersDescription()}</CardDescription>
+                            </div>
+                            <div className="relative">
+                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    placeholder="Search by name or email..."
+                                    className="pl-8 sm:w-[240px]"
+                                    value={orderSearchTerm}
+                                    onChange={(e) => setOrderSearchTerm(e.target.value)}
+                                />
+                            </div>
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <Table>
@@ -121,7 +191,7 @@ export default async function AdminDashboardPage() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {stats.recentOrders.map(order => (
+                                {filteredRecentOrders.map(order => (
                                     <TableRow key={order.id}>
                                         <TableCell>
                                             <div className="font-medium">{order.customer.name}</div>
@@ -138,8 +208,10 @@ export default async function AdminDashboardPage() {
                                 ))}
                             </TableBody>
                         </Table>
-                        {stats.recentOrders.length === 0 && (
-                            <p className="text-center text-muted-foreground py-8">No orders have been placed yet.</p>
+                        {filteredRecentOrders.length === 0 && (
+                            <p className="text-center text-muted-foreground py-8">
+                                {orderSearchTerm ? `No orders found for "${orderSearchTerm}"` : "No orders have been placed yet."}
+                            </p>
                         )}
                     </CardContent>
                     {stats.recentOrders.length > 0 && (
@@ -153,8 +225,21 @@ export default async function AdminDashboardPage() {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Recent Coaching Applications</CardTitle>
-                        <CardDescription>{getRecentApplicationsDescription()}</CardDescription>
+                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <div className="flex-1">
+                                <CardTitle>Recent Coaching Applications</CardTitle>
+                                <CardDescription>{getRecentApplicationsDescription()}</CardDescription>
+                            </div>
+                            <div className="relative">
+                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    placeholder="Search by applicant..."
+                                    className="pl-8 sm:w-[240px]"
+                                    value={appSearchTerm}
+                                    onChange={(e) => setAppSearchTerm(e.target.value)}
+                                />
+                            </div>
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <Table>
@@ -166,7 +251,7 @@ export default async function AdminDashboardPage() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {stats.recentApplications.map(app => (
+                                {filteredRecentApplications.map(app => (
                                     <TableRow key={app.id}>
                                         <TableCell>
                                             <div className="font-medium">{app.applicant.name}</div>
@@ -182,8 +267,10 @@ export default async function AdminDashboardPage() {
                                 ))}
                             </TableBody>
                         </Table>
-                        {stats.recentApplications.length === 0 && (
-                            <p className="text-center text-muted-foreground py-8">No coaching applications yet.</p>
+                        {filteredRecentApplications.length === 0 && (
+                            <p className="text-center text-muted-foreground py-8">
+                                 {appSearchTerm ? `No applications found for "${appSearchTerm}"` : "No coaching applications yet."}
+                            </p>
                         )}
                     </CardContent>
                     {stats.recentApplications.length > 0 && (
