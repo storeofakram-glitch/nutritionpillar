@@ -39,6 +39,8 @@ export default function CommissionTable({ coaches, isLoading, onDataChange, sear
         <TableRow key={i}>
             <TableCell><Skeleton className="h-5 w-32" /></TableCell>
             <TableCell><Skeleton className="h-5 w-16" /></TableCell>
+            <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+            <TableCell><Skeleton className="h-5 w-24" /></TableCell>
             <TableCell className="text-right"><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
         </TableRow>
     ));
@@ -50,7 +52,7 @@ export default function CommissionTable({ coaches, isLoading, onDataChange, sear
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex-1">
                             <CardTitle>Coach Commissions</CardTitle>
-                            <CardDescription>Manage commission rates for your coaches and experts.</CardDescription>
+                            <CardDescription>Manage commission rates and view financial summaries for your team.</CardDescription>
                         </div>
                          <div className="relative">
                             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -69,7 +71,9 @@ export default function CommissionTable({ coaches, isLoading, onDataChange, sear
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Coach</TableHead>
-                                <TableHead>Commission Rate</TableHead>
+                                <TableHead>Commission</TableHead>
+                                <TableHead>Pending Payout</TableHead>
+                                <TableHead>Total Paid</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -78,6 +82,8 @@ export default function CommissionTable({ coaches, isLoading, onDataChange, sear
                                 <TableRow key={coach.id}>
                                     <TableCell className="font-medium">{coach.name}</TableCell>
                                     <TableCell>{coach.commissionRate || 70}%</TableCell>
+                                    <TableCell className="font-semibold text-primary">DZD {coach.pendingPayout?.toFixed(2) || '0.00'}</TableCell>
+                                    <TableCell>DZD {coach.paidOut?.toFixed(2) || '0.00'}</TableCell>
                                     <TableCell className="text-right">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild><Button size="icon" variant="ghost"><MoreHorizontal /></Button></DropdownMenuTrigger>
@@ -90,7 +96,7 @@ export default function CommissionTable({ coaches, isLoading, onDataChange, sear
                             ))}
                              {!isLoading && coaches.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={3} className="text-center h-24 text-muted-foreground">
+                                    <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">
                                         No coaches found.
                                     </TableCell>
                                 </TableRow>
@@ -110,3 +116,4 @@ export default function CommissionTable({ coaches, isLoading, onDataChange, sear
         </>
     );
 }
+
