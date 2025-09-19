@@ -29,20 +29,24 @@ export default function ApplyDialog({ plan, coachId, coachName }: ApplyDialogPro
       <DialogTrigger asChild>
         <Button className="w-full">Apply Now</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-lg p-0">
+        <DialogHeader className="p-6 pb-4">
           <DialogTitle>Apply for: {plan.title}</DialogTitle>
           <DialogDescription>
             Complete the form below to apply for this plan with {coachName}.
           </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="max-h-[80vh] pr-6">
-            <ApplicationForm 
-                plan={plan} 
-                coachId={coachId}
-                coachName={coachName} 
-                onSuccess={() => setOpen(false)} 
-            />
+        <ScrollArea className="max-h-[70vh]">
+          <div className="px-6 pb-6">
+            <div className="border rounded-lg p-4">
+                <ApplicationForm 
+                    plan={plan} 
+                    coachId={coachId}
+                    coachName={coachName} 
+                    onSuccess={() => setOpen(false)} 
+                />
+            </div>
+          </div>
         </ScrollArea>
       </DialogContent>
     </Dialog>
