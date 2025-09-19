@@ -104,101 +104,96 @@ export default async function AdminDashboardPage() {
                 </Card>
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="space-y-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Recent Orders</CardTitle>
-                            <CardDescription>{getRecentOrdersDescription()}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Customer</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead>Date</TableHead>
-                                        <TableHead className="text-right">Amount</TableHead>
+            <div className="grid grid-cols-1 gap-6">
+                <Card className="lg:col-span-2">
+                    <CardHeader>
+                        <CardTitle>Recent Orders</CardTitle>
+                        <CardDescription>{getRecentOrdersDescription()}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Customer</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead className="text-right">Amount</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {stats.recentOrders.map(order => (
+                                    <TableRow key={order.id}>
+                                        <TableCell>
+                                            <div className="font-medium">{order.customer.name}</div>
+                                            <div className="text-sm text-muted-foreground">{order.customer.email}</div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                            {format(new Date(order.date), "PPP")}
+                                        </TableCell>
+                                        <TableCell className="text-right">DZD {order.amount.toFixed(2)}</TableCell>
                                     </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {stats.recentOrders.map(order => (
-                                        <TableRow key={order.id}>
-                                            <TableCell>
-                                                <div className="font-medium">{order.customer.name}</div>
-                                                <div className="text-sm text-muted-foreground">{order.customer.email}</div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
-                                            </TableCell>
-                                            <TableCell>
-                                                {format(new Date(order.date), "PPP")}
-                                            </TableCell>
-                                            <TableCell className="text-right">DZD {order.amount.toFixed(2)}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                            {stats.recentOrders.length === 0 && (
-                                <p className="text-center text-muted-foreground py-8">No orders have been placed yet.</p>
-                            )}
-                        </CardContent>
-                        {stats.recentOrders.length > 0 && (
-                            <div className="flex items-center justify-center p-4">
-                                <Button asChild variant="outline">
-                                    <Link href="/admin/orders">View All Orders</Link>
-                                </Button>
-                            </div>
+                                ))}
+                            </TableBody>
+                        </Table>
+                        {stats.recentOrders.length === 0 && (
+                            <p className="text-center text-muted-foreground py-8">No orders have been placed yet.</p>
                         )}
-                    </Card>
+                    </CardContent>
+                    {stats.recentOrders.length > 0 && (
+                        <div className="flex items-center justify-center p-4">
+                            <Button asChild variant="outline">
+                                <Link href="/admin/orders">View All Orders</Link>
+                            </Button>
+                        </div>
+                    )}
+                </Card>
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Recent Coaching Applications</CardTitle>
-                            <CardDescription>{getRecentApplicationsDescription()}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Applicant</TableHead>
-                                        <TableHead>Coach</TableHead>
-                                        <TableHead>Status</TableHead>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Recent Coaching Applications</CardTitle>
+                        <CardDescription>{getRecentApplicationsDescription()}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Applicant</TableHead>
+                                    <TableHead>Coach</TableHead>
+                                    <TableHead>Status</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {stats.recentApplications.map(app => (
+                                    <TableRow key={app.id}>
+                                        <TableCell>
+                                            <div className="font-medium">{app.applicant.name}</div>
+                                            <div className="text-sm text-muted-foreground">{app.planTitle}</div>
+                                        </TableCell>
+                                        <TableCell>
+                                            {app.coachName}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge variant={getApplicationStatusVariant(app.status)}>{app.status}</Badge>
+                                        </TableCell>
                                     </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {stats.recentApplications.map(app => (
-                                        <TableRow key={app.id}>
-                                            <TableCell>
-                                                <div className="font-medium">{app.applicant.name}</div>
-                                                <div className="text-sm text-muted-foreground">{app.planTitle}</div>
-                                            </TableCell>
-                                            <TableCell>
-                                                {app.coachName}
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge variant={getApplicationStatusVariant(app.status)}>{app.status}</Badge>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                            {stats.recentApplications.length === 0 && (
-                                <p className="text-center text-muted-foreground py-8">No coaching applications yet.</p>
-                            )}
-                        </CardContent>
-                        {stats.recentApplications.length > 0 && (
-                            <div className="flex items-center justify-center p-4">
-                                <Button asChild variant="outline">
-                                    <Link href="/admin/coaches">View All Applications</Link>
-                                </Button>
-                            </div>
+                                ))}
+                            </TableBody>
+                        </Table>
+                        {stats.recentApplications.length === 0 && (
+                            <p className="text-center text-muted-foreground py-8">No coaching applications yet.</p>
                         )}
-                    </Card>
-                </div>
-                 <div className="space-y-6">
-                    {/* Other cards for the right column can go here in the future */}
-                </div>
+                    </CardContent>
+                    {stats.recentApplications.length > 0 && (
+                        <div className="flex items-center justify-center p-4">
+                            <Button asChild variant="outline">
+                                <Link href="/admin/coaches">View All Applications</Link>
+                            </Button>
+                        </div>
+                    )}
+                </Card>
             </div>
         </div>
     )
