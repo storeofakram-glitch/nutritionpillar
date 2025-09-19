@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition, useMemo } from "react";
 import { MoreHorizontal, Dot } from "lucide-react";
 import type { ContactSubmission } from "@/types";
 import { getSubmissions, updateSubmissionStatus } from "@/services/contact-service";
@@ -18,9 +18,10 @@ import { cn } from "@/lib/utils";
 
 interface InboxTableProps {
     onDataChange: () => void;
+    searchTerm: string;
 }
 
-export default function InboxTable({ onDataChange }: InboxTableProps) {
+export default function InboxTable({ onDataChange, searchTerm }: InboxTableProps) {
     const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
     const [loading, setLoading] = useState(true);
     const [isPending, startTransition] = useTransition();
@@ -47,6 +48,18 @@ export default function InboxTable({ onDataChange }: InboxTableProps) {
     useEffect(() => {
         fetchSubmissions();
     }, []);
+
+    const filteredSubmissions = useMemo(() => {
+        if (!searchTerm) {
+            return submissions;
+        }
+        return submissions.filter(submission => 
+            submission.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            submission.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            submission.subject.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [submissions, searchTerm]);
+
 
     const handleView = async (submission: ContactSubmission) => {
         setSelectedSubmission(submission);
@@ -105,7 +118,7 @@ export default function InboxTable({ onDataChange }: InboxTableProps) {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {loading ? renderSkeleton() : submissions.map((submission) => (
+                        {loading ? renderSkeleton() : filteredSubmissions.map((submission) => (
                             <TableRow key={submission.id} className={cn(submission.status === 'new' && 'bg-muted/50 font-bold')}>
                                 <TableCell>
                                     <div className="flex items-center gap-2">
@@ -142,10 +155,10 @@ export default function InboxTable({ onDataChange }: InboxTableProps) {
                                 </TableCell>
                             </TableRow>
                         ))}
-                         {!loading && submissions.length === 0 && (
+                         {!loading && filteredSubmissions.length === 0 && (
                             <TableRow>
                                 <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
-                                    Your inbox is empty.
+                                    {searchTerm ? `No messages found for "${searchTerm}"` : 'Your inbox is empty.'}
                                 </TableCell>
                             </TableRow>
                         )}
