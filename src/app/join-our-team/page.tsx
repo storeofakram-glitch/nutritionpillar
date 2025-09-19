@@ -26,7 +26,7 @@ const joinTeamFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
   age: z.coerce.number().min(18, { message: "You must be at least 18 years old to apply." }),
   countryCode: z.string().min(1, "Country code is required."),
-  phone: z.string().min(1, "Phone number is required."),
+  phone: z.string().min(1, "Phone number is required.").regex(/^[0-9]+$/, "Only numbers are allowed."),
   address: z.string().min(2, "Address is required."),
   city: z.string().min(2, "City is required."),
   state: z.string().min(1, "State is required."),
@@ -537,11 +537,3 @@ export default function JoinTeamPage() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
