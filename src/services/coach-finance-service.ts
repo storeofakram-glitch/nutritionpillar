@@ -1,5 +1,6 @@
 
 
+
 'use server';
 
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy, getDoc, runTransaction, where, writeBatch } from 'firebase/firestore';
@@ -128,6 +129,60 @@ export async function addClientPayment(payment: Omit<ClientPayment, 'id' | 'coac
 }
 
 
+export async function deleteClientPayment(paymentId: string) {
+    const db = getDb();
+    try {
+        await runTransaction(db, async (transaction) => {
+            const paymentRef = doc(db, 'client_payments', paymentId);
+            const paymentDoc = await transaction.get(paymentRef);
+
+            if (!paymentDoc.exists()) {
+                throw new Error("Payment record not found.");
+            }
+
+            const paymentData = paymentDoc.data() as ClientPayment;
+            const { coachId, coachShare, status } = paymentData;
+
+            // Delete the payment itself
+            transaction.delete(paymentRef);
+
+            // If the payment was 'paid', we need to reverse the financial entries
+            if (status === 'paid') {
+                const coachFinRef = doc(db, 'coach_financials', coachId);
+                const coachFinDoc = await transaction.get(coachFinRef);
+
+                if (coachFinDoc.exists()) {
+                    const financials = coachFinDoc.data();
+                    // Reverse the earnings
+                    transaction.update(coachFinRef, {
+                        totalEarnings: (financials.totalEarnings || 0) - coachShare,
+                        pendingPayout: (financials.pendingPayout || 0) - coachShare,
+                    });
+                }
+
+                // Also delete the corresponding 'pending' payout record
+                const payoutQuery = query(
+                    payoutsCollection(),
+                    where('clientPaymentId', '==', paymentId),
+                    where('status', '==', 'pending')
+                );
+                const payoutSnapshot = await getDocs(payoutQuery);
+                payoutSnapshot.forEach(payoutDoc => {
+                    transaction.delete(payoutDoc.ref);
+                });
+            }
+        });
+
+        revalidatePath('/admin/finance-coaching');
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting client payment: ", error);
+        return { success: false, error: (error as Error).message };
+    }
+}
+
+
+
 // COACH PAYOUTS
 export async function getCoachPayouts(): Promise<CoachPayout[]> {
     const snapshot = await getDocs(query(payoutsCollection(), orderBy('payoutDate', 'desc')));
@@ -135,7 +190,7 @@ export async function getCoachPayouts(): Promise<CoachPayout[]> {
 }
 
 export async function getCoachPayoutsByCoachId(coachId: string): Promise<CoachPayout[]> {
-    const q = query(payoutsCollection(), where('coachId', '==', coachId));
+    const q = query(collection(getDb(), 'coach_payouts'), where('coachId', '==', coachId));
     const snapshot = await getDocs(q);
     const payouts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CoachPayout));
     
@@ -153,44 +208,46 @@ export async function getCoachPayoutsByCoachId(coachId: string): Promise<CoachPa
 export async function processAllPendingPayoutsForCoach(coachId: string) {
     const db = getDb();
     try {
+        // Use a transaction to ensure atomicity
         await runTransaction(db, async (transaction) => {
-            // Find all pending payouts for the coach
+            // 1. Find all pending payouts for the coach
             const pendingPayoutsQuery = query(
-                payoutsCollection(),
+                collection(db, 'coach_payouts'),
                 where('coachId', '==', coachId),
                 where('status', '==', 'pending')
             );
+            
+            // Note: getDocs cannot be used inside a transaction.
+            // We fetch the documents outside and then use their refs inside.
             const pendingPayoutsSnapshot = await getDocs(pendingPayoutsQuery);
 
             if (pendingPayoutsSnapshot.empty) {
-                throw new Error("No pending payouts found for this coach.");
+                // It's not an error to have no pending payouts, just nothing to do.
+                return;
             }
 
             let totalPayoutAmount = 0;
-            const batch = writeBatch(db);
-
-            // Mark each pending payout as 'completed'
+            
+            // 2. Prepare updates for each pending payout
             pendingPayoutsSnapshot.forEach(payoutDoc => {
                 const payoutData = payoutDoc.data() as CoachPayout;
                 totalPayoutAmount += payoutData.amount;
-                batch.update(payoutDoc.ref, { status: 'completed' });
+                transaction.update(payoutDoc.ref, { status: 'completed' });
             });
             
-            // Commit the batch updates
-            await batch.commit();
-
-            // Update the coach's aggregate financial record
+            // 3. Update the coach's aggregate financial record
             const coachFinRef = doc(db, 'coach_financials', coachId);
             const coachFinDoc = await transaction.get(coachFinRef);
             
             if (!coachFinDoc.exists()) {
                 // This case should ideally not happen if a financial doc is created with the first payment
-                throw new Error("Coach financial record not found.");
+                throw new Error("Coach financial record not found during payout processing.");
             }
 
             const currentPaidOut = coachFinDoc.data().paidOut || 0;
             const currentPending = coachFinDoc.data().pendingPayout || 0;
             
+            // Update the financials within the transaction
             transaction.update(coachFinRef, {
                 pendingPayout: Math.max(0, currentPending - totalPayoutAmount),
                 paidOut: currentPaidOut + totalPayoutAmount,
