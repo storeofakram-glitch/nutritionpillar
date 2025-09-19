@@ -2,9 +2,9 @@
 
 'use server';
 
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, where, orderBy } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, where, orderBy, getDoc } from 'firebase/firestore';
 import { getDb } from '@/lib/firebase';
-import type { Membership, MembershipWithProducts, Product, RecommendedProduct } from '@/types';
+import type { Membership, MembershipWithProducts, Product, RecommendedProduct, CoachingApplication } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { getOrders } from './order-service';
 import { getProductById } from './product-service';
@@ -51,6 +51,16 @@ export async function findMembershipByCode(code: string): Promise<MembershipWith
         console.log(`Membership ${membershipData.code} has expired.`);
         return null; // Treat expired memberships as invalid
     }
+    
+    let coachingApplication: CoachingApplication | null = null;
+    if (membershipData.applicationId) {
+        const appDocRef = doc(getDb(), 'coachingApplications', membershipData.applicationId);
+        const appDocSnap = await getDoc(appDocRef);
+        if (appDocSnap.exists()) {
+            coachingApplication = { id: appDocSnap.id, ...appDocSnap.data() } as CoachingApplication;
+        }
+    }
+
 
     // Fetch full product details for recommended products
     const recommendedProductsWithDetails: (RecommendedProduct & { product: Product })[] = [];
@@ -73,6 +83,7 @@ export async function findMembershipByCode(code: string): Promise<MembershipWith
     return {
         ...rest,
         recommendedProducts: recommendedProductsWithDetails,
+        ...(coachingApplication && { applicant: coachingApplication.applicant }),
     };
 }
 
