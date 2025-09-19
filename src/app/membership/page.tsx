@@ -96,33 +96,48 @@ export default function MembershipPage() {
         setCoachFinancials(null);
         setPayoutHistory([]);
 
-
         try {
             const foundMembership = await findMembershipByCode(membershipCode);
-            if (foundMembership) {
-                // Check for user type mismatch
-                if (userType === 'coach' && foundMembership.type !== 'Coach/Expert') {
-                    toast({ variant: 'destructive', title: 'Invalid User Type', description: 'This code belongs to an athlete. Please select "I am a Coach/Expert".' });
-                    setResult('invalid');
-                } else if (userType === 'athlete' && foundMembership.type === 'Coach/Expert') {
-                    toast({ variant: 'destructive', title: 'Invalid User Type', description: 'This code belongs to a coach. Please select "I am an Athlete".' });
-                    setResult('invalid');
-                } else {
-                    setResult(foundMembership);
-                    // If the member is a coach, fetch their specific details
-                    if (foundMembership.type === 'Coach/Expert' && userType === 'coach') {
-                        const coach = await getCoachByName(foundMembership.customerName);
-                        if (coach) {
-                            setCoachDetails(coach);
-                            await fetchCoachData(coach);
-                        }
-                    }
-                }
-            } else {
+
+            if (!foundMembership) {
                 setResult('invalid');
+                setIsLoading(false);
+                return;
+            }
+
+            // Check for user type mismatch
+            if (userType === 'coach' && foundMembership.type !== 'Coach/Expert') {
+                toast({ variant: 'destructive', title: 'Invalid User Type', description: 'This code belongs to an athlete. Please select "I am an Athlete".' });
+                setResult('invalid');
+                setIsLoading(false);
+                return;
+            } else if (userType === 'athlete' && foundMembership.type === 'Coach/Expert') {
+                toast({ variant: 'destructive', title: 'Invalid User Type', description: 'This code belongs to a coach. Please select "I am a Coach/Expert".' });
+                setResult('invalid');
+                setIsLoading(false);
+                return;
+            }
+
+            setResult(foundMembership);
+
+            // If the member is a coach, fetch their specific details
+            if (foundMembership.type === 'Coach/Expert' && userType === 'coach') {
+                const coach = await getCoachByName(foundMembership.customerName);
+                if (coach) {
+                    setCoachDetails(coach);
+                    await fetchCoachData(coach);
+                } else {
+                    // Handle case where membership exists but coach record doesn't
+                    toast({
+                        variant: 'destructive',
+                        title: 'Coach Data Missing',
+                        description: `Membership code is valid, but we couldn't find the associated coach profile.`,
+                    });
+                }
             }
         } catch (error) {
-            toast({ variant: 'destructive', title: 'Error', description: 'Could not verify membership.' });
+            console.error("Error during membership check:", error);
+            toast({ variant: 'destructive', title: 'Error', description: 'Could not verify membership. Please try again.' });
             setResult('invalid');
         } finally {
             setIsLoading(false);
@@ -648,4 +663,5 @@ export default function MembershipPage() {
         </div>
     );
 }
+
 
