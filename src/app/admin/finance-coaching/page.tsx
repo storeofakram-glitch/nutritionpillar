@@ -12,6 +12,7 @@ import CommissionTable from "./_components/commission-table";
 import ClientPaymentsTable from "./_components/client-payments-table";
 import PayoutsTable from "./_components/payouts-table";
 import PayoutsHistoryTable from "./_components/payouts-history-table";
+import { cn } from "@/lib/utils";
 
 export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?: boolean }) {
     const [coaches, setCoaches] = useState<Coach[]>([]);
@@ -96,15 +97,17 @@ export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?
         });
     }, [payouts, coaches, payoutsHistorySearch]);
 
-    const StatsCard = ({ title, value, icon: Icon, description }: { title: string, value: string, icon: React.ElementType, description: string }) => (
-        <Card>
+    const platformNet = totalRevenue - totalPaidOut - pendingPayoutsTotal;
+
+    const StatsCard = ({ title, value, icon: Icon, description, cardClassName, textClassName }: { title: string, value: string, icon: React.ElementType, description: string, cardClassName?: string, textClassName?: string }) => (
+        <Card className={cardClassName}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{title}</CardTitle>
-                <Icon className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className={cn("text-sm font-medium", textClassName)}>{title}</CardTitle>
+                <Icon className={cn("h-4 w-4 text-muted-foreground", textClassName)} />
             </CardHeader>
             <CardContent>
-                {loading ? <Skeleton className="h-8 w-32" /> : <div className="text-2xl font-bold">{value}</div>}
-                <p className="text-xs text-muted-foreground">{description}</p>
+                {loading ? <Skeleton className="h-8 w-32" /> : <div className={cn("text-2xl font-bold", textClassName)}>{value}</div>}
+                <p className={cn("text-xs text-muted-foreground", textClassName && `${textClassName} opacity-80`)}>{description}</p>
             </CardContent>
         </Card>
     );
@@ -117,10 +120,10 @@ export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?
             </div>
             
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <StatsCard title="Total Client Revenue" value={`DZD ${totalRevenue.toFixed(2)}`} icon={DollarSign} description="Total paid by all coaching clients." />
-                <StatsCard title="Total Paid to Coaches" value={`DZD ${totalPaidOut.toFixed(2)}`} icon={TrendingUp} description="Total amount successfully paid out." />
-                <StatsCard title="Pending Payouts" value={`DZD ${pendingPayoutsTotal.toFixed(2)}`} icon={Wallet} description="Amount waiting to be paid out." />
-                <StatsCard title="Platform Net" value={`DZD ${(totalRevenue - totalPaidOut - pendingPayoutsTotal).toFixed(2)}`} icon={Percent} description="Total revenue minus total payouts." />
+                <StatsCard title="Total Client Revenue" value={`DZD ${totalRevenue.toFixed(2)}`} icon={DollarSign} description="Total paid by all coaching clients." cardClassName="bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800" textClassName="text-blue-800 dark:text-blue-200" />
+                <StatsCard title="Total Paid to Coaches" value={`DZD ${totalPaidOut.toFixed(2)}`} icon={TrendingUp} description="Total amount successfully paid out." cardClassName="bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700" />
+                <StatsCard title="Pending Payouts" value={`DZD ${pendingPayoutsTotal.toFixed(2)}`} icon={Wallet} description="Amount waiting to be paid out." cardClassName="bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800" textClassName="text-yellow-800 dark:text-yellow-200" />
+                <StatsCard title="Platform Net" value={`DZD ${platformNet.toFixed(2)}`} icon={Percent} description="Total revenue minus total paid out." cardClassName={cn("border", platformNet >= 0 ? "bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800" : "bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800")} textClassName={cn(platformNet >= 0 ? "text-green-800 dark:text-green-200" : "text-red-800 dark:text-red-200")} />
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
