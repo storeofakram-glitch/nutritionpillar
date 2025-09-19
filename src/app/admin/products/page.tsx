@@ -1,83 +1,45 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import AddProductDialog from "./_components/add-product-dialog"
 import ProductTable from "./_components/product-table"
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
-import { getAuth } from "firebase/auth";
-import { addDoc, collection } from "firebase/firestore";
-import { firebaseApp, db } from "@/lib/firebase";
+import { RefreshCw, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
 
 
 export default function AdminProductsPage({ authLoading }: { authLoading?: boolean }) {
   const [refreshKey, setRefreshKey] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
 
   const handleRefresh = () => {
     setRefreshKey(prevKey => prevKey + 1);
+    setSearchTerm("");
   };
-  
-  const testWrite = async () => {
-    const auth = getAuth(firebaseApp);
-    console.log('=== WRITE TEST ===');
-    console.log('Current user:', auth.currentUser);
-    
-    if (!auth.currentUser) {
-      console.log('❌ No authenticated user at time of write');
-      toast({
-        variant: "destructive",
-        title: "Write Test Failed",
-        description: "No authenticated user found. Check console.",
-      });
-      return;
-    }
-    
-    try {
-      const docRef = await addDoc(collection(db, 'products'), {
-        name: 'Test Product',
-        description: 'This is a test product from a debug write.',
-        category: 'Test',
-        price: 100,
-        quantity: 1,
-        imageUrls: ['https://picsum.photos/400'],
-        createdAt: new Date().toISOString()
-      });
-      console.log('✅ Write successful! Doc ID:', docRef.id);
-      toast({
-        title: "Write Test Successful!",
-        description: "Check the console and your database.",
-      });
-      handleRefresh(); // Refresh the table to see the new product
-    } catch (error: any) {
-      console.log('❌ Write failed:', error);
-      console.log('Error code:', error.code);
-      console.log('Error message:', error.message);
-      toast({
-        variant: "destructive",
-        title: "Write Test Failed",
-        description: `Check the console. Error: ${error.message}`,
-      });
-    }
-    console.log('=== END WRITE TEST ===');
-  };
-
 
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col md:flex-row items-start justify-between gap-4">
             <div className="flex-1">
                 <CardTitle>Products</CardTitle>
                 <CardDescription>Manage your products and view their sales performance.</CardDescription>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={testWrite} disabled={authLoading}>
-                Test Database Write
-              </Button>
+            <div className="flex w-full md:w-auto items-center gap-2">
+                <div className="relative flex-1 md:flex-initial">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                        type="search"
+                        placeholder="Search by name..."
+                        className="pl-8 sm:w-[200px] lg:w-[250px]"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
               <Button variant="outline" size="icon" onClick={handleRefresh} disabled={authLoading}>
                 <RefreshCw className="h-4 w-4" />
                 <span className="sr-only">Refresh</span>
@@ -88,7 +50,7 @@ export default function AdminProductsPage({ authLoading }: { authLoading?: boole
       </CardHeader>
       <CardContent>
         {/* The key prop ensures the component re-mounts and re-fetches data */}
-        <ProductTable key={refreshKey} />
+        <ProductTable key={refreshKey} searchTerm={searchTerm} />
       </CardContent>
     </Card>
   )

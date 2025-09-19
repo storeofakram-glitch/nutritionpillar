@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useEffect, useState, useTransition } from "react"
+import { useEffect, useState, useTransition, useMemo } from "react"
 import Image from "next/image"
 import { MoreHorizontal } from "lucide-react"
 
@@ -30,10 +30,13 @@ import { Skeleton } from "@/components/ui/skeleton"
 import EditProductDialog from "./edit-product-dialog"
 import DeleteProductDialog from "./delete-product-dialog"
 
-export default function ProductTable() {
+interface ProductTableProps {
+  searchTerm: string;
+}
+
+export default function ProductTable({ searchTerm }: ProductTableProps) {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
-  const [isPending, startTransition] = useTransition()
   
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -41,21 +44,24 @@ export default function ProductTable() {
 
   const fetchProducts = () => {
     setLoading(true);
-    startTransition(async () => {
-      try {
-        const fetchedProducts = await getProducts()
-        setProducts(fetchedProducts)
-      } catch (error) {
-        console.error("Failed to fetch products:", error)
-      } finally {
-        setLoading(false)
-      }
-    })
+    getProducts().then(fetchedProducts => {
+      setProducts(fetchedProducts);
+      setLoading(false);
+    }).catch(error => {
+      console.error("Failed to fetch products:", error);
+      setLoading(false);
+    });
   }
 
   useEffect(() => {
     fetchProducts()
   }, [])
+
+  const filteredProducts = useMemo(() => {
+    return products.filter(product =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [products, searchTerm]);
   
   const handleEditClick = (product: Product) => {
     setSelectedProduct(product);
@@ -102,7 +108,7 @@ export default function ProductTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {products.map((product) => (
+        {filteredProducts.map((product) => (
           <TableRow key={product.id}>
             <TableCell className="hidden sm:table-cell">
               <Image
@@ -141,6 +147,13 @@ export default function ProductTable() {
             </TableCell>
           </TableRow>
         ))}
+         {!loading && filteredProducts.length === 0 && (
+            <TableRow>
+                <TableCell colSpan={6} className="h-24 text-center">
+                    {searchTerm ? `No products found for "${searchTerm}".` : "No products found."}
+                </TableCell>
+            </TableRow>
+        )}
       </TableBody>
     </Table>
     
