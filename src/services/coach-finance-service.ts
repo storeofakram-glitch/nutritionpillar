@@ -127,68 +127,6 @@ export async function addClientPayment(payment: Omit<ClientPayment, 'id' | 'coac
     }
 }
 
-
-export async function deleteClientPayment(paymentId: string) {
-    const db = getDb();
-    try {
-        await runTransaction(db, async (transaction) => {
-            const paymentRef = doc(db, 'client_payments', paymentId);
-            const paymentDoc = await transaction.get(paymentRef);
-
-            if (!paymentDoc.exists()) {
-                throw new Error("Payment record not found.");
-            }
-            
-            // Fetch the corresponding payout document to delete it as well.
-            // This is a read operation, so it must happen before writes.
-            const payoutQuery = query(
-                collection(db, 'coach_payouts'),
-                where('clientPaymentId', '==', paymentId),
-                where('status', '==', 'pending')
-            );
-            const payoutSnapshot = await getDocs(payoutQuery);
-            const payoutDocToDelete = !payoutSnapshot.empty ? payoutSnapshot.docs[0] : null;
-
-
-            const paymentData = paymentDoc.data() as ClientPayment;
-            const { coachId, coachShare, status } = paymentData;
-            
-            // All read operations are done. Now perform writes.
-
-            // Delete the payment itself
-            transaction.delete(paymentRef);
-
-            // If the payment was 'paid', we need to reverse the financial entries
-            if (status === 'paid' && coachShare > 0) {
-                const coachFinRef = doc(db, 'coach_financials', coachId);
-                const coachFinDoc = await transaction.get(coachFinRef);
-
-                if (coachFinDoc.exists()) {
-                    const financials = coachFinDoc.data();
-                    // Reverse the earnings
-                    transaction.update(coachFinRef, {
-                        totalEarnings: (financials.totalEarnings || 0) - coachShare,
-                        pendingPayout: (financials.pendingPayout || 0) - coachShare,
-                    });
-                }
-
-                // Also delete the corresponding 'pending' payout record if found
-                if(payoutDocToDelete) {
-                    transaction.delete(payoutDocToDelete.ref);
-                }
-            }
-        });
-
-        revalidatePath('/admin/finance-coaching');
-        return { success: true };
-    } catch (error) {
-        console.error("Error deleting client payment: ", error);
-        return { success: false, error: (error as Error).message };
-    }
-}
-
-
-
 // COACH PAYOUTS
 export async function getCoachPayouts(): Promise<CoachPayout[]> {
     const snapshot = await getDocs(query(payoutsCollection(), orderBy('payoutDate', 'desc')));

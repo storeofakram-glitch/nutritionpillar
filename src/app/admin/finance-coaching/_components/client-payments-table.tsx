@@ -10,9 +10,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Search, Trash2 } from "lucide-react";
+import { MoreHorizontal, Search } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import DeleteClientPaymentDialog from "./delete-client-payment-dialog";
 
 interface ClientPaymentsTableProps {
     clients: ClientPayment[];
@@ -24,20 +23,7 @@ interface ClientPaymentsTableProps {
 }
 
 export default function ClientPaymentsTable({ clients, coaches, isLoading, onDataChange, searchTerm, onSearchTermChange }: ClientPaymentsTableProps) {
-    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const [selectedPayment, setSelectedPayment] = useState<ClientPayment | null>(null);
-
-    const handleDelete = (payment: ClientPayment) => {
-        setSelectedPayment(payment);
-        setIsDeleteDialogOpen(true);
-    };
-
-    const handleDialogClose = () => {
-        setIsDeleteDialogOpen(false);
-        setSelectedPayment(null);
-        onDataChange();
-    };
-
+    
     const renderSkeleton = () => Array.from({ length: 3 }).map((_, i) => (
         <TableRow key={i}>
             <TableCell><Skeleton className="h-5 w-24" /></TableCell>
@@ -90,7 +76,6 @@ export default function ClientPaymentsTable({ clients, coaches, isLoading, onDat
                                 <TableHead>Amount</TableHead>
                                 <TableHead>Status</TableHead>
                                 <TableHead>Date</TableHead>
-                                <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -102,21 +87,6 @@ export default function ClientPaymentsTable({ clients, coaches, isLoading, onDat
                                     <TableCell>DZD {client.amount.toFixed(2)}</TableCell>
                                     <TableCell><Badge variant={getStatusVariant(client.status)}>{client.status}</Badge></TableCell>
                                     <TableCell>{format(new Date(client.paymentDate), "PPP")}</TableCell>
-                                    <TableCell className="text-right">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button size="icon" variant="ghost">
-                                                    <MoreHorizontal />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuItem onSelect={() => handleDelete(client)} className="text-red-500">
-                                                    <Trash2 className="mr-2 h-4 w-4" />
-                                                    Delete
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -126,14 +96,6 @@ export default function ClientPaymentsTable({ clients, coaches, isLoading, onDat
                     )}
                 </CardContent>
             </Card>
-            {selectedPayment && (
-                <DeleteClientPaymentDialog
-                    isOpen={isDeleteDialogOpen}
-                    onOpenChange={setIsDeleteDialogOpen}
-                    payment={selectedPayment}
-                    onDialogClose={handleDialogClose}
-                />
-            )}
         </>
     );
 }
