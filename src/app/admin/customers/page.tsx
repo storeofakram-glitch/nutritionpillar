@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { MoreHorizontal, RefreshCw, Download } from "lucide-react"
+import { MoreHorizontal, RefreshCw, Download, Search } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState, useTransition, useMemo } from "react";
@@ -18,12 +18,14 @@ import { getCustomerOrders } from "@/services/admin-service";
 import { getOrders } from "@/services/order-service";
 import type { Order, Customer } from "@/types";
 import ViewCustomerDialog from "./_components/view-customer-dialog";
+import { Input } from "@/components/ui/input";
 
 export default function AdminCustomersPage() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [customerOrders, setCustomerOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
     const [isPending, startTransition] = useTransition();
+    const [searchTerm, setSearchTerm] = useState("");
 
     const [isViewCustomerOpen, setIsViewCustomerOpen] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
@@ -53,8 +55,18 @@ export default function AdminCustomersPage() {
                 customerMap.set(order.customer.email, order.customer);
             }
         });
-        return Array.from(customerMap.values());
-    }, [orders]);
+
+        const customers = Array.from(customerMap.values());
+        if (!searchTerm) {
+            return customers;
+        }
+
+        return customers.filter(c => 
+            c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            c.email.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+    }, [orders, searchTerm]);
 
 
     const { deliveredCustomers, canceledCustomers } = useMemo(() => {
@@ -77,11 +89,20 @@ export default function AdminCustomersPage() {
             }
         });
 
-        return {
-            deliveredCustomers: Array.from(delivered.values()),
-            canceledCustomers: Array.from(canceled.values()),
+        const filterCustomers = (customerMap: Map<string, Customer>) => {
+            const customers = Array.from(customerMap.values());
+            if (!searchTerm) return customers;
+            return customers.filter(c =>
+                c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                c.email.toLowerCase().includes(searchTerm.toLowerCase())
+            );
         };
-    }, [orders]);
+
+        return {
+            deliveredCustomers: filterCustomers(delivered),
+            canceledCustomers: filterCustomers(canceled),
+        };
+    }, [orders, searchTerm]);
 
     const handleViewCustomer = async (customer: Customer) => {
         setSelectedCustomer(customer);
@@ -173,7 +194,7 @@ export default function AdminCustomersPage() {
                 {customers.length === 0 && (
                     <TableRow>
                         <TableCell colSpan={3} className="text-center text-muted-foreground h-24">
-                            No customers found in this category.
+                            {searchTerm ? `No customers found for "${searchTerm}"` : "No customers found in this category."}
                         </TableCell>
                     </TableRow>
                 )}
@@ -183,12 +204,22 @@ export default function AdminCustomersPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col md:flex-row items-start justify-between gap-4">
                 <div className="flex-1">
                     <h1 className="text-2xl font-bold font-headline tracking-tight">Customers</h1>
                     <p className="text-muted-foreground">View and manage your customers, segmented by order status.</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex w-full md:w-auto items-center gap-2">
+                    <div className="relative flex-1 md:flex-initial">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            type="search"
+                            placeholder="Search by name or email..."
+                            className="pl-8 sm:w-[200px] lg:w-[250px]"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
                     <Button variant="outline" size="icon" onClick={fetchAndProcessData} disabled={isPending}>
                         <RefreshCw className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
                         <span className="sr-only">Refresh</span>
