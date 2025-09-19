@@ -7,8 +7,8 @@ import { getDb } from '@/lib/firebase';
 import type { Order, Customer, CoachingApplication } from '@/types';
 import { getOrders, getTotalCostOfGoodsSold, getTotalRevenue } from './order-service';
 import { getTotalExpenses } from './expense-service';
-import { getUnreadSubmissionsCount, getAllApplications } from './contact-service';
-import { getNewApplicationsCount } from './application-service';
+import { getUnreadSubmissionsCount } from './contact-service';
+import { getNewApplicationsCount, getAllApplications } from './application-service';
 
 const ordersCollection = collection(getDb(), 'orders');
 
