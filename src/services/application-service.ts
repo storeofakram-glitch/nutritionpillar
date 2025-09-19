@@ -166,15 +166,18 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
                         const plan = coach?.plans?.find(p => p.title === application.planTitle);
                         const planPrice = plan?.price || 0;
 
-                        await addClientPayment({
-                            clientId: application.id,
-                            clientName: application.applicant.name,
-                            coachId: application.coachId,
-                            coachName: application.coachName,
-                            amount: planPrice,
-                            paymentDate: new Date().toISOString(),
-                            status: 'paid',
-                        });
+                        if (planPrice > 0) {
+                            await addClientPayment({
+                                clientId: application.id,
+                                clientName: application.applicant.name,
+                                coachId: application.coachId,
+                                coachName: application.coachName,
+                                planTitle: application.planTitle,
+                                amount: planPrice,
+                                paymentDate: new Date().toISOString(),
+                                status: 'paid',
+                            });
+                        }
                     }
                 }
             }
