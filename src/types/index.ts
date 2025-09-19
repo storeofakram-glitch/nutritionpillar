@@ -265,6 +265,7 @@ export type Membership = {
 
 export type MembershipWithProducts = Omit<Membership, 'recommendedProducts'> & {
     recommendedProducts: (RecommendedProduct & { product: Product })[];
+    applicant?: CoachingApplication['applicant'];
 };
 
 export type ContactSubmission = {
@@ -368,6 +369,8 @@ export type CoachingApplication = {
     goal: string;
     duration: string;
     message?: string;
+    nutritionPlanUrl?: string;
+    trainingPlanUrl?: string;
   };
   createdAt: string; // ISO 8601 string
   status: 'new' | 'contacted' | 'active' | 'rejected' | 'archived';

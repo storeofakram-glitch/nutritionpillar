@@ -192,6 +192,34 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
     }
 }
 
+
+/**
+ * Updates the plan URLs for a specific application.
+ * @param id The ID of the application to update.
+ * @param plans An object containing the nutrition and training plan URLs.
+ * @returns An object indicating success or failure.
+ */
+export async function updateApplicationPlans(id: string, plans: { nutritionPlanUrl?: string; trainingPlanUrl?: string; }) {
+    try {
+        const docRef = doc(getDb(), 'coachingApplications', id);
+        
+        // Firestore requires dot notation for updating nested objects
+        const updateData = {
+            'applicant.nutritionPlanUrl': plans.nutritionPlanUrl || '',
+            'applicant.trainingPlanUrl': plans.trainingPlanUrl || '',
+        };
+
+        await updateDoc(docRef, updateData);
+
+        revalidatePath('/membership');
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating application plans: ", error);
+        return { success: false, error: (error as Error).message };
+    }
+}
+
+
 /**
  * Deletes an application from the database.
  * @param id The ID of the application to delete.
