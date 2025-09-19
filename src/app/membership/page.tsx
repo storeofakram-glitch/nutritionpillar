@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { findMembershipByCode } from '@/services/membership-service';
 import type { RecommendedProduct, MembershipWithProducts, Coach, CoachingApplication, Membership, CoachFinancials, CoachPayout } from '@/types';
-import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users, Mail, MessageSquare, User, UserX, History, Copy, Wallet, TrendingUp, Search, BookOpen } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, Award, ShoppingCart, CalendarClock, Info, Star, StarHalf, Users, Mail, MessageSquare, User, UserX, History, Copy, Wallet, TrendingUp, Search, BookOpen, Dumbbell, HeartPulse } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
@@ -583,17 +583,17 @@ export default function MembershipPage() {
                     {(result as any).applicant?.nutritionPlanUrl || (result as any).applicant?.trainingPlanUrl ? (
                          <div className="flex flex-col sm:flex-row gap-4">
                             {(result as any).applicant.nutritionPlanUrl && (
-                                <Button asChild className="w-full">
+                                <Button asChild className="w-full bg-green-600 hover:bg-green-700">
                                     <Link href={(result as any).applicant.nutritionPlanUrl} target="_blank" rel="noopener noreferrer">
-                                        <BookOpen className="mr-2 h-4 w-4" />
+                                        <HeartPulse className="mr-2 h-4 w-4" />
                                         View Nutrition Plan
                                     </Link>
                                 </Button>
                             )}
                              {(result as any).applicant.trainingPlanUrl && (
-                                <Button asChild variant="secondary" className="w-full">
+                                <Button asChild variant="destructive" className="w-full bg-red-600 hover:bg-red-700">
                                     <Link href={(result as any).applicant.trainingPlanUrl} target="_blank" rel="noopener noreferrer">
-                                        <BookOpen className="mr-2 h-4 w-4" />
+                                        <Dumbbell className="mr-2 h-4 w-4" />
                                         View Training Plan
                                     </Link>
                                 </Button>
@@ -711,3 +711,4 @@ export default function MembershipPage() {
         </div>
     );
 }
+
