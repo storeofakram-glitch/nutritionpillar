@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, Percent, TrendingUp, Wallet } from "lucide-react";
+import { DollarSign, Percent, TrendingUp, Wallet, RefreshCw } from "lucide-react";
 import { getCoaches } from "@/services/coach-service";
 import { getClientPayments, getCoachFinancials, getCoachPayouts } from "@/services/coach-finance-service";
 import type { Coach, CoachFinancials, ClientPayment, CoachPayout, CoachWithFinancials } from "@/types";
@@ -13,6 +13,7 @@ import ClientPaymentsTable from "./_components/client-payments-table";
 import PayoutsTable from "./_components/payouts-table";
 import PayoutsHistoryTable from "./_components/payouts-history-table";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?: boolean }) {
     const [coaches, setCoaches] = useState<Coach[]>([]);
@@ -114,9 +115,15 @@ export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-2xl font-bold font-headline tracking-tight">Finance (Coaching)</h1>
-                <p className="text-muted-foreground">Manage financial details related to coaches and experts.</p>
+            <div className="flex items-start justify-between gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold font-headline tracking-tight">Finance (Coaching)</h1>
+                    <p className="text-muted-foreground">Manage financial details related to coaches and experts.</p>
+                </div>
+                 <Button variant="outline" size="icon" onClick={fetchData} disabled={loading || authLoading}>
+                    <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                    <span className="sr-only">Refresh</span>
+                </Button>
             </div>
             
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -157,6 +164,7 @@ export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?
                 isLoading={loading}
                 searchTerm={payoutsHistorySearch}
                 onSearchTermChange={setPayoutsHistorySearch}
+                onDataChange={fetchData}
             />
         </div>
     );

@@ -16,6 +16,7 @@ interface PayoutsHistoryTableProps {
     isLoading: boolean;
     searchTerm: string;
     onSearchTermChange: (term: string) => void;
+    onDataChange: () => void;
 }
 
 export default function PayoutsHistoryTable({ payouts, coaches, isLoading, searchTerm, onSearchTermChange }: PayoutsHistoryTableProps) {
