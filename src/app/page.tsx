@@ -172,16 +172,16 @@ export default function Home() {
                 <p className="text-sm font-bold text-muted-foreground tracking-widest uppercase">{coreServices.subheading[language]}</p>
                 <h2 className="inline-block gradient-border text-foreground font-bold font-headline text-3xl md:text-4xl px-6 py-2 rounded-md mt-2 shadow-lg shadow-primary/20">{coreServices.heading[language]}</h2>
             </div>
-            <div className="grid md:grid-cols-2 gap-8">
-              <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 gradient-border">
+            <div className="grid grid-cols-2 gap-4 md:gap-8">
+              <Card className="flex flex-col items-center text-center p-4 md:p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 gradient-border">
                 <CardHeader>
                   <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
                     <ShoppingBag className="h-10 w-10 text-primary" />
                   </div>
-                  <CardTitle className="font-headline text-2xl">{coreServices.services[0].title[language]}</CardTitle>
+                  <CardTitle className="font-headline text-xl md:text-2xl">{coreServices.services[0].title[language]}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-grow">
-                  <p className="text-muted-foreground">{coreServices.services[0].description[language]}</p>
+                  <p className="text-muted-foreground text-sm md:text-base">{coreServices.services[0].description[language]}</p>
                 </CardContent>
                 <CardFooter>
                   <Button asChild>
@@ -189,15 +189,15 @@ export default function Home() {
                   </Button>
                 </CardFooter>
               </Card>
-              <Card className="flex flex-col items-center text-center p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 gradient-border">
+              <Card className="flex flex-col items-center text-center p-4 md:p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 gradient-border">
                 <CardHeader>
                   <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
                     <UsersIcon className="h-10 w-10 text-primary" />
                   </div>
-                  <CardTitle className="font-headline text-2xl">{coreServices.services[1].title[language]}</CardTitle>
+                  <CardTitle className="font-headline text-xl md:text-2xl">{coreServices.services[1].title[language]}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-grow">
-                  <p className="text-muted-foreground">{coreServices.services[1].description[language]}</p>
+                  <p className="text-muted-foreground text-sm md:text-base">{coreServices.services[1].description[language]}</p>
                 </CardContent>
                 <CardFooter>
                   <Button asChild>
@@ -359,5 +359,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
