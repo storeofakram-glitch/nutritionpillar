@@ -12,7 +12,7 @@ import { LanguageProvider } from '@/contexts/language-context';
 
 export const metadata: Metadata = {
   title: 'Nutrition Pillar - Your Complete Platform for Supplements & Sports Coaching',
-  description: 'The bridge between quality nutrition and professional coaches.',
+  description: 'Quality nutrition and coaching expertise, delivered together.',
   icons: {
     icon: [
         { url: 'https://github.com/storeofakram-glitch/NutritionPillar/blob/main/main%20logo%20nutrition%20pillar.png?raw=true', href: 'https://github.com/storeofakram-glitch/NutritionPillar/blob/main/main%20logo%20nutrition%20pillar.png?raw=true' },
