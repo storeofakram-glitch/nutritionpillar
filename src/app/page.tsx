@@ -56,6 +56,8 @@ export default function Home() {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [isAdVideoLoaded, setIsAdVideoLoaded] = useState(false);
   const { language } = useLanguage();
+  const [isService1Expanded, setIsService1Expanded] = useState(false);
+  const [isService2Expanded, setIsService2Expanded] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -181,7 +183,12 @@ export default function Home() {
                   <CardTitle className="font-headline text-xl md:text-2xl">{coreServices.services[0].title[language]}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-grow">
-                  <p className="text-muted-foreground text-sm md:text-base">{coreServices.services[0].description[language]}</p>
+                  <p className={cn("text-muted-foreground text-sm md:text-base", !isService1Expanded && "line-clamp-5 md:line-clamp-none")}>
+                    {coreServices.services[0].description[language]}
+                  </p>
+                  <Button variant="link" className="text-primary p-0 h-auto md:hidden" onClick={() => setIsService1Expanded(!isService1Expanded)}>
+                      {isService1Expanded ? 'Show Less' : 'Show More'}
+                  </Button>
                 </CardContent>
                 <CardFooter>
                   <Button asChild>
@@ -197,7 +204,12 @@ export default function Home() {
                   <CardTitle className="font-headline text-xl md:text-2xl">{coreServices.services[1].title[language]}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-grow">
-                  <p className="text-muted-foreground text-sm md:text-base">{coreServices.services[1].description[language]}</p>
+                  <p className={cn("text-muted-foreground text-sm md:text-base", !isService2Expanded && "line-clamp-5 md:line-clamp-none")}>
+                    {coreServices.services[1].description[language]}
+                  </p>
+                  <Button variant="link" className="text-primary p-0 h-auto md:hidden" onClick={() => setIsService2Expanded(!isService2Expanded)}>
+                      {isService2Expanded ? 'Show Less' : 'Show More'}
+                  </Button>
                 </CardContent>
                 <CardFooter>
                   <Button asChild>
