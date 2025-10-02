@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     description: 'Quality nutrition and coaching expertise, delivered together.',
     images: [
       {
-        url: 'https://github.com/storeofakram-glitch/NutritionPillar/blob/main/main%20logo%20nutrition%20pillar.png?raw=true',
+        url: '/og-image.png', // From /public/og-image.png
         width: 1200,
         height: 630,
         alt: 'Nutrition Pillar Logo',
