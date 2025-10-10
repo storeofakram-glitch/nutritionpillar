@@ -3,7 +3,7 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { Search, User } from "lucide-react"
+import { Search, User, Package } from "lucide-react"
 
 import {
   CommandDialog,
@@ -64,7 +64,8 @@ export function SearchDialog({ children }: { children?: React.ReactNode }) {
 
   const filteredProducts = searchTerm.length > 0
     ? allProducts.filter(product =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : [];
     
@@ -92,12 +93,18 @@ export function SearchDialog({ children }: { children?: React.ReactNode }) {
       )}
       <CommandDialog open={open} onOpenChange={handleOpenChange}>
         <CommandInput 
-            placeholder="Search products, coaches, experts..." 
+            placeholder="Search products, categories, coaches..." 
             value={searchTerm}
             onValueChange={setSearchTerm}
         />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
+           {!searchTerm ? (
+                <div className="p-6 text-center text-sm text-muted-foreground">
+                    <p>Search for supplements, product categories, coaches, or experts.</p>
+                </div>
+            ) : (
+                <CommandEmpty>No results found.</CommandEmpty>
+            )}
            {filteredProducts.length > 0 && (
             <CommandGroup heading="Products">
                 {filteredProducts.map((product) => (
@@ -107,6 +114,7 @@ export function SearchDialog({ children }: { children?: React.ReactNode }) {
                     onSelect={() => handleSelect(`/products/${product.id}`)}
                     className="cursor-pointer"
                 >
+                    <Package className="mr-2 h-4 w-4" />
                     <span>{product.name}</span>
                 </CommandItem>
                 ))}
