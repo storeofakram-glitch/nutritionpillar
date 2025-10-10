@@ -222,6 +222,8 @@ export default function Home() {
         </section>
       )}
 
+      <CoachesExpertsSection />
+
       <section className="py-8 md:py-12 bg-background">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8 items-center bg-card p-8 rounded-lg shadow-lg shadow-primary/20">
@@ -318,8 +320,6 @@ export default function Home() {
             <ProductGrid products={products} />
         </div>
       </section>
-
-      <CoachesExpertsSection />
       
       <section className="py-12 md:py-16 bg-background">
         <div className="container mx-auto px-4">
