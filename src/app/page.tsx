@@ -129,7 +129,7 @@ export default function Home() {
         )}
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center h-full text-center p-4 bg-black/60">
           <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight">
-            {hero.title}
+            {hero.title[language]}
           </h1>
           <div className="text-lg md:text-xl max-w-2xl mb-8 prose dark:prose-invert prose-p:text-white">
             <ReactMarkdown>{hero.description[language]}</ReactMarkdown>
@@ -174,7 +174,7 @@ export default function Home() {
                 <p className="text-sm font-bold text-muted-foreground tracking-widest uppercase">{coreServices.subheading[language]}</p>
                 <h2 className="inline-block gradient-border text-foreground font-bold font-headline text-3xl md:text-4xl px-6 py-2 rounded-md mt-2">{coreServices.heading[language]}</h2>
             </div>
-            <div className="grid grid-cols-2 gap-4 md:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
               <Card className="flex flex-col items-center text-center p-4 md:p-8 transition-all duration-300 gradient-border">
                 <CardHeader>
                   <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
