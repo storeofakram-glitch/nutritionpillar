@@ -405,7 +405,7 @@ export default function MembershipPage() {
                             </div>
                         </div>
                         {filteredActiveClients.length > 0 ? (
-                            <ScrollArea className="h-[40rem] pr-4">
+                            <ScrollArea className="h-96 pr-4">
                                 <div className="space-y-4">
                                     {filteredActiveClients.map(app => {
                                         const daysLeft = getDaysLeft(app.membership?.expiresAt);
@@ -485,7 +485,7 @@ export default function MembershipPage() {
                      <div>
                         <h3 className="font-semibold text-lg mb-4">Your Payout History</h3>
                         {payoutHistory.length > 0 ? (
-                            <div className="w-full overflow-hidden rounded-lg border">
+                            <ScrollArea className="h-96 pr-4">
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
@@ -510,7 +510,7 @@ export default function MembershipPage() {
                                         ))}
                                     </TableBody>
                                 </Table>
-                            </div>
+                            </ScrollArea>
                         ) : (
                             <p className="text-center text-muted-foreground py-4">You have no payout history yet.</p>
                         )}
@@ -614,7 +614,7 @@ export default function MembershipPage() {
                         )}
                     </div>
                 </CardContent>
-            </Card>
+             </Card>
          );
     };
 
