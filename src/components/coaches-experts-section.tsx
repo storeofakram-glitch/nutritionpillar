@@ -38,7 +38,7 @@ const StarRating = ({ rating }: { rating: number }) => (
 
 const CoachCard = ({ person }: { person: Coach }) => {
   return (
-    <Card className="h-full flex flex-col text-center transition-all duration-300 border shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-1 hover:border-primary relative pt-4">
+    <Card className="h-full flex flex-col text-center transition-all duration-300 border shadow-lg shadow-primary/20 hover:shadow-xl hover:border-primary relative pt-4">
         <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground font-bold z-10">
             {person.type}
         </Badge>
