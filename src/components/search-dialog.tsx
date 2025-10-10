@@ -1,8 +1,9 @@
+
 "use client"
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { Search } from "lucide-react"
+import { Search, User } from "lucide-react"
 
 import {
   CommandDialog,
@@ -13,21 +14,27 @@ import {
   CommandList,
 } from "@/components/ui/command"
 import { Button } from "./ui/button"
-import type { Product } from "@/types"
+import type { Product, Coach } from "@/types"
 import { getProducts } from "@/services/product-service"
+import { getCoaches } from "@/services/coach-service"
 
 export function SearchDialog({ children }: { children?: React.ReactNode }) {
   const [open, setOpen] = React.useState(false)
   const [allProducts, setAllProducts] = React.useState<Product[]>([])
+  const [allCoaches, setAllCoaches] = React.useState<Coach[]>([])
   const [searchTerm, setSearchTerm] = React.useState("")
   const router = useRouter()
 
   React.useEffect(() => {
-    async function fetchProducts() {
-      const fetchedProducts = await getProducts();
-      setAllProducts(fetchedProducts);
+    async function fetchData() {
+        const [fetchedProducts, fetchedCoaches] = await Promise.all([
+            getProducts(),
+            getCoaches(),
+        ]);
+        setAllProducts(fetchedProducts);
+        setAllCoaches(fetchedCoaches);
     }
-    fetchProducts();
+    fetchData();
   }, []);
 
   React.useEffect(() => {
@@ -49,15 +56,22 @@ export function SearchDialog({ children }: { children?: React.ReactNode }) {
     }
   }
 
-  const handleSelect = (productId: string) => {
+  const handleSelect = (url: string) => {
     setOpen(false)
     setSearchTerm("")
-    router.push(`/products/${productId}`)
+    router.push(url)
   }
 
   const filteredProducts = searchTerm.length > 0
     ? allProducts.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
+    
+   const filteredCoaches = searchTerm.length > 0
+    ? allCoaches.filter(coach =>
+        coach.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        coach.specialty.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : [];
 
@@ -78,22 +92,37 @@ export function SearchDialog({ children }: { children?: React.ReactNode }) {
       )}
       <CommandDialog open={open} onOpenChange={handleOpenChange}>
         <CommandInput 
-            placeholder="Type a product name..." 
+            placeholder="Search products, coaches, experts..." 
             value={searchTerm}
             onValueChange={setSearchTerm}
         />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-           {searchTerm.length > 0 && filteredProducts.length > 0 && (
+           {filteredProducts.length > 0 && (
             <CommandGroup heading="Products">
                 {filteredProducts.map((product) => (
                 <CommandItem
                     key={product.id}
                     value={product.name}
-                    onSelect={() => handleSelect(product.id)}
+                    onSelect={() => handleSelect(`/products/${product.id}`)}
                     className="cursor-pointer"
                 >
                     <span>{product.name}</span>
+                </CommandItem>
+                ))}
+            </CommandGroup>
+           )}
+           {filteredCoaches.length > 0 && (
+            <CommandGroup heading="Coaches & Experts">
+                {filteredCoaches.map((coach) => (
+                <CommandItem
+                    key={coach.id}
+                    value={coach.name}
+                    onSelect={() => handleSelect(`/coaches/${coach.id}`)}
+                    className="cursor-pointer"
+                >
+                    <User className="mr-2 h-4 w-4" />
+                    <span>{coach.name}</span>
                 </CommandItem>
                 ))}
             </CommandGroup>
