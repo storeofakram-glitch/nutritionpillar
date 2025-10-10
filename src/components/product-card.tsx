@@ -42,8 +42,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link href={`/products/${product.id}`} className="flex h-full">
         <Card className={cn(
-            "flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 w-full",
-            product.sponsored && "border-primary/50 shadow-lg shadow-primary/10"
+            "flex flex-col h-full overflow-hidden transition-all duration-300 w-full",
+            product.sponsored && "border-primary/50"
         )}>
         <CardHeader className="p-0 relative">
              {product.sponsored && (

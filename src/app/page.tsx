@@ -175,7 +175,7 @@ export default function Home() {
                 <h2 className="inline-block gradient-border text-foreground font-bold font-headline text-3xl md:text-4xl px-6 py-2 rounded-md mt-2">{coreServices.heading[language]}</h2>
             </div>
             <div className="grid grid-cols-2 gap-4 md:gap-8">
-              <Card className="flex flex-col items-center text-center p-4 md:p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 gradient-border">
+              <Card className="flex flex-col items-center text-center p-4 md:p-8 transition-all duration-300 gradient-border">
                 <CardHeader>
                   <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
                     <ShoppingBag className="h-10 w-10 text-primary" />
@@ -196,7 +196,7 @@ export default function Home() {
                   </Button>
                 </CardFooter>
               </Card>
-              <Card className="flex flex-col items-center text-center p-4 md:p-8 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 gradient-border">
+              <Card className="flex flex-col items-center text-center p-4 md:p-8 transition-all duration-300 gradient-border">
                 <CardHeader>
                   <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
                     <UsersIcon className="h-10 w-10 text-primary" />
@@ -226,7 +226,7 @@ export default function Home() {
 
       <section className="py-8 md:py-12 bg-background">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-8 items-center bg-card p-8 rounded-lg shadow-lg shadow-primary/20">
+          <div className="grid md:grid-cols-2 gap-8 items-center bg-card p-8 rounded-lg">
             <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black">
                 {adBanner.backgroundVideoUrl ? (
                     <>
@@ -323,7 +323,7 @@ export default function Home() {
       
       <section className="py-12 md:py-16 bg-background">
         <div className="container mx-auto px-4">
-          <div className="bg-card p-8 rounded-lg shadow-lg shadow-primary/20">
+          <div className="bg-card p-8 rounded-lg">
             <h3 className="text-center text-lg font-semibold text-card-foreground uppercase tracking-wider mb-8">
               Partnership
             </h3>
@@ -353,7 +353,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold font-headline text-center mb-10">Find Us</h2>
             <div className="max-w-4xl mx-auto">
-                <div className="w-full h-[400px] rounded-lg overflow-hidden shadow-lg border shadow-primary/20">
+                <div className="w-full h-[400px] rounded-lg overflow-hidden border">
                     <iframe 
                         src={mapUrl}
                         width="100%" 

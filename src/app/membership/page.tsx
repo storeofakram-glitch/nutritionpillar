@@ -618,7 +618,7 @@ export default function MembershipPage() {
     return (
         <div className="container mx-auto px-4 py-12 md:py-16">
             <div className="max-w-4xl mx-auto">
-                <Card className="mb-8 shadow-lg shadow-primary/20">
+                <Card className="mb-8">
                     <CardHeader className="text-center">
                         <CardTitle className="text-3xl md:text-4xl font-bold font-headline">Membership</CardTitle>
                         <CardDescription className="text-lg">
@@ -711,4 +711,3 @@ export default function MembershipPage() {
         </div>
     );
 }
-

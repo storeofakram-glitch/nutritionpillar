@@ -53,7 +53,7 @@ const PlanCard = ({ plan, coachId, coachName }: { plan: Plan; coachId: string; c
     };
 
     return (
-        <Card className="relative flex flex-col text-center pt-6 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">
+        <Card className="relative flex flex-col text-center pt-6 transition-all duration-300">
              {plan.icon === 'Online Coaching' && (
                 <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground font-bold">
                     Most Popular
@@ -90,7 +90,7 @@ export default function CoachProfileView({ coach }: { coach: Coach }) {
         <div className="container mx-auto px-4 py-12 md:py-16">
             <div className="grid md:grid-cols-3 gap-8 md:gap-12">
                 <div className="md:col-span-1">
-                     <Card className="p-4 sticky top-24 shadow-lg shadow-primary/20">
+                     <Card className="p-4 sticky top-24">
                         <div className="flex flex-col items-center text-center">
                             <div className="relative h-48 w-48 mb-4 rounded-full overflow-hidden shadow-lg">
                                 <Image
@@ -111,7 +111,7 @@ export default function CoachProfileView({ coach }: { coach: Coach }) {
                     </Card>
                 </div>
                 <div className="md:col-span-2 space-y-8">
-                     <Card className="shadow-lg shadow-primary/20">
+                     <Card>
                         <CardContent className="p-6">
                              <h2 className="text-2xl font-bold font-headline mb-4">About {coach.name}</h2>
                              <p className="text-muted-foreground leading-relaxed">
@@ -121,7 +121,7 @@ export default function CoachProfileView({ coach }: { coach: Coach }) {
                     </Card>
                     
                     {coach.certifications && coach.certifications.length > 0 && (
-                        <Card className="shadow-lg shadow-primary/20">
+                        <Card>
                             <CardContent className="p-6">
                                 <h2 className="text-2xl font-bold font-headline mb-4">Certifications</h2>
                                 <ul className="flex flex-wrap gap-3">
