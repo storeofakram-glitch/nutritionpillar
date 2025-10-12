@@ -101,7 +101,7 @@ export default function MembershipTable({ memberships, isLoading, onDataChange }
 
   return (
     <>
-      <ScrollArea className="max-h-[500px]">
+      <ScrollArea className="max-h-[750px]">
         <div className="rounded-md border">
           <Table>
             <TableHeader>
@@ -196,4 +196,5 @@ export default function MembershipTable({ memberships, isLoading, onDataChange }
     </>
   );
 }
+
 
