@@ -21,6 +21,7 @@ import EditMembershipDialog from "./edit-membership-dialog";
 import DeleteMembershipDialog from "./delete-membership-dialog";
 import ViewCustomerDialog from "../../customers/_components/view-customer-dialog";
 import { getCustomerOrders } from "@/services/admin-service";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface MembershipTableProps {
   memberships: Membership[];
@@ -100,70 +101,72 @@ export default function MembershipTable({ memberships, isLoading, onDataChange }
 
   return (
     <>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Customer Name</TableHead>
-              <TableHead>Identifier / Plan</TableHead>
-              <TableHead>Membership Code</TableHead>
-              <TableHead>Recommendations</TableHead>
-              <TableHead>
-                <span className="sr-only">Actions</span>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? renderSkeleton() : memberships.map(membership => (
-              <TableRow key={membership.id}>
-                <TableCell className="font-medium">{membership.customerName}</TableCell>
-                <TableCell className="text-muted-foreground">
-                    {membership.type === 'Fitness Pillar' ? membership.customerPhone : (membership.customerEmail || membership.coachingPlan)}
-                </TableCell>
-                <TableCell>
-                    <div className="flex items-center gap-2">
-                        <Badge variant="outline">{membership.code}</Badge>
-                         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(membership.code)}>
-                            <Copy className="h-3.5 w-3.5" />
-                         </Button>
-                    </div>
-                </TableCell>
-                <TableCell>{membership.recommendedProducts?.length || 0}</TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button size="icon" variant="ghost">
-                        <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Actions</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem onSelect={() => handleEdit(membership)}>Edit Supplement Guide</DropdownMenuItem>
-                       {membership.type === 'Fitness Pillar' && (
-                         <DropdownMenuItem onSelect={() => handleViewCustomer(membership)}>
-                           View Customer Details
-                         </DropdownMenuItem>
-                      )}
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onSelect={() => handleDelete(membership)} className="text-red-500">
-                        Delete Membership
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
+      <ScrollArea className="max-h-[500px]">
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Customer Name</TableHead>
+                <TableHead>Identifier / Plan</TableHead>
+                <TableHead>Membership Code</TableHead>
+                <TableHead>Recommendations</TableHead>
+                <TableHead>
+                  <span className="sr-only">Actions</span>
+                </TableHead>
               </TableRow>
-            ))}
-            {!isLoading && memberships.length === 0 && (
-                <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
-                        No memberships found in this category.
-                    </TableCell>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? renderSkeleton() : memberships.map(membership => (
+                <TableRow key={membership.id}>
+                  <TableCell className="font-medium">{membership.customerName}</TableCell>
+                  <TableCell className="text-muted-foreground">
+                      {membership.type === 'Fitness Pillar' ? membership.customerPhone : (membership.customerEmail || membership.coachingPlan)}
+                  </TableCell>
+                  <TableCell>
+                      <div className="flex items-center gap-2">
+                          <Badge variant="outline">{membership.code}</Badge>
+                          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(membership.code)}>
+                              <Copy className="h-3.5 w-3.5" />
+                          </Button>
+                      </div>
+                  </TableCell>
+                  <TableCell>{membership.recommendedProducts?.length || 0}</TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="ghost">
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Actions</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem onSelect={() => handleEdit(membership)}>Edit Supplement Guide</DropdownMenuItem>
+                        {membership.type === 'Fitness Pillar' && (
+                          <DropdownMenuItem onSelect={() => handleViewCustomer(membership)}>
+                            View Customer Details
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onSelect={() => handleDelete(membership)} className="text-red-500">
+                          Delete Membership
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              ))}
+              {!isLoading && memberships.length === 0 && (
+                  <TableRow>
+                      <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                          No memberships found in this category.
+                      </TableCell>
+                  </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </ScrollArea>
 
       {selectedMembership && (
         <>
@@ -193,3 +196,4 @@ export default function MembershipTable({ memberships, isLoading, onDataChange }
     </>
   );
 }
+
