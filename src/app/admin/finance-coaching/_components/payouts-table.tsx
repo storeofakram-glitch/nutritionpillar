@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface PayoutsTableProps {
     coachesWithPending: CoachWithFinancials[];
@@ -66,34 +67,36 @@ export default function PayoutsTable({ coachesWithPending, isLoading, onDataChan
                 </div>
             </CardHeader>
             <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Coach</TableHead>
-                            <TableHead>Commission</TableHead>
-                            <TableHead>Amount Owed</TableHead>
-                            <TableHead className="text-right">Action</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {isLoading ? renderSkeleton() : coachesWithPending.map(coach => (
-                            <TableRow key={coach.id}>
-                                <TableCell className="font-medium">{coach.name}</TableCell>
-                                <TableCell>{coach.commissionRate || 70}%</TableCell>
-                                <TableCell className="font-semibold text-primary">DZD {coach.pendingPayout?.toFixed(2) || '0.00'}</TableCell>
-                                <TableCell className="text-right">
-                                    <Button 
-                                        size="sm" 
-                                        onClick={() => handleProcessPayout(coach.id, coach.pendingPayout || 0)}
-                                        disabled={processingId === coach.id}
-                                    >
-                                        {processingId === coach.id ? "Processing..." : "Process Payout"}
-                                    </Button>
-                                </TableCell>
+                <ScrollArea className="max-h-[750px]">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Coach</TableHead>
+                                <TableHead>Commission</TableHead>
+                                <TableHead>Amount Owed</TableHead>
+                                <TableHead className="text-right">Action</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {isLoading ? renderSkeleton() : coachesWithPending.map(coach => (
+                                <TableRow key={coach.id}>
+                                    <TableCell className="font-medium">{coach.name}</TableCell>
+                                    <TableCell>{coach.commissionRate || 70}%</TableCell>
+                                    <TableCell className="font-semibold text-primary">DZD {coach.pendingPayout?.toFixed(2) || '0.00'}</TableCell>
+                                    <TableCell className="text-right">
+                                        <Button 
+                                            size="sm" 
+                                            onClick={() => handleProcessPayout(coach.id, coach.pendingPayout || 0)}
+                                            disabled={processingId === coach.id}
+                                        >
+                                            {processingId === coach.id ? "Processing..." : "Process Payout"}
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </ScrollArea>
                 {!isLoading && coachesWithPending.length === 0 && (
                     <p className="text-center text-muted-foreground py-8">No pending payouts at the moment.</p>
                 )}
@@ -101,5 +104,3 @@ export default function PayoutsTable({ coachesWithPending, isLoading, onDataChan
         </Card>
     );
 }
-
-    
