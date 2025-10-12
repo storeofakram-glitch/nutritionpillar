@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface PayoutsHistoryTableProps {
     payouts: CoachPayout[];
@@ -22,7 +23,7 @@ interface PayoutsHistoryTableProps {
 export default function PayoutsHistoryTable({ payouts, coaches, isLoading, searchTerm, onSearchTermChange }: PayoutsHistoryTableProps) {
     const coachMap = new Map(coaches.map(c => [c.id, c.name]));
 
-    const renderSkeleton = () => Array.from({ length: 3 }).map((_, i) => (
+    const renderSkeleton = () => Array.from({ length: 10 }).map((_, i) => (
         <TableRow key={i}>
             <TableCell><Skeleton className="h-5 w-24" /></TableCell>
             <TableCell><Skeleton className="h-5 w-24" /></TableCell>
@@ -63,32 +64,34 @@ export default function PayoutsHistoryTable({ payouts, coaches, isLoading, searc
                 </div>
             </CardHeader>
             <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Coach</TableHead>
-                            <TableHead>Client</TableHead>
-                            <TableHead>Plan</TableHead>
-                            <TableHead>Amount</TableHead>
-                            <TableHead>Date</TableHead>
-                            <TableHead>Status</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {isLoading ? renderSkeleton() : payouts.map(payout => (
-                            <TableRow key={payout.id}>
-                                <TableCell className="font-medium">{coachMap.get(payout.coachId) || payout.coachId}</TableCell>
-                                <TableCell>{payout.clientName}</TableCell>
-                                <TableCell>{payout.planTitle}</TableCell>
-                                <TableCell>DZD {payout.amount.toFixed(2)}</TableCell>
-                                <TableCell>{format(new Date(payout.payoutDate), "PPP")}</TableCell>
-                                <TableCell>
-                                    <Badge variant={getStatusVariant(payout.status)}>{payout.status}</Badge>
-                                </TableCell>
+                <ScrollArea className="h-[480px]">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Coach</TableHead>
+                                <TableHead>Client</TableHead>
+                                <TableHead>Plan</TableHead>
+                                <TableHead>Amount</TableHead>
+                                <TableHead>Date</TableHead>
+                                <TableHead>Status</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {isLoading ? renderSkeleton() : payouts.map(payout => (
+                                <TableRow key={payout.id}>
+                                    <TableCell className="font-medium">{coachMap.get(payout.coachId) || payout.coachId}</TableCell>
+                                    <TableCell>{payout.clientName}</TableCell>
+                                    <TableCell>{payout.planTitle}</TableCell>
+                                    <TableCell>DZD {payout.amount.toFixed(2)}</TableCell>
+                                    <TableCell>{format(new Date(payout.payoutDate), "PPP")}</TableCell>
+                                    <TableCell>
+                                        <Badge variant={getStatusVariant(payout.status)}>{payout.status}</Badge>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </ScrollArea>
                  {!isLoading && payouts.length === 0 && (
                     <p className="text-center text-muted-foreground py-8">No payout history found.</p>
                 )}
@@ -96,5 +99,3 @@ export default function PayoutsHistoryTable({ payouts, coaches, isLoading, searc
         </Card>
     );
 }
-
-    
