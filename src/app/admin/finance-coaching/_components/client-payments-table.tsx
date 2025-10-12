@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Search } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ClientPaymentsTableProps {
     clients: ClientPayment[];
@@ -67,30 +68,32 @@ export default function ClientPaymentsTable({ clients, coaches, isLoading, onDat
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Client</TableHead>
-                                <TableHead>Coach</TableHead>
-                                <TableHead>Plan</TableHead>
-                                <TableHead>Amount</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Date</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {isLoading ? renderSkeleton() : clients.map(client => (
-                                <TableRow key={client.id}>
-                                    <TableCell className="font-medium">{client.clientName}</TableCell>
-                                    <TableCell>{client.coachName}</TableCell>
-                                    <TableCell>{client.planTitle}</TableCell>
-                                    <TableCell>DZD {client.amount.toFixed(2)}</TableCell>
-                                    <TableCell><Badge variant={getStatusVariant(client.status)}>{client.status}</Badge></TableCell>
-                                    <TableCell>{format(new Date(client.paymentDate), "PPP")}</TableCell>
+                    <ScrollArea className="max-h-[500px]">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Client</TableHead>
+                                    <TableHead>Coach</TableHead>
+                                    <TableHead>Plan</TableHead>
+                                    <TableHead>Amount</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead>Date</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+                            <TableBody>
+                                {isLoading ? renderSkeleton() : clients.map(client => (
+                                    <TableRow key={client.id}>
+                                        <TableCell className="font-medium">{client.clientName}</TableCell>
+                                        <TableCell>{client.coachName}</TableCell>
+                                        <TableCell>{client.planTitle}</TableCell>
+                                        <TableCell>DZD {client.amount.toFixed(2)}</TableCell>
+                                        <TableCell><Badge variant={getStatusVariant(client.status)}>{client.status}</Badge></TableCell>
+                                        <TableCell>{format(new Date(client.paymentDate), "PPP")}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </ScrollArea>
                     {!isLoading && clients.length === 0 && (
                         <p className="text-center text-muted-foreground py-8">No client payments found.</p>
                     )}

@@ -11,6 +11,7 @@ import type { CoachWithFinancials } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import EditCommissionDialog from "./edit-commission-dialog";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface CommissionTableProps {
     coaches: CoachWithFinancials[];
@@ -67,42 +68,44 @@ export default function CommissionTable({ coaches, isLoading, onDataChange, sear
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Coach</TableHead>
-                                <TableHead>Commission</TableHead>
-                                <TableHead>Pending Payout</TableHead>
-                                <TableHead>Total Paid</TableHead>
-                                <TableHead className="text-right">Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {isLoading ? renderSkeleton() : coaches.map(coach => (
-                                <TableRow key={coach.id}>
-                                    <TableCell className="font-medium">{coach.name}</TableCell>
-                                    <TableCell>{coach.commissionRate || 70}%</TableCell>
-                                    <TableCell className="font-semibold text-primary">DZD {coach.pendingPayout?.toFixed(2) || '0.00'}</TableCell>
-                                    <TableCell>DZD {coach.paidOut?.toFixed(2) || '0.00'}</TableCell>
-                                    <TableCell className="text-right">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild><Button size="icon" variant="ghost"><MoreHorizontal /></Button></DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuItem onSelect={() => handleEdit(coach)}>Edit Rate</DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                             {!isLoading && coaches.length === 0 && (
+                    <ScrollArea className="max-h-[500px]">
+                        <Table>
+                            <TableHeader>
                                 <TableRow>
-                                    <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">
-                                        No coaches found.
-                                    </TableCell>
+                                    <TableHead>Coach</TableHead>
+                                    <TableHead>Commission</TableHead>
+                                    <TableHead>Pending Payout</TableHead>
+                                    <TableHead>Total Paid</TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+                            <TableBody>
+                                {isLoading ? renderSkeleton() : coaches.map(coach => (
+                                    <TableRow key={coach.id}>
+                                        <TableCell className="font-medium">{coach.name}</TableCell>
+                                        <TableCell>{coach.commissionRate || 70}%</TableCell>
+                                        <TableCell className="font-semibold text-primary">DZD {coach.pendingPayout?.toFixed(2) || '0.00'}</TableCell>
+                                        <TableCell>DZD {coach.paidOut?.toFixed(2) || '0.00'}</TableCell>
+                                        <TableCell className="text-right">
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild><Button size="icon" variant="ghost"><MoreHorizontal /></Button></DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuItem onSelect={() => handleEdit(coach)}>Edit Rate</DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                                {!isLoading && coaches.length === 0 && (
+                                    <TableRow>
+                                        <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">
+                                            No coaches found.
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </ScrollArea>
                 </CardContent>
             </Card>
             {selectedCoach && (
@@ -116,5 +119,3 @@ export default function CommissionTable({ coaches, isLoading, onDataChange, sear
         </>
     );
 }
-
-    
