@@ -64,7 +64,7 @@ export default function PayoutsHistoryTable({ payouts, coaches, isLoading, searc
                 </div>
             </CardHeader>
             <CardContent>
-                <ScrollArea className="h-[480px]">
+                <ScrollArea className="max-h-[750px]">
                     <Table>
                         <TableHeader>
                             <TableRow>
