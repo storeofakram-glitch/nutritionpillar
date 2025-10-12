@@ -47,7 +47,7 @@ export default function CommissionTable({ coaches, isLoading, onDataChange, sear
 
     return (
         <>
-            <Card>
+            <Card className="border-primary">
                 <CardHeader>
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex-1">
@@ -117,3 +117,4 @@ export default function CommissionTable({ coaches, isLoading, onDataChange, sear
     );
 }
 
+    

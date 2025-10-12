@@ -71,7 +71,7 @@ export default function AdminMembershipPage({ authLoading }: { authLoading?: boo
                 </div>
             </div>
 
-            <Card className="shadow-md">
+            <Card className="shadow-md border-primary">
                 <CardHeader>
                     <div className="flex items-center justify-between">
                          <div>
@@ -85,7 +85,7 @@ export default function AdminMembershipPage({ authLoading }: { authLoading?: boo
                 </CardContent>
             </Card>
 
-            <Card className="shadow-md">
+            <Card className="shadow-md border-primary">
                 <CardHeader>
                     <CardTitle>Coaches & Experts Memberships</CardTitle>
                     <CardDescription>Memberships automatically created for your team.</CardDescription>
@@ -95,7 +95,7 @@ export default function AdminMembershipPage({ authLoading }: { authLoading?: boo
                 </CardContent>
             </Card>
 
-             <Card className="shadow-md">
+             <Card className="shadow-md border-primary">
                 <CardHeader>
                      <div className="flex items-center justify-between">
                          <div>
@@ -115,3 +115,5 @@ export default function AdminMembershipPage({ authLoading }: { authLoading?: boo
         </div>
     );
 }
+
+    

@@ -47,7 +47,7 @@ export default function ClientPaymentsTable({ clients, coaches, isLoading, onDat
 
     return (
         <>
-            <Card>
+            <Card className="border-primary">
                 <CardHeader>
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex-1">
@@ -99,3 +99,5 @@ export default function ClientPaymentsTable({ clients, coaches, isLoading, onDat
         </>
     );
 }
+
+    

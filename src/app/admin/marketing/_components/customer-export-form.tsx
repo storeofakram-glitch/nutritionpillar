@@ -218,7 +218,7 @@ export default function CustomerExportForm() {
 
     if (loading) {
         return (
-            <Card>
+            <Card className="border-primary">
                 <CardHeader>
                     <Skeleton className="h-6 w-3/4" />
                     <Skeleton className="h-4 w-1/2" />
@@ -236,7 +236,7 @@ export default function CustomerExportForm() {
     }
 
     return (
-        <Card>
+        <Card className="border-primary">
             <CardHeader>
                 <CardTitle>Customer List Exporter</CardTitle>
                 <CardDescription>
@@ -296,3 +296,5 @@ export default function CustomerExportForm() {
         </Card>
     );
 }
+
+    

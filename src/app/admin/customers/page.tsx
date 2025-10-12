@@ -231,7 +231,7 @@ export default function AdminCustomersPage() {
                 </div>
             </div>
 
-            <Card>
+            <Card className="border-primary">
                 <CardHeader>
                     <CardTitle>Valued Customers (Completed Orders)</CardTitle>
                     <CardDescription>Customers who have successfully received an order.</CardDescription>
@@ -241,7 +241,7 @@ export default function AdminCustomersPage() {
                 </CardContent>
             </Card>
 
-             <Card>
+             <Card className="border-primary">
                 <CardHeader>
                     <CardTitle>Customers with Canceled Orders</CardTitle>
                     <CardDescription>Customers who have had an order canceled.</CardDescription>
@@ -262,3 +262,5 @@ export default function AdminCustomersPage() {
         </div>
     )
 }
+
+    

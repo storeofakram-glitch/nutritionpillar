@@ -93,7 +93,7 @@ export default function AdminCoachesPage({ authLoading }: { authLoading?: boolea
                 </div>
             </div>
 
-            <Card>
+            <Card className="border-primary">
                 <CardHeader>
                     <div className="flex items-center gap-2">
                         <CardTitle>Coaches</CardTitle>
@@ -108,7 +108,7 @@ export default function AdminCoachesPage({ authLoading }: { authLoading?: boolea
                 </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-primary">
                 <CardHeader>
                     <div className="flex items-center gap-2">
                         <CardTitle>Experts</CardTitle>
@@ -125,3 +125,5 @@ export default function AdminCoachesPage({ authLoading }: { authLoading?: boolea
         </div>
     );
 }
+
+    

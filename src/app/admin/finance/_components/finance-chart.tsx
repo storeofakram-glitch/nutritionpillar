@@ -41,7 +41,7 @@ const chartConfig = {
 export default function FinanceChart({ data }: FinanceChartProps) {
   
     return (
-        <Card>
+        <Card className="border-primary">
             <CardHeader>
                 <CardTitle>Monthly Financial Summary</CardTitle>
                 <CardDescription>A visual summary of your financial metrics by month for the current year.</CardDescription>
@@ -75,3 +75,5 @@ export default function FinanceChart({ data }: FinanceChartProps) {
         </Card>
     )
 }
+
+    

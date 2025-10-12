@@ -161,7 +161,7 @@ export default function TeamManagementPage({ authLoading }: { authLoading?: bool
 
     return (
         <>
-            <Card>
+            <Card className="border-primary">
                 <CardHeader>
                     <div className="flex flex-col md:flex-row items-start justify-between gap-4">
                         <div className="flex-1">
@@ -254,3 +254,5 @@ export default function TeamManagementPage({ authLoading }: { authLoading?: bool
         </>
     )
 }
+
+    

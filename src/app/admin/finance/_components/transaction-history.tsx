@@ -83,7 +83,7 @@ export default function TransactionHistory({ orders, expenses, isLoading, onData
 
   return (
     <>
-      <Card>
+      <Card className="border-primary">
         <CardHeader>
           <CardTitle>Recent Transactions</CardTitle>
           <CardDescription>A log of all revenue (from delivered orders) and expenses.</CardDescription>
@@ -141,3 +141,5 @@ export default function TransactionHistory({ orders, expenses, isLoading, onData
     </>
   )
 }
+
+    

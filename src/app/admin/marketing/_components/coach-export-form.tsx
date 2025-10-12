@@ -141,7 +141,7 @@ export default function CoachExportForm() {
 
     if (loading) {
         return (
-            <Card>
+            <Card className="border-primary">
                 <CardHeader>
                     <Skeleton className="h-6 w-3/4" />
                     <Skeleton className="h-4 w-1/2" />
@@ -158,7 +158,7 @@ export default function CoachExportForm() {
     }
 
     return (
-        <Card>
+        <Card className="border-primary">
             <CardHeader>
                 <CardTitle>Coach & Expert Exporter</CardTitle>
                 <CardDescription>
@@ -186,3 +186,4 @@ export default function CoachExportForm() {
     );
 }
 
+    

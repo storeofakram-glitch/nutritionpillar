@@ -119,7 +119,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                 <Card>
+                 <Card className="border-primary">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Unread Messages</CardTitle>
                         <Mail className="h-4 w-4 text-muted-foreground" />
@@ -129,7 +129,7 @@ export default function AdminDashboardPage() {
                         <p className="text-xs text-muted-foreground">From contact form</p>
                     </CardContent>
                 </Card>
-                 <Card>
+                 <Card className="border-primary">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">New Applications</CardTitle>
                         <UserPlus className="h-4 w-4 text-muted-foreground" />
@@ -139,7 +139,7 @@ export default function AdminDashboardPage() {
                         <p className="text-xs text-muted-foreground">New coaching applicants</p>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="border-primary">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium flex-1">Total Sales</CardTitle>
                         <ShoppingCart className="h-4 w-4 text-muted-foreground" />
@@ -149,7 +149,7 @@ export default function AdminDashboardPage() {
                         <p className="text-xs text-muted-foreground">Total orders placed</p>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="border-primary">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium flex-1">New Customers</CardTitle>
                         <Users className="h-4 w-4 text-muted-foreground" />
@@ -162,7 +162,7 @@ export default function AdminDashboardPage() {
             </div>
             
             <div className="grid grid-cols-1 gap-6">
-                <Card>
+                <Card className="border-primary">
                     <CardHeader>
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                             <div className="flex-1">
@@ -223,7 +223,7 @@ export default function AdminDashboardPage() {
                     )}
                 </Card>
 
-                <Card>
+                <Card className="border-primary">
                     <CardHeader>
                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                             <div className="flex-1">
@@ -285,3 +285,5 @@ export default function AdminDashboardPage() {
         </div>
     )
 }
+
+    

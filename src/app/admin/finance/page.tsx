@@ -110,7 +110,7 @@ export default function AdminFinancePage({ authLoading }: { authLoading?: boolea
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-                <Card>
+                <Card className="border-primary">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
                         <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -124,7 +124,7 @@ export default function AdminFinancePage({ authLoading }: { authLoading?: boolea
                         <p className="text-xs text-muted-foreground">From delivered orders (shipping excluded)</p>
                     </CardContent>
                 </Card>
-                 <Card>
+                 <Card className="border-primary">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Cost of Goods Sold</CardTitle>
                         <ShoppingCart className="h-4 w-4 text-muted-foreground" />
@@ -138,7 +138,7 @@ export default function AdminFinancePage({ authLoading }: { authLoading?: boolea
                         <p className="text-xs text-muted-foreground">Total cost of delivered products</p>
                     </CardContent>
                 </Card>
-                 <Card>
+                 <Card className="border-primary">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Gross Profit</CardTitle>
                         <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -154,7 +154,7 @@ export default function AdminFinancePage({ authLoading }: { authLoading?: boolea
                         <p className="text-xs text-muted-foreground">Revenue - Cost of Goods</p>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="border-primary">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Other Expenses</CardTitle>
                         <MinusCircle className="h-4 w-4 text-muted-foreground" />
@@ -168,7 +168,7 @@ export default function AdminFinancePage({ authLoading }: { authLoading?: boolea
                         <p className="text-xs text-muted-foreground">Manually entered expenses</p>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="border-primary">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Net Profit</CardTitle>
                         <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -184,7 +184,7 @@ export default function AdminFinancePage({ authLoading }: { authLoading?: boolea
                         <p className="text-xs text-muted-foreground">Gross Profit - Expenses</p>
                     </CardContent>
                 </Card>
-                 <Card className="md:col-span-2 lg:col-span-3 xl:col-span-2">
+                 <Card className="md:col-span-2 lg:col-span-3 xl:col-span-2 border-primary">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Inventory Value</CardTitle>
                         <Package className="h-4 w-4 text-muted-foreground" />
@@ -211,3 +211,5 @@ export default function AdminFinancePage({ authLoading }: { authLoading?: boolea
         </div>
     )
 }
+
+    

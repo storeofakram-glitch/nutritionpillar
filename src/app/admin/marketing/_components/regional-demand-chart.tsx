@@ -32,7 +32,7 @@ const chartConfig = {
 export default function RegionalDemandChart({ data, isLoading }: RegionalDemandChartProps) {
     if (isLoading) {
         return (
-            <Card>
+            <Card className="border-primary">
                 <CardHeader>
                     <Skeleton className="h-6 w-3/4" />
                     <Skeleton className="h-4 w-1/2" />
@@ -45,7 +45,7 @@ export default function RegionalDemandChart({ data, isLoading }: RegionalDemandC
     }
   
     return (
-        <Card>
+        <Card className="border-primary">
             <CardHeader>
                 <CardTitle>Regional Product Demand</CardTitle>
                 <CardDescription>Total items sold per state across all orders.</CardDescription>
@@ -93,3 +93,5 @@ export default function RegionalDemandChart({ data, isLoading }: RegionalDemandC
         </Card>
     );
 }
+
+    

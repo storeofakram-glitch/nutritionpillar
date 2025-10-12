@@ -26,7 +26,7 @@ export default function BestSellingProductsCard({ products, isLoading }: BestSel
       );
 
     return (
-        <Card>
+        <Card className="border-primary">
             <CardHeader>
                 <CardTitle>Top 5 Best-Selling Products</CardTitle>
                 <CardDescription>Based on units sold from delivered orders.</CardDescription>
@@ -66,3 +66,5 @@ export default function BestSellingProductsCard({ products, isLoading }: BestSel
         </Card>
     );
 }
+
+    

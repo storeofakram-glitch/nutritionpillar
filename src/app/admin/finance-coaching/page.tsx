@@ -169,3 +169,5 @@ export default function AdminFinanceCoachingPage({ authLoading }: { authLoading?
         </div>
     );
 }
+
+    
