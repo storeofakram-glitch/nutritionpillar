@@ -16,6 +16,7 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { Skeleton } from "./ui/skeleton";
 
 const SmallProductCard = ({ product }: { product: Product }) => {
   const isOutOfStock = product.quantity === 0;
@@ -67,8 +68,23 @@ export default function NewArrivalsCarousel() {
   }, []);
 
   if (loading) {
-    // Optional: add a loading skeleton here
-    return null;
+    return (
+        <section className="py-8 md:py-12 bg-background">
+            <div className="container mx-auto px-4">
+                 <div className="text-center mb-10">
+                    <Skeleton className="h-4 w-32 mx-auto" />
+                    <Skeleton className="h-8 w-48 mx-auto mt-2" />
+                </div>
+                <div className="flex gap-4">
+                    {[...Array(6)].map((_, i) => (
+                        <div key={i} className="w-1/6">
+                            <Skeleton className="w-full h-64" />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    )
   }
   
   if (newArrivals.length === 0) {

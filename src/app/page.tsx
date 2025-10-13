@@ -12,17 +12,17 @@ import { getSiteSettings } from '@/services/site-settings-service';
 import type { SiteSettings, Product, PartnershipLogo } from '@/types';
 import NewArrivalsCarousel from '@/components/new-arrivals-carousel';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, CarouselDots } from '@/components/ui/carousel';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
 import DynamicCounter from '@/components/dynamic-counter';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
-import CoachesExpertsSection from '@/components/coaches-experts-section';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import ReactMarkdown from 'react-markdown';
 import { useLanguage } from '@/contexts/language-context';
 
+const CoachesExpertsSection = lazy(() => import('@/components/coaches-experts-section'));
 
 const LogoItem = ({ logo }: { logo: PartnershipLogo }) => {
     const content = (
@@ -222,7 +222,9 @@ export default function Home() {
         </section>
       )}
 
-      <CoachesExpertsSection />
+      <Suspense fallback={<Skeleton className="h-96 w-full" />}>
+        <CoachesExpertsSection />
+      </Suspense>
 
       <section className="py-8 md:py-12 bg-background">
         <div className="container mx-auto px-4">
@@ -312,7 +314,9 @@ export default function Home() {
         </div>
       </section>
 
-      <NewArrivalsCarousel />
+      <Suspense fallback={<Skeleton className="h-96 w-full" />}>
+        <NewArrivalsCarousel />
+      </Suspense>
 
       <section id="products" className="py-12 md:py-16">
         <div className="container mx-auto px-4">
