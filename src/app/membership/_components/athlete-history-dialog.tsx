@@ -24,6 +24,7 @@ interface AthleteHistoryDialogProps {
 
 export default function AthleteHistoryDialog({ athletes }: AthleteHistoryDialogProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [visibleCount, setVisibleCount] = useState(10);
 
   const filteredAthletes = useMemo(() => {
     if (!searchTerm) return athletes;
@@ -59,24 +60,35 @@ export default function AthleteHistoryDialog({ athletes }: AthleteHistoryDialogP
         </div>
         <ScrollArea className="max-h-[60vh] pr-4">
             {filteredAthletes.length > 0 ? (
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Archived On</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {filteredAthletes.map(athlete => (
-                            <TableRow key={athlete.id}>
-                                <TableCell>{athlete.applicant.name}</TableCell>
-                                <TableCell>{athlete.applicant.email}</TableCell>
-                                <TableCell>{format(new Date(athlete.createdAt), "PPP")}</TableCell>
+                <div className="space-y-4">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Name</TableHead>
+                                <TableHead>Email</TableHead>
+                                <TableHead>Archived On</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {filteredAthletes.slice(0, visibleCount).map(athlete => (
+                                <TableRow key={athlete.id}>
+                                    <TableCell>{athlete.applicant.name}</TableCell>
+                                    <TableCell>{athlete.applicant.email}</TableCell>
+                                    <TableCell>{format(new Date(athlete.createdAt), "PPP")}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                     {filteredAthletes.length > visibleCount && (
+                        <Button
+                            variant="outline"
+                            className="w-full"
+                            onClick={() => setVisibleCount(prev => prev + 10)}
+                        >
+                            Load More
+                        </Button>
+                    )}
+                </div>
             ) : (
                 <p className="text-center text-muted-foreground py-10">
                     {searchTerm ? `No results for "${searchTerm}"` : "No archived athletes found."}
