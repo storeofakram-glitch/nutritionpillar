@@ -156,7 +156,7 @@ export default function JoinTeamPage() {
   return (
     <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-3xl mx-auto space-y-8">
-            <Card className="flex flex-col items-center text-center p-8">
+            <Card className="flex flex-col items-center text-center p-8 border-primary">
               <CardHeader>
                 <div className="mx-auto bg-primary/10 p-4 rounded-full mb-4">
                   <Handshake className="h-10 w-10 text-primary" />
