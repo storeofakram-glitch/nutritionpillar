@@ -63,6 +63,9 @@ export default function MembershipPage() {
     const [selectedAppForRevoke, setSelectedAppForRevoke] = useState<CoachingApplication | null>(null);
     const [activeClientSearchTerm, setActiveClientSearchTerm] = useState('');
     const { toast } = useToast();
+    
+    const [visibleClients, setVisibleClients] = useState(3);
+    const [visiblePayouts, setVisiblePayouts] = useState(6);
 
     const fetchCoachData = async (coach: Coach) => {
         const [coachApps, financials, payouts] = await Promise.all([
@@ -405,77 +408,80 @@ export default function MembershipPage() {
                             </div>
                         </div>
                         {filteredActiveClients.length > 0 ? (
-                            <ScrollArea className="h-96 pr-4">
-                                <div className="space-y-4">
-                                    {filteredActiveClients.map(app => {
-                                        const daysLeft = getDaysLeft(app.membership?.expiresAt);
-                                        const isActive = daysLeft === null || daysLeft > 0;
-                                        return (
-                                        <Card key={app.id} className="bg-muted/50">
-                                            <CardContent className="p-4">
-                                                <div className="flex justify-between items-start">
-                                                    <div>
-                                                        <h4 className="font-semibold">{app.applicant.name}</h4>
-                                                        <div className="flex items-center gap-2 mt-1">
-                                                            <Badge variant={isActive ? "default" : "destructive"} className={cn("text-xs", isActive && "bg-green-600 hover:bg-green-700")}>
-                                                                {isActive ? "Active" : "Inactive"}
-                                                            </Badge>
-                                                            {daysLeft !== null && (
-                                                                <div className={cn("flex items-center gap-1 text-sm", getDaysLeftColor(daysLeft))}>
-                                                                    <CalendarClock className="h-3 w-3" />
-                                                                    <span>{daysLeft} days left</span>
-                                                                </div>
-                                                            )}
-                                                        </div>
+                            <div className="space-y-4">
+                                {filteredActiveClients.slice(0, visibleClients).map(app => {
+                                    const daysLeft = getDaysLeft(app.membership?.expiresAt);
+                                    const isActive = daysLeft === null || daysLeft > 0;
+                                    return (
+                                    <Card key={app.id} className="bg-muted/50">
+                                        <CardContent className="p-4">
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <h4 className="font-semibold">{app.applicant.name}</h4>
+                                                    <div className="flex items-center gap-2 mt-1">
+                                                        <Badge variant={isActive ? "default" : "destructive"} className={cn("text-xs", isActive && "bg-green-600 hover:bg-green-700")}>
+                                                            {isActive ? "Active" : "Inactive"}
+                                                        </Badge>
+                                                        {daysLeft !== null && (
+                                                            <div className={cn("flex items-center gap-1 text-sm", getDaysLeftColor(daysLeft))}>
+                                                                <CalendarClock className="h-3 w-3" />
+                                                                <span>{daysLeft} days left</span>
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                    <div className="flex items-center gap-1">
-                                                        <ManageProgramsDialog application={app} onUpdate={() => fetchCoachData(coachDetails)} />
+                                                </div>
+                                                <div className="flex items-center gap-1">
+                                                    <ManageProgramsDialog application={app} onUpdate={() => fetchCoachData(coachDetails)} />
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+                                                        <a href={`mailto:${app.applicant.email}`}>
+                                                            <Mail className="h-4 w-4" />
+                                                            <span className="sr-only">Email</span>
+                                                        </a>
+                                                    </Button>
                                                         <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
-                                                            <a href={`mailto:${app.applicant.email}`}>
-                                                                <Mail className="h-4 w-4" />
-                                                                <span className="sr-only">Email</span>
-                                                            </a>
+                                                        <a href={`https://wa.me/${app.applicant.phone.replace(/\\D/g, '')}`} target="_blank" rel="noopener noreferrer">
+                                                            <MessageSquare className="h-4 w-4" />
+                                                            <span className="sr-only">WhatsApp</span>
+                                                        </a>
+                                                    </Button>
+                                                        <Button variant="destructive" size="icon" className="h-8 w-8" onClick={() => handleOpenRevokeDialog(app)}>
+                                                        <UserX className="h-4 w-4" />
+                                                        <span className="sr-only">Archive Athlete</span>
                                                         </Button>
-                                                         <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
-                                                            <a href={`https://wa.me/${app.applicant.phone.replace(/\\D/g, '')}`} target="_blank" rel="noopener noreferrer">
-                                                                <MessageSquare className="h-4 w-4" />
-                                                                <span className="sr-only">WhatsApp</span>
-                                                            </a>
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-3 text-muted-foreground">
+                                                <p><span className="font-medium text-foreground">Goal:</span> {app.applicant.goal}</p>
+                                                <p><span className="font-medium text-foreground">Duration:</span> {app.applicant.duration}</p>
+                                                <p><span className="font-medium text-foreground">Age:</span> {app.applicant.age}</p>
+                                                <p><span className="font-medium text-foreground">Phone:</span> {app.applicant.phone}</p>
+                                                <p><span className="font-medium text-foreground">Weight:</span> {app.applicant.weight}kg</p>
+                                                <p><span className="font-medium text-foreground">Height:</span> {app.applicant.height}cm</p>
+                                                    {app.membership?.code && (
+                                                    <div className="col-span-2 flex items-center gap-2">
+                                                        <span className="font-medium text-foreground">Code:</span>
+                                                        <Badge variant="secondary">{app.membership.code}</Badge>
+                                                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(app.membership!.code)}>
+                                                            <Copy className="h-3.5 w-3.5" />
                                                         </Button>
-                                                         <Button variant="destructive" size="icon" className="h-8 w-8" onClick={() => handleOpenRevokeDialog(app)}>
-                                                            <UserX className="h-4 w-4" />
-                                                            <span className="sr-only">Archive Athlete</span>
-                                                         </Button>
-                                                    </div>
-                                                </div>
-                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-3 text-muted-foreground">
-                                                    <p><span className="font-medium text-foreground">Goal:</span> {app.applicant.goal}</p>
-                                                    <p><span className="font-medium text-foreground">Duration:</span> {app.applicant.duration}</p>
-                                                    <p><span className="font-medium text-foreground">Age:</span> {app.applicant.age}</p>
-                                                    <p><span className="font-medium text-foreground">Phone:</span> {app.applicant.phone}</p>
-                                                    <p><span className="font-medium text-foreground">Weight:</span> {app.applicant.weight}kg</p>
-                                                    <p><span className="font-medium text-foreground">Height:</span> {app.applicant.height}cm</p>
-                                                     {app.membership?.code && (
-                                                        <div className="col-span-2 flex items-center gap-2">
-                                                            <span className="font-medium text-foreground">Code:</span>
-                                                            <Badge variant="secondary">{app.membership.code}</Badge>
-                                                            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => copyToClipboard(app.membership!.code)}>
-                                                                <Copy className="h-3.5 w-3.5" />
-                                                            </Button>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                {app.applicant.message && (
-                                                    <div className="mt-3">
-                                                        <p className="font-medium text-sm text-foreground">Message:</p>
-                                                        <p className="text-sm text-muted-foreground italic">"{app.applicant.message}"</p>
                                                     </div>
                                                 )}
-                                            </CardContent>
-                                        </Card>
-                                    )})}
-                                </div>
-                            </ScrollArea>
+                                            </div>
+                                            {app.applicant.message && (
+                                                <div className="mt-3">
+                                                    <p className="font-medium text-sm text-foreground">Message:</p>
+                                                    <p className="text-sm text-muted-foreground italic">"{app.applicant.message}"</p>
+                                                </div>
+                                            )}
+                                        </CardContent>
+                                    </Card>
+                                )})}
+                                {filteredActiveClients.length > visibleClients && (
+                                    <Button variant="outline" className="w-full" onClick={() => setVisibleClients(prev => prev + 3)}>
+                                        Load More Clients
+                                    </Button>
+                                )}
+                            </div>
                         ) : (
                             <p className="text-center text-muted-foreground py-4">
                                 {activeClientSearchTerm ? `No clients found for "${activeClientSearchTerm}".` : 'You have no active clients yet.'}
@@ -485,32 +491,39 @@ export default function MembershipPage() {
                      <div>
                         <h3 className="font-semibold text-lg mb-4">Your Payout History</h3>
                         {payoutHistory.length > 0 ? (
-                            <ScrollArea className="h-96 pr-4">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Client</TableHead>
-                                            <TableHead>Plan</TableHead>
-                                            <TableHead>Date</TableHead>
-                                            <TableHead>Amount</TableHead>
-                                            <TableHead>Status</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {payoutHistory.map(payout => (
-                                            <TableRow key={payout.id}>
-                                                <TableCell>{payout.clientName}</TableCell>
-                                                <TableCell>{payout.planTitle}</TableCell>
-                                                <TableCell>{format(new Date(payout.payoutDate), 'PPP')}</TableCell>
-                                                <TableCell className="font-medium">DZD {payout.amount.toFixed(2)}</TableCell>
-                                                <TableCell>
-                                                    <Badge variant={'default'} className={cn(getPayoutStatusStyles(payout.status))}>{payout.status}</Badge>
-                                                </TableCell>
+                             <div className="space-y-4">
+                                <div className="border rounded-lg">
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Client</TableHead>
+                                                <TableHead>Plan</TableHead>
+                                                <TableHead>Date</TableHead>
+                                                <TableHead>Amount</TableHead>
+                                                <TableHead>Status</TableHead>
                                             </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </ScrollArea>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {payoutHistory.slice(0, visiblePayouts).map(payout => (
+                                                <TableRow key={payout.id}>
+                                                    <TableCell>{payout.clientName}</TableCell>
+                                                    <TableCell>{payout.planTitle}</TableCell>
+                                                    <TableCell>{format(new Date(payout.payoutDate), 'PPP')}</TableCell>
+                                                    <TableCell className="font-medium">DZD {payout.amount.toFixed(2)}</TableCell>
+                                                    <TableCell>
+                                                        <Badge variant={'default'} className={cn(getPayoutStatusStyles(payout.status))}>{payout.status}</Badge>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </div>
+                                {payoutHistory.length > visiblePayouts && (
+                                     <Button variant="outline" className="w-full" onClick={() => setVisiblePayouts(prev => prev + 6)}>
+                                        Load More Payouts
+                                    </Button>
+                                )}
+                            </div>
                         ) : (
                             <p className="text-center text-muted-foreground py-4">You have no payout history yet.</p>
                         )}
@@ -714,3 +727,5 @@ export default function MembershipPage() {
         </div>
     );
 }
+
+    
