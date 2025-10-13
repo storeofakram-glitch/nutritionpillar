@@ -186,22 +186,22 @@ export default function JoinTeamPage() {
             <div className="mx-auto max-w-4xl w-full bg-gray-900 rounded-2xl border border-cyan-500 p-6 md:p-8 shadow-lg shadow-cyan-500/20">
                 <h3 className="text-xl font-bold text-white text-center mb-6">🌟 Why Join Our Community?</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-gray-800 p-6 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 hover:-translate-y-1">
+                    <div className="bg-gray-800 p-6 rounded-xl transition-all duration-300">
                         <div className="text-4xl mb-3">🌍</div>
                         <h4 className="font-bold text-white">Global Reach</h4>
                         <p className="text-gray-300 text-sm">Connect with clients from around the world.</p>
                     </div>
-                    <div className="bg-gray-800 p-6 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 hover:-translate-y-1">
+                    <div className="bg-gray-800 p-6 rounded-xl transition-all duration-300">
                         <div className="text-4xl mb-3">⏰</div>
                         <h4 className="font-bold text-white">Flexible Schedule</h4>
                         <p className="text-gray-300 text-sm">Work on your own terms and set your own hours.</p>
                     </div>
-                    <div className="bg-gray-800 p-6 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 hover:-translate-y-1">
+                    <div className="bg-gray-800 p-6 rounded-xl transition-all duration-300">
                         <div className="text-4xl mb-3">🚀</div>
                         <h4 className="font-bold text-white">Career Growth</h4>
                         <p className="text-gray-300 text-sm">Access opportunities for professional development.</p>
                     </div>
-                    <div className="bg-gray-800 p-6 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 hover:-translate-y-1">
+                    <div className="bg-gray-800 p-6 rounded-xl transition-all duration-300">
                         <div className="text-4xl mb-3">📚</div>
                         <h4 className="font-bold text-white">Resource Access</h4>
                         <p className="text-gray-300 text-sm">Utilize our library of tools and educational materials.</p>
