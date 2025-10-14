@@ -127,7 +127,7 @@ export type HeroSettings = {
     imageUrl: string;
     videoUrl?: string;
     alt: string;
-    title: string;
+    title: TranslatedText;
     description: TranslatedText;
     buttonText: TranslatedText;
     buttonLink: string;
@@ -309,6 +309,7 @@ export type Coach = {
   plans?: Plan[];
   personalInfo?: PersonalInfo;
   createdAt: string; // ISO 8601 string
+  isVisible?: boolean;
 };
 
 export type CoachFinancials = {

@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, orderBy, getDoc, where } from 'firebase/firestore';
@@ -68,6 +69,7 @@ export async function addCoach(coach: Omit<Coach, 'id' | 'createdAt'>) {
     try {
         const newCoach: Omit<Coach, 'id'> = {
             ...coach,
+            isVisible: coach.isVisible !== undefined ? coach.isVisible : true, // Default to visible
             createdAt: new Date().toISOString(),
         };
         const docRef = await addDoc(coachesCollection(), newCoach);
@@ -107,6 +109,26 @@ export async function updateCoach(id: string, data: Partial<Omit<Coach, 'id' | '
         return { success: false, error: (error as Error).message };
     }
 }
+
+/**
+ * Toggles the visibility of a coach or expert.
+ * @param id The ID of the coach/expert to update.
+ * @param isVisible The new visibility status.
+ * @returns An object indicating success or failure.
+ */
+export async function updateCoachVisibility(id: string, isVisible: boolean) {
+    try {
+        const docRef = doc(getDb(), 'coaches', id);
+        await updateDoc(docRef, { isVisible });
+        revalidatePath('/admin/coaches');
+        revalidatePath('/');
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating coach visibility: ", error);
+        return { success: false, error: (error as Error).message };
+    }
+}
+
 
 /**
  * Deletes a coach or expert from the database.

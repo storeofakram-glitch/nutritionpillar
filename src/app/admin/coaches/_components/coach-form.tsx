@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { useForm, useFieldArray } from "react-hook-form"
@@ -27,6 +28,7 @@ import { cn } from "@/lib/utils"
 import { useState } from "react"
 import { countryCodes } from "@/lib/country-codes"
 import { dzStates } from "@/lib/dz-states"
+import { Switch } from "@/components/ui/switch"
 
 const planSchema = z.object({
     icon: z.string().min(1, "Icon is required."),
@@ -57,6 +59,7 @@ const coachSchema = z.object({
   certifications: z.array(z.object({ value: z.string().min(1, "Certification cannot be empty.") })).optional(),
   plans: z.array(planSchema).optional(),
   personalInfo: personalInfoSchema.optional(),
+  isVisible: z.boolean().default(true).optional(),
 })
 
 type CoachFormValues = z.infer<typeof coachSchema>
@@ -93,6 +96,7 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
       certifications: coach?.certifications?.map(c => ({ value: c })) || [{ value: "" }],
       plans: coach?.plans?.map(p => ({ ...p, applyLink: p.applyLink || '' })) || [],
       personalInfo: coach?.personalInfo || {},
+      isVisible: coach?.isVisible !== undefined ? coach.isVisible : true,
     },
   })
 
@@ -147,6 +151,26 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-h-[80vh] overflow-y-auto p-1 pr-4">
+        <FormField
+          control={form.control}
+          name="isVisible"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+              <div className="space-y-0.5">
+                <FormLabel>Visible on Homepage</FormLabel>
+                <FormDescription>
+                  Control whether this person appears on the main page.
+                </FormDescription>
+              </div>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="name"

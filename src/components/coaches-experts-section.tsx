@@ -113,7 +113,9 @@ export default function CoachesExpertsSection() {
     async function fetchData() {
       setLoading(true);
       const coachesData = await getCoaches();
-      setAllCoaches(coachesData);
+      // Only include coaches that are marked as visible
+      const visibleCoaches = coachesData.filter(c => c.isVisible !== false);
+      setAllCoaches(visibleCoaches);
       setLoading(false);
     }
     fetchData();

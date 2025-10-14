@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MoreHorizontal, Star, StarHalf, User, Copy } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreHorizontal, Star, StarHalf, User, Copy, Eye, EyeOff } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { CoachWithMembership } from "@/types";
 import EditCoachDialog from "./edit-coach-dialog";
@@ -24,6 +24,7 @@ import ApplicationList from "./application-list";
 import ViewPersonalInfoDialog from "./view-personal-info-dialog";
 import AthleteList from "./athlete-list";
 import { useToast } from "@/hooks/use-toast";
+import { updateCoachVisibility } from "@/services/coach-service";
 
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex items-center">
@@ -62,6 +63,24 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
   const handleViewPersonalInfo = (coach: CoachWithMembership) => {
     setSelectedCoach(coach);
     setIsPersonalInfoOpen(true);
+  };
+
+  const handleVisibilityToggle = async (coach: CoachWithMembership) => {
+    const newVisibility = !coach.isVisible;
+    const result = await updateCoachVisibility(coach.id, newVisibility);
+    if (result.success) {
+      toast({
+        title: `Visibility Updated`,
+        description: `${coach.name} is now ${newVisibility ? 'visible' : 'hidden'}.`,
+      });
+      onDataChange(); // Refresh data to show updated state
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update visibility.",
+      });
+    }
   };
 
   const onDialogClose = () => {
@@ -109,11 +128,14 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
           </TableHeader>
           <TableBody>
             {isLoading ? renderSkeleton() : data.map(coach => (
-              <TableRow key={coach.id}>
+              <TableRow key={coach.id} className={!coach.isVisible ? 'bg-muted/30' : ''}>
                 <TableCell>
                   <Image src={coach.imageUrl} alt={coach.name} width={40} height={40} className="rounded-full object-cover" />
                 </TableCell>
-                <TableCell className="font-medium">{coach.name}</TableCell>
+                <TableCell className="font-medium">
+                  {coach.name}
+                  {!coach.isVisible && <Badge variant="secondary" className="ml-2">Hidden</Badge>}
+                </TableCell>
                 <TableCell>
                     <Badge variant="outline">{coach.specialty}</Badge>
                 </TableCell>
@@ -150,6 +172,11 @@ export default function CoachTable({ data, isLoading, onDataChange }: CoachTable
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem onSelect={() => handleEdit(coach)}>Edit Details</DropdownMenuItem>
                       <DropdownMenuItem onSelect={() => handleViewPersonalInfo(coach)}>View Personal Info</DropdownMenuItem>
+                       <DropdownMenuSeparator />
+                       <DropdownMenuItem onSelect={() => handleVisibilityToggle(coach)}>
+                         {coach.isVisible ? <EyeOff className="mr-2 h-4 w-4"/> : <Eye className="mr-2 h-4 w-4" />}
+                         {coach.isVisible ? 'Hide on page' : 'Show on page'}
+                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onSelect={() => handleDelete(coach)} className="text-red-500">
                         Delete
