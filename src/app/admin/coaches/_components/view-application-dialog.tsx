@@ -47,6 +47,25 @@ export default function ViewApplicationDialog({ isOpen, onOpenChange, applicatio
 
   const appliedPlan = coach?.plans?.find(p => p.title === application.planTitle);
 
+  const calculateTotalPrice = () => {
+    if (!appliedPlan || appliedPlan.pricePeriod !== 'month') {
+        return null;
+    }
+    const durationMap: Record<string, number> = {
+        '1 month': 1,
+        '3 months': 3,
+        '6 months': 6,
+        '1 year': 12,
+    };
+    const multiplier = durationMap[applicant.duration];
+    if (multiplier) {
+        return appliedPlan.price * multiplier;
+    }
+    return null;
+  }
+
+  const totalPrice = calculateTotalPrice();
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl">
@@ -72,9 +91,19 @@ export default function ViewApplicationDialog({ isOpen, onOpenChange, applicatio
                  {appliedPlan && (
                     <div>
                         <h4 className="font-semibold mb-2">Plan Price:</h4>
-                         <div className="flex items-center gap-2 text-primary font-bold p-3 bg-primary/10 rounded-md">
-                            <CreditCard className="h-5 w-5" />
-                            <span>DZD {appliedPlan.price.toLocaleString()} / {appliedPlan.pricePeriod}</span>
+                         <div className="flex flex-col gap-2 p-3 bg-primary/10 rounded-md">
+                            <div className="flex items-center justify-between text-primary font-bold">
+                                <div className="flex items-center gap-2">
+                                    <CreditCard className="h-5 w-5" />
+                                    <span>DZD {appliedPlan.price.toLocaleString()} / {appliedPlan.pricePeriod}</span>
+                                </div>
+                                {totalPrice !== null && (
+                                    <div className="text-right">
+                                        <p className="text-lg">Total: DZD {totalPrice.toLocaleString()}</p>
+                                        <p className="text-xs font-normal text-muted-foreground">({applicant.duration})</p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                  )}
