@@ -184,8 +184,21 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
                                 '6 months': 6,
                                 '1 year': 12,
                             };
+                             const discountMap: Record<string, number | undefined> = {
+                                '3 months': plan.discount3Months,
+                                '6 months': plan.discount6Months,
+                                '1 year': plan.discount1Year,
+                            };
                             const multiplier = durationMap[application.applicant.duration] || 1;
-                            totalPrice = planPrice * multiplier;
+                            const basePrice = planPrice * multiplier;
+
+                            const discountPercentage = discountMap[application.applicant.duration];
+                            if (discountPercentage && discountPercentage > 0) {
+                                const discount = basePrice * (discountPercentage / 100);
+                                totalPrice = basePrice - discount;
+                            } else {
+                                totalPrice = basePrice;
+                            }
                         }
 
 

@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button"
 import type { CoachingApplication, Coach, Plan } from "@/types"
 import { format } from "date-fns"
-import { Mail, MessageSquare, CreditCard } from "lucide-react"
+import { Mail, MessageSquare, CreditCard, Percent } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
@@ -49,7 +49,7 @@ export default function ViewApplicationDialog({ isOpen, onOpenChange, applicatio
 
   const calculateTotalPrice = () => {
     if (!appliedPlan || appliedPlan.pricePeriod !== 'month') {
-        return null;
+        return { totalPrice: null, discountApplied: 0 };
     }
     const durationMap: Record<string, number> = {
         '1 month': 1,
@@ -57,14 +57,27 @@ export default function ViewApplicationDialog({ isOpen, onOpenChange, applicatio
         '6 months': 6,
         '1 year': 12,
     };
+    const discountMap: Record<string, number | undefined> = {
+        '3 months': appliedPlan.discount3Months,
+        '6 months': appliedPlan.discount6Months,
+        '1 year': appliedPlan.discount1Year,
+    };
+
     const multiplier = durationMap[applicant.duration];
     if (multiplier) {
-        return appliedPlan.price * multiplier;
+        const basePrice = appliedPlan.price * multiplier;
+        const discountPercentage = discountMap[applicant.duration];
+        
+        if (discountPercentage && discountPercentage > 0) {
+            const discount = basePrice * (discountPercentage / 100);
+            return { totalPrice: basePrice - discount, discountApplied: discountPercentage };
+        }
+        return { totalPrice: basePrice, discountApplied: 0 };
     }
-    return null;
+    return { totalPrice: null, discountApplied: 0 };
   }
 
-  const totalPrice = calculateTotalPrice();
+  const { totalPrice, discountApplied } = calculateTotalPrice();
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -104,6 +117,12 @@ export default function ViewApplicationDialog({ isOpen, onOpenChange, applicatio
                                     </div>
                                 )}
                             </div>
+                            {discountApplied > 0 && (
+                                <div className="flex items-center gap-2 text-xs text-green-600 font-medium border-t border-primary/10 pt-2 mt-2">
+                                    <Percent className="h-3 w-3" />
+                                    <span>Discount of {discountApplied}% applied!</span>
+                                </div>
+                            )}
                         </div>
                     </div>
                  )}

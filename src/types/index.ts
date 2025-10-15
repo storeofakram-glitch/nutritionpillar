@@ -285,6 +285,9 @@ export type Plan = {
   price: number;
   pricePeriod: 'month' | 'program';
   applyLink?: string;
+  discount3Months?: number;
+  discount6Months?: number;
+  discount1Year?: number;
 };
 
 export type PersonalInfo = {

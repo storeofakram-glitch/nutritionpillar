@@ -80,9 +80,23 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
         '6 months': 6,
         '1 year': 12,
     };
+    const discountMap: Record<string, number | undefined> = {
+        '3 months': plan.discount3Months,
+        '6 months': plan.discount6Months,
+        '1 year': plan.discount1Year,
+    };
+
     const multiplier = durationMap[selectedDuration];
     if (multiplier) {
-        setTotalPrice(plan.price * multiplier);
+        const basePrice = plan.price * multiplier;
+        const discountPercentage = discountMap[selectedDuration];
+        
+        if (discountPercentage && discountPercentage > 0) {
+            const discount = basePrice * (discountPercentage / 100);
+            setTotalPrice(basePrice - discount);
+        } else {
+            setTotalPrice(basePrice);
+        }
     } else {
         setTotalPrice(null);
     }

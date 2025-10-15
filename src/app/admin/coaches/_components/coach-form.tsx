@@ -22,7 +22,7 @@ import { addCoach, updateCoach } from "@/services/coach-service"
 import type { Coach } from "@/types"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dumbbell, PlusCircle, Trash2, Zap, HeartPulse, Rocket, ChevronDown, Info } from "lucide-react"
+import { Dumbbell, PlusCircle, Trash2, Zap, HeartPulse, Rocket, ChevronDown, Info, Percent } from "lucide-react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
@@ -37,6 +37,9 @@ const planSchema = z.object({
     price: z.coerce.number().min(0, "Price must be a non-negative number."),
     pricePeriod: z.enum(['month', 'program']),
     applyLink: z.string().url("Must be a valid URL.").optional().or(z.literal('')),
+    discount3Months: z.coerce.number().min(0).max(100).optional(),
+    discount6Months: z.coerce.number().min(0).max(100).optional(),
+    discount1Year: z.coerce.number().min(0).max(100).optional(),
 });
 
 const personalInfoSchema = z.object({
@@ -326,6 +329,27 @@ export function CoachForm({ onFormSubmit, coach }: CoachFormProps) {
                                             </FormItem>
                                         )}
                                     />
+                                </div>
+                                <div className="space-y-3 rounded-lg border p-3">
+                                    <FormLabel className="text-sm flex items-center gap-2">
+                                        <Percent className="h-4 w-4" />
+                                        Duration Discounts (Optional)
+                                    </FormLabel>
+                                    <FormDescription className="text-xs">Set a discount percentage for longer commitments. Applied to monthly plans only.</FormDescription>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        <FormField
+                                            control={form.control} name={`plans.${index}.discount3Months`}
+                                            render={({ field }) => ( <FormItem><FormLabel className="text-xs">3 Months</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} placeholder="e.g., 10" /></FormControl><FormMessage /></FormItem> )}
+                                        />
+                                        <FormField
+                                            control={form.control} name={`plans.${index}.discount6Months`}
+                                            render={({ field }) => ( <FormItem><FormLabel className="text-xs">6 Months</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} placeholder="e.g., 15" /></FormControl><FormMessage /></FormItem> )}
+                                        />
+                                        <FormField
+                                            control={form.control} name={`plans.${index}.discount1Year`}
+                                            render={({ field }) => ( <FormItem><FormLabel className="text-xs">1 Year</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} placeholder="e.g., 20" /></FormControl><FormMessage /></FormItem> )}
+                                        />
+                                    </div>
                                 </div>
                                 <FormField
                                     control={form.control} name={`plans.${index}.applyLink`}
