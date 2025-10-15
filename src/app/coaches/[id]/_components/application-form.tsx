@@ -13,6 +13,8 @@ import { addApplication } from '@/services/application-service';
 import type { Plan } from '@/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { countryCodes } from '@/lib/country-codes';
+import { CreditCard } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const fitnessGoals = [
     "Weight Loss",
@@ -47,6 +49,8 @@ interface ApplicationFormProps {
 
 export function ApplicationForm({ plan, coachId, coachName, onSuccess }: ApplicationFormProps) {
   const { toast } = useToast();
+  const [totalPrice, setTotalPrice] = useState<number | null>(null);
+
   const form = useForm<ApplicationFormValues>({
     resolver: zodResolver(applicationFormSchema),
     defaultValues: {
@@ -62,6 +66,28 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
       message: '',
     },
   });
+
+  const selectedDuration = form.watch('duration');
+
+  useEffect(() => {
+    if (plan.pricePeriod !== 'month' || !selectedDuration) {
+        setTotalPrice(null);
+        return;
+    }
+    const durationMap: Record<string, number> = {
+        '1 month': 1,
+        '3 months': 3,
+        '6 months': 6,
+        '1 year': 12,
+    };
+    const multiplier = durationMap[selectedDuration];
+    if (multiplier) {
+        setTotalPrice(plan.price * multiplier);
+    } else {
+        setTotalPrice(null);
+    }
+  }, [selectedDuration, plan]);
+
 
   const onSubmit = async (data: ApplicationFormValues) => {
     const selectedCountry = countryCodes.find(c => c.code === data.countryCode);
@@ -178,25 +204,40 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
             )}
             />
         </div>
-        <FormField
-            control={form.control}
-            name="duration"
-            render={({ field }) => (
-                <FormItem>
-                <FormLabel>Coaching Duration</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl><SelectTrigger><SelectValue placeholder="Select a duration" /></SelectTrigger></FormControl>
-                    <SelectContent>
-                        <SelectItem value="1 month">1 Month</SelectItem>
-                        <SelectItem value="3 months">3 Months</SelectItem>
-                        <SelectItem value="6 months">6 Months</SelectItem>
-                        <SelectItem value="1 year">1 Year</SelectItem>
-                    </SelectContent>
-                </Select>
-                <FormMessage />
-                </FormItem>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+            <FormField
+                control={form.control}
+                name="duration"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Coaching Duration</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl><SelectTrigger><SelectValue placeholder="Select a duration" /></SelectTrigger></FormControl>
+                        <SelectContent>
+                            <SelectItem value="1 month">1 Month</SelectItem>
+                            <SelectItem value="3 months">3 Months</SelectItem>
+                            <SelectItem value="6 months">6 Months</SelectItem>
+                            <SelectItem value="1 year">1 Year</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <FormMessage />
+                    </FormItem>
+                )}
+            />
+            {totalPrice !== null && (
+                <div className="flex flex-col gap-2 p-3 bg-primary/10 rounded-md border border-primary/20">
+                    <div className="flex items-center justify-between text-primary font-bold">
+                        <div className="flex items-center gap-2">
+                            <CreditCard className="h-5 w-5" />
+                            <span>Total Price</span>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-lg">DZD {totalPrice.toLocaleString()}</p>
+                        </div>
+                    </div>
+                </div>
             )}
-        />
+        </div>
         <FormField
             control={form.control}
             name="goal"
