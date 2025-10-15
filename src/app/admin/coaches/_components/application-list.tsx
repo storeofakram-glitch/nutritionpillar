@@ -15,18 +15,21 @@ import DeleteApplicationDialog from "./delete-application-dialog";
 import { updateApplicationStatus } from "@/services/application-service";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ApplicationListProps {
   coachId: string;
 }
 
 const applicationStatuses: CoachingApplication['status'][] = ['new', 'contacted', 'active', 'archived'];
+const ITEMS_PER_PAGE = 5;
 
 export default function ApplicationList({ coachId }: ApplicationListProps) {
     const [applications, setApplications] = useState<CoachingApplication[]>([]);
     const [newCount, setNewCount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 
     const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -103,7 +106,7 @@ export default function ApplicationList({ coachId }: ApplicationListProps) {
                         )}
                     </Button>
                 </SheetTrigger>
-                <SheetContent className="sm:max-w-xl">
+                <SheetContent className="sm:max-w-xl flex flex-col">
                     <SheetHeader>
                         <SheetTitle>Coaching Applications</SheetTitle>
                         <SheetDescription>
@@ -122,51 +125,60 @@ export default function ApplicationList({ coachId }: ApplicationListProps) {
                             />
                         </div>
                     </div>
-                    <div className="space-y-4">
-                        {filteredApplications.length > 0 ? filteredApplications.map(app => (
-                            <div key={app.id} className="border p-4 rounded-lg flex justify-between items-start">
-                                <div>
-                                    <p className="font-semibold">{app.applicant.name}</p>
-                                    <p className="text-sm text-muted-foreground">Plan: {app.planTitle}</p>
-                                    <p className="text-xs text-muted-foreground mt-1">
-                                        {formatDistanceToNow(new Date(app.createdAt), { addSuffix: true })}
-                                    </p>
+                    <ScrollArea className="flex-grow">
+                        <div className="space-y-4 pr-4">
+                            {filteredApplications.length > 0 ? filteredApplications.slice(0, visibleCount).map(app => (
+                                <div key={app.id} className="border p-4 rounded-lg flex justify-between items-start">
+                                    <div>
+                                        <p className="font-semibold">{app.applicant.name}</p>
+                                        <p className="text-sm text-muted-foreground">Plan: {app.planTitle}</p>
+                                        <p className="text-xs text-muted-foreground mt-1">
+                                            {formatDistanceToNow(new Date(app.createdAt), { addSuffix: true })}
+                                        </p>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Badge variant={'default'} className={cn(getStatusStyles(app.status))}>{app.status}</Badge>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button size="icon" variant="ghost">
+                                                    <MoreHorizontal className="h-4 w-4" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                <DropdownMenuItem onSelect={() => handleView(app)}>View Details</DropdownMenuItem>
+                                                <DropdownMenuSub>
+                                                    <DropdownMenuSubTrigger>Change Status</DropdownMenuSubTrigger>
+                                                    <DropdownMenuSubContent>
+                                                        {applicationStatuses.map(status => (
+                                                            <DropdownMenuItem 
+                                                                key={status} 
+                                                                onSelect={() => handleStatusChange(app.id, status)}
+                                                                disabled={app.status === status}
+                                                            >
+                                                                {status}
+                                                            </DropdownMenuItem>
+                                                        ))}
+                                                    </DropdownMenuSubContent>
+                                                </DropdownMenuSub>
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuItem onSelect={() => handleDelete(app)} className="text-red-500">Delete Permanently</DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                     <Badge variant={'default'} className={cn(getStatusStyles(app.status))}>{app.status}</Badge>
-                                      <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button size="icon" variant="ghost">
-                                                <MoreHorizontal className="h-4 w-4" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                            <DropdownMenuItem onSelect={() => handleView(app)}>View Details</DropdownMenuItem>
-                                            <DropdownMenuSub>
-                                                <DropdownMenuSubTrigger>Change Status</DropdownMenuSubTrigger>
-                                                <DropdownMenuSubContent>
-                                                    {applicationStatuses.map(status => (
-                                                        <DropdownMenuItem 
-                                                            key={status} 
-                                                            onSelect={() => handleStatusChange(app.id, status)}
-                                                            disabled={app.status === status}
-                                                        >
-                                                            {status}
-                                                        </DropdownMenuItem>
-                                                    ))}
-                                                </DropdownMenuSubContent>
-                                            </DropdownMenuSub>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem onSelect={() => handleDelete(app)} className="text-red-500">Delete Permanently</DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </div>
-                            </div>
-                        )) : (
-                            <p className="text-center text-muted-foreground py-8">No applications found.</p>
-                        )}
-                    </div>
+                            )) : (
+                                <p className="text-center text-muted-foreground py-8">No applications found.</p>
+                            )}
+                        </div>
+                    </ScrollArea>
+                    {filteredApplications.length > visibleCount && (
+                        <div className="pt-4">
+                            <Button variant="outline" className="w-full" onClick={() => setVisibleCount(prev => prev + ITEMS_PER_PAGE)}>
+                                Load More
+                            </Button>
+                        </div>
+                    )}
                 </SheetContent>
             </Sheet>
 
