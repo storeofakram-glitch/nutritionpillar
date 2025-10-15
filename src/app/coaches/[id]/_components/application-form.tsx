@@ -229,7 +229,7 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
                     <div className="flex items-center justify-between text-primary font-bold">
                         <div className="flex items-center gap-2">
                             <CreditCard className="h-5 w-5" />
-                            <span>Total Price</span>
+                            <span>Total</span>
                         </div>
                         <div className="text-right">
                             <p className="text-lg">DZD {totalPrice.toLocaleString()}</p>
