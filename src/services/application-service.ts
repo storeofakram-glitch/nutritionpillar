@@ -175,15 +175,28 @@ export async function updateApplicationStatus(id: string, status: CoachingApplic
                         const coach = await getCoachById(application.coachId);
                         const plan = coach?.plans?.find(p => p.title === application.planTitle);
                         const planPrice = plan?.price || 0;
+                        
+                        let totalPrice = planPrice;
+                        if (plan?.pricePeriod === 'month') {
+                            const durationMap: Record<string, number> = {
+                                '1 month': 1,
+                                '3 months': 3,
+                                '6 months': 6,
+                                '1 year': 12,
+                            };
+                            const multiplier = durationMap[application.applicant.duration] || 1;
+                            totalPrice = planPrice * multiplier;
+                        }
 
-                        if (planPrice > 0) {
+
+                        if (totalPrice > 0) {
                             await addClientPayment({
                                 clientId: application.id,
                                 clientName: application.applicant.name,
                                 coachId: application.coachId,
                                 coachName: application.coachName,
                                 planTitle: application.planTitle,
-                                amount: planPrice,
+                                amount: totalPrice,
                                 paymentDate: new Date().toISOString(),
                                 status: 'paid',
                             });
