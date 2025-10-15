@@ -13,7 +13,7 @@ import { addApplication } from '@/services/application-service';
 import type { Plan } from '@/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { countryCodes } from '@/lib/country-codes';
-import { CreditCard } from 'lucide-react';
+import { CreditCard, Percent } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const fitnessGoals = [
@@ -50,6 +50,7 @@ interface ApplicationFormProps {
 export function ApplicationForm({ plan, coachId, coachName, onSuccess }: ApplicationFormProps) {
   const { toast } = useToast();
   const [totalPrice, setTotalPrice] = useState<number | null>(null);
+  const [discountApplied, setDiscountApplied] = useState(0);
 
   const form = useForm<ApplicationFormValues>({
     resolver: zodResolver(applicationFormSchema),
@@ -72,6 +73,7 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
   useEffect(() => {
     if (plan.pricePeriod !== 'month' || !selectedDuration) {
         setTotalPrice(null);
+        setDiscountApplied(0);
         return;
     }
     const durationMap: Record<string, number> = {
@@ -94,11 +96,14 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
         if (discountPercentage && discountPercentage > 0) {
             const discount = basePrice * (discountPercentage / 100);
             setTotalPrice(basePrice - discount);
+            setDiscountApplied(discountPercentage);
         } else {
             setTotalPrice(basePrice);
+            setDiscountApplied(0);
         }
     } else {
         setTotalPrice(null);
+        setDiscountApplied(0);
     }
   }, [selectedDuration, plan]);
 
@@ -249,6 +254,12 @@ export function ApplicationForm({ plan, coachId, coachName, onSuccess }: Applica
                             <p className="text-lg">DZD {totalPrice.toLocaleString()}</p>
                         </div>
                     </div>
+                     {discountApplied > 0 && (
+                        <div className="flex items-center gap-2 text-xs text-green-600 font-medium border-t border-primary/10 pt-2 mt-2">
+                            <Percent className="h-3 w-3" />
+                            <span>Discount of {discountApplied}% applied!</span>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
